@@ -686,20 +686,39 @@ stage.addEventListener('dragleave', () => { dragDepth = Math.max(0, dragDepth - 
 stage.addEventListener('drop', (e) => { e.preventDefault(); dragDepth = 0; drop.hidden = true; takeFile(e.dataTransfer.files[0]); });
 window.addEventListener('paste', (e) => { const f = [...(e.clipboardData?.files || [])].find((x) => x.type.startsWith('image/')); if (f) takeFile(f); });
 
-/* ================= sound toggle ================= */
-const soundBtn = q('[data-sound]');
+/* ================= sound: on by default ================= */
+/* Browsers only allow audio after the visitor's first click, tap or key press, so the sound is
+   "on" from the start and actually begins at that first gesture anywhere on the page. A visitor
+   who turns it off is remembered on this device. */
+const soundBtn = q('[data-sound]'), soundHint = q('[data-sound-hint]');
 const soundText = { ko: ['소리 켜기', '소리 끄기'], en: ['Sound on', 'Sound off'] }[lang];
+let wantSound = true;
+try { if (localStorage.getItem('lab-sound') === 'off') wantSound = false; } catch (e) { /* storage unavailable */ }
 function soundUI() {
-  const on = Snd.on;
-  soundBtn.setAttribute('aria-pressed', String(on));
-  soundBtn.querySelector('.label').textContent = on ? soundText[1] : soundText[0];
-  soundBtn.querySelector('.x').style.display = on ? 'none' : '';
-  soundBtn.querySelector('.w').style.display = on ? '' : 'none';
+  soundBtn.setAttribute('aria-pressed', String(wantSound));
+  soundBtn.querySelector('.label').textContent = wantSound ? soundText[1] : soundText[0];
+  soundBtn.querySelector('.x').style.display = wantSound ? 'none' : '';
+  soundBtn.querySelector('.w').style.display = wantSound ? '' : 'none';
+  soundHint.hidden = !(wantSound && !Snd.on);
 }
-soundBtn.addEventListener('click', async () => {
-  if (Snd.on) Snd.disable(); else { await Snd.enable(); Snd.chime(); }
+function startSound() {
+  if (!wantSound || Snd.on) return;
+  Snd.enable().then((ok) => { if (ok) Snd.chime(); soundUI(); });
+}
+const GESTURES = ['pointerdown', 'keydown', 'touchend'];
+function firstGesture(e) {
+  if (e.target && e.target.closest && e.target.closest('[data-sound]')) return;
+  GESTURES.forEach((t) => window.removeEventListener(t, firstGesture, true));
+  startSound();
+}
+GESTURES.forEach((t) => window.addEventListener(t, firstGesture, true));
+soundBtn.addEventListener('click', () => {
+  wantSound = !wantSound;
+  try { localStorage.setItem('lab-sound', wantSound ? 'on' : 'off'); } catch (e) { /* storage unavailable */ }
+  if (wantSound) startSound(); else Snd.disable();
   soundUI();
 });
+soundUI();
 
 /* the sample sits on the object plane; the demo plays itself without sound once the page is calm */
 setDepthUI(false);
