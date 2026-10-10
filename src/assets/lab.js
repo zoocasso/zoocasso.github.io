@@ -178,7 +178,6 @@ const Snd = (() => {
       const k = (ch.charCodeAt(0) * 7) % 9 - 4;
       tone('square', 520 * Math.pow(2, k / 12), ctx.currentTime, 0.006, 0.09, 0.05, voice, 1900);
     },
-    key() { if (live()) noise(ctx.currentTime, 0.012, 'highpass', 4000, 0.02, sfx); },
     ui() { if (live()) tone('sine', 1320, ctx.currentTime, 0.003, 0.05, 0.06, sfx); }
   };
 })();
@@ -260,20 +259,23 @@ function sayLine(line, after) {
   const jp = line[0], sub = line[1][lang];
   liveEl.textContent = sub;
   clearInterval(sayTimer);
-  if (reduce) { ej.textContent = jp; ek.textContent = sub; if (after) after(); return; }
-  let i = 0, k = 0; ej.textContent = ''; ek.textContent = '';
+  // the subtitle shows in full as the line starts, like a film subtitle, while the Japanese is typed out
+  ek.textContent = sub;
+  if (reduce) { ej.textContent = jp; if (after) after(); return; }
+  ek.classList.remove('fade'); void ek.offsetWidth; ek.classList.add('fade');
+  // after the Japanese ends, hold as long as typing the subtitle used to take, so the pacing stays the same
+  let i = 0, hold = Math.ceil(sub.length / 2); ej.textContent = '';
   const rest = Face.mode === 'talk' ? 'idle' : Face.mode;
   if (rest !== 'work') Face.set('talk');
   sayTimer = setInterval(() => {
     if (i < jp.length) {
       const ch = jp[i++]; ej.textContent = jp.slice(0, i);
       if (!/[\s、。！？…]/.test(ch)) { Snd.blip(ch); Face.flap(); }
-    } else if (k < sub.length) {
-      k = Math.min(sub.length, k + 2); ek.textContent = sub.slice(0, k);
-      if (k % 6 === 0) Snd.key();
+      if (i === jp.length && Face.mode === 'talk') Face.set(rest);
+    } else if (hold > 0) {
+      hold--;
     } else {
       clearInterval(sayTimer);
-      if (Face.mode === 'talk') Face.set(rest);
       if (after) after();
     }
   }, 48);

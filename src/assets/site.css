@@ -76,6 +76,8 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 .dialog{position:absolute;left:calc(50% + min(235px,20%));bottom:20px;transform:translateX(-50%);width:min(600px,calc(100% - 600px));background:var(--veil);border:1px solid var(--rule);padding:12px 18px 13px;text-align:center;z-index:2}
 .dialog .jp{font-family:var(--dot);font-size:17px;line-height:1.6;min-height:1.6em}
 .dialog .ko{font-size:14.5px;line-height:1.55;color:var(--mute);min-height:1.55em;margin-top:2px}
+.dialog .ko.fade{animation:subin .35s ease-out}
+@keyframes subin{from{opacity:0}to{opacity:1}}
 .lab-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:12px var(--gutter) 14px;background:var(--bench);border-top:1px solid var(--rule)}
 .lab-tools .group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .lab-tools .btn{min-height:40px;padding:0 13px;font-size:14px;background:var(--veil)}
