@@ -56,6 +56,7 @@ p{margin:0 0 1em}
 .lab{position:relative;background:var(--plate);border-bottom:1px solid var(--rule);overflow:hidden;height:clamp(600px,80vh,860px);touch-action:manipulation}
 .lab canvas.gl{position:absolute;inset:0;width:100%;height:100%;display:block}
 .lab .poster{position:absolute;inset:0;background:var(--plate)}
+.lab .torch{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:var(--ta,0);transition:opacity .5s;background:radial-gradient(460px circle at var(--tx,50%) var(--ty,50%),rgba(227,196,127,.16),rgba(227,196,127,.05) 45%,transparent 70%)}
 .intro{position:absolute;left:var(--gutter);top:clamp(28px,6vh,64px);width:min(470px,40%);z-index:2}
 .intro h1{font-size:clamp(46px,5.2vw,74px);letter-spacing:-.02em;line-height:1.02}
 .intro h1 .alt{display:block;font-weight:200;font-size:.42em;letter-spacing:0;color:var(--mute);margin-top:10px}

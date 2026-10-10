@@ -194,10 +194,20 @@ const Face = (() => {
     workR: ['..............', '..............', '....##....##..', '....##....##..', '..............', '..............', '......##......', '..............', '..............'],
     happy: ['..............', '..............', '....#....#....', '...#.#..#.#...', '..............', '....#....#....', '.....####.....', '..............', '..............']
   };
-  let mode = 'idle', mouth = false, last = '';
+  let mode = 'idle', mouth = false, last = '', gx = 0, gy = 0;
+  const shift = (s, dx) => dx > 0 ? '.'.repeat(dx) + s.slice(0, -dx) : dx < 0 ? s.slice(-dx) + '.'.repeat(-dx) : s;
+  function gaze(base) {
+    // move the eye rows (2 and 3) toward the pointer
+    if (!gx && !gy) return base;
+    const rows = base.slice(), eyes = [rows[2], rows[3]];
+    rows[2] = rows[3] = '.'.repeat(COLS);
+    rows[2 + gy] = shift(eyes[0], gx); rows[3 + gy] = shift(eyes[1], gx);
+    return rows;
+  }
   function paint(key) {
-    if (key === last) return; last = key;
-    const rows = F[key], cw = c.width / COLS, chh = c.height / ROWS, r = Math.min(cw, chh) * 0.36;
+    const sig = key + gx + ',' + gy;
+    if (sig === last) return; last = sig;
+    const rows = key.startsWith('work') ? F[key] : gaze(F[key]), cw = c.width / COLS, chh = c.height / ROWS, r = Math.min(cw, chh) * 0.36;
     g.clearRect(0, 0, c.width, c.height);
     for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
       const lit = rows[y][x] === '#';
@@ -215,7 +225,12 @@ const Face = (() => {
     else if (mode === 'work') key = Math.floor(now / 380) % 2 ? 'workL' : 'workR';
     paint(key);
   }
-  return { set(m) { mode = m; }, get mode() { return mode; }, flap() { mouth = !mouth; }, frame };
+  function look(clientX, clientY) {
+    const r = c.getBoundingClientRect();
+    gx = Math.max(-1, Math.min(1, Math.round((clientX - (r.left + r.width / 2)) / 260)));
+    gy = Math.max(-1, Math.min(1, Math.round((clientY - (r.top + r.height / 2)) / 260)));
+  }
+  return { set(m) { mode = m; }, get mode() { return mode; }, flap() { mouth = !mouth; }, frame, look };
 })();
 
 /* ================= dialogue: Japanese voice line, subtitle in the page language ================= */
@@ -341,24 +356,30 @@ precision mediump float;
 uniform vec4 uCol; out vec4 o;
 void main(){ o = uCol; }`;
 const EV = `#version 300 es
-in vec4 aP; uniform mat4 uVP; uniform float uT, uPx, uP11;
-out float vK; out float vA;
+in vec4 aP; uniform mat4 uVP; uniform float uT, uPx, uP11, uAsp, uMA; uniform vec2 uM;
+out float vK; out float vA; out float vG;
 void main(){
   vec3 p = aP.xyz; float seed = abs(aP.w); vK = step(0., aP.w);
   if (vK > .5) { p.x += sin(uT * .13 + seed * 40.) * .12; p.y += sin(uT * .21 + seed * 17.) * .18; p.z += cos(uT * .1 + seed * 9.) * .1; }
   vec4 v = uVP * vec4(p, 1.);
+  vec2 ndc = v.xy / v.w;
+  vec2 dm = (ndc - uM) * vec2(uAsp, 1.);
+  float near = length(dm);
+  // the pointer works like a torch on the breadboard, and pushes the dust aside
+  vG = uMA * smoothstep(.8, 0., near);
+  if (vK > .5 && near > .001) v.xy += normalize(dm) / vec2(uAsp, 1.) * uMA * smoothstep(.35, 0., near) * .09 * v.w;
   gl_Position = v;
-  float sz = vK > .5 ? .018 + .02 * fract(seed * 13.7) : .034;
+  float sz = vK > .5 ? .018 + .02 * fract(seed * 13.7) : .034 * (1. + .5 * vG);
   gl_PointSize = clamp(uPx * uP11 * sz / (2. * v.w), 1., 18.);
-  vA = vK > .5 ? (.25 + .35 * (.5 + .5 * sin(uT * .9 + seed * 23.))) : .16;
+  vA = vK > .5 ? (.25 + .35 * (.5 + .5 * sin(uT * .9 + seed * 23.))) : .16 + .6 * vG;
 }`;
 const EF = `#version 300 es
 precision mediump float;
-in float vK; in float vA; out vec4 o;
+in float vK; in float vA; in float vG; out vec4 o;
 void main(){
   vec2 d2 = gl_PointCoord - .5; float d = length(d2);
   if (d > .5) discard;
-  vec3 col = vK > .5 ? vec3(.89, .77, .5) : vec3(.62, .64, .68);
+  vec3 col = vK > .5 ? vec3(.89, .77, .5) : mix(vec3(.62, .64, .68), vec3(.95, .82, .55), vG);
   o = vec4(col, vA * (vK > .5 ? smoothstep(.5, 0., d) : smoothstep(.5, .3, d)));
 }`;
 let P, Q, LN, E;
@@ -423,7 +444,7 @@ const lerp = (a, b, t) => a + (b - a) * t;
 const lerp3 = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
 
 const st = { A: 0, B: 0, C: 0, D: 0, cam: 0 };
-const ptr = { x: 0, y: 0, sx: 0, sy: 0 };
+const ptr = { x: 0, y: 0, sx: 0, sy: 0, tx: 0, ty: 0, mx: 0, my: 0, ma: 0, inside: false };
 let VP = null, P11 = 1, hasImage = false;
 const T0 = performance.now();
 const wideLayout = () => window.innerWidth >= 1024;
@@ -436,8 +457,8 @@ function camera(asp, now) {
   const fit = V / Math.tan(FOV / 2), lift = -V * (frac - 0.025);
   const k = easeIO(st.cam);
   const drift = reduce ? 0 : Math.sin(now / 5200) * 0.06;
-  const amp = 1 - 0.65 * k;
-  const ox = (ptr.sx * 0.55 + drift) * amp, oy = (ptr.sy * 0.32 + drift * 0.5) * amp;
+  const amp = 1 - 0.35 * k;
+  const ox = (ptr.sx * 1.05 + drift) * amp, oy = (ptr.sy * 0.62 + drift * 0.5) * amp;
   const eObl = small ? [1.5 + ox, 1.0 + oy, 4.2] : [2.15 + ox, 1.15 + oy, 3.4];
   const eFr = [ox * 0.9, lift + oy * 0.9, -ZS + fit];
   const proj = persp(FOV, asp, 0.05, 40);
@@ -455,7 +476,9 @@ function draw(now) {
   const dpr = Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2);
   const cw = Math.max(1, Math.round(stage.clientWidth * dpr)), ch = Math.max(1, Math.round(stage.clientHeight * dpr));
   if (canvas.width !== cw || canvas.height !== ch) { canvas.width = cw; canvas.height = ch; }
-  ptr.sx += (ptr.x - ptr.sx) * 0.06; ptr.sy += (ptr.y - ptr.sy) * 0.06;
+  ptr.sx += (ptr.x - ptr.sx) * 0.07; ptr.sy += (ptr.y - ptr.sy) * 0.07;
+  ptr.mx += (ptr.tx - ptr.mx) * 0.2; ptr.my += (ptr.ty - ptr.my) * 0.2;
+  ptr.ma += ((ptr.inside ? 1 : 0) - ptr.ma) * 0.08;
   VP = camera(cw / ch, now);
   ensureAcc(cw, ch);
   const t = (now - T0) / 1000;
@@ -464,6 +487,7 @@ function draw(now) {
   gl.clearColor(BG[0], BG[1], BG[2], 1); gl.clear(gl.COLOR_BUFFER_BIT);
   gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   gl.useProgram(E.p); gl.uniformMatrix4fv(E.u.uVP, false, VP); gl.uniform1f(E.u.uT, t); gl.uniform1f(E.u.uPx, ch); gl.uniform1f(E.u.uP11, P11);
+  gl.uniform1f(E.u.uAsp, cw / ch); gl.uniform2f(E.u.uM, ptr.mx, ptr.my); gl.uniform1f(E.u.uMA, ptr.ma);
   gl.bindVertexArray(envVAO); gl.drawArrays(gl.POINTS, 0, envCount);
   gl.disable(gl.BLEND);
   if (hasImage) {
@@ -506,7 +530,18 @@ function start() { if (reduce) { request(); return; } running = true; request();
 new ResizeObserver(() => request()).observe(stage);
 new IntersectionObserver((es) => { visible = es[0].isIntersecting; if (visible) start(); }).observe(stage);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) start(); });
-window.addEventListener('pointermove', (e) => { if (reduce) return; ptr.x = e.clientX / window.innerWidth * 2 - 1; ptr.y = -(e.clientY / window.innerHeight * 2 - 1); });
+window.addEventListener('pointermove', (e) => {
+  if (reduce) return;
+  ptr.x = e.clientX / window.innerWidth * 2 - 1; ptr.y = -(e.clientY / window.innerHeight * 2 - 1);
+  const r = canvas.getBoundingClientRect();
+  ptr.tx = (e.clientX - r.left) / r.width * 2 - 1; ptr.ty = -((e.clientY - r.top) / r.height * 2 - 1);
+  ptr.inside = ptr.tx > -1 && ptr.tx < 1 && ptr.ty > -1 && ptr.ty < 1;
+  stage.style.setProperty('--tx', (e.clientX - r.left) + 'px');
+  stage.style.setProperty('--ty', (e.clientY - r.top) + 'px');
+  stage.style.setProperty('--ta', ptr.inside ? '1' : '0');
+  Face.look(e.clientX, e.clientY);
+});
+root.addEventListener('pointerleave', () => { ptr.inside = false; stage.style.setProperty('--ta', '0'); });
 
 /* ================= timeline ================= */
 let token = 0;
