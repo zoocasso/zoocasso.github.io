@@ -1,7 +1,7 @@
 <!--meta {"title": "RIM·iRIM", "description": "렌즈 배열 영상의 픽셀을 보간 없이 일대일로 재배열해 시점 영상을 만드는 RIM(ICMV 2026)과, 그 역변환으로 가상 렌즈 배열 요소 영상을 합성하는 iRIM(ICCAS 2026).", "nav": "research"} -->
 <div class="doc-head">
   <p class="crumb"><a href="/research/">연구</a> / RIM·iRIM</p>
-  <div class="badges"><span>ICMV 2026 채택, 부다페스트</span><span>ICCAS 2026 채택, 삿포로</span></div>
+  <div class="badges"><span>ICMV 2026 채택, 부다페스트</span><span>ICCAS 2026 채택, 삿포로, 10월 30일 포스터</span></div>
   <h1>RIM·iRIM: 렌즈 배열 영상의 각도 정보를 공간 해상도로</h1>
   <p class="authors"><b>Hyeongju Lee</b>, Myungjin Cho, Min-Chul Lee</p>
   <p class="lede">이 사이트 첫 화면의 실험실에서 2단계 "재배열"이 RIM입니다.</p>
@@ -10,7 +10,7 @@
 <div class="doc">
   <nav class="toc" aria-label="이 페이지 목차">
     <p>목차</p>
-    <a href="#problem">문제</a><a href="#rim">RIM</a><a href="#result">결과</a><a href="#irim">iRIM</a><a href="#code">코드</a>
+    <a href="#problem">문제</a><a href="#rim">RIM</a><a href="#result">결과</a><a href="#irim">iRIM</a><a href="#lab">첫 화면 실험실</a><a href="#code">코드</a>
   </nav>
   <div>
     <section id="problem" aria-labelledby="h-problem">
@@ -54,6 +54,18 @@
         <figure class="fig dark"><img src="/img/sai-camera.webp" width="1200" height="675" alt="렌즈 배열 카메라를 시뮬레이션한 시점 영상 격자. 가장자리 칸으로 갈수록 어둡게 잘린다" loading="lazy"><figcaption>렌즈 배열 카메라 시뮬레이션: 가장자리 시점은 유효 영역이 6.7%까지 줄어듦</figcaption></figure>
       </div>
       <p class="muted" style="font-size:15px">같은 블렌더 장면으로 만든 시점 영상 격자 비교. ICCAS 2026</p>
+    </section>
+
+    <section id="lab" aria-labelledby="h-lab">
+      <h2 id="h-lab">첫 화면 실험실은 어떻게 만들었나</h2>
+      <p>실험실은 렌즈 배열 촬영, RIM 재배열, 재구성을 브라우저에서 그대로 계산해 보여 줍니다. 촬영 단계만은 실제 카메라 대신 단순화한 모델로 흉내 냅니다.</p>
+      <ul>
+        <li><b>예시 장면</b>: ICCAS 2026 논문의 블렌더 장면(중앙 시점 한 장)을 물체별로 나눠, 원환체, 원숭이 머리, 원뿔·구·정육면체, 배경을 서로 다른 깊이의 네 층으로 세웠습니다. 실제 3D 모델이 아니라 층마다 평평한 그림이라, 가려졌던 뒷부분은 비어 있습니다.</li>
+        <li><b>촬영</b>: 핀홀 배열 모델입니다. 센서 픽셀마다 렌즈 중심을 지나는 광선을 뒤로 따라가, 처음 만나는 불투명한 층의 색을 그 요소 영상 픽셀에 기록합니다.</li>
+        <li><b>재배열과 재구성</b>: (렌즈 번호, 렌즈 안 위치)를 맞바꾸는 RIM과, 시점 영상을 거리만큼 밀어 평균하는 재구성은 논문 방식 그대로입니다. 거리가 층의 깊이와 맞으면 그 층의 표본이 원래 자리로 돌아와 선명해집니다.</li>
+        <li><b>직접 넣은 이미지</b>: 사진 한 장에는 깊이 정보가 없어서, 가장자리 색을 배경으로 보고 주인공과 배경 두 층으로 나눕니다. 배경을 가려내기 어려우면 한 장의 판으로 세웁니다. 이미지는 브라우저 밖으로 나가지 않습니다.</li>
+        <li><b>소리</b>: 음악, 효과음, 로봇 목소리는 모두 브라우저가 직접 합성합니다.</li>
+      </ul>
     </section>
 
     <section id="code" aria-labelledby="h-code">

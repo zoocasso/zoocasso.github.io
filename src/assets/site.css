@@ -84,7 +84,8 @@ p{margin:0 0 1em}
 .lab-tools .depth input{flex:1;min-width:0;accent-color:var(--brass);height:40px}
 .lab-tools .depth output{min-width:7em;text-align:right;font-variant-numeric:tabular-nums;color:var(--paper)}
 .sound{display:inline-flex;align-items:center;gap:8px}
-.sound-hint{font-size:13px;color:var(--brass-hi);margin-left:auto}
+.sound-hint{font-size:13px;color:var(--brass-hi)}
+.lab-how{font-size:13px;color:var(--mute);margin-left:auto;display:inline-flex;align-items:center;min-height:40px}
 .sound svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .lab .drop{position:absolute;inset:12px;border:2px dashed var(--brass);display:flex;align-items:center;justify-content:center;background:var(--veil);font-size:18px;z-index:5}
 .lab .fallback{position:absolute;right:var(--gutter);bottom:90px;width:min(46%,560px);z-index:1}

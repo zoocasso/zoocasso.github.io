@@ -7,9 +7,9 @@ if (!root) return;
 const q = (s) => root.querySelector(s);
 const stage = q('.stage'), canvas = q('canvas.gl'), dialogEl = q('.dialog');
 const lang = document.documentElement.lang === 'en' ? 'en' : 'ko';
-const NP = 8, KAPPA = 3, W = 2.0, ZO = 1.2, ZS = ZO / KAPPA, TEX = 512;
+const NP = 8, W = 2.0, ZS = 0.3;
 const small = Math.min(window.innerWidth, screen.width || 9999) < 640;
-const NL = small ? 32 : 48, R = NL * NP, COUNT = R * R, DSTAR = KAPPA / NP, VIEWS = NP * NP;
+const NL = small ? 32 : 48, R = NL * NP, COUNT = R * R, VIEWS = NP * NP;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fmt = (n) => n.toLocaleString(lang === 'ko' ? 'ko-KR' : 'en-US');
 
@@ -236,20 +236,28 @@ const Face = (() => {
 /* ================= dialogue: Japanese voice line, subtitle in the page language ================= */
 const L = {
   greet: ['いらっしゃいませ！ レンズ研究所へようこそ。', { ko: '어서 오세요! 렌즈 연구실에 오신 걸 환영합니다.', en: 'Welcome to the lens lab!' }],
-  intro: ['いまから一枚、レンズで撮って元に戻してみますね。', { ko: '지금부터 이미지 한 장을 렌즈 배열로 찍었다가 원래대로 되돌려 볼게요.', en: "I'll capture an image through a lens array and bring it back." }],
-  load: ['画像、受け取りました！', { ko: '이미지를 받았습니다!', en: 'Got your image!' }],
-  A: [`まずは撮影です。${NL}×${NL}個のレンズが、それぞれ小さな像を作ります。`, { ko: `먼저 찍습니다. ${NL}×${NL}개의 렌즈가 저마다 작고 뒤집힌 영상을 만들어요. 이것이 요소 영상입니다.`, en: `Capture. Each of the ${NL}×${NL} lenses forms a small, flipped image: the elemental images.` }],
+  intro: ['奥行きのある景色を、レンズで撮って元に戻してみますね。', { ko: '깊이가 다른 물체들이 놓인 장면을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "I'll capture a scene with depth through a lens array, then bring it back." }],
+  A: ['まずは撮影。奥行きの違う物体からの光が、レンズを通って小さな像になります。', { ko: `먼저 찍습니다. 깊이가 다른 물체에서 나온 빛이 ${NL}×${NL}개 렌즈를 지나 저마다 작고 뒤집힌 영상을 만듭니다. 이것이 요소 영상입니다.`, en: `Capture. Light from objects at different depths passes ${NL}×${NL} lenses and forms small, flipped elemental images.` }],
   B: ['次は並べ替え。同じ位置のピクセルを集めると、ひとつの視点になります。', { ko: `다음은 재배열(RIM)입니다. 모든 렌즈에서 같은 자리의 픽셀만 모으면 한 방향에서 본 시점 영상 ${VIEWS}장이 돼요.`, en: `Rearrange (RIM). Taking the same pixel from every lens gives ${VIEWS} views, each from one direction.` }],
-  C: ['最後に再構成。距離を合わせて重ねると……', { ko: `마지막으로 재구성입니다. 시점 영상 ${VIEWS}장을 거리에 맞춰 겹치면…`, en: `Reconstruct. Shift the ${VIEWS} views by distance and overlap them…` }],
-  done: ['ピント、合いました！ ピクセルはひとつも失われていません。', { ko: `초점이 맞았어요! ${fmt(COUNT)}개 픽셀이 모두 제자리로 돌아왔습니다.`, en: `In focus! All ${fmt(COUNT)} pixels are back where they started.` }],
-  idle: ['気になる画像を入れてみてください。', { ko: '직접 이미지를 넣어 보세요. 사진도 그림도 됩니다. 재구성 거리도 움직여 보세요.', en: 'Try your own image, or move the distance slider.' }],
+  C: ['最後に再構成。距離を変えると、ピントの合う物体が変わります。', { ko: `마지막으로 재구성입니다. 시점 영상 ${VIEWS}장을 거리에 맞춰 겹치는데, 거리를 바꾸면 초점이 맞는 물체가 바뀝니다.`, en: `Reconstruct. The ${VIEWS} views are overlapped by distance; change the distance and a different object comes into focus.` }],
+  done: ['ピクセルはひとつも失われていません。奥行きごとにピントを合わせ直せます。', { ko: `${fmt(COUNT)}개 픽셀을 하나도 버리지 않고, 깊이마다 초점을 다시 맞출 수 있어요.`, en: `Not one of the ${fmt(COUNT)} pixels was lost, and focus can be set at any depth.` }],
+  idle: ['距離のつまみを動かしたり、画像を入れたりしてみてください。', { ko: '재구성 거리를 움직여 초점을 옮겨 보세요. 직접 이미지를 넣어도 됩니다.', en: 'Move the distance slider, or try your own image.' }],
   rev: ['逆再生もできます。一対一の並べ替えですから。', { ko: 'RIM은 일대일 재배열이라 픽셀 하나 잃지 않고 요소 영상으로 되돌아갑니다.', en: 'RIM is one-to-one, so the elemental images come back without losing a pixel.' }],
-  bad: ['あれ？ この画像は開けませんでした。', { ko: '이 파일은 열 수 없어요. JPG, PNG, WebP 이미지를 넣어 주세요.', en: "I can't open this file. Try a JPG, PNG or WebP image." }]
+  bad: ['あれ？ この画像は開けませんでした。', { ko: '이 파일은 열 수 없어요. JPG, PNG, WebP 이미지를 넣어 주세요.', en: "I can't open this file. Try a JPG, PNG or WebP image." }],
+  load2: ['画像、受け取りました！ 主役と背景の二層に分けますね。', { ko: '이미지를 받았습니다! 가장자리 색을 배경으로 보고, 주인공과 배경 두 층으로 세웠어요.', en: 'Got it! I split it into a subject layer and a background layer using the edge colour.' }],
+  scene: ['サンプルの景色をもう一度並べました。', { ko: '예시 장면을 다시 세웠어요. 원환체, 원숭이 머리, 원뿔·정육면체가 서로 다른 깊이에 있습니다.', en: 'The sample scene is back: torus, monkey head, cone and cube at different depths.' }],
+  chart: ['解像度チャートを一枚の板として置きました。', { ko: '해상도 차트를 한 장의 판으로 세웠어요. 초점이 맞는 거리는 하나입니다.', en: 'The resolution chart stands as one flat card, so there is one in-focus distance.' }],
+  load1: ['画像、受け取りました！ 一枚の板として置きますね。', { ko: '이미지를 받았습니다! 배경을 가려내기 어려워 한 장의 판으로 세웠어요.', en: "Got it! The background was hard to separate, so it stands as one flat card." }]
 };
+const FOCUS = [
+  (n) => [`距離を手前に合わせると、${n.jp}がくっきり。`, { ko: `거리를 앞쪽에 맞추면 ${n.ko}에 초점이 맞고, 나머지는 흐려집니다.`, en: `Focus near: the ${n.en} is sharp, the rest blurs.` }],
+  (n) => [`もう少し奥へ。今度は${n.jp}。`, { ko: `조금 더 뒤로. 이번엔 ${n.ko}에 초점이 맞았어요.`, en: `A little further: now the ${n.en}.` }],
+  (n) => [`いちばん奥は${n.jp}。`, { ko: `가장 뒤의 ${n.ko}에도 맞출 수 있어요.`, en: `And the farthest: the ${n.en}.` }]
+];
 const ej = q('.dialog .jp'), ek = q('.dialog .ko'), liveEl = q('[data-live]');
 let sayTimer = 0;
-function say(key, after) {
-  const jp = L[key][0], sub = L[key][1][lang];
+function sayLine(line, after) {
+  const jp = line[0], sub = line[1][lang];
   liveEl.textContent = sub;
   clearInterval(sayTimer);
   if (reduce) { ej.textContent = jp; ek.textContent = sub; if (after) after(); return; }
@@ -270,13 +278,21 @@ function say(key, after) {
     }
   }, 48);
 }
+const say = (key, after) => sayLine(L[key], after);
 
 /* ================= WebGL2 scene ================= */
+/* The scene is a stack of image layers at different depths in front of a pinhole (lens) array.
+   Layer k sits at distance K[k] * ZS from the array; a ray through lens s that leaves sensor pixel u
+   meets layer k at lens - K[k] * (u - c) / R, and the first opaque layer it meets is what that
+   elemental-image pixel records. RIM then swaps (s, u) to (u, s), and reconstruction shifts each view
+   by d * (u - c) / NL: when d equals K[k] / NP the samples of layer k land back where they came from. */
+const K = [3, 5, 7, 9];
+const DMAX = K[3] / NP * 1.1;
 function fallback() {
   q('.fallback').hidden = false; canvas.hidden = true;
   root.querySelectorAll('.lab-tools .needs-gl').forEach((el) => { el.hidden = true; });
 }
-const gl = canvas.getContext('webgl2', { antialias: false, premultipliedAlpha: false });
+const gl = canvas.getContext('webgl2', { antialias: false, premultipliedAlpha: false, depth: true });
 if (!gl) { fallback(); return; }
 const floatOK = !!gl.getExtension('EXT_color_buffer_float');
 function sh(type, src) {
@@ -289,18 +305,23 @@ function prog(vs, fs) {
   gl.attachShader(p, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(p, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(p);
   if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
   const u = {}; const n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
-  for (let i = 0; i < n; i++) { const name = gl.getActiveUniform(p, i).name; u[name] = gl.getUniformLocation(p, name); }
+  for (let i = 0; i < n; i++) { const name = gl.getActiveUniform(p, i).name.replace(/\[0\]$/, ''); u[name] = gl.getUniformLocation(p, name); }
   return { p, u };
 }
 const PV = `#version 300 es
 precision highp float;
 uniform sampler2D uImg;
 uniform mat4 uVP;
-uniform float uNL, uNP, uKappa, uW, uZo, uZs, uA, uB, uC, uD, uDstar, uPx, uP11;
+uniform float uK[4];
+uniform float uNL, uNP, uW, uZs, uA, uB, uC, uD, uPx, uP11;
 out vec4 vCol;
 float ease(float t){ return t < .5 ? 4.*t*t*t : 1. - pow(-2.*t + 2., 3.) / 2.; }
 float lag(float t, float d, float spread){ return clamp((t - d * spread) / (1. - spread), 0., 1.); }
 vec3 plane(vec2 n, float z){ return vec3((n.x - .5) * uW, (.5 - n.y) * uW, z); }
+vec4 layer(int k, vec2 uv){
+  vec2 cell = vec2(float(k % 2), float(k / 2));
+  return texture(uImg, (clamp(uv, vec2(.001), vec2(.999)) + cell) * .5);
+}
 void main(){
   float R = uNL * uNP;
   int iR = int(R);
@@ -310,28 +331,35 @@ void main(){
   float c = (uNP - 1.) * .5;
   vec2 uo = u - c;
   vec2 lens = (s + .5) / uNL;
-  vec2 obj = lens - uKappa * uo / R;
+  // follow the ray outward and keep the first opaque layer it meets
+  vec4 col = vec4(0.); float kap = uK[3]; int hit = 3;
+  for (int k = 0; k < 4; k++) {
+    vec2 o = lens - uK[k] * uo / R;
+    if (o.x < 0. || o.x > 1. || o.y < 0. || o.y > 1.) continue;
+    vec4 t = layer(k, o);
+    if (t.a > .5) { col = t; kap = uK[k]; hit = k; break; }
+  }
+  vec2 obj = lens - kap * uo / R;
   vec2 ei = (px + .5) / R;
   vec2 sai = (u * uNL + s + .5) / R;
   vec2 rec = lens - uD * uo / uNL;
-  vec4 tex = texture(uImg, obj);
-  float inside = step(0., obj.x) * step(obj.x, 1.) * step(0., obj.y) * step(obj.y, 1.);
   float a = ease(lag(uA, length(lens - .5) * 1.4142, .45));
-  vec3 O = plane(obj, uZo), P = plane(lens, 0.), S = plane(ei, -uZs);
+  vec3 O = plane(obj, -kap * uZs), P = plane(lens, 0.), S = plane(ei, uZs);
   vec3 pos = a < .5 ? mix(O, P, a * 2.) : mix(P, S, a * 2. - 1.);
   float dB = (u.y * uNP + u.x) / (uNP * uNP - 1.);
   float b = ease(lag(uB, dB, .55));
-  pos = mix(pos, plane(sai, -uZs), b);
+  pos = mix(pos, plane(sai, uZs), b);
   pos.z += sin(3.14159 * b) * .22 * (.5 + .5 * dB);
   float cc = ease(lag(uC, length(uo) / (c * 1.4143), .4));
-  pos = mix(pos, plane(rec, -uZs), cc);
+  pos = mix(pos, plane(rec, uZs), cc);
   pos.z += sin(3.14159 * cc) * .08;
-  float focus = 1. - smoothstep(0., .22, abs(uD - uDstar) / uDstar);
+  float dk = kap / uNP;
+  float focus = 1. - smoothstep(0., .2, abs(uD - dk) / dk);
   float cells = mix(1., mix(uNP, 1., focus), cc);
   vec4 v = uVP * vec4(pos, 1.);
   gl_Position = v;
   gl_PointSize = clamp(uPx * uP11 * (uW / R) * cells / (2. * v.w) * 1.12, 1., 64.);
-  vCol = vec4(tex.rgb, tex.a * inside);
+  vCol = col;
 }`;
 const PF = `#version 300 es
 precision mediump float;
@@ -389,19 +417,17 @@ const emptyVAO = gl.createVertexArray();
 
 const lines = [], h = W / 2;
 for (let i = 0; i <= NL; i++) { const x = -h + W * i / NL; lines.push(x, -h, 0, x, h, 0, -h, x, 0, h, x, 0); }
-const frame = (z) => [-h, -h, z, h, -h, z, h, -h, z, h, h, z, h, h, z, -h, h, z, -h, h, z, -h, -h, z];
 const gridCount = lines.length / 3;
-lines.push(...frame(ZO), ...frame(-ZS));
-const frameCount = lines.length / 3 - gridCount;
+lines.push(-h, -h, ZS, h, -h, ZS, h, -h, ZS, h, h, ZS, h, h, ZS, -h, h, ZS, -h, h, ZS, -h, -h, ZS);
 const lineVAO = gl.createVertexArray(); gl.bindVertexArray(lineVAO);
 gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(lines), gl.STATIC_DRAW);
 const aPos = gl.getAttribLocation(LN.p, 'aPos'); gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 0, 0);
 
 /* environment: an optical breadboard (holes on a regular pitch) below the bench, and dust in the light */
 const env = [];
-for (let zi = 0; zi < 34; zi++) for (let xi = 0; xi < 52; xi++) env.push(-5.1 + xi * 0.2, -1.45, -4.2 + zi * 0.2, -1 - Math.random() * 0.001);
+for (let zi = 0; zi < 40; zi++) for (let xi = 0; xi < 52; xi++) env.push(-5.1 + xi * 0.2, -1.45, -5.6 + zi * 0.2, -1 - Math.random() * 0.001);
 const DUST = small ? 160 : 340;
-for (let i = 0; i < DUST; i++) env.push(-3.6 + Math.random() * 7, -1.2 + Math.random() * 3, -3.5 + Math.random() * 6, 0.001 + Math.random());
+for (let i = 0; i < DUST; i++) env.push(-3.6 + Math.random() * 7, -1.2 + Math.random() * 3, -4.5 + Math.random() * 7, 0.001 + Math.random());
 const envCount = env.length / 4;
 const envVAO = gl.createVertexArray(); gl.bindVertexArray(envVAO);
 gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(env), gl.STATIC_DRAW);
@@ -456,15 +482,17 @@ function camera(asp, now) {
   const V = Math.max(2.1 * h / (1.95 - 2 * frac), 1.08 * h / (asp * (1 - shift)));
   const fit = V / Math.tan(FOV / 2), lift = -V * (frac - 0.025);
   const k = easeIO(st.cam);
-  const drift = reduce ? 0 : Math.sin(now / 5200) * 0.06;
+  const drift = reduce ? 0 : Math.sin(now / 5200) * 0.08;
   const amp = 1 - 0.35 * k;
   const ox = (ptr.sx * 1.05 + drift) * amp, oy = (ptr.sy * 0.62 + drift * 0.5) * amp;
-  const eObl = small ? [1.5 + ox, 1.0 + oy, 4.2] : [2.15 + ox, 1.15 + oy, 3.4];
-  const eFr = [ox * 0.9, lift + oy * 0.9, -ZS + fit];
+  // the oblique view stands beside the camera body and looks through the lens array at the layered scene
+  const eObl = small ? [2.0 + ox, 1.2 + oy, 4.6] : [2.6 + ox, 1.35 + oy, 3.9];
+  const tObl = [0, -0.1, -0.9];
+  const eFr = [ox * 0.9, lift + oy * 0.9, ZS + fit];
   const proj = persp(FOV, asp, 0.05, 40);
   proj[8] = -shift;
   P11 = proj[5];
-  return mul(proj, look(lerp3(eObl, eFr, k), lerp3([0, -0.05, 0.3], [0, lift, -ZS], k), [0, 1, 0]));
+  return mul(proj, look(lerp3(eObl, eFr, k), lerp3(tObl, [0, lift, ZS], k), [0, 1, 0]));
 }
 function project(p, w, hh) {
   const x = VP[0] * p[0] + VP[4] * p[1] + VP[8] * p[2] + VP[12], y = VP[1] * p[0] + VP[5] * p[1] + VP[9] * p[2] + VP[13], ww = VP[3] * p[0] + VP[7] * p[1] + VP[11] * p[2] + VP[15];
@@ -484,25 +512,29 @@ function draw(now) {
   const t = (now - T0) / 1000;
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   gl.viewport(0, 0, cw, ch);
-  gl.clearColor(BG[0], BG[1], BG[2], 1); gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.clearColor(BG[0], BG[1], BG[2], 1); gl.clearDepth(1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   gl.useProgram(E.p); gl.uniformMatrix4fv(E.u.uVP, false, VP); gl.uniform1f(E.u.uT, t); gl.uniform1f(E.u.uPx, ch); gl.uniform1f(E.u.uP11, P11);
   gl.uniform1f(E.u.uAsp, cw / ch); gl.uniform2f(E.u.uM, ptr.mx, ptr.my); gl.uniform1f(E.u.uMA, ptr.ma);
   gl.bindVertexArray(envVAO); gl.drawArrays(gl.POINTS, 0, envCount);
   gl.disable(gl.BLEND);
   if (hasImage) {
-    if (floatOK) { gl.bindFramebuffer(gl.FRAMEBUFFER, acc); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE); }
+    // while the layers stand in 3D, near points hide far ones (depth test); once views overlap for
+    // reconstruction, they are averaged in a float buffer instead
+    const averaging = floatOK && st.C > 0.001;
+    if (averaging) { gl.bindFramebuffer(gl.FRAMEBUFFER, acc); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE); }
+    else { gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LESS); }
     gl.useProgram(P.p);
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex); gl.uniform1i(P.u.uImg, 0);
     gl.uniformMatrix4fv(P.u.uVP, false, VP);
-    gl.uniform1f(P.u.uNL, NL); gl.uniform1f(P.u.uNP, NP); gl.uniform1f(P.u.uKappa, KAPPA);
-    gl.uniform1f(P.u.uW, W); gl.uniform1f(P.u.uZo, ZO); gl.uniform1f(P.u.uZs, ZS);
-    gl.uniform1f(P.u.uA, st.A); gl.uniform1f(P.u.uB, st.B); gl.uniform1f(P.u.uC, st.C);
-    gl.uniform1f(P.u.uD, st.D); gl.uniform1f(P.u.uDstar, DSTAR);
+    gl.uniform1fv(P.u.uK, K);
+    gl.uniform1f(P.u.uNL, NL); gl.uniform1f(P.u.uNP, NP);
+    gl.uniform1f(P.u.uW, W); gl.uniform1f(P.u.uZs, ZS);
+    gl.uniform1f(P.u.uA, st.A); gl.uniform1f(P.u.uB, st.B); gl.uniform1f(P.u.uC, st.C); gl.uniform1f(P.u.uD, st.D);
     gl.uniform1f(P.u.uPx, ch); gl.uniform1f(P.u.uP11, P11);
     gl.bindVertexArray(emptyVAO); gl.drawArrays(gl.POINTS, 0, COUNT);
-    gl.disable(gl.BLEND);
-    if (floatOK) {
+    gl.disable(gl.BLEND); gl.disable(gl.DEPTH_TEST);
+    if (averaging) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
       gl.useProgram(Q.p); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, accTex); gl.uniform1i(Q.u.uAcc, 0);
@@ -516,11 +548,11 @@ function draw(now) {
   gl.bindVertexArray(lineVAO);
   if (fade > 0.01) { gl.uniform4f(LN.u.uCol, 0.79, 0.64, 0.36, 0.42 * fade); gl.drawArrays(gl.LINES, 0, gridCount); }
   gl.uniform4f(LN.u.uCol, 0.79, 0.64, 0.36, 0.28 + 0.3 * fade);
-  if (fade > 0.01) gl.drawArrays(gl.LINES, gridCount, frameCount); else gl.drawArrays(gl.LINES, gridCount + 8, 8);
+  gl.drawArrays(gl.LINES, gridCount, 8);
   gl.disable(gl.BLEND); gl.bindVertexArray(null);
   const sw = stage.clientWidth, shh = stage.clientHeight;
   const place = (el, p) => { const s = project(p, sw, shh); el.style.transform = `translate(${s[0]}px, ${s[1] - 6}px) translate(0, -100%)`; el.style.opacity = fade.toFixed(2); };
-  place(tags.obj, [-h, h, ZO]); place(tags.lens, [-h, h, 0]); place(tags.sen, [-h, h, -ZS]);
+  place(tags.obj, [-h, h, -K[layers.first] * ZS]); place(tags.lens, [-h, h, 0]); place(tags.sen, [-h, h, ZS]);
   Face.frame(now);
 }
 let running = false, visible = true, raf = 0;
@@ -543,6 +575,18 @@ window.addEventListener('pointermove', (e) => {
 });
 root.addEventListener('pointerleave', () => { ptr.inside = false; stage.style.setProperty('--ta', '0'); });
 
+/* ================= layers: which objects stand at which depth ================= */
+const NAMES = {
+  torus: { ko: '앞쪽 원환체', jp: '手前のドーナツ', en: 'torus in front' },
+  monkey: { ko: '가운데 원숭이 머리', jp: '真ん中のサルの頭', en: 'monkey head in the middle' },
+  back: { ko: '뒤쪽 원뿔·정육면체', jp: '奥の円すいと立方体', en: 'cone and cube at the back' },
+  bg: { ko: '배경', jp: '背景', en: 'background' },
+  subject: { ko: '주인공', jp: '主役', en: 'subject' },
+  card: { ko: '이미지', jp: '画像', en: 'image' },
+  chart: { ko: '해상도 차트', jp: '解像度チャート', en: 'resolution chart' }
+};
+let layers = { names: [NAMES.torus, NAMES.monkey, NAMES.back, NAMES.bg], used: [0, 1, 2], first: 0 };
+
 /* ================= timeline ================= */
 let token = 0;
 const wait = (ms) => new Promise((r) => setTimeout(r, reduce ? 0 : ms));
@@ -562,21 +606,26 @@ function tween(key, to, ms, my) {
   });
 }
 const depth = q('[data-depth]'), depthOut = q('[data-depth-out]');
-const label = { ko: ['초점 맞음', '물체 거리와 같음, 초점 맞음', (p) => `물체 거리의 ${p}%`], en: ['in focus', 'same as the object distance, in focus', (p) => `${p}% of the object distance`] }[lang];
+const focusWord = { ko: '초점', en: 'in focus' }[lang];
+function focusedLayer() {
+  for (const k of layers.used) if (Math.abs(st.D - K[k] / NP) < 0.05) return k;
+  return -1;
+}
 function setDepthUI(enabled) {
-  const pct = Math.round(st.D / DSTAR * 100);
+  const pct = Math.round(st.D / DMAX * 100), k = focusedLayer();
   depth.disabled = !enabled; depth.value = String(pct);
-  depthOut.textContent = enabled ? (pct === 100 ? `100% ${label[0]}` : pct + '%') : '–';
-  depth.setAttribute('aria-valuetext', pct === 100 ? label[1] : label[2](pct));
+  const name = k >= 0 ? layers.names[k][lang] : '';
+  depthOut.textContent = enabled ? (k >= 0 ? `${name} ${focusWord}` : pct + '%') : '–';
+  depth.setAttribute('aria-valuetext', k >= 0 ? `${name} ${focusWord}` : `${pct}%`);
 }
 const stepBtns = [...root.querySelectorAll('[data-step]')];
 function steps(n) { stepBtns.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.step) === n))); }
 async function doCapture(my) {
   steps(1); setDepthUI(false); Face.set('work'); say('A');
   st.B = 0; st.C = 0; st.cam = 0; st.A = 0;
-  await wait(400); if (my !== token) return false;
-  Snd.shutter(); Snd.motor(3.6);
-  await tween('A', 1, 3600, my); if (my !== token) return false;
+  await wait(500); if (my !== token) return false;
+  Snd.shutter(); Snd.motor(3.8);
+  await tween('A', 1, 3800, my); if (my !== token) return false;
   await tween('cam', 1, 1500, my); return my === token;
 }
 async function doRim(my) {
@@ -591,11 +640,18 @@ async function doRecon(my) {
   st.A = 1; st.cam = 1; st.B = 1; st.D = 0; st.C = 0;
   await wait(300); if (my !== token) return false;
   Snd.motor(2.2);
-  await tween('C', 1, 2000, my); if (my !== token) return false;
-  await wait(350); if (my !== token) return false;
-  await tween('D', DSTAR * 1.6, 1700, my); if (my !== token) return false;
-  await tween('D', DSTAR, 1300, my); if (my !== token) return false;
-  setDepthUI(true); Snd.focus(); Face.set('happy');
+  await tween('C', 1, 1800, my); if (my !== token) return false;
+  await wait(1200); if (my !== token) return false;
+  // walk the focus from the nearest layer to the farthest one
+  for (let i = 0; i < layers.used.length; i++) {
+    const k = layers.used[i];
+    await tween('D', K[k] / NP, 1500, my); if (my !== token) return false;
+    Snd.focus(); setDepthUI(true);
+    await new Promise((r) => sayLine(FOCUS[Math.min(i, FOCUS.length - 1)](layers.names[k]), r)); if (my !== token) return false;
+    await wait(900); if (my !== token) return false;
+  }
+  await tween('D', K[layers.first] / NP, 1300, my); if (my !== token) return false;
+  setDepthUI(true); Face.set('happy');
   say('done', () => { if (my === token) setTimeout(() => { if (my === token) say('idle'); }, 2600); });
   return true;
 }
@@ -606,7 +662,7 @@ async function playAll(my) {
   await wait(600); if (my !== token) return;
   await doRecon(my);
 }
-function jumpToEnd() { st.A = 1; st.cam = 1; st.B = 1; st.C = 1; st.D = DSTAR; setDepthUI(true); steps(3); Face.set('happy'); say('done'); request(); }
+function jumpToEnd() { st.A = 1; st.cam = 1; st.B = 1; st.C = 1; st.D = K[layers.first] / NP; setDepthUI(true); steps(3); Face.set('happy'); say('done'); request(); }
 stepBtns.forEach((b) => b.addEventListener('click', () => {
   Snd.ui(); const my = ++token; const n = Number(b.dataset.step);
   if (n === 1) doCapture(my); else if (n === 2) doRim(my); else doRecon(my);
@@ -621,61 +677,103 @@ q('[data-reverse]').addEventListener('click', async () => {
 });
 depth.addEventListener('input', () => {
   token++; st.A = 1; st.B = 1; st.C = 1; st.cam = 1;
-  const before = Math.round(st.D / DSTAR * 100);
-  st.D = DSTAR * Number(depth.value) / 100;
+  const before = focusedLayer();
+  st.D = DMAX * Number(depth.value) / 100;
   setDepthUI(true); request();
-  if (Number(depth.value) === 100 && before !== 100) Snd.focus();
+  const now = focusedLayer();
+  if (now >= 0 && now !== before) Snd.focus();
 });
 
-/* ================= images in ================= */
-function setImage(img) {
-  const c = document.createElement('canvas'); c.width = c.height = TEX;
-  const g = c.getContext('2d'), iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height, s = Math.min(iw, ih);
-  g.drawImage(img, (iw - s) / 2, (ih - s) / 2, s, s, 0, 0, TEX, TEX);
-  gl.bindTexture(gl.TEXTURE_2D, tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+/* ================= images in: build a 2 x 2 atlas of depth layers ================= */
+const CELL = 512;
+function uploadAtlas(source) {
+  gl.bindTexture(gl.TEXTURE_2D, tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
   hasImage = true; request();
 }
-function fromURL(url, mode) {
-  const img = new Image();
-  img.onload = () => {
-    setImage(img);
-    st.A = 0; st.B = 0; st.C = 0; st.cam = 0; setDepthUI(false); steps(0);
-    if (mode === 'still') return;
-    const my = ++token;
-    if (reduce) { jumpToEnd(); return; }
-    if (mode === 'opening') { say('greet', () => { if (my === token) say('intro', () => { if (my === token) setTimeout(() => { if (my === token) playAll(my); }, 600); }); }); return; }
-    say('load', () => { if (my === token) playAll(my); });
-  };
-  img.onerror = () => { Face.set('idle'); say('bad'); };
-  img.src = url;
+function squareCrop(img) {
+  const w = document.createElement('canvas'); w.width = w.height = CELL;
+  const g = w.getContext('2d', { willReadFrequently: true }), iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height, s = Math.min(iw, ih);
+  g.drawImage(img, (iw - s) / 2, (ih - s) / 2, s, s, 0, 0, CELL, CELL);
+  return w;
 }
-function chart() {
-  const c = document.createElement('canvas'); c.width = c.height = TEX;
+function atlasFromPicture(img) {
+  // a single photo has no depth: estimate the background from the border colour, stand the rest in front
+  const w = squareCrop(img), g = w.getContext('2d', { willReadFrequently: true });
+  const src = g.getImageData(0, 0, CELL, CELL), px = src.data, N = CELL * CELL;
+  let r = 0, gg = 0, b = 0, n = 0;
+  for (let y = 0; y < CELL; y++) for (let x = 0; x < CELL; x++) {
+    if (x > 7 && x < CELL - 8 && y > 7 && y < CELL - 8) continue;
+    const i = (y * CELL + x) * 4; r += px[i]; gg += px[i + 1]; b += px[i + 2]; n++;
+  }
+  r /= n; gg /= n; b /= n;
+  const alpha = new Uint8ClampedArray(N); let cover = 0;
+  for (let i = 0; i < N; i++) {
+    const d = Math.hypot(px[i * 4] - r, px[i * 4 + 1] - gg, px[i * 4 + 2] - b);
+    const a = Math.max(0, Math.min(1, (d - 38) / 30));
+    alpha[i] = a * 255; if (a > 0.5) cover++;
+  }
+  cover /= N;
+  const atlas = document.createElement('canvas'); atlas.width = atlas.height = CELL * 2;
+  const ag = atlas.getContext('2d');
+  if (cover < 0.04 || cover > 0.8) {
+    ag.drawImage(w, CELL, 0);
+    return { atlas, names: [NAMES.bg, NAMES.card, NAMES.bg, NAMES.bg], used: [1], first: 1, line: 'load1' };
+  }
+  const sub = new ImageData(CELL, CELL), back = new ImageData(CELL, CELL);
+  for (let i = 0; i < N; i++) {
+    const o = i * 4;
+    sub.data[o] = px[o]; sub.data[o + 1] = px[o + 1]; sub.data[o + 2] = px[o + 2]; sub.data[o + 3] = alpha[i];
+    const keep = alpha[i] < 50;
+    back.data[o] = keep ? px[o] : r; back.data[o + 1] = keep ? px[o + 1] : gg; back.data[o + 2] = keep ? px[o + 2] : b; back.data[o + 3] = 255;
+  }
+  ag.putImageData(sub, 0, 0); ag.putImageData(back, CELL, CELL);
+  return { atlas, names: [NAMES.subject, NAMES.bg, NAMES.bg, NAMES.bg], used: [0, 3], first: 0, line: 'load2' };
+}
+function atlasFromChart() {
+  const c = document.createElement('canvas'); c.width = c.height = CELL;
   const g = c.getContext('2d');
-  g.fillStyle = '#efece4'; g.fillRect(0, 0, TEX, TEX); g.fillStyle = '#16181c';
+  g.fillStyle = '#efece4'; g.fillRect(0, 0, CELL, CELL); g.fillStyle = '#16181c';
   for (const [x, y, w] of [[60, 70, 26], [250, 70, 18], [380, 70, 12], [60, 300, 9], [200, 300, 6.5], [310, 300, 4.5], [400, 300, 3.2]]) {
     for (let i = 0; i < 3; i++) g.fillRect(x, y + i * w * 2, w * 5, w);
     for (let i = 0; i < 3; i++) g.fillRect(x + w * 6 + i * w * 2, y, w, w * 5);
   }
   g.font = '700 28px "Gothic A1", sans-serif'; g.fillText('RIM', 60, 470);
   g.font = '400 18px "Gothic A1", sans-serif'; g.fillText('lens array test chart', 140, 468);
-  return c.toDataURL('image/png');
+  const atlas = document.createElement('canvas'); atlas.width = atlas.height = CELL * 2;
+  atlas.getContext('2d').drawImage(c, CELL, 0);
+  return { atlas, names: [NAMES.bg, NAMES.chart, NAMES.bg, NAMES.bg], used: [1], first: 1, line: 'chart' };
 }
-const sampleURL = root.dataset.sample;
+function useLayers(info, mode) {
+  layers = { names: info.names, used: info.used, first: info.first };
+  uploadAtlas(info.atlas);
+  st.A = 0; st.B = 0; st.C = 0; st.cam = 0; st.D = 0; setDepthUI(false); steps(0);
+  if (mode === 'still') return;
+  const my = ++token;
+  if (reduce) { jumpToEnd(); return; }
+  if (mode === 'opening') { say('greet', () => { if (my === token) say('intro', () => { if (my === token) setTimeout(() => { if (my === token) playAll(my); }, 600); }); }); return; }
+  sayLine(L[info.line] || L.load2, () => { if (my === token) playAll(my); });
+}
+const sceneURL = root.dataset.layers;
+function loadScene(mode) {
+  const img = new Image();
+  img.onload = () => useLayers({ atlas: img, names: [NAMES.torus, NAMES.monkey, NAMES.back, NAMES.bg], used: [0, 1, 2], first: 0, line: 'scene' }, mode);
+  img.src = sceneURL;
+}
 const sampleBtns = [...root.querySelectorAll('[data-sample-btn]')];
 function pick(which) { sampleBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sampleBtn === which))); }
 sampleBtns.forEach((b) => b.addEventListener('click', () => {
   Snd.ui(); pick(b.dataset.sampleBtn);
-  fromURL(b.dataset.sampleBtn === 'chart' ? chart() : sampleURL, 'load');
+  if (b.dataset.sampleBtn === 'chart') useLayers(atlasFromChart(), 'load'); else loadScene('load');
 }));
 function takeFile(f) {
   if (!f) return;
   if (!f.type.startsWith('image/')) { Face.set('idle'); say('bad'); return; }
   pick('none');
-  const url = URL.createObjectURL(f);
-  fromURL(url, 'load');
-  setTimeout(() => URL.revokeObjectURL(url), 15000);
+  const url = URL.createObjectURL(f), img = new Image();
+  img.onload = () => { useLayers(atlasFromPicture(img), 'load'); URL.revokeObjectURL(url); };
+  img.onerror = () => { Face.set('idle'); say('bad'); URL.revokeObjectURL(url); };
+  img.src = url;
 }
 q('[data-file]').addEventListener('change', (e) => takeFile(e.target.files[0]));
 const drop = q('.drop');
@@ -720,8 +818,8 @@ soundBtn.addEventListener('click', () => {
 });
 soundUI();
 
-/* the sample sits on the object plane; the demo plays itself without sound once the page is calm */
+/* the layered sample scene stands in front of the lens array; the demo plays itself once the page is calm */
 setDepthUI(false);
 start();
-fromURL(sampleURL, reduce ? 'still' : 'opening');
+loadScene(reduce ? 'still' : 'opening');
 })();

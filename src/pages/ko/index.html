@@ -1,5 +1,5 @@
 <!--meta {"home": true, "title": "이형주, 데이터·백엔드 엔지니어", "description": "데이터 수집·적재 파이프라인과 백엔드를 2년 5개월 만들었고, 지금은 렌즈 배열 영상으로 3D 장면을 재구성하는 연구를 합니다. 2027년 4월부터 국내 입사 가능.", "nav": "", "body": "home", "head": "<script src=\"/assets/lab.js?v={{v}}\" defer></script>\n"} -->
-<section class="lab" id="lab" aria-label="렌즈 배열 실험실" data-sample="/img/lab-sample.webp">
+<section class="lab" id="lab" aria-label="렌즈 배열 실험실" data-layers="/img/lab-scene-layers.webp">
   <div class="intro">
     <h1>{{f:name}}<span class="alt" lang="en">{{f:name_alt}}</span></h1>
     <p class="role">{{f:role}}</p>
@@ -17,7 +17,7 @@
     <div class="poster"></div>
     <canvas class="gl" aria-hidden="true"></canvas>
     <div class="torch" aria-hidden="true"></div>
-    <div class="tag3d" data-tag="obj">물체 평면</div>
+    <div class="tag3d" data-tag="obj">물체</div>
     <div class="tag3d" data-tag="lens">렌즈 배열</div>
     <div class="tag3d" data-tag="sen">센서</div>
     <div class="robot" aria-hidden="true"><canvas width="216" height="132"></canvas><span>レンズくん</span></div>
@@ -47,6 +47,7 @@
       <input type="range" id="lab-depth" min="0" max="200" step="1" value="100" disabled data-depth>
       <output for="lab-depth" data-depth-out>–</output>
     </div>
+    <a class="lab-how" href="/research/rim/#lab">이 장면은 어떻게 만들었나요</a>
     <span class="sound-hint needs-gl" data-sound-hint>화면을 한 번 누르면 소리가 납니다</span>
     <button class="btn sound needs-gl" type="button" data-sound aria-pressed="true">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path class="x" d="M17 9l5 6M22 9l-5 6" style="display:none"></path><path class="w" d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"></path></svg>
@@ -93,7 +94,7 @@
       <span class="when">2025.04 – 현재<br>수탁연구, 파트타임</span>
       <div><h3>히타치솔루션즈크리에이트 수탁연구 이미지 데이터 파이프라인</h3>
         <p>유지보수할 수 없던 기존 코드를 다시 써서, 산업용 머신비전 카메라 제어·촬영부터 학습용 데이터셋 전처리까지 Python 파이프라인으로 만들고 비개발자 연구원용 PyQt GUI를 제공했습니다.</p>
-        <span class="key">후임 2명 리드, 네덜란드 현지 배포</span></div>
+        <span class="key">후임 2명 리드, 2026년 9~10월 네덜란드 출장·현지 배포</span></div>
       <span class="flow" aria-label="처리 흐름"><span>카메라 제어</span><i></i><span>촬영</span><i></i><span class="core">전처리</span><i></i><span>데이터셋</span></span>
     </a></li>
   </ol>
@@ -131,8 +132,8 @@
   <header><h2 id="h-papers">논문</h2></header>
   <ul class="papers">
     <li><span class="venue">ICMV 2026</span><span class="title" lang="en">Angular-to-Spatial Information Redistribution via Ray-based Inverse Mapping<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee</span></span><span class="state">채택, 10월 16일 포스터 발표</span></li>
-    <li><span class="venue">ICCAS 2026</span><span class="title" lang="en">Virtual Lens Array Synthesis from Multi-View Images via iRIM<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee</span></span><span class="state">채택</span></li>
-    <li><span class="venue">ITC-CSCC 2026</span><span class="title" lang="en">Accelerated Origin Point Optimization for Volumetric Computational Reconstruction<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee</span></span><span class="state">발표, <a href="https://github.com/zoocasso/origin-point-optimization-vcr">코드</a></span></li>
+    <li><span class="venue">ICCAS 2026</span><span class="title" lang="en">Virtual Lens Array Synthesis from Multi-View Images via iRIM<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee</span></span><span class="state">채택, 10월 30일 포스터 발표</span></li>
+    <li><span class="venue">ITC-CSCC 2026</span><span class="title" lang="en">Accelerated Origin Point Optimization for Volumetric Computational Reconstruction<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee</span></span><span class="state">구두 발표, <a href="https://github.com/zoocasso/origin-point-optimization-vcr">코드</a></span></li>
     <li><span class="venue">ITC-CSCC 2025</span><span class="title" lang="en">Image Enhancement of Volumetric Computational Reconstruction Using Origin Point Optimization<span class="authors">Hyeongju Lee, Gilsu Yeo, Myungjin Cho, Min-Chul Lee</span></span><span class="state">포스터 발표, <a href="https://github.com/zoocasso/origin-point-optimization-vcr">코드</a></span></li>
     <li><span class="venue">한국광학회 2024</span><span class="title">원점 최적화를 이용한 체적 컴퓨터 재생의 이미지 향상<span class="authors">이형주 외 7명, Photonics Conference 2024</span></span><span class="state">국내 포스터 발표</span></li>
   </ul>
