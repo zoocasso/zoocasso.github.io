@@ -235,6 +235,9 @@ def check():
         for img in re.findall(r"<img\b[^>]*>", t):
             if " alt=" not in img:
                 errors.append(f"{name}: image without alt: {img[:80]}")
+        for og in re.findall(r'property="og:image" content="' + re.escape(BASE) + r'(/[^"]+)"', t):
+            if not (DIST / og.lstrip("/")).exists():
+                errors.append(f"{name}: missing share image {og}")
         for link in ref.findall(t):
             target = DIST / link.lstrip("/")
             if link.endswith("/"):
