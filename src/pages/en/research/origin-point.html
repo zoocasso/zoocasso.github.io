@@ -1,0 +1,109 @@
+<!--meta {"title": "Origin point optimization", "description": "Reducing the quantization error of volumetric computational reconstruction (VCR) with origin point optimization, then computing that origin from camera parameters: 25.45 s to 0.31 s on CPU with identical SSIM (ITC-CSCC 2025, 2026). Code public.", "nav": "research"} -->
+<div class="doc-head">
+  <p class="crumb"><a href="/en/research/">Research</a> / Origin point optimization</p>
+  <div class="badges"><span>ITC-CSCC 2025 poster</span><span>ITC-CSCC 2026 oral</span></div>
+  <h1>Origin point optimization: sharper, then faster volumetric reconstruction</h1>
+  <p class="authors"><b>Hyeongju Lee</b>, Myungjin Cho, Min-Chul Lee (the 2025 paper also with Gilsu Yeo). Kyushu Institute of Technology, Hankyong National University</p>
+  <div class="paper-links">
+    <a class="btn primary" href="https://github.com/zoocasso/origin-point-optimization-vcr">Code (GitHub)</a>
+    <a class="btn" href="#cite">BibTeX</a>
+  </div>
+</div>
+
+<div class="doc">
+  <nav class="toc" aria-label="On this page">
+    <p>On this page</p>
+    <a href="#see">Compare</a><a href="#what">What it does</a><a href="#vcr">What VCR is</a><a href="#method">Method</a><a href="#speed">Run time</a><a href="#code">Code</a><a href="#cite">Cite</a>
+  </nav>
+  <div>
+    <section id="see" aria-labelledby="h-see">
+      <h2 id="h-see">Fixed origin and optimized origin</h2>
+      <div class="compare" data-compare="cmp-origin">
+        <img src="/img/vcr-fixed.webp" width="640" height="640" alt="USAF resolution chart reconstructed with a fixed origin">
+        <img class="after" src="/img/vcr-proposed.webp" width="640" height="640" alt="USAF resolution chart reconstructed with the optimized origin">
+        <span class="line" aria-hidden="true"></span>
+        <span class="lab-l">Fixed origin</span><span class="lab-r">Optimized origin</span>
+      </div>
+      <div class="compare-ctl">
+        <label for="cmp-origin">Divider position</label>
+        <input type="range" id="cmp-origin" min="0" max="100" value="50">
+      </div>
+      <p class="muted" style="font-size:15px">A 1951 USAF resolution chart reconstructed from 9 × 9 elemental images, panels (a) and (d) of ITC-CSCC 2026 Fig. 6. Compare the edges of the bar groups.</p>
+    </section>
+
+    <section id="what" aria-labelledby="h-what">
+      <h2 id="h-what">What it does</h2>
+      <p>Volumetric computational reconstruction (VCR) builds slices of a 3D scene by shifting elemental images, taken from many viewpoints, by an amount that depends on depth and overlapping them. The images can only move by whole pixels, which causes quantization error and blurs the result.</p>
+      <p>The 2025 paper reduced that error by optimizing the origin point that the overlap is measured from, but finding the best origin meant reconstructing many times, which was slow. The 2026 paper computes the same origin directly from the camera parameters, independent of the image. The SSIM of the result is identical to the iterative search; only the time drops.</p>
+    </section>
+
+    <section id="vcr" aria-labelledby="h-vcr">
+      <h2 id="h-vcr">What VCR is</h2>
+      <figure class="fig">
+        <img src="/img/vcr-principle.webp" width="1200" height="669" alt="Diagram: a 3D object captured through a pinhole array as elemental images, back-projected through a virtual pinhole array to a reconstruction plane" loading="lazy">
+        <figcaption>Elemental images are back-projected through a virtual pinhole array to form a reconstruction plane at the chosen depth. ITC-CSCC 2026 Fig. 1</figcaption>
+      </figure>
+    </section>
+
+    <section id="method" class="full" aria-labelledby="h-method">
+      <h2 id="h-method">Method</h2>
+      <div class="method">
+        <div>
+          <h3>Before: iterative search</h3>
+          <ol><li>Acquire elemental images</li><li>Pick a candidate origin</li><li>Run VCR</li><li>Score image quality and go back to step 2</li></ol>
+          <p>Every candidate needs a full reconstruction, so the cost is high.</p>
+        </div>
+        <div>
+          <h3>Proposed: direct calculation</h3>
+          <ol><li>Acquire elemental images</li><li>Enter the camera parameters and depth</li><li>Compute the origin with the smallest quantization error</li><li>Run VCR once</li></ol>
+          <p>Only the parameters are used, not the image, so there is no loop. The output matches the iterative search.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="speed" aria-labelledby="h-speed">
+      <h2 id="h-speed">Run time</h2>
+      <div class="tablewrap">
+        <table class="data">
+          <caption>9 × 9 elemental images. ITC-CSCC 2026 Tables III and IV</caption>
+          <thead><tr><th scope="col">Method</th><th scope="col">Device</th><th scope="col" class="n">Time</th></tr></thead>
+          <tbody>
+            <tr><td>Iterative search</td><td>CPU</td><td class="n">25.45 s</td></tr>
+            <tr><td><b>Direct calculation (proposed)</b></td><td>CPU</td><td class="n"><b>0.31 s</b></td></tr>
+            <tr><td>Direct calculation (proposed)</td><td>GPU, CuPy, RTX 3090</td><td class="n">{{f:origin_gpu}}</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" style="margin-top:10px;font-size:15px">About 82 times faster on CPU, with the same SSIM as the iterative search.</p>
+    </section>
+
+    <section id="code" aria-labelledby="h-code">
+      <h2 id="h-code">Code</h2>
+      <p>A Python release of both papers' methods: <a href="https://github.com/zoocasso/origin-point-optimization-vcr">github.com/zoocasso/origin-point-optimization-vcr</a></p>
+      <ul>
+        <li>Origin calculation (<code>origin.py</code>), VCR (<code>vcr.py</code>), quality metrics and a timing script</li>
+        <li>8 tests, and 10,020 random inputs checked against the original research scripts</li>
+        <li>NumPy and OpenCV; CuPy is optional for the GPU timing. MIT license</li>
+      </ul>
+    </section>
+
+    <section id="cite" aria-labelledby="h-cite">
+      <h2 id="h-cite">Cite</h2>
+      <div class="bib"><pre id="bib-2026">@inproceedings{lee2026accelerated,
+  title     = {Accelerated Origin Point Optimization for
+               Volumetric Computational Reconstruction},
+  author    = {Lee, Hyeongju and Cho, Myungjin and Lee, Min-Chul},
+  booktitle = {Proc. ITC-CSCC},
+  year      = {2026}
+}</pre><button class="btn" type="button" data-copy="bib-2026" data-done="Copied">Copy</button></div>
+      <div class="bib"><pre id="bib-2025">@inproceedings{lee2025image,
+  title     = {Image Enhancement of Volumetric Computational
+               Reconstruction Using Origin Point Optimization},
+  author    = {Lee, Hyeongju and Yeo, Gilsu and Cho, Myungjin and Lee, Min-Chul},
+  booktitle = {Proc. ITC-CSCC},
+  year      = {2025}
+}</pre><button class="btn" type="button" data-copy="bib-2025" data-done="Copied">Copy</button></div>
+    </section>
+  </div>
+</div>
+<nav class="pager" aria-label="Other research"><a href="/en/research/">All research</a><a href="/en/research/rim/">Next: RIM and iRIM</a></nav>

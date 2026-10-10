@@ -1,0 +1,125 @@
+<!--meta {"title": "Data platform for KISTI", "description": "Sole data engineer on a KISTI-commissioned public R&D value-creation platform (SMART K2C): collected and loaded 80M+ rows of product and procurement data, then shipped model batches and an admin interface.", "nav": "work"} -->
+<div class="doc-head">
+  <p class="crumb"><a href="/en/work/">Work</a> / KISTI data platform</p>
+  <h1>Collecting and loading {{f:kisti_rows}} of product and procurement data for a public R&amp;D platform</h1>
+  <p class="lede">On a platform commissioned by KISTI (Korea Institute of Science and Technology Information) to create value from public R&amp;D, later named SMART K2C, I was the only data engineer on the Vision Inside side.</p>
+  <dl class="meta">
+    <div><dt>Period</dt><dd>{{f:kisti_period}}</dd></div>
+    <div><dt>Company and type</dt><dd>Vision Inside, contract work for KISTI</dd></div>
+    <div><dt>Role</dt><dd>Sole data engineer</dd></div>
+    <div><dt>Stack</dt><dd>Python, Selenium, MySQL/MariaDB, FastAPI, KeyBERT</dd></div>
+  </dl>
+</div>
+
+<div class="doc">
+  <nav class="toc" aria-label="On this page">
+    <p>On this page</p>
+    <a href="#result">Results</a><a href="#context">Context</a><a href="#scope">My part</a><a href="#arch">Architecture</a><a href="#scale">Scale</a><a href="#decisions">Decisions</a><a href="#serving">Models and serving</a><a href="#proof">Evidence</a>
+  </nav>
+  <div>
+    <section id="result" aria-labelledby="h-result">
+      <h2 id="h-result">Results</h2>
+      <dl class="results">
+        <div><dt>{{f:kisti_rows}}</dt><dd>Rows loaded in total (as of November 2023)</dd></div>
+        <div><dt>{{f:kisti_asin_dedup}}</dt><dd>Amazon products after de-duplication (from {{f:kisti_asin}} collected)</dd></div>
+        <div><dt>2,481</dt><dd>Danawa categories collected (of 2,517)</dd></div>
+        <div><dt>{{f:kisti_match}}</dt><dd>Links between national R&amp;D projects and companies (SQL)</dd></div>
+      </dl>
+      <p style="margin-top:16px">I presented the data and the model results in technical meetings with KISTI researchers, and contributed to winning the KRW 300M main-phase contract.</p>
+    </section>
+
+    <section id="context" aria-labelledby="h-context">
+      <h2 id="h-context">Context</h2>
+      <p>The platform is a set of analysis models that connect public R&amp;D results to products on the market: finding competing products, mining required quality from reviews, and matching national R&amp;D projects with companies. University teams (Sungkyunkwan University, Kookmin University) designed some of the models, and Vision Inside owned the data and serving layers. I did the data side from end to end.</p>
+    </section>
+
+    <section id="scope" aria-labelledby="h-scope">
+      <h2 id="h-scope">My part</h2>
+      <div class="scope">
+        <div>
+          <h3>What I did</h3>
+          <ul>
+            <li>Selenium crawlers for Amazon and Danawa, collectors for the Public Procurement Service API, and crawling of the national procurement site</li>
+            <li>A crawling farm on several laptops loading into one remote database, with de-duplication</li>
+            <li>Batches for models 3, 4 and 5, a FastAPI service and an admin interface</li>
+            <li>Moving the partner's prototype (models 1–2, a Java/Tomcat web app) to company servers and setting up its Docker runtime</li>
+            <li>Audit deliverables: operator manual and initial data-build report</li>
+          </ul>
+        </div>
+        <div>
+          <h3>What others did</h3>
+          <ul class="muted">
+            <li>Algorithm design for some models: university research teams</li>
+            <li>Models 1–2 and the prototype web app: a partner company</li>
+            <li>Meeting minutes and reporting: another colleague</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="arch" class="full" aria-labelledby="h-arch">
+      <h2 id="h-arch">Architecture</h2>
+      <div class="diagram" role="img" aria-label="Flow from data sources to distributed crawlers, a remote database, model batches and FastAPI serving">
+        <div class="box"><b>Sources</b><span>Amazon, Danawa, procurement API, procurement site</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>Distributed crawlers</b><span>Selenium on {{f:kisti_farm}}</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box core"><b>One remote database</b><span>De-duplicated, {{f:kisti_rows}}</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>Model batches</b><span>SQL matching, K-means, KeyBERT</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>Serving</b><span>FastAPI, admin interface</span></div>
+      </div>
+      <p class="muted" style="margin-top:10px;font-size:15px">The company's code cannot be published, so only the structure is shown.</p>
+    </section>
+
+    <section id="scale" aria-labelledby="h-scale">
+      <h2 id="h-scale">Scale</h2>
+      <div class="tablewrap">
+        <table class="data">
+          <caption>Rows per main table, from the November 2023 code definition document</caption>
+          <thead><tr><th scope="col">Source</th><th scope="col">Table</th><th scope="col" class="n">Rows</th></tr></thead>
+          <tbody>
+            <tr><td>Procurement API</td><td>Item attributes</td><td class="n">41,917,377</td></tr>
+            <tr><td>Danawa</td><td>Reviews</td><td class="n">16,049,734</td></tr>
+            <tr><td>Amazon</td><td>Product details</td><td class="n">9,985,638</td></tr>
+            <tr><td>Amazon</td><td>Review keywords</td><td class="n">7,882,058</td></tr>
+            <tr><td>Procurement API</td><td>API records</td><td class="n">4,779,512</td></tr>
+            <tr><td>Amazon</td><td>Products</td><td class="n">925,441</td></tr>
+            <tr><td>Danawa</td><td>Products</td><td class="n">417,240</td></tr>
+          </tbody>
+          <tfoot><tr><td colspan="2">Total</td><td class="n">81,957,000</td></tr></tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section id="decisions" aria-labelledby="h-decisions">
+      <h2 id="h-decisions">Decisions</h2>
+      <ol class="decisions">
+        <li><h3>Several laptops instead of one server</h3>
+          <dl><dt>Why</dt><dd>Sending many requests from one place got us blocked by the target sites, so the requests were spread across machines.</dd><dt>How</dt><dd>The crawlers ran on {{f:kisti_farm}} and wrote to one remote database (November 2022 to January 2023).</dd></dl></li>
+        <li><h3>De-duplication by product ID (ASIN)</h3>
+          <dl><dt>Why</dt><dd>The same product appeared in several categories, so collecting category by category produced duplicates.</dd><dt>Result</dt><dd>{{f:kisti_asin}} Amazon products became {{f:kisti_asin_dedup}}.</dd></dl></li>
+        <li><h3>From crawling shopping sites to APIs</h3>
+          <dl><dt>Why</dt><dd>In June 2023 the client, KISTI, asked us to collect through APIs instead of crawling shopping sites.</dd><dt>How</dt><dd>Procurement data had come from the public data portal API since April 2023. Amazon moved to the Rainforest API (selected in July 2023, built from February to May 2024).</dd></dl></li>
+      </ol>
+    </section>
+
+    <section id="serving" aria-labelledby="h-serving">
+      <h2 id="h-serving">Models and serving</h2>
+      <ul>
+        <li><b>Model 3</b>: SQL keyword matching between NTIS national R&amp;D projects and NICE company records, {{f:kisti_match}} links</li>
+        <li><b>Model 4</b>: price-band K-means clustering, with the number of clusters chosen by the Dunn index</li>
+        <li><b>Model 5</b>: a daily batch that mines required-quality keywords from reviews with KeyBERT, Sentence-Transformers and Mecab</li>
+        <li><b>Admin interface</b>: FastAPI with Jinja2 and Tabulator for filtering, sequential runs, unified search and Excel export</li>
+        <li><b>Model 3.1 in 2024</b>: SQL statistics on procurement prices, attributes and deliveries</li>
+      </ul>
+    </section>
+
+    <section id="proof" aria-labelledby="h-proof">
+      <h2 id="h-proof">Evidence</h2>
+      <p class="note">The code and data belong to the company and the client, so they are not public. The numbers on this page come from the November 2023 code definition document and the daily work reports of that time, and they are kept in the same source document as my CV.</p>
+    </section>
+  </div>
+</div>
+<nav class="pager" aria-label="Other work"><a href="/en/work/">All work</a><a href="/en/work/genomics/">Next: genomics backend</a></nav>

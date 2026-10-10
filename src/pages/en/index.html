@@ -1,2 +1,151 @@
-<!--meta {"title": "Hyeongju Lee", "description": "Hyeongju Lee", "nav": "", "home": true} -->
-<section class="section"><h1>Hyeongju Lee</h1><p class="lead"></p><p>The English version is being written.</p></section>
+<!--meta {"home": true, "title": "Hyeongju Lee, data & backend engineer", "description": "Data and backend engineer with 29 months of building data pipelines and backends, now researching 3D reconstruction from lens array images. Available in Korea from April 2027.", "nav": "", "body": "home", "head": "<script src=\"/assets/lab.js?v={{v}}\" defer></script>\n"} -->
+<section class="lab" id="lab" aria-label="Lens array lab" data-layers="/img/lab-scene-layers.webp">
+  <div class="intro">
+    <h1>{{f:name}}<span class="alt" lang="ko">{{f:name_alt}}</span></h1>
+    <p class="role">{{f:role}}</p>
+    <p class="lede">I spent {{f:career_len}} at Vision Inside building data collection and loading pipelines and backends. Now, in my master's at Kyushu Institute of Technology, I research how to reconstruct 3D scenes from lens array images.</p>
+    <p class="status">{{f:status}}</p>
+    <div class="ctas">
+      <a class="btn primary" href="/files/HyeongjuLee_CV_EN.pdf">CV (PDF)</a>
+      <a class="btn" href="/files/HyeongjuLee_Portfolio_EN.pdf">Portfolio (PDF)</a>
+      <a class="btn" href="https://github.com/zoocasso">GitHub</a>
+      <button class="btn" type="button" data-email-user="{{f:email_user}}" data-email-domain="{{f:email_domain}}" data-copied="Copied">Copy email address</button>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="poster"></div>
+    <canvas class="gl" aria-hidden="true"></canvas>
+    <div class="torch" aria-hidden="true"></div>
+    <div class="tag3d" data-tag="obj">Objects</div>
+    <div class="tag3d" data-tag="lens">Lens array</div>
+    <div class="tag3d" data-tag="sen">Sensor</div>
+    <div class="robot" aria-hidden="true"><canvas width="216" height="132"></canvas><span>レンズくん</span></div>
+    <div class="dialog" aria-hidden="true"><div class="jp" lang="ja"></div><div class="ko"></div></div>
+    <div class="vh" aria-live="polite" data-live></div>
+    <div class="drop" hidden>Drop it here to start</div>
+    <figure class="fallback" hidden>
+      <img src="/img/ei-synth-800.webp" width="800" height="450" alt="Elemental image of a 6 × 6 lens array synthesized with iRIM">
+      <figcaption><p>This device cannot run the lab animation, so a research image is shown instead.</p></figcaption>
+    </figure>
+  </div>
+
+  <div class="lab-tools">
+    <div class="group needs-gl">
+      <label class="btn primary" for="lab-file">Add an image<input class="vh" type="file" id="lab-file" accept="image/*" data-file></label>
+      <button class="btn" type="button" data-sample-btn="scene" aria-pressed="true">Blender scene</button>
+      <button class="btn" type="button" data-sample-btn="chart" aria-pressed="false">Resolution chart</button>
+    </div>
+    <div class="group seg needs-gl" role="group" aria-label="Steps">
+      <button class="btn" type="button" data-step="1">1 Capture</button>
+      <button class="btn" type="button" data-step="2">2 Rearrange</button>
+      <button class="btn" type="button" data-step="3">3 Reconstruct</button>
+    </div>
+    <button class="btn needs-gl" type="button" data-reverse>Reverse RIM</button>
+    <div class="depth needs-gl">
+      <label for="lab-depth">Distance</label>
+      <input type="range" id="lab-depth" min="0" max="100" step="1" value="0" disabled data-depth>
+      <output for="lab-depth" data-depth-out>–</output>
+    </div>
+    <a class="lab-how" href="/en/research/rim/#lab">How it works</a>
+    <span class="sound-hint needs-gl" data-sound-hint>Click anywhere for sound</span>
+    <button class="btn sound needs-gl" type="button" data-sound aria-pressed="true">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path class="x" d="M17 9l5 6M22 9l-5 6" style="display:none"></path><path class="w" d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"></path></svg>
+      <span class="label">Sound off</span>
+    </button>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="h-facts">
+  <header><h2 id="h-facts">In numbers</h2></header>
+  <dl class="facts">
+    <div><dt>{{f:kisti_rows}}</dt><dd>Product and procurement data I collected and loaded alone for a KISTI public R&amp;D platform<small>As of November 2023, including 16M Danawa reviews and 42M procurement attribute rows</small></dd></div>
+    <div><dt>{{f:bio_ref}}</dt><dd>Public reference data behind a genomic variant annotation system<small>dbSNP 237 GB, 1000 Genomes 770 GB and more. I built the system alone</small></dd></div>
+    <div><dt>4 papers</dt><dd>First-author papers at international conferences on light field and integral imaging<small>ICMV 2026, ICCAS 2026, ITC-CSCC 2026, ITC-CSCC 2025</small></dd></div>
+    <div><dt>{{f:wjmax_peak}}</dt><dd>Peak concurrent players on the WJMax game server during updates<small>{{f:wjmax_avg}} on average. I handled server, database and security in a team of two</small></dd></div>
+  </dl>
+</section>
+
+<section class="section" aria-labelledby="h-work">
+  <header><h2 id="h-work">Work</h2><a class="more" href="/en/work/">All work</a></header>
+  <ol class="log">
+    <li><a class="row" href="/en/work/kisti/">
+      <span class="when">{{f:kisti_period}}<br>Vision Inside, contract work</span>
+      <div><h3>Data collection and loading for a KISTI public R&amp;D platform</h3>
+        <p>I built crawlers for Amazon and Danawa and collectors for the procurement service API, spread them over {{f:kisti_farm}}, and loaded everything into one remote database. On top of that data I shipped model batches and a FastAPI admin interface.</p>
+        <span class="key"><b>{{f:kisti_rows}}</b>, sole data engineer</span></div>
+      <span class="flow" aria-label="Pipeline"><span>Crawlers on {{f:kisti_farm}}</span><i></i><span class="core">Remote DB</span><i></i><span>Model batches</span><i></i><span>FastAPI</span></span>
+    </a></li>
+    <li><a class="row" href="/en/work/genomics/">
+      <span class="when">{{f:bio_period}}<br>Vision Inside, internal project</span>
+      <div><h3>Backend for genomic variant annotation and risk reports</h3>
+        <p>I built the variant-calling pipeline from FASTQ to VCF, an annotation layer that joins public references in four SQL stages, and a FastAPI JSON API, and deployed it with Docker.</p>
+        <span class="key"><b>{{f:bio_ref}}</b> of reference data, sole developer</span></div>
+      <span class="flow" aria-label="Pipeline"><span>FASTQ</span><i></i><span>BWA, GATK</span><i></i><span>VCF</span><i></i><span class="core">Annotation SQL</span><i></i><span>JSON API</span></span>
+    </a></li>
+    <li><a class="row" href="/en/work/wjmax/">
+      <span class="when">{{f:wjmax_period}}<br>Side project, team of two</span>
+      <div><h3>Server for WJMax, a community rhythm game</h3>
+        <p>I handled the server, database and security: FastAPI in Docker on EC2, RDS MySQL, a Cloudflare proxy and WAF, and an API that collects play logs.</p>
+        <span class="key">Up to <b>{{f:wjmax_peak}}</b> concurrent players during updates</span></div>
+      <span class="flow" aria-label="Pipeline"><span>Cloudflare</span><i></i><span class="core">FastAPI on EC2</span><i></i><span>RDS MySQL</span></span>
+    </a></li>
+    <li><a class="row" href="/en/work/#hitachi">
+      <span class="when">Apr 2025 – now<br>Commissioned research, part-time</span>
+      <div><h3>Image-data pipeline for commissioned research with Hitachi Solutions Create</h3>
+        <p>I rewrote an unmaintainable inherited codebase into a Python pipeline that runs from machine-vision camera control and capture to model-ready datasets, with a PyQt GUI that non-developer researchers use themselves.</p>
+        <span class="key">Led two junior researchers; deployed on site in the Netherlands, Sep–Oct 2026</span></div>
+      <span class="flow" aria-label="Pipeline"><span>Camera control</span><i></i><span>Capture</span><i></i><span class="core">Preprocessing</span><i></i><span>Dataset</span></span>
+    </a></li>
+  </ol>
+</section>
+
+<section class="section" aria-labelledby="h-research">
+  <header><h2 id="h-research">Research</h2><a class="more" href="/en/research/">All research</a></header>
+  <p class="lead">I rearrange and reconstruct lens array images with geometric optics alone, without training. Master's program at Kyushu Institute of Technology, advised by Prof. Min-Chul Lee.</p>
+  <ol class="log">
+    <li><a class="row" href="/en/research/origin-point/">
+      <span class="when">ITC-CSCC 2025, 2026<br>Code public</span>
+      <div><h3>Origin point optimization: sharper and faster volumetric reconstruction</h3>
+        <p>Shifting elemental images by whole pixels causes quantization error. The 2025 paper reduced it by optimizing the origin point; the 2026 paper computes that origin directly from camera parameters instead of searching for it. Image quality (SSIM) is the same as the search.</p>
+        <span class="key">CPU <b>{{f:origin_cpu}}</b>, GPU {{f:origin_gpu}}</span></div>
+      <figure class="thumbs">
+        <img src="/img/vcr-fixed.webp" width="640" height="640" alt="USAF resolution chart reconstructed with a fixed origin" loading="lazy">
+        <img src="/img/vcr-proposed.webp" width="640" height="640" alt="USAF resolution chart reconstructed with the optimized origin" loading="lazy">
+        <figcaption>Fixed origin (left) and optimized origin (right). ITC-CSCC 2026 Fig. 6</figcaption>
+      </figure>
+    </a></li>
+    <li><a class="row" href="/en/research/rim/">
+      <span class="when">ICMV 2026, ICCAS 2026<br>Accepted</span>
+      <div><h3>RIM and iRIM: turning angular samples into spatial resolution</h3>
+        <p>RIM rearranges the pixels of a lens array image one to one, without interpolation, into views; the lab above runs it. Its inverse, iRIM, synthesizes the elemental image of any virtual lens array from multi-view images.</p>
+        <span class="key"><b>+2.39 dB PSNR</b> and +0.14 SSIM on 7 Stanford Lytro scenes (as reported in the paper)</span></div>
+      <figure class="wide-thumb">
+        <img src="/img/ei-synth-800.webp" width="800" height="450" alt="Elemental image of a 6 × 6 lens array synthesized with iRIM" loading="lazy">
+        <figcaption>Elemental image of a 6 × 6 lens array synthesized with iRIM. ICCAS 2026</figcaption>
+      </figure>
+    </a></li>
+  </ol>
+</section>
+
+<section class="section" aria-labelledby="h-papers">
+  <header><h2 id="h-papers">Papers</h2></header>
+  <ul class="papers">
+    <li><span class="venue">ICMV 2026</span><span class="title">Angular-to-Spatial Information Redistribution via Ray-based Inverse Mapping<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee</span></span><span class="state">Accepted, poster on Oct 16</span></li>
+    <li><span class="venue">ICCAS 2026</span><span class="title">Virtual Lens Array Synthesis from Multi-View Images via iRIM<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee</span></span><span class="state">Accepted, poster on Oct 30</span></li>
+    <li><span class="venue">ITC-CSCC 2026</span><span class="title">Accelerated Origin Point Optimization for Volumetric Computational Reconstruction<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee</span></span><span class="state">Oral, <a href="https://github.com/zoocasso/origin-point-optimization-vcr">code</a></span></li>
+    <li><span class="venue">ITC-CSCC 2025</span><span class="title">Image Enhancement of Volumetric Computational Reconstruction Using Origin Point Optimization<span class="authors">Hyeongju Lee, Gilsu Yeo, Myungjin Cho, Min-Chul Lee</span></span><span class="state">Poster, <a href="https://github.com/zoocasso/origin-point-optimization-vcr">code</a></span></li>
+    <li><span class="venue">OSK 2024</span><span class="title"><span lang="ko">원점 최적화를 이용한 체적 컴퓨터 재생의 이미지 향상</span> (image enhancement of volumetric computational reconstruction using origin point optimization)<span class="authors">Hyeongju Lee and 7 co-authors, Photonics Conference 2024, Optical Society of Korea</span></span><span class="state">Domestic poster</span></li>
+  </ul>
+</section>
+
+<section class="section" aria-labelledby="h-contact">
+  <header><h2 id="h-contact">Contact</h2></header>
+  <p class="lead">{{f:status}}. I am looking for roles in data engineering, backend development and vision data pipelines.</p>
+  <div class="contact">
+    <button class="btn primary" type="button" data-email-user="{{f:email_user}}" data-email-domain="{{f:email_domain}}" data-copied="Copied">Copy email address</button>
+    <a class="btn" href="/files/HyeongjuLee_CV_EN.pdf">CV (PDF)</a>
+    <a class="btn" href="/en/cv/">CV summary</a>
+    <a class="btn" href="https://github.com/zoocasso">GitHub</a>
+  </div>
+</section>

@@ -1,0 +1,49 @@
+<!--meta {"title": "WJMax game server", "description": "Server, database and security for WJMax, a community rhythm game run by a team of two: FastAPI on EC2, RDS MySQL and Cloudflare, with up to about 2,000 concurrent players during updates.", "nav": "work"} -->
+<div class="doc-head">
+  <p class="crumb"><a href="/en/work/">Work</a> / WJMax server</p>
+  <h1>The server for WJMax, a community rhythm game, with up to {{f:wjmax_peak}} concurrent players</h1>
+  <p class="lede">In a team of two, I handled the server, database and security. The other member built the game client.</p>
+  <dl class="meta">
+    <div><dt>Period</dt><dd>{{f:wjmax_period}}</dd></div>
+    <div><dt>Type</dt><dd>Side project, team of two</dd></div>
+    <div><dt>Role</dt><dd>Server, database and security</dd></div>
+    <div><dt>Stack</dt><dd>FastAPI, Docker, AWS EC2 and RDS, Cloudflare</dd></div>
+  </dl>
+</div>
+
+<div class="doc">
+  <nav class="toc" aria-label="On this page">
+    <p>On this page</p>
+    <a href="#result">Results</a><a href="#arch">Architecture</a><a href="#proof">Code</a>
+  </nav>
+  <div>
+    <section id="result" aria-labelledby="h-result">
+      <h2 id="h-result">Results</h2>
+      <dl class="results">
+        <div><dt>{{f:wjmax_avg}}</dt><dd>Concurrent players on a normal day</dd></div>
+        <div><dt>{{f:wjmax_peak}}</dt><dd>Peak concurrent players during updates</dd></div>
+      </dl>
+      <p class="muted" style="margin-top:12px;font-size:15px">Taken from the earliest record kept while the server was running.</p>
+    </section>
+
+    <section id="arch" class="full" aria-labelledby="h-arch">
+      <h2 id="h-arch">Architecture</h2>
+      <div class="diagram" role="img" aria-label="Flow from the game client through Cloudflare to the FastAPI server and RDS MySQL">
+        <div class="box"><b>Game client</b><span>Sends play logs</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>Cloudflare</b><span>Proxy, WAF</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box core"><b>FastAPI</b><span>Docker on AWS EC2, play-log API</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>RDS MySQL</b><span>Managed database on AWS</span></div>
+      </div>
+      <p style="margin-top:16px">A Cloudflare proxy and WAF sat in front of the server. The server was FastAPI packaged with Docker on EC2, and the database was RDS MySQL.</p>
+    </section>
+
+    <section id="proof" aria-labelledby="h-proof">
+      <h2 id="h-proof">Code</h2>
+      <p>A public copy with secrets removed: <a href="https://github.com/zoocasso/wjmax-game-server">github.com/zoocasso/wjmax-game-server</a></p>
+    </section>
+  </div>
+</div>
+<nav class="pager" aria-label="Other work"><a href="/en/work/genomics/">Previous: genomics backend</a><a href="/en/work/">All work</a></nav>

@@ -1,0 +1,77 @@
+<!--meta {"title": "RIM and iRIM", "description": "RIM (ICMV 2026) rearranges the pixels of a lens array image one to one, without interpolation, into views; its inverse iRIM (ICCAS 2026) synthesizes the elemental image of a virtual lens array from multi-view images.", "nav": "research"} -->
+<div class="doc-head">
+  <p class="crumb"><a href="/en/research/">Research</a> / RIM and iRIM</p>
+  <div class="badges"><span>ICMV 2026 accepted, Budapest</span><span>ICCAS 2026 accepted, Sapporo, poster on Oct 30</span></div>
+  <h1>RIM and iRIM: turning the angular samples of a lens array image into spatial resolution</h1>
+  <p class="authors"><b>Hyeongju Lee</b>, Myungjin Cho, Min-Chul Lee</p>
+  <p class="lede">Step 2, "Rearrange", in the lab on the home page is RIM.</p>
+</div>
+
+<div class="doc">
+  <nav class="toc" aria-label="On this page">
+    <p>On this page</p>
+    <a href="#problem">Problem</a><a href="#rim">RIM</a><a href="#result">Results</a><a href="#irim">iRIM</a><a href="#lab">The home page lab</a><a href="#code">Code</a>
+  </nav>
+  <div>
+    <section id="problem" aria-labelledby="h-problem">
+      <h2 id="h-problem">Problem</h2>
+      <p>A lens array camera divides its sensor pixels between the number of lenses and the pixels under each lens. More lenses give richer depth information, but each lens then forms an elemental image only a few pixels wide. As it is, the image is too coarse both for people to look at and for a detector to work on.</p>
+    </section>
+
+    <section id="rim" aria-labelledby="h-rim">
+      <h2 id="h-rim">RIM: ray-based inverse mapping</h2>
+      <p>Think of each pixel of the elemental image as re-emitted through a virtual lens array and captured again by a virtual camera. Under telecentric capture and orthographic recapture, this turns into a one-to-one swap of (lens index, position under the lens) into (position under the lens, lens index). There is no interpolation and therefore no quantization error, and it produces as many views as there are pixels under a lens, each with as many pixels as there are lenses. The paper uses the result as the first stage of computational integral imaging reconstruction (CIIR).</p>
+      <figure class="fig">
+        <img src="/img/rim-usaf.webp" width="1600" height="473" alt="A USAF resolution chart in three panels: a single elemental image as coarse blocks, a RIM virtual image where the chart is readable, and the reference image" loading="lazy">
+        <figcaption>A synthetic USAF 1951 chart. From left: one raw elemental image, one RIM virtual image (ours), and the ground-truth image at the same viewpoint. ICMV 2026</figcaption>
+      </figure>
+    </section>
+
+    <section id="result" aria-labelledby="h-result">
+      <h2 id="h-result">Results</h2>
+      <div class="tablewrap">
+        <table class="data">
+          <caption>Seven Stanford Lytro light field scenes, as reported in the paper</caption>
+          <thead><tr><th scope="col">Pipeline</th><th scope="col" class="n">PSNR (dB)</th><th scope="col" class="n">SSIM</th><th scope="col" class="n">mAP50</th></tr></thead>
+          <tbody>
+            <tr><td>Elemental image → CIIR</td><td class="n">23.31</td><td class="n">0.741</td><td class="n">0.665</td></tr>
+            <tr><td><b>RIM → CIIR (ours)</b></td><td class="n"><b>25.70</b></td><td class="n"><b>0.877</b></td><td class="n"><b>0.776</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" style="margin-top:10px;font-size:15px">mAP50 comes from running a pretrained YOLO detector, unchanged, on the reconstructed images.</p>
+    </section>
+
+    <section id="irim" aria-labelledby="h-irim">
+      <h2 id="h-irim">iRIM: a virtual lens array from multi-view images</h2>
+      <p>Because RIM is one to one, it also runs backwards. iRIM takes multi-view images and synthesizes the elemental image of the virtual lens array you want. The paper covers a matched 6 × 6 configuration for a 24-inch FHD panel (1.6056 mm lenses, 320 × 180 of them).</p>
+      <figure class="fig dark">
+        <img src="/img/ei-synth-1600.webp" width="1600" height="900" alt="Elemental image of a 6 × 6 lens array synthesized with iRIM: a torus, a cone and a monkey head split into small lens images" loading="lazy">
+        <figcaption>Elemental image of a 6 × 6 lens array synthesized with iRIM. ICCAS 2026</figcaption>
+      </figure>
+      <div class="pair" style="margin-top:20px">
+        <figure class="fig dark"><img src="/img/sai-irim.webp" width="1200" height="675" alt="Grid of views synthesized with iRIM, evenly bright in every cell" loading="lazy"><figcaption>iRIM synthesis: 100% effective coverage in every view</figcaption></figure>
+        <figure class="fig dark"><img src="/img/sai-camera.webp" width="1200" height="675" alt="Grid of views from a simulated lens array camera, cut off and darker toward the edges" loading="lazy"><figcaption>Simulated lens array camera: corner views drop to 6.7% effective coverage</figcaption></figure>
+      </div>
+      <p class="muted" style="font-size:15px">View grids from the same Blender scene. ICCAS 2026</p>
+    </section>
+
+    <section id="lab" aria-labelledby="h-lab">
+      <h2 id="h-lab">How the home page lab is made</h2>
+      <p>The lab computes lens array capture, RIM and reconstruction in the browser and animates them. Only the capture step is a simplified model instead of a real camera.</p>
+      <ul>
+        <li><b>Sample scene</b>: the Blender scene from the ICCAS 2026 paper (one center view), split by object into four layers at different depths: the torus, the monkey head, the cone, sphere and cube, and the background. Each layer is a flat picture rather than a 3D model, so parts that were hidden behind other objects are empty.</li>
+        <li><b>Capture</b>: a pinhole array model. For each sensor pixel, the ray through its lens center is traced back, and the colour of the first opaque layer it meets is recorded in that elemental-image pixel.</li>
+        <li><b>Rearrangement and reconstruction</b>: RIM, which swaps (lens index, position under the lens), and reconstruction, which shifts the views by distance and averages them, follow the papers. When the distance matches a layer's depth, that layer's samples land back where they came from and it becomes sharp.</li>
+        <li><b>Your own image</b>: a single photo has no depth, so the edge colour is taken as background and the image is split into a subject layer and a background layer. If the background cannot be separated, it stands as one flat card. The image never leaves your browser.</li>
+        <li><b>Sound</b>: the music, sound effects and robot voice are all synthesized by the browser.</li>
+      </ul>
+    </section>
+
+    <section id="code" aria-labelledby="h-code">
+      <h2 id="h-code">Code</h2>
+      <p>The code for both papers is kept in a private repository (13 tests).</p>
+    </section>
+  </div>
+</div>
+<nav class="pager" aria-label="Other research"><a href="/en/research/origin-point/">Previous: origin point optimization</a><a href="/en/research/">All research</a></nav>

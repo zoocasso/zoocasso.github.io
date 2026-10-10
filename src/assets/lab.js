@@ -473,7 +473,7 @@ const st = { A: 0, B: 0, C: 0, D: 0, cam: 0 };
 const ptr = { x: 0, y: 0, sx: 0, sy: 0, tx: 0, ty: 0, mx: 0, my: 0, ma: 0, inside: false };
 let VP = null, P11 = 1, hasImage = false;
 const T0 = performance.now();
-const wideLayout = () => window.innerWidth >= 1024;
+const wideLayout = () => window.innerWidth >= 1180;
 function camera(asp, now) {
   // on wide screens the introduction sits on the left, so the scene is drawn off-axis to the right
   const shift = wideLayout() ? 0.36 : 0;
@@ -606,7 +606,7 @@ function tween(key, to, ms, my) {
   });
 }
 const depth = q('[data-depth]'), depthOut = q('[data-depth-out]');
-const focusWord = { ko: '초점', en: 'in focus' }[lang];
+const focusLabel = lang === 'ko' ? (n) => `${n} 초점` : (n) => `Focus: ${n}`;
 function focusedLayer() {
   for (const k of layers.used) if (Math.abs(st.D - K[k] / NP) < 0.05) return k;
   return -1;
@@ -615,8 +615,8 @@ function setDepthUI(enabled) {
   const pct = Math.round(st.D / DMAX * 100), k = focusedLayer();
   depth.disabled = !enabled; depth.value = String(pct);
   const name = k >= 0 ? layers.names[k][lang] : '';
-  depthOut.textContent = enabled ? (k >= 0 ? `${name} ${focusWord}` : pct + '%') : '–';
-  depth.setAttribute('aria-valuetext', k >= 0 ? `${name} ${focusWord}` : `${pct}%`);
+  depthOut.textContent = enabled ? (k >= 0 ? focusLabel(name) : pct + '%') : '–';
+  depth.setAttribute('aria-valuetext', k >= 0 ? focusLabel(name) : `${pct}%`);
 }
 const stepBtns = [...root.querySelectorAll('[data-step]')];
 function steps(n) { stepBtns.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.step) === n))); }

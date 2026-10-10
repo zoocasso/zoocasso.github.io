@@ -1,0 +1,110 @@
+<!--meta {"title": "Genomic variant backend", "description": "Sole developer of a backend that calls genomic variants from FASTQ to VCF, annotates them against about 1 TB of public reference data, and serves risk reports through a FastAPI JSON API.", "nav": "work"} -->
+<div class="doc-head">
+  <p class="crumb"><a href="/en/work/">Work</a> / Genomics backend</p>
+  <h1>A backend that annotates genomic variants against {{f:bio_ref}} of public reference data</h1>
+  <p class="lede">I built, alone, the backend of a system that links a person's genomic variants (VCF or genotyping-array files) to public references and reports disease and trait risk, population frequencies, and related drugs and herbal medicines. It was an international collaboration between Kyung Hee University's College of Korean Medicine and a Canadian bio research lab.</p>
+  <dl class="meta">
+    <div><dt>Period</dt><dd>{{f:bio_period}}</dd></div>
+    <div><dt>Company and type</dt><dd>Vision Inside, internal project</dd></div>
+    <div><dt>Role</dt><dd>Sole backend developer (frontend by another developer)</dd></div>
+    <div><dt>Stack</dt><dd>Python, FastAPI, MySQL, GATK, Docker, Harbor</dd></div>
+  </dl>
+</div>
+
+<div class="doc">
+  <nav class="toc" aria-label="On this page">
+    <p>On this page</p>
+    <a href="#result">Results</a><a href="#scope">My part</a><a href="#arch">Architecture</a><a href="#load">Loading</a><a href="#ref">References</a><a href="#deploy">Deployment</a><a href="#limits">Limits</a><a href="#proof">Code</a>
+  </nav>
+  <div>
+    <section id="result" aria-labelledby="h-result">
+      <h2 id="h-result">Results</h2>
+      <dl class="results">
+        <div><dt>{{f:bio_ref}}</dt><dd>Public reference data loaded (dbSNP, 1000 Genomes and more)</dd></div>
+        <div><dt>4 stages</dt><dd>SQL joins on (chrom, pos, ref, alt) to annotate variants</dd></div>
+        <div><dt>26 populations</dt><dd>Allele frequencies compared across 1000 Genomes populations</dd></div>
+        <div><dt>Sole developer</dt><dd>From variant calling to the API and the production server</dd></div>
+      </dl>
+    </section>
+
+    <section id="scope" aria-labelledby="h-scope">
+      <h2 id="h-scope">My part</h2>
+      <div class="scope">
+        <div>
+          <h3>What I did</h3>
+          <ul>
+            <li>Variant-calling pipeline (FASTQ → BWA → samtools → Picard → GATK → VCF)</li>
+            <li>Handling of customer VCF and genotyping-array files (PyVCF)</li>
+            <li>Loading of public references and four-stage SQL annotation</li>
+            <li>Disease and trait risk scores from GWAS odds ratios, population frequencies, and drug and herbal-medicine lookups</li>
+            <li>FastAPI JSON API, Docker deployment, a Harbor private registry, domain and HTTPS</li>
+            <li>Technical communication between the Korean and Canadian teams, and requirements with the Canadian lab's designer</li>
+          </ul>
+        </div>
+        <div>
+          <h3>What others did</h3>
+          <ul class="muted">
+            <li>Frontend (React): another developer</li>
+            <li>Screen design: the Canadian lab's designer</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="arch" class="full" aria-labelledby="h-arch">
+      <h2 id="h-arch">Architecture</h2>
+      <div class="diagram" role="img" aria-label="Flow from sequencing data to variant calling, annotation, scoring and a JSON API">
+        <div class="box"><b>Input</b><span>FASTQ, or a customer VCF or array file</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>Variant calling</b><span>BWA, samtools, Picard, GATK</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box core"><b>Annotation</b><span>dbSNP, GWAS Catalog, 1000 Genomes, UniProt</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>Scoring</b><span>Risk scores, population frequencies, drugs and herbs</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>Serving</b><span>FastAPI JSON API</span></div>
+      </div>
+    </section>
+
+    <section id="load" aria-labelledby="h-load">
+      <h2 id="h-load">Loading</h2>
+      <p>The dbSNP source VCFs alone are 237 GB, and the 1000 Genomes sources are 770 GB. I split the files by chromosome (sed, split) and loaded them in pandas chunks through SQLAlchemy. Annotation joins the reference tables one after another on (chrom, pos, ref, alt), in four stages.</p>
+    </section>
+
+    <section id="ref" aria-labelledby="h-ref">
+      <h2 id="h-ref">References</h2>
+      <div class="tablewrap">
+        <table class="data">
+          <caption>Public data used for annotation. Sizes are for the source files</caption>
+          <thead><tr><th scope="col">Data</th><th scope="col">Used for</th><th scope="col" class="n">Size</th></tr></thead>
+          <tbody>
+            <tr><td>dbSNP (GRCh37, GRCh38)</td><td>Variant IDs and positions</td><td class="n">237 GB</td></tr>
+            <tr><td>1000 Genomes</td><td>Allele frequencies in 26 populations</td><td class="n">770 GB</td></tr>
+            <tr><td>GWAS Catalog</td><td>Disease and trait associations, odds ratios</td><td class="n">–</td></tr>
+            <tr><td>UniProt</td><td>Protein variants and clinical significance</td><td class="n">–</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="deploy" aria-labelledby="h-deploy">
+      <h2 id="h-deploy">Deployment</h2>
+      <p>I set up a Harbor private registry on an Ubuntu server at Korea IDC (certificate, domain, Let's Encrypt), pushed the images there and deployed with Docker. In September 2023 I removed the web screens and turned the service into a JSON API for the separate frontend.</p>
+    </section>
+
+    <section id="limits" aria-labelledby="h-limits">
+      <h2 id="h-limits">Limits</h2>
+      <ul class="note">
+        <li>Risk is a <b>rule-based score</b> from GWAS odds ratios and betas, not a machine-learning prediction.</li>
+        <li>The LDA and 1D-CNN models linking diseases to herbal medicines stayed <b>prototype experiments</b>.</li>
+        <li>After deployment the server was <b>reachable only from internal IPs</b>; it was never launched as a public service.</li>
+      </ul>
+    </section>
+
+    <section id="proof" aria-labelledby="h-proof">
+      <h2 id="h-proof">Code</h2>
+      <p>A public copy with secrets removed: <a href="https://github.com/zoocasso/bio_fastapi">github.com/zoocasso/bio_fastapi</a>. The LDA experiment is at <a href="https://github.com/zoocasso/model_lda">github.com/zoocasso/model_lda</a>.</p>
+    </section>
+  </div>
+</div>
+<nav class="pager" aria-label="Other work"><a href="/en/work/kisti/">Previous: KISTI data platform</a><a href="/en/work/wjmax/">Next: WJMax server</a></nav>

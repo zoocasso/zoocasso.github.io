@@ -1,0 +1,46 @@
+<!--meta {"title": "Research", "description": "Light field and integral imaging research that rearranges and reconstructs lens array images with geometric optics, without training. Four first-author papers at international conferences.", "nav": "research"} -->
+<div class="doc-head">
+  <h1>Research</h1>
+  <p class="lede">I rearrange and reconstruct lens array images with geometric optics alone, without training. Master's program in Creative Informatics, Graduate School of Computer Science and Systems Engineering, Kyushu Institute of Technology, advised by Prof. Min-Chul Lee. {{f:papers}}.</p>
+</div>
+
+<section class="section" style="padding-top:40px" aria-labelledby="h-topics">
+  <header><h2 id="h-topics">Topics</h2></header>
+  <ol class="log">
+    <li><a class="row" href="/en/research/rim/">
+      <span class="when">ICMV 2026, ICCAS 2026<br>Accepted</span>
+      <div><h3>RIM and iRIM: turning angular samples into spatial resolution</h3>
+        <p>RIM rearranges the pixels of a lens array image one to one, without interpolation, into views; iRIM runs it backwards to synthesize the elemental image of a virtual lens array from multi-view images.</p>
+        <span class="key"><b>+2.39 dB PSNR</b> and +0.14 SSIM on 7 Stanford Lytro scenes (as reported in the paper)</span></div>
+      <figure class="wide-thumb"><img src="/img/ei-synth-800.webp" width="800" height="450" alt="Elemental image of a 6 × 6 lens array synthesized with iRIM" loading="lazy"></figure>
+    </a></li>
+    <li><a class="row" href="/en/research/origin-point/">
+      <span class="when">ITC-CSCC 2025, 2026<br>Code public</span>
+      <div><h3>Origin point optimization: sharper, then faster volumetric reconstruction</h3>
+        <p>Optimizing the origin point reduces the quantization error of volumetric computational reconstruction, and the origin is then computed from camera parameters without a search.</p>
+        <span class="key">CPU <b>{{f:origin_cpu}}</b>, same image quality</span></div>
+      <figure class="thumbs"><img src="/img/vcr-fixed.webp" width="640" height="640" alt="Resolution chart reconstructed with a fixed origin" loading="lazy"><img src="/img/vcr-proposed.webp" width="640" height="640" alt="Resolution chart reconstructed with the optimized origin" loading="lazy"></figure>
+    </a></li>
+  </ol>
+</section>
+
+<section class="section" aria-labelledby="h-pubs">
+  <header><h2 id="h-pubs">Papers</h2></header>
+  <ul class="papers">
+    <li><span class="venue">ICMV 2026</span><span class="title">Angular-to-Spatial Information Redistribution via Ray-based Inverse Mapping<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee. 18th ICMV, Budapest</span></span><span class="state">Accepted, poster on Oct 16</span></li>
+    <li><span class="venue">ICCAS 2026</span><span class="title">Virtual Lens Array Synthesis from Multi-View Images via iRIM<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee. Sapporo</span></span><span class="state">Accepted, poster on Oct 30</span></li>
+    <li><span class="venue">ITC-CSCC 2026</span><span class="title">Accelerated Origin Point Optimization for Volumetric Computational Reconstruction<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee. Bangkok</span></span><span class="state">Oral, <a href="https://github.com/zoocasso/origin-point-optimization-vcr">code</a></span></li>
+    <li><span class="venue">ITC-CSCC 2025</span><span class="title">Image Enhancement of Volumetric Computational Reconstruction Using Origin Point Optimization<span class="authors">Hyeongju Lee, Gilsu Yeo, Myungjin Cho, Min-Chul Lee. Seoul</span></span><span class="state">Poster, <a href="https://github.com/zoocasso/origin-point-optimization-vcr">code</a></span></li>
+    <li><span class="venue">OSK 2024</span><span class="title"><span lang="ko">원점 최적화를 이용한 체적 컴퓨터 재생의 이미지 향상</span> (image enhancement of volumetric computational reconstruction using origin point optimization)<span class="authors">Hyeongju Lee and 7 co-authors. Photonics Conference 2024, Optical Society of Korea</span></span><span class="state">Domestic poster</span></li>
+  </ul>
+</section>
+
+<section class="section" aria-labelledby="h-path">
+  <header><h2 id="h-path">Path</h2></header>
+  <ul class="timeline">
+    <li><span class="when">Apr 2025 – now</span><div><b>Master's program, Kyushu Institute of Technology</b><span class="sub">Light field and integral imaging 3D reconstruction, advised by Prof. Min-Chul Lee</span></div></li>
+    <li><span class="when">2026</span><div><b>Rotary Yoneyama Memorial Foundation Scholar</b><span class="sub">Selected through a Japanese-language interview in Rotary District 2700</span></div></li>
+    <li><span class="when">Aug 2024 – Mar 2025</span><div><b>Undergraduate researcher, 3D Image Processing Systems Lab, Hankyong National University</b><span class="sub">Advised by Prof. Myungjin Cho. A first-author poster at Photonics Conference 2024, the groundwork for origin point optimization</span></div></li>
+    <li><span class="when">2022</span><div><b>Depth estimation with correlation filters and VCR</b><span class="sub">Course project where this research started</span></div></li>
+  </ul>
+</section>
