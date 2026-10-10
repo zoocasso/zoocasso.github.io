@@ -1,0 +1,37 @@
+{
+  "_about": "Every number shown on the site comes from here. Each value cites the section of D:/claude_vision/cv_master/MASTER.md it was taken from. Change MASTER first, then this file.",
+  "updated": {"ko": "2026-10-11", "en": "Oct 11, 2026"},
+
+  "name": {"ko": "이형주", "en": "Hyeongju Lee"},
+  "name_alt": {"ko": "Hyeongju Lee", "en": "이형주"},
+  "role": {"ko": "데이터·백엔드 엔지니어, 3D 비전 연구", "en": "Data & backend engineer, 3D vision researcher", "src": "MASTER §0 포지셔닝"},
+  "status": {"ko": "2027년 3월 석사 졸업 예정, 4월부터 국내 입사 가능", "en": "Finishing my master's in March 2027, available in Korea from April 2027", "src": "MASTER §0"},
+  "based": {"ko": "일본 후쿠오카 거주", "en": "Based in Fukuoka, Japan", "src": "MASTER §0"},
+  "career_len": {"ko": "2년 5개월", "en": "29 months", "src": "MASTER §2 기간 2022-07 ~ 2024-11"},
+
+  "kisti_rows": {"ko": "8,000만 행 이상", "en": "80M+ rows", "src": "MASTER §2-1 누적 규모 (2023-11)"},
+  "kisti_rows_short": {"ko": "8,000만+", "en": "80M+", "src": "MASTER §2-1"},
+  "kisti_period": {"ko": "2022.08 – 2024.06", "en": "Aug 2022 – Jun 2024", "src": "MASTER §2-1"},
+  "kisti_farm": {"ko": "노트북 10~20대", "en": "10–20 laptops", "src": "MASTER §2-1 분산 크롤링 팜"},
+  "kisti_asin": {"ko": "2,217,720개", "en": "2,217,720", "src": "MASTER §2-1"},
+  "kisti_asin_dedup": {"ko": "1,221,128개", "en": "1,221,128", "src": "MASTER §2-1"},
+  "kisti_match": {"ko": "24만 8천 건", "en": "248K", "src": "MASTER §2-1 모델3"},
+
+  "bio_ref": {"ko": "약 1 TB", "en": "~1 TB", "src": "MASTER §2-2 공개 레퍼런스"},
+  "bio_period": {"ko": "2022.08 – 2023.09", "en": "Aug 2022 – Sep 2023", "src": "MASTER §2-2"},
+
+  "wjmax_peak": {"ko": "약 2,000명", "en": "~2,000", "src": "MASTER §5 WJMax 동접 (업데이트 시 최대)"},
+  "wjmax_avg": {"ko": "약 300명", "en": "~300", "src": "MASTER §5"},
+  "wjmax_period": {"ko": "2023.08 – 2024.02", "en": "Aug 2023 – Feb 2024", "src": "MASTER §5"},
+
+  "papers": {"ko": "1저자 논문 4편", "en": "4 first-author papers", "src": "MASTER §4"},
+  "origin_cpu": {"ko": "25.45 s → 0.31 s", "en": "25.45 s → 0.31 s", "src": "MASTER §3-1 (ITC-CSCC 2026 Table III·IV)"},
+  "origin_gpu": {"ko": "0.0057 s", "en": "0.0057 s", "src": "MASTER §3-1"},
+  "rim_psnr": {"ko": "PSNR 23.31 → 25.70 dB", "en": "PSNR 23.31 → 25.70 dB", "src": "MASTER §3-1 논문 기재값 (CV 표기 결정)"},
+  "rim_ssim": {"ko": "SSIM 0.741 → 0.877", "en": "SSIM 0.741 → 0.877", "src": "MASTER §3-1 논문 기재값"},
+  "rim_map": {"ko": "mAP50 0.665 → 0.776", "en": "mAP50 0.665 → 0.776", "src": "MASTER §3-1 논문 기재값"},
+
+  "email_user": "zoocasso1590",
+  "email_domain": "gmail.com",
+  "github": "https://github.com/zoocasso"
+}

@@ -1,0 +1,125 @@
+<!--meta {"title": "KISTI 공공 R&D 플랫폼 데이터 수집·적재", "description": "KISTI 발주 공공 R&D 가치창출 플랫폼(SMART K2C)에서 상품·조달 데이터 8,000만 행 이상을 혼자 수집·적재하고 모델 배치와 관리 화면까지 만든 데이터 엔지니어링 사례.", "nav": "work"} -->
+<div class="doc-head">
+  <p class="crumb"><a href="/work/">작업</a> / KISTI 데이터 플랫폼</p>
+  <h1>공공 R&amp;D 플랫폼에 상품·조달 데이터 {{f:kisti_rows}}을 공급한 수집·적재 파이프라인</h1>
+  <p class="lede">KISTI가 발주한 「인공지능 기반 공공 R&amp;D 가치창출 플랫폼」(이후 SMART K2C)에서 비전인사이드 쪽 데이터 엔지니어링을 혼자 맡았습니다.</p>
+  <dl class="meta">
+    <div><dt>기간</dt><dd>{{f:kisti_period}}</dd></div>
+    <div><dt>소속과 형태</dt><dd>비전인사이드, KISTI 발주 외주 용역</dd></div>
+    <div><dt>역할</dt><dd>데이터 엔지니어링 단독</dd></div>
+    <div><dt>기술</dt><dd>Python, Selenium, MySQL·MariaDB, FastAPI, KeyBERT</dd></div>
+  </dl>
+</div>
+
+<div class="doc">
+  <nav class="toc" aria-label="이 페이지 목차">
+    <p>목차</p>
+    <a href="#result">결과</a><a href="#context">맥락</a><a href="#scope">맡은 범위</a><a href="#arch">구조</a><a href="#scale">규모</a><a href="#decisions">주요 결정</a><a href="#serving">모델 배치와 서빙</a><a href="#proof">근거와 공개 범위</a>
+  </nav>
+  <div>
+    <section id="result" aria-labelledby="h-result">
+      <h2 id="h-result">결과</h2>
+      <dl class="results">
+        <div><dt>{{f:kisti_rows}}</dt><dd>누적 적재 행 수 (2023년 11월 기준)</dd></div>
+        <div><dt>{{f:kisti_asin_dedup}}</dt><dd>중복을 걷어 낸 Amazon 상품 (수집 {{f:kisti_asin}}에서)</dd></div>
+        <div><dt>2,481개</dt><dd>수집한 다나와 카테고리 (전체 2,517개 중)</dd></div>
+        <div><dt>{{f:kisti_match}}</dt><dd>NTIS 과제와 기업을 키워드로 이은 매칭 (SQL)</dd></div>
+      </dl>
+      <p style="margin-top:16px">이 데이터와 모델 결과를 KISTI 연구진 기술 회의에서 직접 발표했고, 3억 원 규모 본사업 계약 수주에 기여했습니다.</p>
+    </section>
+
+    <section id="context" aria-labelledby="h-context">
+      <h2 id="h-context">맥락</h2>
+      <p>플랫폼은 공공 R&amp;D 성과를 시장의 상품과 이어 주는 분석 모델 여러 개로 이루어집니다. 경쟁 제품 탐색, 리뷰에서 요구 품질 뽑기, 과제와 기업 매칭 같은 모델입니다. 모델 일부는 대학 위탁연구팀(성균관대, 국민대)이 설계했고, 비전인사이드는 그 모델들이 쓰는 데이터와 서빙 계층을 맡았습니다. 그 데이터 쪽 일을 처음부터 끝까지 혼자 했습니다.</p>
+    </section>
+
+    <section id="scope" aria-labelledby="h-scope">
+      <h2 id="h-scope">맡은 범위</h2>
+      <div class="scope">
+        <div>
+          <h3>직접 한 일</h3>
+          <ul>
+            <li>Amazon·다나와 Selenium 크롤러, 조달청 공공데이터포털 API 수집기, 나라장터 크롤링</li>
+            <li>노트북 분산 크롤링과 원격 DB 적재, 중복 제거</li>
+            <li>모델 3·4·5 배치와 FastAPI 서비스, 관리 화면</li>
+            <li>협력사 프로토타입(모델 1·2, Java/Tomcat 웹)을 사내 서버로 이전하고 Docker 실행 환경 구성</li>
+            <li>감리 산출물(운영자 매뉴얼, 초기데이터구축완료보고서) 작성</li>
+          </ul>
+        </div>
+        <div>
+          <h3>다른 사람이 한 일</h3>
+          <ul class="muted">
+            <li>모델 일부의 알고리즘 설계: 대학 위탁연구팀</li>
+            <li>모델 1·2와 프로토타입 웹: 협력사</li>
+            <li>회의록 작성과 보고: 사내 다른 담당자</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="arch" class="full" aria-labelledby="h-arch">
+      <h2 id="h-arch">구조</h2>
+      <div class="diagram" role="img" aria-label="수집 대상에서 분산 크롤러, 원격 DB, 모델 배치, FastAPI 서빙으로 이어지는 흐름">
+        <div class="box"><b>수집 대상</b><span>Amazon, 다나와, 조달청 API, 나라장터</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>분산 크롤러</b><span>Selenium, {{f:kisti_farm}}</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box core"><b>원격 DB 1대</b><span>중복 제거 후 적재, {{f:kisti_rows}}</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>모델 배치</b><span>SQL 매칭, K-means, KeyBERT</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>서빙</b><span>FastAPI, 관리 화면</span></div>
+      </div>
+      <p class="muted" style="margin-top:10px;font-size:15px">회사 코드는 공개할 수 없어 구조만 그렸습니다.</p>
+    </section>
+
+    <section id="scale" aria-labelledby="h-scale">
+      <h2 id="h-scale">규모</h2>
+      <div class="tablewrap">
+        <table class="data">
+          <caption>주요 테이블별 행 수. 2023년 11월 코드정의서 기준</caption>
+          <thead><tr><th scope="col">출처</th><th scope="col">테이블</th><th scope="col" class="n">행 수</th></tr></thead>
+          <tbody>
+            <tr><td>조달청 API</td><td>개별 속성</td><td class="n">41,917,377</td></tr>
+            <tr><td>다나와</td><td>리뷰</td><td class="n">16,049,734</td></tr>
+            <tr><td>Amazon</td><td>상품 상세</td><td class="n">9,985,638</td></tr>
+            <tr><td>Amazon</td><td>리뷰 키워드</td><td class="n">7,882,058</td></tr>
+            <tr><td>조달청 API</td><td>API 수집분</td><td class="n">4,779,512</td></tr>
+            <tr><td>Amazon</td><td>상품</td><td class="n">925,441</td></tr>
+            <tr><td>다나와</td><td>상품</td><td class="n">417,240</td></tr>
+          </tbody>
+          <tfoot><tr><td colspan="2">합계</td><td class="n">81,957,000</td></tr></tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section id="decisions" aria-labelledby="h-decisions">
+      <h2 id="h-decisions">주요 결정</h2>
+      <ol class="decisions">
+        <li><h3>서버 한 대 대신 노트북 여러 대로 나눠 수집</h3>
+          <dl><dt>이유</dt><dd>한곳에서 대량으로 요청하면 수집 대상 사이트에 막히기 때문에, 요청을 여러 기기로 나눠 차단을 피했습니다.</dd><dt>방법</dt><dd>크롤러를 {{f:kisti_farm}}에 나눠 돌리고, 결과는 원격 DB 한 곳에 모았습니다 (2022년 11월 ~ 2023년 1월).</dd></dl></li>
+        <li><h3>상품 식별자(ASIN) 기준으로 중복 제거</h3>
+          <dl><dt>이유</dt><dd>같은 상품이 여러 카테고리에 동시에 노출되어 카테고리별로 모으면 겹쳤습니다.</dd><dt>결과</dt><dd>Amazon 상품 {{f:kisti_asin}}를 {{f:kisti_asin_dedup}}로 줄였습니다.</dd></dl></li>
+        <li><h3>쇼핑몰 직접 크롤링에서 API 수집으로 전환</h3>
+          <dl><dt>이유</dt><dd>2023년 6월 발주처(KISTI)가 쇼핑몰 직접 크롤링 대신 API로 수집하도록 요구했습니다.</dd><dt>방법</dt><dd>조달청 데이터는 2023년 4월부터 공공데이터포털 API로 받고 있었고, Amazon은 Rainforest API로 옮겼습니다 (2023년 7월 선정, 2024년 2~5월 구현).</dd></dl></li>
+      </ol>
+    </section>
+
+    <section id="serving" aria-labelledby="h-serving">
+      <h2 id="h-serving">모델 배치와 서빙</h2>
+      <ul>
+        <li><b>모델 3</b>: NTIS 과제와 NICE 기업을 키워드로 잇는 SQL 매칭, {{f:kisti_match}}</li>
+        <li><b>모델 4</b>: 가격대별 K-means 클러스터링. 군집 수 k는 Dunn index로 고름</li>
+        <li><b>모델 5</b>: KeyBERT, Sentence-Transformers, Mecab으로 리뷰에서 요구 품질 키워드를 뽑는 일 배치</li>
+        <li><b>관리 화면</b>: FastAPI와 Jinja2·Tabulator로 필터, 순차 실행, 통합 검색, 엑셀 다운로드 제공</li>
+        <li><b>2024년 모델 3.1 대응</b>: 조달청 가격·속성·납품 통계 SQL</li>
+      </ul>
+    </section>
+
+    <section id="proof" aria-labelledby="h-proof">
+      <h2 id="h-proof">근거와 공개 범위</h2>
+      <p class="note">코드와 데이터는 회사와 발주처 자산이라 공개하지 않습니다. 이 페이지의 숫자는 2023년 11월 코드정의서와 당시 일일업무보고에서 옮겼고, 이력서와 같은 기준 문서에서 관리합니다.</p>
+    </section>
+  </div>
+</div>
+<nav class="pager" aria-label="다른 작업"><a href="/work/">모든 작업</a><a href="/work/genomics/">다음: 유전체 변이 백엔드</a></nav>

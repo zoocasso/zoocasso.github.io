@@ -1,0 +1,109 @@
+<!--meta {"title": "원점 최적화", "description": "체적 컴퓨터 재생(VCR)의 양자화 오차를 원점 최적화로 줄이고, 그 원점을 반복 탐색 없이 카메라 파라미터로 계산해 CPU 25.45 s를 0.31 s로 줄인 연구 (ITC-CSCC 2025, 2026). 코드 공개.", "nav": "research"} -->
+<div class="doc-head">
+  <p class="crumb"><a href="/research/">연구</a> / 원점 최적화</p>
+  <div class="badges"><span>ITC-CSCC 2025 포스터</span><span>ITC-CSCC 2026 발표</span></div>
+  <h1>원점 최적화로 체적 컴퓨터 재생을 선명하게, 그리고 빠르게</h1>
+  <p class="authors"><b>Hyeongju Lee</b>, Myungjin Cho, Min-Chul Lee (2025년 논문은 Gilsu Yeo 포함). 규슈공업대학, 한경국립대학교</p>
+  <div class="paper-links">
+    <a class="btn primary" href="https://github.com/zoocasso/origin-point-optimization-vcr">코드 (GitHub)</a>
+    <a class="btn" href="#cite">BibTeX</a>
+  </div>
+</div>
+
+<div class="doc">
+  <nav class="toc" aria-label="이 페이지 목차">
+    <p>목차</p>
+    <a href="#see">비교</a><a href="#what">무엇을 했나</a><a href="#vcr">VCR이란</a><a href="#method">방법</a><a href="#speed">처리 시간</a><a href="#code">코드</a><a href="#cite">인용</a>
+  </nav>
+  <div>
+    <section id="see" aria-labelledby="h-see">
+      <h2 id="h-see">고정 원점과 최적화한 원점</h2>
+      <div class="compare" data-compare="cmp-origin">
+        <img src="/img/vcr-fixed.webp" width="640" height="640" alt="고정 원점으로 재생한 USAF 해상도 차트">
+        <img class="after" src="/img/vcr-proposed.webp" width="640" height="640" alt="최적화한 원점으로 재생한 USAF 해상도 차트">
+        <span class="line" aria-hidden="true"></span>
+        <span class="lab-l">고정 원점</span><span class="lab-r">최적화한 원점</span>
+      </div>
+      <div class="compare-ctl">
+        <label for="cmp-origin">비교선 위치</label>
+        <input type="range" id="cmp-origin" min="0" max="100" value="50">
+      </div>
+      <p class="muted" style="font-size:15px">9×9 요소 영상으로 재생한 1951 USAF 해상도 차트. ITC-CSCC 2026 Fig. 6의 (a)와 (d)입니다. 막대 묶음의 경계를 비교해 보세요.</p>
+    </section>
+
+    <section id="what" aria-labelledby="h-what">
+      <h2 id="h-what">무엇을 했나</h2>
+      <p>체적 컴퓨터 재생(VCR)은 여러 시점에서 찍은 요소 영상을 깊이에 맞춰 밀어 겹쳐 3D 장면의 단면을 만듭니다. 이때 영상을 픽셀 단위로만 옮길 수 있어 양자화 오차가 생기고, 재생 영상이 흐려집니다.</p>
+      <p>2025년 논문은 겹치는 기준점(원점)을 최적화해 이 오차를 줄였습니다. 다만 최적 원점을 찾으려면 재생을 여러 번 반복해야 해서 느렸습니다. 2026년 논문은 이 원점을 영상과 상관없이 카메라 파라미터만으로 바로 계산합니다. 결과 영상의 SSIM은 반복 탐색과 같고, 시간만 줄었습니다.</p>
+    </section>
+
+    <section id="vcr" aria-labelledby="h-vcr">
+      <h2 id="h-vcr">VCR이란</h2>
+      <figure class="fig">
+        <img src="/img/vcr-principle.webp" width="1200" height="669" alt="3D 물체를 핀홀 배열로 찍은 요소 영상을 가상 핀홀 배열로 역투영해 재생 평면을 만드는 원리 그림" loading="lazy">
+        <figcaption>요소 영상을 가상 핀홀 배열로 역투영해 원하는 깊이의 재생 평면을 만듭니다. ITC-CSCC 2026 Fig. 1</figcaption>
+      </figure>
+    </section>
+
+    <section id="method" class="full" aria-labelledby="h-method">
+      <h2 id="h-method">방법</h2>
+      <div class="method">
+        <div>
+          <h3>기존: 반복 탐색</h3>
+          <ol><li>요소 영상 획득</li><li>후보 원점 고르기</li><li>VCR 재생</li><li>화질 평가, 2로 돌아가 반복</li></ol>
+          <p>후보마다 재생을 다시 해야 해서 계산량이 큽니다.</p>
+        </div>
+        <div>
+          <h3>제안: 직접 계산</h3>
+          <ol><li>요소 영상 획득</li><li>카메라 파라미터와 깊이 입력</li><li>양자화 오차가 가장 작은 원점을 식으로 계산</li><li>VCR 재생 한 번</li></ol>
+          <p>영상에 의존하지 않고 파라미터만 쓰므로 반복이 없습니다. 결과 영상은 반복 탐색과 같습니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="speed" aria-labelledby="h-speed">
+      <h2 id="h-speed">처리 시간</h2>
+      <div class="tablewrap">
+        <table class="data">
+          <caption>9×9 요소 영상 기준. ITC-CSCC 2026 Table III, IV</caption>
+          <thead><tr><th scope="col">방법</th><th scope="col">장치</th><th scope="col" class="n">시간</th></tr></thead>
+          <tbody>
+            <tr><td>반복 탐색</td><td>CPU</td><td class="n">25.45 s</td></tr>
+            <tr><td><b>직접 계산 (제안)</b></td><td>CPU</td><td class="n"><b>0.31 s</b></td></tr>
+            <tr><td>직접 계산 (제안)</td><td>GPU, CuPy, RTX 3090</td><td class="n">{{f:origin_gpu}}</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" style="margin-top:10px;font-size:15px">CPU 기준 약 82배 빠르고, SSIM은 반복 탐색과 같습니다.</p>
+    </section>
+
+    <section id="code" aria-labelledby="h-code">
+      <h2 id="h-code">코드</h2>
+      <p>두 논문의 방법을 Python으로 정리해 공개했습니다: <a href="https://github.com/zoocasso/origin-point-optimization-vcr">github.com/zoocasso/origin-point-optimization-vcr</a></p>
+      <ul>
+        <li>원점 계산(<code>origin.py</code>), VCR 재생(<code>vcr.py</code>), 화질 지표, 처리 시간 측정 스크립트</li>
+        <li>테스트 8개, 원본 연구 스크립트와 무작위 입력 10,020건 대조 일치</li>
+        <li>NumPy, OpenCV. GPU 측정은 CuPy(선택). MIT 라이선스</li>
+      </ul>
+    </section>
+
+    <section id="cite" aria-labelledby="h-cite">
+      <h2 id="h-cite">인용</h2>
+      <div class="bib"><pre id="bib-2026">@inproceedings{lee2026accelerated,
+  title     = {Accelerated Origin Point Optimization for
+               Volumetric Computational Reconstruction},
+  author    = {Lee, Hyeongju and Cho, Myungjin and Lee, Min-Chul},
+  booktitle = {Proc. ITC-CSCC},
+  year      = {2026}
+}</pre><button class="btn" type="button" data-copy="bib-2026" data-done="복사했습니다">복사</button></div>
+      <div class="bib"><pre id="bib-2025">@inproceedings{lee2025image,
+  title     = {Image Enhancement of Volumetric Computational
+               Reconstruction Using Origin Point Optimization},
+  author    = {Lee, Hyeongju and Yeo, Gilsu and Cho, Myungjin and Lee, Min-Chul},
+  booktitle = {Proc. ITC-CSCC},
+  year      = {2025}
+}</pre><button class="btn" type="button" data-copy="bib-2025" data-done="복사했습니다">복사</button></div>
+    </section>
+  </div>
+</div>
+<nav class="pager" aria-label="다른 연구"><a href="/research/">연구 목록</a><a href="/research/rim/">다음: RIM·iRIM</a></nav>

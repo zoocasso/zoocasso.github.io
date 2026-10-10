@@ -1,0 +1,110 @@
+<!--meta {"title": "유전체 변이 주석·위험도 리포트 백엔드", "description": "FASTQ에서 VCF까지의 변이 호출 파이프라인과 약 1 TB 공개 레퍼런스 기반 주석 계층, FastAPI JSON API를 혼자 만들고 Docker로 배포한 백엔드 사례.", "nav": "work"} -->
+<div class="doc-head">
+  <p class="crumb"><a href="/work/">작업</a> / 유전체 변이 백엔드</p>
+  <h1>{{f:bio_ref}} 공개 레퍼런스로 유전체 변이를 주석하는 백엔드</h1>
+  <p class="lede">개인 유전체 변이(VCF, 칩 array)를 공개 레퍼런스와 이어 질병·형질 위험도, 집단별 빈도, 관련 의약품·한약재 정보를 주는 시스템의 백엔드를 혼자 만들었습니다. 경희대 한의대와 캐나다 바이오 연구소가 함께한 국제 협업 과제였습니다.</p>
+  <dl class="meta">
+    <div><dt>기간</dt><dd>{{f:bio_period}}</dd></div>
+    <div><dt>소속과 형태</dt><dd>비전인사이드, 사내 과제</dd></div>
+    <div><dt>역할</dt><dd>백엔드 단독 개발 (프런트엔드는 다른 개발자)</dd></div>
+    <div><dt>기술</dt><dd>Python, FastAPI, MySQL, GATK, Docker, Harbor</dd></div>
+  </dl>
+</div>
+
+<div class="doc">
+  <nav class="toc" aria-label="이 페이지 목차">
+    <p>목차</p>
+    <a href="#result">결과</a><a href="#scope">맡은 범위</a><a href="#arch">구조</a><a href="#load">적재 방법</a><a href="#ref">레퍼런스</a><a href="#deploy">배포</a><a href="#limits">한계</a><a href="#proof">코드</a>
+  </nav>
+  <div>
+    <section id="result" aria-labelledby="h-result">
+      <h2 id="h-result">결과</h2>
+      <dl class="results">
+        <div><dt>{{f:bio_ref}}</dt><dd>적재한 공개 레퍼런스 원본 (dbSNP, 1000 Genomes 등)</dd></div>
+        <div><dt>4단계</dt><dd>(chrom, pos, ref, alt) 기준 SQL 조인으로 변이 주석</dd></div>
+        <div><dt>26개 집단</dt><dd>1000 Genomes 대립유전자 빈도 비교</dd></div>
+        <div><dt>단독 개발</dt><dd>변이 호출부터 API와 운영서버 배포까지</dd></div>
+      </dl>
+    </section>
+
+    <section id="scope" aria-labelledby="h-scope">
+      <h2 id="h-scope">맡은 범위</h2>
+      <div class="scope">
+        <div>
+          <h3>직접 한 일</h3>
+          <ul>
+            <li>변이 호출 파이프라인 (FASTQ → BWA → samtools → Picard → GATK → VCF)</li>
+            <li>고객 VCF·칩 array 입력 처리 (PyVCF)</li>
+            <li>공개 레퍼런스 적재와 4단계 SQL 주석</li>
+            <li>GWAS 오즈비 기반 질병·형질 위험점수, 집단별 빈도, 질환별 의약품·한약재 정보</li>
+            <li>FastAPI JSON API, Docker 배포, Harbor 사설 레지스트리, 도메인·HTTPS</li>
+            <li>한국과 캐나다 팀 사이의 기술 소통, 캐나다 연구소 디자이너와 요구사항 조율</li>
+          </ul>
+        </div>
+        <div>
+          <h3>다른 사람이 한 일</h3>
+          <ul class="muted">
+            <li>프런트엔드(React): 다른 개발자</li>
+            <li>화면 디자인: 캐나다 연구소 디자이너</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="arch" class="full" aria-labelledby="h-arch">
+      <h2 id="h-arch">구조</h2>
+      <div class="diagram" role="img" aria-label="시퀀싱 원본에서 변이 호출, 주석, 점수 계산, JSON API로 이어지는 흐름">
+        <div class="box"><b>입력</b><span>FASTQ, 또는 고객 VCF·칩 파일</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>변이 호출</b><span>BWA, samtools, Picard, GATK</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box core"><b>주석</b><span>dbSNP, GWAS Catalog, 1000 Genomes, UniProt</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>계산</b><span>위험점수, 집단 빈도, 의약품·한약재</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>서빙</b><span>FastAPI JSON API</span></div>
+      </div>
+    </section>
+
+    <section id="load" aria-labelledby="h-load">
+      <h2 id="h-load">적재 방법</h2>
+      <p>dbSNP 원본 VCF만 237 GB, 1000 Genomes 원본은 770 GB입니다. 그래서 염색체 단위로 파일을 나누고(sed, split), pandas 청크와 SQLAlchemy로 조금씩 나눠 적재했습니다. 주석은 (chrom, pos, ref, alt)를 기준으로 레퍼런스 테이블을 차례로 붙이는 4단계 SQL 조인입니다.</p>
+    </section>
+
+    <section id="ref" aria-labelledby="h-ref">
+      <h2 id="h-ref">레퍼런스</h2>
+      <div class="tablewrap">
+        <table class="data">
+          <caption>주석에 쓴 공개 데이터. 크기는 원본 기준</caption>
+          <thead><tr><th scope="col">데이터</th><th scope="col">쓰임</th><th scope="col" class="n">크기</th></tr></thead>
+          <tbody>
+            <tr><td>dbSNP (GRCh37, GRCh38)</td><td>변이 식별자와 위치</td><td class="n">237 GB</td></tr>
+            <tr><td>1000 Genomes</td><td>26개 집단 대립유전자 빈도</td><td class="n">770 GB</td></tr>
+            <tr><td>GWAS Catalog</td><td>질병·형질 연관과 오즈비</td><td class="n">–</td></tr>
+            <tr><td>UniProt</td><td>단백질 변이와 임상 의미</td><td class="n">–</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="deploy" aria-labelledby="h-deploy">
+      <h2 id="h-deploy">배포</h2>
+      <p>Korea IDC의 Ubuntu 운영서버에 Harbor 사설 레지스트리를 직접 구축하고(인증서, 도메인, Let's Encrypt), 이미지를 올려 Docker로 배포했습니다. 2023년 9월에는 웹 화면을 떼어 내고 프런트엔드가 쓰는 JSON API로 정리했습니다.</p>
+    </section>
+
+    <section id="limits" aria-labelledby="h-limits">
+      <h2 id="h-limits">한계</h2>
+      <ul class="note">
+        <li>위험도는 GWAS 오즈비·베타값을 쓰는 <b>규칙형 점수</b>입니다. 머신러닝 예측이 아닙니다.</li>
+        <li>질환과 한약을 잇는 LDA와 1D-CNN 모델은 <b>프로토타입 실험</b>에 그쳤습니다.</li>
+        <li>운영서버에 배포한 뒤에도 <b>내부 IP로만 접근</b>하게 두었습니다. 정식 서비스로 공개되지는 않았습니다.</li>
+      </ul>
+    </section>
+
+    <section id="proof" aria-labelledby="h-proof">
+      <h2 id="h-proof">코드</h2>
+      <p>비밀값을 걷어 낸 공개 정리본: <a href="https://github.com/zoocasso/bio_fastapi">github.com/zoocasso/bio_fastapi</a>. LDA 실험은 <a href="https://github.com/zoocasso/model_lda">github.com/zoocasso/model_lda</a>에 있습니다.</p>
+    </section>
+  </div>
+</div>
+<nav class="pager" aria-label="다른 작업"><a href="/work/kisti/">이전: KISTI 데이터 플랫폼</a><a href="/work/wjmax/">다음: WJMax 서버</a></nav>

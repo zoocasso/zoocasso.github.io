@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://zoocasso.github.io/sitemap.xml

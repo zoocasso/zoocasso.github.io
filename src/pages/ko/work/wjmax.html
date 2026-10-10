@@ -1,0 +1,49 @@
+<!--meta {"title": "WJMax 리듬게임 서버", "description": "커뮤니티 리듬게임 WJMax의 서버·DB·보안을 맡아 FastAPI, EC2, RDS MySQL, Cloudflare로 운영하고 업데이트 때 최대 약 2,000명 동시 접속을 받은 사이드 프로젝트.", "nav": "work"} -->
+<div class="doc-head">
+  <p class="crumb"><a href="/work/">작업</a> / WJMax 서버</p>
+  <h1>커뮤니티 리듬게임 WJMax의 서버, 업데이트 때 최대 {{f:wjmax_peak}} 동시 접속</h1>
+  <p class="lede">두 사람이 만든 커뮤니티 리듬게임에서 서버·DB·보안을 맡았습니다. 게임 클라이언트는 다른 한 명이 만들었습니다.</p>
+  <dl class="meta">
+    <div><dt>기간</dt><dd>{{f:wjmax_period}}</dd></div>
+    <div><dt>형태</dt><dd>사이드 프로젝트, 2인 팀</dd></div>
+    <div><dt>역할</dt><dd>서버·DB·보안 단독</dd></div>
+    <div><dt>기술</dt><dd>FastAPI, Docker, AWS EC2·RDS, Cloudflare</dd></div>
+  </dl>
+</div>
+
+<div class="doc">
+  <nav class="toc" aria-label="이 페이지 목차">
+    <p>목차</p>
+    <a href="#result">결과</a><a href="#arch">구조</a><a href="#proof">코드</a>
+  </nav>
+  <div>
+    <section id="result" aria-labelledby="h-result">
+      <h2 id="h-result">결과</h2>
+      <dl class="results">
+        <div><dt>{{f:wjmax_avg}}</dt><dd>평소 동시 접속</dd></div>
+        <div><dt>{{f:wjmax_peak}}</dt><dd>업데이트 때 최대 동시 접속</dd></div>
+      </dl>
+      <p class="muted" style="margin-top:12px;font-size:15px">운영 당시 기록 가운데 가장 이른 기록을 기준으로 했습니다.</p>
+    </section>
+
+    <section id="arch" class="full" aria-labelledby="h-arch">
+      <h2 id="h-arch">구조</h2>
+      <div class="diagram" role="img" aria-label="게임 클라이언트에서 Cloudflare, FastAPI 서버, RDS MySQL로 이어지는 흐름">
+        <div class="box"><b>게임 클라이언트</b><span>플레이 로그 전송</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>Cloudflare</b><span>프록시, WAF</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box core"><b>FastAPI</b><span>Docker, AWS EC2. 플레이 로그 수집 API</span></div>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
+        <div class="box"><b>RDS MySQL</b><span>AWS 관리형 DB</span></div>
+      </div>
+      <p style="margin-top:16px">서버 앞에는 Cloudflare 프록시와 WAF를 두었습니다. 서버는 FastAPI를 Docker로 묶어 EC2에 올렸고, 데이터베이스는 RDS MySQL을 썼습니다.</p>
+    </section>
+
+    <section id="proof" aria-labelledby="h-proof">
+      <h2 id="h-proof">코드</h2>
+      <p>비밀값을 걷어 낸 공개 정리본: <a href="https://github.com/zoocasso/wjmax-game-server">github.com/zoocasso/wjmax-game-server</a></p>
+    </section>
+  </div>
+</div>
+<nav class="pager" aria-label="다른 작업"><a href="/work/genomics/">이전: 유전체 변이 백엔드</a><a href="/work/">모든 작업</a></nav>
