@@ -1,7 +1,7 @@
 /* RIM page: two viewers on the ICCAS 2026 scene, rendered with the paper's Blender script at 8 x 8 views.
    Views: the 64 rendered views (1000 px); the pointer picks a viewpoint and the nearest view is shown. Refocus: 31 images reconstructed from the 64 views (shift-and-sum) at depths spaced evenly
-   from 0.36 to 1.55 m; the pointer picks the depth.
-   Both have a slider for the keyboard and move on their own while untouched. */
+   from 0.36 to 1.55 m; the slider picks the depth.
+   Both have a slider (the refocus viewer only that) and move on their own while untouched. */
 (() => {
 'use strict';
 const NP = 8, C = (NP - 1) / 2, NF = 31, Z0 = 0.36, Z1 = 1.55;
@@ -25,7 +25,7 @@ function viewer(fig, h) {
   cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', still.alt);
   still.hidden = true; cv.hidden = false;
   let last = -1e9, visible = false, raf = 0;
-  cv.addEventListener('pointermove', (e) => {
+  if (h.pointer) cv.addEventListener('pointermove', (e) => {
     if (e.pointerType !== 'mouse' && !e.pressure) return;
     const r = cv.getBoundingClientRect();
     h.pointer(Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)), Math.min(1, Math.max(0, (e.clientY - r.top) / r.height)));
@@ -86,7 +86,6 @@ async function refocus(fig) {
   let v = at(OBJ[0].z);
   viewer(fig, {
     size: S,
-    pointer(x) { v = span(x); },
     slider(t) { v = span(t); },
     auto(now) { v = at(OBJ[0].z) + (at(OBJ[4].z) - at(OBJ[0].z)) * (0.5 - 0.5 * Math.cos(2 * Math.PI * now / 9000)); input.value = String(Math.round((v - lo) / (hi - lo) * 100)); },
     draw() {

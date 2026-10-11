@@ -290,7 +290,8 @@ table.data tfoot td{color:var(--paper);font-weight:700;border-bottom:0}
 .fig.clear img{background:none;border:0}
 .viz .vizbox{position:relative;border:1px solid var(--rule);background:var(--plate);touch-action:pan-y}
 .viz .vizbox img{border:0}
-.viz canvas{display:block;width:100%;height:auto;aspect-ratio:1/1;cursor:crosshair}
+.viz canvas{display:block;width:100%;height:auto;aspect-ratio:1/1}
+.viz[data-viz=views] canvas{cursor:crosshair}
 .vmap.mini{right:8px;top:8px;grid-template-columns:repeat(8,6px);gap:2px;padding:5px}
 .vmap.mini i{width:6px;height:6px}
 .vmap.mini::after{content:none}
