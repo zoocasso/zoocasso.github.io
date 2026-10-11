@@ -78,6 +78,9 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 .dialog .ko{font-size:14.5px;line-height:1.55;color:var(--mute);min-height:1.55em;margin-top:2px}
 .dialog .ko.fade{animation:subin .35s ease-out}
 @keyframes subin{from{opacity:0}to{opacity:1}}
+.stage.waiting{cursor:pointer}
+.stage.waiting .dialog{animation:askclick 1.8s ease-in-out infinite}
+@keyframes askclick{50%{border-color:var(--brass);box-shadow:0 0 0 3px rgba(201,164,92,.18)}}
 .lab-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:12px var(--gutter) 14px;background:var(--bench);border-top:1px solid var(--rule)}
 .lab-tools .group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .lab-tools .btn{min-height:40px;padding:0 13px;font-size:14px;background:var(--veil)}

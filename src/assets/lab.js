@@ -114,6 +114,8 @@ const Snd = (() => {
   const live = () => on && ctx;
   return {
     get on() { return on; },
+    /* true only when the browser lets this page play sound before any click (e.g. a site the visitor uses often) */
+    autoplayOK() { init(); return !!ctx && ctx.state === 'running'; },
     async enable() {
       init(); if (!ctx) return false;
       try { await ctx.resume(); } catch (e) { return false; }
@@ -234,7 +236,8 @@ const Face = (() => {
 
 /* ================= dialogue: Japanese voice line, subtitle in the page language ================= */
 const L = {
-  greet: ['いらっしゃいませ！ レンズ研究所へようこそ。', { ko: '어서 오세요! 렌즈 연구실에 오신 걸 환영합니다.', en: 'Welcome to the lens lab!' }],
+  tap: ['画面をクリックすると、音といっしょに始まります。', { ko: '화면을 한 번 누르면 소리와 함께 시작해요.', en: 'Click anywhere to start, with sound.' }],
+  greet:['いらっしゃいませ！ レンズ研究所へようこそ。', { ko: '어서 오세요! 렌즈 연구실에 오신 걸 환영합니다.', en: 'Welcome to the lens lab!' }],
   intro: ['奥行きのある景色を、レンズで撮って元に戻してみますね。', { ko: '깊이가 다른 물체들이 놓인 장면을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "I'll capture a scene with depth through a lens array, then bring it back." }],
   A: ['まずは撮影。奥行きの違う物体からの光が、レンズを通って小さな像になります。', { ko: `먼저 찍습니다. 깊이가 다른 물체에서 나온 빛이 ${NL}×${NL}개 렌즈를 지나 저마다 작고 뒤집힌 영상을 만듭니다. 이것이 요소 영상입니다.`, en: `Capture. Light from objects at different depths passes ${NL}×${NL} lenses and forms small, flipped elemental images.` }],
   B: ['次は並べ替え。同じ位置のピクセルを集めると、ひとつの視点になります。', { ko: `다음은 재배열(RIM)입니다. 모든 렌즈에서 같은 자리의 픽셀만 모으면 한 방향에서 본 시점 영상 ${VIEWS}장이 돼요.`, en: `Rearrange (RIM). Taking the same pixel from every lens gives ${VIEWS} views, each from one direction.` }],
@@ -746,14 +749,23 @@ function atlasFromChart() {
   atlas.getContext('2d').drawImage(c, CELL, 0);
   return { atlas, names: [NAMES.bg, NAMES.chart, NAMES.bg, NAMES.bg], used: [1], first: 1, line: 'chart' };
 }
+/* before the first click the scene is alive but the story waits, so it can start with its sound */
+let waiting = false, waitTimer = 0;
+function endWait() { waiting = false; clearTimeout(waitTimer); stage.classList.remove('waiting'); }
+function opening(my) {
+  say('greet', () => { if (my === token) say('intro', () => { if (my === token) setTimeout(() => { if (my === token) playAll(my); }, 600); }); });
+}
 function useLayers(info, mode) {
   layers = { names: info.names, used: info.used, first: info.first };
   uploadAtlas(info.atlas);
   st.A = 0; st.B = 0; st.C = 0; st.cam = 0; st.D = 0; setDepthUI(false); steps(0);
   if (mode === 'still') return;
+  if (mode === 'wait' && !waiting) mode = 'opening'; // the click came while the scene was loading
+  if (mode !== 'wait') endWait();
   const my = ++token;
   if (reduce) { jumpToEnd(); return; }
-  if (mode === 'opening') { say('greet', () => { if (my === token) say('intro', () => { if (my === token) setTimeout(() => { if (my === token) playAll(my); }, 600); }); }); return; }
+  if (mode === 'wait') { Face.set('idle'); say('tap'); return; }
+  if (mode === 'opening') { opening(my); return; }
   sayLine(L[info.line] || L.load2, () => { if (my === token) playAll(my); });
 }
 const sceneURL = root.dataset.layers;
@@ -787,9 +799,11 @@ stage.addEventListener('drop', (e) => { e.preventDefault(); dragDepth = 0; drop.
 window.addEventListener('paste', (e) => { const f = [...(e.clipboardData?.files || [])].find((x) => x.type.startsWith('image/')); if (f) takeFile(f); });
 
 /* ================= sound: on by default ================= */
-/* Browsers only allow audio after the visitor's first click, tap or key press, so the sound is
-   "on" from the start and actually begins at that first gesture anywhere on the page. A visitor
-   who turns it off is remembered on this device. */
+/* Browsers only allow audio after the visitor's first click, tap or key press. So, like the
+   reference site, the robot first asks for a click and the story waits for it; the first gesture
+   anywhere on the page starts the music and the story together. If the browser already allows
+   sound, the story starts at once; if nobody clicks within a few seconds, it starts silently and
+   the sound joins at the first click. A visitor who turns the sound off is remembered on this device. */
 const soundBtn = q('[data-sound]'), soundHint = q('[data-sound-hint]');
 const soundText = { ko: ['소리 켜기', '소리 끄기'], en: ['Sound on', 'Sound off'] }[lang];
 let wantSound = true;
@@ -805,23 +819,32 @@ function startSound() {
   if (!wantSound || Snd.on) return;
   Snd.enable().then((ok) => { if (ok) Snd.chime(); soundUI(); });
 }
+function beginStory() {
+  if (!waiting) return;
+  endWait(); opening(++token);
+}
 const GESTURES = ['pointerdown', 'keydown', 'touchend'];
 function firstGesture(e) {
   if (e.target && e.target.closest && e.target.closest('[data-sound]')) return;
   GESTURES.forEach((t) => window.removeEventListener(t, firstGesture, true));
-  startSound();
+  startSound(); beginStory();
 }
 GESTURES.forEach((t) => window.addEventListener(t, firstGesture, true));
 soundBtn.addEventListener('click', () => {
   wantSound = !wantSound;
   try { localStorage.setItem('lab-sound', wantSound ? 'on' : 'off'); } catch (e) { /* storage unavailable */ }
   if (wantSound) startSound(); else Snd.disable();
-  soundUI();
+  soundUI(); beginStory();
 });
 soundUI();
 
-/* the layered sample scene stands in front of the lens array; the demo plays itself once the page is calm */
+/* the layered sample scene stands in front of the lens array */
 setDepthUI(false);
 start();
-loadScene(reduce ? 'still' : 'opening');
+if (reduce) loadScene('still');
+else if (wantSound && !Snd.autoplayOK()) {
+  waiting = true; stage.classList.add('waiting');
+  waitTimer = setTimeout(beginStory, 10000);
+  loadScene('wait');
+} else { startSound(); loadScene('opening'); }
 })();
