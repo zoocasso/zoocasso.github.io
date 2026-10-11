@@ -237,11 +237,10 @@ const Face = (() => {
 /* ================= dialogue: Japanese voice line, subtitle in the page language ================= */
 const L = {
   tap: ['画面をクリックすると、音といっしょに始まります。', { ko: '화면을 한 번 누르면 소리와 함께 시작해요.', en: 'Click anywhere to start, with sound.' }],
-  greet:['いらっしゃいませ！ レンズ研究所へようこそ。', { ko: '어서 오세요! 렌즈 연구실에 오신 걸 환영합니다.', en: 'Welcome to the lens lab!' }],
-  intro: ['奥行きのある景色を、レンズで撮って元に戻してみますね。', { ko: '깊이가 다른 물체들이 놓인 장면을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "I'll capture a scene with depth through a lens array, then bring it back." }],
+  greet: ['いらっしゃいませ！ 奥行きのある景色を、レンズで撮って元に戻してみますね。', { ko: '어서 오세요! 깊이가 다른 물체들을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "Welcome! I'll capture a scene with depth through a lens array, then bring it back." }],
   A: ['まずは撮影。奥行きの違う物体からの光が、レンズを通って小さな像になります。', { ko: `먼저 찍습니다. 깊이가 다른 물체에서 나온 빛이 ${NL}×${NL}개 렌즈를 지나 저마다 작고 뒤집힌 영상을 만듭니다. 이것이 요소 영상입니다.`, en: `Capture. Light from objects at different depths passes ${NL}×${NL} lenses and forms small, flipped elemental images.` }],
   B: ['次は並べ替え。同じ位置のピクセルを集めると、ひとつの視点になります。', { ko: `다음은 재배열(RIM)입니다. 모든 렌즈에서 같은 자리의 픽셀만 모으면 한 방향에서 본 시점 영상 ${VIEWS}장이 돼요.`, en: `Rearrange (RIM). Taking the same pixel from every lens gives ${VIEWS} views, each from one direction.` }],
-  C: ['最後に再構成。距離を変えると、ピントの合う物体が変わります。', { ko: `마지막으로 재구성입니다. 시점 영상 ${VIEWS}장을 거리에 맞춰 겹치는데, 거리를 바꾸면 초점이 맞는 물체가 바뀝니다.`, en: `Reconstruct. The ${VIEWS} views are overlapped by distance; change the distance and a different object comes into focus.` }],
+  C: ['最後に再構成。重ねる面を奥へ動かすと、その奥行きの物体がくっきり戻ります。', { ko: `마지막으로 재구성입니다. 시점 영상 ${VIEWS}장을 한 면에 겹치는데, 그 면을 뒤로 옮기면 그 깊이에 있던 물체가 선명하게 되살아나요.`, en: `Reconstruct. The ${VIEWS} views are overlapped on one plane; move the plane back and whatever stood at that depth comes back sharp.` }],
   done: ['ピクセルはひとつも失われていません。奥行きごとにピントを合わせ直せます。', { ko: `${fmt(COUNT)}개 픽셀을 하나도 버리지 않고, 깊이마다 초점을 다시 맞출 수 있어요.`, en: `Not one of the ${fmt(COUNT)} pixels was lost, and focus can be set at any depth.` }],
   idle: ['距離のつまみを動かしたり、画像を入れたりしてみてください。', { ko: '재구성 거리를 움직여 초점을 옮겨 보세요. 직접 이미지를 넣어도 됩니다.', en: 'Move the distance slider, or try your own image.' }],
   rev: ['逆再生もできます。一対一の並べ替えですから。', { ko: 'RIM은 일대일 재배열이라 픽셀 하나 잃지 않고 요소 영상으로 되돌아갑니다.', en: 'RIM is one-to-one, so the elemental images come back without losing a pixel.' }],
@@ -252,9 +251,9 @@ const L = {
   load1: ['画像、受け取りました！ 一枚の板として置きますね。', { ko: '이미지를 받았습니다! 배경을 가려내기 어려워 한 장의 판으로 세웠어요.', en: "Got it! The background was hard to separate, so it stands as one flat card." }]
 };
 const FOCUS = [
-  (n) => [`距離を手前に合わせると、${n.jp}がくっきり。`, { ko: `거리를 앞쪽에 맞추면 ${n.ko}에 초점이 맞고, 나머지는 흐려집니다.`, en: `Focus near: the ${n.en} is sharp, the rest blurs.` }],
-  (n) => [`もう少し奥へ。今度は${n.jp}。`, { ko: `조금 더 뒤로. 이번엔 ${n.ko}에 초점이 맞았어요.`, en: `A little further: now the ${n.en}.` }],
-  (n) => [`いちばん奥は${n.jp}。`, { ko: `가장 뒤의 ${n.ko}에도 맞출 수 있어요.`, en: `And the farthest: the ${n.en}.` }]
+  (n) => [`${n.jp}の位置で、くっきり。`, { ko: `${n.ko} 자리에서 선명해졌어요.`, en: `Sharp where the ${n.en} stood.` }],
+  (n) => [`もっと奥へ。${n.jp}。`, { ko: `더 뒤로 가면 ${n.ko}.`, en: `Further back: the ${n.en}.` }],
+  (n) => [`いちばん奥は${n.jp}。`, { ko: `가장 뒤의 ${n.ko}까지.`, en: `And the farthest: the ${n.en}.` }]
 ];
 const ej = q('.dialog .jp'), ek = q('.dialog .ko'), liveEl = q('[data-live]');
 let sayTimer = 0;
@@ -356,8 +355,9 @@ void main(){
   pos = mix(pos, plane(sai, uZs), b);
   pos.z += sin(3.14159 * b) * .22 * (.5 + .5 * dB);
   float cc = ease(lag(uC, length(uo) / (c * 1.4143), .4));
-  pos = mix(pos, plane(rec, uZs), cc);
-  pos.z += sin(3.14159 * cc) * .08;
+  // the views are overlapped on a plane in front of the lens array: shifting by d per view step
+  // brings back the layer at distance d * NP * ZS, so the plane is drawn at that depth in the scene
+  pos = mix(pos, plane(rec, -uD * uNP * uZs), cc);
   float dk = kap / uNP;
   float focus = 1. - smoothstep(0., .2, abs(uD - dk) / dk);
   float cells = mix(1., mix(uNP, 1., focus), cc);
@@ -382,8 +382,8 @@ void main(){
   o = vec4(a.rgb / a.a, clamp(a.a, 0., 1.));
 }`;
 const LV = `#version 300 es
-in vec3 aPos; uniform mat4 uVP;
-void main(){ gl_Position = uVP * vec4(aPos, 1.); }`;
+in vec3 aPos; uniform mat4 uVP; uniform float uZ;
+void main(){ gl_Position = uVP * vec4(aPos + vec3(0., 0., uZ), 1.); }`;
 const LF = `#version 300 es
 precision mediump float;
 uniform vec4 uCol; out vec4 o;
@@ -492,7 +492,8 @@ function camera(asp, now) {
   const ox = (ptr.sx * 1.05 + drift) * amp, oy = (ptr.sy * 0.62 + drift * 0.5) * amp;
   // the oblique view stands beside the camera body and looks through the lens array at the layered scene
   const eObl = small ? [2.0 + ox, 1.2 + oy, 4.6] : [2.6 + ox, 1.35 + oy, 3.9];
-  const tObl = [0, -0.1, -0.9];
+  // on phones the dialogue covers more of the stage, so the side view aims lower to lift the scene
+  const tObl = [0, small ? -0.5 : -0.1, -0.9];
   const eFr = [ox * 0.9, lift + oy * 0.9, ZS + fit];
   const proj = persp(FOV, asp, 0.05, 40);
   proj[8] = -shift;
@@ -504,7 +505,8 @@ function project(p, w, hh) {
   return [(x / ww * .5 + .5) * w, (1 - (y / ww * .5 + .5)) * hh];
 }
 const BG = [0x1c / 255, 0x20 / 255, 0x27 / 255];
-const tags = { obj: q('[data-tag=obj]'), lens: q('[data-tag=lens]'), sen: q('[data-tag=sen]') };
+const tags = { obj: q('[data-tag=obj]'), lens: q('[data-tag=lens]'), sen: q('[data-tag=sen]'), rec: q('[data-tag=rec]') };
+const recLabel = tags.rec.textContent;
 function draw(now) {
   const dpr = Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2);
   const cw = Math.max(1, Math.round(stage.clientWidth * dpr)), ch = Math.max(1, Math.round(stage.clientHeight * dpr));
@@ -547,17 +549,34 @@ function draw(now) {
       gl.disable(gl.BLEND);
     }
   }
-  const fade = 1 - easeIO(st.cam);
-  gl.useProgram(LN.p); gl.uniformMatrix4fv(LN.u.uVP, false, VP);
+  const fade = 1 - easeIO(st.cam), rc = hasImage ? easeIO(Math.min(1, st.C * 1.5)) : 0, zRec = -st.D * NP * ZS;
+  gl.useProgram(LN.p); gl.uniformMatrix4fv(LN.u.uVP, false, VP); gl.uniform1f(LN.u.uZ, 0);
   gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   gl.bindVertexArray(lineVAO);
-  if (fade > 0.01) { gl.uniform4f(LN.u.uCol, 0.79, 0.64, 0.36, 0.42 * fade); gl.drawArrays(gl.LINES, 0, gridCount); }
+  // the lens grid steps back while the reconstruction plane is shown through it
+  if (fade > 0.01) { gl.uniform4f(LN.u.uCol, 0.79, 0.64, 0.36, 0.42 * fade * (1 - 0.75 * rc)); gl.drawArrays(gl.LINES, 0, gridCount); }
   gl.uniform4f(LN.u.uCol, 0.79, 0.64, 0.36, 0.28 + 0.3 * fade);
   gl.drawArrays(gl.LINES, gridCount, 8);
+  if (rc > 0.01) {
+    // the same square outline, moved to the reconstruction plane
+    gl.uniform1f(LN.u.uZ, zRec - ZS); gl.uniform4f(LN.u.uCol, 0.89, 0.77, 0.5, 0.8 * rc);
+    gl.drawArrays(gl.LINES, gridCount, 8);
+  }
   gl.disable(gl.BLEND); gl.bindVertexArray(null);
   const sw = stage.clientWidth, shh = stage.clientHeight;
-  const place = (el, p) => { const s = project(p, sw, shh); el.style.transform = `translate(${s[0]}px, ${s[1] - 6}px) translate(0, -100%)`; el.style.opacity = fade.toFixed(2); };
-  place(tags.obj, [-h, h, -K[layers.first] * ZS]); place(tags.lens, [-h, h, 0]); place(tags.sen, [-h, h, ZS]);
+  const place = (el, p, o, right) => {
+    const s = project(p, sw, shh);
+    el.style.transform = `translate(${s[0]}px, ${s[1] - 6}px) translate(${right ? '-100%' : '0'}, -100%)`;
+    el.style.opacity = o.toFixed(2);
+  };
+  place(tags.obj, [-h, h, -K[layers.first] * ZS], fade * (1 - rc));
+  place(tags.lens, [-h, h, 0], fade); place(tags.sen, [-h, h, ZS], fade);
+  place(tags.rec, [h, h, zRec], fade * rc, true);
+  if (cta && !cta.hidden) {
+    // the link to the paper page sits just above the dialogue box, whatever its height
+    const b = Math.round(shh - dialogEl.offsetTop + 10);
+    if (b !== ctaBottom) { ctaBottom = b; cta.style.bottom = b + 'px'; }
+  }
   Face.frame(now);
 }
 let running = false, visible = true, raf = 0;
@@ -622,52 +641,62 @@ function setDepthUI(enabled) {
   const name = k >= 0 ? layers.names[k][lang] : '';
   depthOut.textContent = enabled ? (k >= 0 ? focusLabel(name) : pct + '%') : '–';
   depth.setAttribute('aria-valuetext', k >= 0 ? focusLabel(name) : `${pct}%`);
+  tags.rec.textContent = k >= 0 ? `${recLabel} · ${name}` : recLabel;
 }
+/* while reconstructing, the camera stands partway between the side view and the frontal one,
+   so the plane can be seen moving into the depth of the scene */
+const CAM_REC = 0.3;
+const cta = q('.lab-cta');
+let ctaBottom = -1;
+function finish() { root.classList.add('played'); if (cta) cta.hidden = false; }
+function unfinish() { root.classList.remove('played'); if (cta) cta.hidden = true; }
 const stepBtns = [...root.querySelectorAll('[data-step]')];
 function steps(n) { stepBtns.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.step) === n))); }
 async function doCapture(my) {
   steps(1); setDepthUI(false); Face.set('work'); say('A');
   st.B = 0; st.C = 0; st.cam = 0; st.A = 0;
-  await wait(500); if (my !== token) return false;
-  Snd.shutter(); Snd.motor(3.8);
-  await tween('A', 1, 3800, my); if (my !== token) return false;
-  await tween('cam', 1, 1500, my); return my === token;
+  await wait(300); if (my !== token) return false;
+  Snd.shutter(); Snd.motor(3.2);
+  await tween('A', 1, 3200, my); if (my !== token) return false;
+  await tween('cam', 1, 1200, my); return my === token;
 }
 async function doRim(my) {
   steps(2); setDepthUI(false); Face.set('work'); say('B');
   st.A = 1; st.cam = 1; st.C = 0; st.B = 0;
-  await wait(300); if (my !== token) return false;
-  Snd.ticks(16, 3.0); Snd.motor(3.2);
-  await tween('B', 1, 3200, my); return my === token;
+  await wait(250); if (my !== token) return false;
+  Snd.ticks(16, 2.6); Snd.motor(2.8);
+  await tween('B', 1, 2800, my); return my === token;
 }
 async function doRecon(my) {
   steps(3); Face.set('work'); say('C');
-  st.A = 1; st.cam = 1; st.B = 1; st.D = 0; st.C = 0;
-  await wait(300); if (my !== token) return false;
-  Snd.motor(2.2);
-  await tween('C', 1, 1800, my); if (my !== token) return false;
-  await wait(1200); if (my !== token) return false;
-  // walk the focus from the nearest layer to the farthest one
+  st.A = 1; st.B = 1; st.D = 0; st.C = 0; st.cam = 1;
+  await wait(250); if (my !== token) return false;
+  Snd.motor(2.0);
+  // the views leave the sensor for the reconstruction plane while the camera steps back to show the depth
+  await Promise.all([tween('C', 1, 1800, my), tween('cam', CAM_REC, 1800, my)]); if (my !== token) return false;
+  await wait(400); if (my !== token) return false;
+  // move the plane from the nearest layer to the farthest one
   for (let i = 0; i < layers.used.length; i++) {
     const k = layers.used[i];
-    await tween('D', K[k] / NP, 1500, my); if (my !== token) return false;
+    await tween('D', K[k] / NP, 1100, my); if (my !== token) return false;
     Snd.focus(); setDepthUI(true);
     await new Promise((r) => sayLine(FOCUS[Math.min(i, FOCUS.length - 1)](layers.names[k]), r)); if (my !== token) return false;
-    await wait(900); if (my !== token) return false;
+    await wait(500); if (my !== token) return false;
   }
-  await tween('D', K[layers.first] / NP, 1300, my); if (my !== token) return false;
-  setDepthUI(true); Face.set('happy');
+  await tween('D', K[layers.first] / NP, 1000, my); if (my !== token) return false;
+  setDepthUI(true); Face.set('happy'); finish();
   say('done', () => { if (my === token) setTimeout(() => { if (my === token) say('idle'); }, 2600); });
   return true;
 }
 async function playAll(my) {
+  unfinish();
   if (!(await doCapture(my))) return;
-  await wait(500); if (my !== token) return;
+  await wait(300); if (my !== token) return;
   if (!(await doRim(my))) return;
-  await wait(600); if (my !== token) return;
+  await wait(300); if (my !== token) return;
   await doRecon(my);
 }
-function jumpToEnd() { st.A = 1; st.cam = 1; st.B = 1; st.C = 1; st.D = K[layers.first] / NP; setDepthUI(true); steps(3); Face.set('happy'); say('done'); request(); }
+function jumpToEnd() { st.A = 1; st.cam = CAM_REC; st.B = 1; st.C = 1; st.D = K[layers.first] / NP; setDepthUI(true); steps(3); Face.set('happy'); finish(); say('done'); request(); }
 stepBtns.forEach((b) => b.addEventListener('click', () => {
   Snd.ui(); const my = ++token; const n = Number(b.dataset.step);
   if (n === 1) doCapture(my); else if (n === 2) doRim(my); else doRecon(my);
@@ -677,11 +706,11 @@ q('[data-reverse]').addEventListener('click', async () => {
   if (st.B === 0 && st.C === 0) { st.A = 1; st.cam = 1; st.B = 1; }
   setDepthUI(false); steps(2); Face.set('work'); say('rev');
   Snd.motor(st.C > 0 ? 4 : 2.6);
-  if (st.C > 0) { await tween('C', 0, 1400, my); if (my !== token) return; }
+  if (st.C > 0) { await Promise.all([tween('C', 0, 1400, my), tween('cam', 1, 1400, my)]); if (my !== token) return; }
   await tween('B', 0, 2600, my); if (my === token) Face.set('idle');
 });
 depth.addEventListener('input', () => {
-  token++; st.A = 1; st.B = 1; st.C = 1; st.cam = 1;
+  token++; st.A = 1; st.B = 1; st.C = 1; st.cam = CAM_REC;
   const before = focusedLayer();
   st.D = DMAX * Number(depth.value) / 100;
   setDepthUI(true); request();
@@ -753,7 +782,7 @@ function atlasFromChart() {
 let waiting = false, waitTimer = 0;
 function endWait() { waiting = false; clearTimeout(waitTimer); stage.classList.remove('waiting'); }
 function opening(my) {
-  say('greet', () => { if (my === token) say('intro', () => { if (my === token) setTimeout(() => { if (my === token) playAll(my); }, 600); }); });
+  say('greet', () => { if (my === token) setTimeout(() => { if (my === token) playAll(my); }, 400); });
 }
 function useLayers(info, mode) {
   layers = { names: info.names, used: info.used, first: info.first };
