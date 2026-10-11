@@ -8,6 +8,15 @@ Personal site of Hyeongju Lee (이형주), data and backend engineer and 3D visi
 The home page opens on a lens array lab: an image is captured through a simulated pinhole array,
 rearranged with RIM, and reconstructed at different depths, with synthesized music and sound.
 
+## Data
+
+The Lytro sample in the lab (`src/img/lytro-views-*.webp`, `src/img/lytro-depth-*.png`) is derived from
+the occlusions_26 light field of the Stanford Lytro Light Field Archive (A. S. Raj, M. Lowney, R. Shah,
+G. Wetzstein, 2016, http://lightfields.stanford.edu/LF2016.html). The central 8 × 8 views of the raw
+lens-array image were cropped to 368 × 368 lenses, resized to 128 and 64 lenses, colour-matched to the
+archive's processed image, and stored as a mosaic of views. The depth map is the per-lens refocus shift
+at which the 64 views agree best. The page credits the archive wherever the sample is shown.
+
 ## Layout
 
 | Path | What it holds |

@@ -58,11 +58,12 @@
 
     <section id="lab" aria-labelledby="h-lab">
       <h2 id="h-lab">How the home page lab is made</h2>
-      <p>The lab computes lens array capture, RIM and reconstruction in the browser and animates them. Only the capture step is a simplified model instead of a real camera.</p>
+      <p>The lab computes lens array capture, RIM and reconstruction in the browser and animates them. For the Blender scene and your own images the capture step is a simplified model; the Lytro sample uses data from a real camera.</p>
       <ul>
         <li><b>Sample scene</b>: the Blender scene from the ICCAS 2026 paper (one center view), split by object into four layers at different depths: the torus, the monkey head, the cone, sphere and cube, and the background. Each layer is a flat picture rather than a 3D model, so parts that were hidden behind other objects are empty.</li>
         <li><b>Capture</b>: a pinhole array model. For each sensor pixel, the ray through its lens center is traced back, and the colour of the first opaque layer it meets is recorded in that elemental-image pixel.</li>
         <li><b>Rearrangement and reconstruction</b>: RIM, which swaps (lens index, position under the lens), and reconstruction, which shifts the views by distance and averages them, follow the papers. When the distance matches a layer's depth, that layer's samples land back where they came from and it becomes sharp. On screen the reconstruction plane is drawn at the depth that distance stands for, so an object turns sharp as the plane passes where it stood.</li>
+        <li><b>Lytro sample</b>: the occlusions_26 scene from the Stanford Lytro Light Field Archive (Raj et al., 2016). From the raw lens-array image of a Lytro Illum (14 × 14 pixels per lens) the central 8 × 8 views are used, at 128 × 128 lenses (64 × 64 on phones). The capture was done by a real camera, so it is not simulated; in step 1 the points stand at the depth where the 64 views agree best. Rearrangement and reconstruction run on the real data.</li>
         <li><b>Your own image</b>: a single photo has no depth, so the edge colour is taken as background and the image is split into a subject layer and a background layer. If the background cannot be separated, it stands as one flat card. The image never leaves your browser.</li>
         <li><b>Sound</b>: the music, sound effects and robot voice are all synthesized by the browser.</li>
       </ul>
