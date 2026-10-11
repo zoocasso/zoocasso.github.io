@@ -10,12 +10,17 @@ rearranged with RIM, and reconstructed at different depths, with synthesized mus
 
 ## Data
 
-The Lytro sample in the lab (`src/img/lytro-views-*.webp`, `src/img/lytro-depth-*.png`) is derived from
-the occlusions_26 light field of the Stanford Lytro Light Field Archive (A. S. Raj, M. Lowney, R. Shah,
-G. Wetzstein, 2016, http://lightfields.stanford.edu/LF2016.html). The central 8 × 8 views of the raw
-lens-array image were cropped to 368 × 368 lenses, resized to 128 and 64 lenses, colour-matched to the
-archive's processed image, and stored as a mosaic of views. The depth map is the per-lens refocus shift
-at which the 64 views agree best. The page credits the archive wherever the sample is shown.
+The Lytro sample in the lab (`src/img/lytro-*`) comes from occlusions_26 of the Stanford Lytro Light Field
+Archive (A. S. Raj, M. Lowney, R. Shah, G. Wetzstein, 2016, http://lightfields.stanford.edu/LF2016.html),
+whose "RAW" file is the lenslet image decoded by Lytro's software (ESLF: 541 × 376 lenses, 14 × 14 pixels
+each, 16-bit). 128 × 128 lenses at lens (88, 60) are cut without resampling and the central 8 × 8 pixels
+of each lens are kept; one white point and gamma 1/2.2 map the values to 8-bit (lossless WebP). Phones get
+2 × 2 lenses averaged. `lytro-photo.webp` is the whole picture (central 8 × 8 of each lens averaged) and
+`lytro-eslf-zoom.webp` a 32 × 24-lens crop of the lenslet image at 1:1, for the zoom in step 1.
+`lytro-layers-*` hold a plane sweep of the same views (25 planes): the shifted-and-averaged image and a
+softmax of the view variance across planes, drawn as estimated depth layers and used for click-to-focus.
+The archive states no licence; the data is credited wherever it is shown and only a crop is used, for a
+non-commercial demonstration.
 
 The Blender sample (`src/img/lab-blender-*`) and the RIM page viewers (`src/img/iccas/`) come from the
 ICCAS 2026 scene rendered with the paper's script (`render_multiview.py`, unmodified apart from its

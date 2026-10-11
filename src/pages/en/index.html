@@ -23,11 +23,13 @@
     <div class="tag3d" data-tag="rec">Reconstruction plane</div>
     <div class="robot" aria-hidden="true"><canvas width="216" height="132"></canvas><span>レンズくん</span></div>
     <figure class="raybox" aria-hidden="true" hidden><svg viewBox="0 0 360 214"><text x="74" y="24" text-anchor="middle">one point</text><text x="194" y="24" text-anchor="middle">lens array</text><text x="240" y="24" text-anchor="middle">sensor</text><ellipse class="lens" cx="194" cy="49" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="77" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="105" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="133" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="161" rx="3.2" ry="12"/><rect class="cell" x="234" y="35" width="12" height="28"/><rect class="cell" x="234" y="63" width="12" height="28"/><rect class="cell" x="234" y="91" width="12" height="28"/><rect class="cell" x="234" y="119" width="12" height="28"/><rect class="cell" x="234" y="147" width="12" height="28"/><path class="ray r1" d="M74 105 L194 77 L234 67.67"/><rect class="hit h1" x="234" y="65.92" width="12" height="3.5"/><path class="ray r2" d="M74 105 L194 105 L234 105.00"/><rect class="hit h2" x="234" y="103.25" width="12" height="3.5"/><path class="ray r3" d="M74 105 L194 133 L234 142.33"/><rect class="hit h3" x="234" y="140.58" width="12" height="3.5"/><circle class="pt" cx="74" cy="105" r="5"/><text class="spot" x="254" y="74">upper</text><text class="spot" x="254" y="109">middle</text><text class="spot" x="254" y="144">lower</text><text x="10" y="192">The same point lands at a different spot</text><text x="10" y="207">under each lens: the spot is the direction.</text></svg></figure>
+    <figure class="lfzoom" aria-hidden="true" hidden><span class="badge">Measured · decoded lenslet image</span><canvas width="640" height="480"></canvas><figcaption>Lytro Illum lenslet image (decoded by Lytro's software): 14×14 pixels per lens; the central 8×8 (yellow) become the 8×8 views.</figcaption></figure>
+    <p class="laynote" data-laynote hidden><b>Estimated</b> · layers showing how well the 64 views agree at each depth (plane). Not measured 3D; the depth axis is disparity (px/view), not metres. Faint, spread-out areas are where the views do not settle on one depth.</p>
     <div class="vmap" aria-hidden="true" hidden data-label="Current view"></div>
     <div class="dialog" aria-hidden="true"><div class="jp" lang="ja"></div><div class="ko"></div></div>
     <a class="btn primary lab-cta" href="/en/research/rim/" hidden>Read about RIM</a>
     <div class="vh" aria-live="polite" data-live></div>
-    <p class="credit" data-credit hidden>Lytro data: Stanford Lytro Light Field Archive (Raj et al., 2016)</p>
+    <p class="credit" data-credit hidden>Lytro data: Stanford Lytro Light Field Archive, occlusions_26 (Raj et al., 2016) · cropped for non-commercial demonstration</p>
     <div class="drop" hidden>Drop it here to start</div>
     <figure class="fallback" hidden>
       <img src="/img/ei-synth-800.webp" width="800" height="450" alt="Elemental image of a 6 × 6 lens array synthesized with iRIM">
@@ -47,6 +49,7 @@
       <button class="btn" type="button" data-step="3">3 Reconstruct</button>
     </div>
     <button class="btn needs-gl" type="button" data-reverse>Reverse RIM</button>
+    <button class="btn needs-gl" type="button" data-layers-btn aria-pressed="false" hidden>Estimated depth layers</button>
     <div class="depth needs-gl">
       <label for="lab-depth">Distance</label>
       <input type="range" id="lab-depth" min="0" max="100" step="1" value="0" disabled data-depth>

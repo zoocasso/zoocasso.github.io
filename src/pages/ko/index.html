@@ -23,11 +23,13 @@
     <div class="tag3d" data-tag="rec">재구성 면</div>
     <div class="robot" aria-hidden="true"><canvas width="216" height="132"></canvas><span>レンズくん</span></div>
     <figure class="raybox" aria-hidden="true" hidden><svg viewBox="0 0 360 214"><text x="74" y="24" text-anchor="middle">물체의 한 점</text><text x="194" y="24" text-anchor="middle">렌즈 배열</text><text x="240" y="24" text-anchor="middle">센서</text><ellipse class="lens" cx="194" cy="49" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="77" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="105" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="133" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="161" rx="3.2" ry="12"/><rect class="cell" x="234" y="35" width="12" height="28"/><rect class="cell" x="234" y="63" width="12" height="28"/><rect class="cell" x="234" y="91" width="12" height="28"/><rect class="cell" x="234" y="119" width="12" height="28"/><rect class="cell" x="234" y="147" width="12" height="28"/><path class="ray r1" d="M74 105 L194 77 L234 67.67"/><rect class="hit h1" x="234" y="65.92" width="12" height="3.5"/><path class="ray r2" d="M74 105 L194 105 L234 105.00"/><rect class="hit h2" x="234" y="103.25" width="12" height="3.5"/><path class="ray r3" d="M74 105 L194 133 L234 142.33"/><rect class="hit h3" x="234" y="140.58" width="12" height="3.5"/><circle class="pt" cx="74" cy="105" r="5"/><text class="spot" x="254" y="74">위쪽</text><text class="spot" x="254" y="109">가운데</text><text class="spot" x="254" y="144">아래쪽</text><text x="10" y="192">같은 점이라도 렌즈마다 닿는 자리가 달라요.</text><text x="10" y="207">그 자리가 곧 빛이 들어온 방향입니다.</text></svg></figure>
+    <figure class="lfzoom" aria-hidden="true" hidden><span class="badge">실측 · 디코딩된 렌즈릿 영상</span><canvas width="640" height="480"></canvas><figcaption>Lytro Illum의 렌즈릿 영상(Lytro 소프트웨어가 디코딩). 렌즈마다 14×14 픽셀이고, 가운데 8×8(노란 칸)이 8×8개 시점이 됩니다.</figcaption></figure>
+    <p class="laynote" data-laynote hidden><b>추정</b> · 64개 시점이 깊이(평면)마다 얼마나 일치하는지 그린 층입니다. 측정한 3D가 아니며, 깊이 축은 미터가 아니라 시차(px/시점)입니다. 흐리게 퍼진 곳은 시점들이 한 깊이로 모이지 않은 곳입니다.</p>
     <div class="vmap" aria-hidden="true" hidden data-label="보고 있는 시점"></div>
     <div class="dialog" aria-hidden="true"><div class="jp" lang="ja"></div><div class="ko"></div></div>
     <a class="btn primary lab-cta" href="/research/rim/" hidden>RIM 연구 자세히 보기</a>
     <div class="vh" aria-live="polite" data-live></div>
-    <p class="credit" data-credit hidden>Lytro 데이터: Stanford Lytro Light Field Archive (Raj 외, 2016)</p>
+    <p class="credit" data-credit hidden>Lytro 데이터: Stanford Lytro Light Field Archive, occlusions_26 (Raj 외, 2016) · 일부를 잘라 비상업적 시연에 사용</p>
     <div class="drop" hidden>여기에 놓으면 시작합니다</div>
     <figure class="fallback" hidden>
       <img src="/img/ei-synth-800.webp" width="800" height="450" alt="iRIM으로 합성한 6×6 렌즈 배열 요소 영상">
@@ -47,6 +49,7 @@
       <button class="btn" type="button" data-step="3">3 재구성</button>
     </div>
     <button class="btn needs-gl" type="button" data-reverse>RIM 되돌리기</button>
+    <button class="btn needs-gl" type="button" data-layers-btn aria-pressed="false" hidden>추정 깊이 층</button>
     <div class="depth needs-gl">
       <label for="lab-depth">재구성 거리</label>
       <input type="range" id="lab-depth" min="0" max="100" step="1" value="0" disabled data-depth>

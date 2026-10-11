@@ -241,7 +241,7 @@ const L = {
   tap: ['画面をクリックすると、音といっしょに始まります。', { ko: '화면을 한 번 누르면 소리와 함께 시작해요.', en: 'Click anywhere to start, with sound.' }],
   greet: ['いらっしゃいませ！ 奥行きのある景色を、レンズで撮って元に戻してみますね。', { ko: '어서 오세요! 깊이가 다른 물체들을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "Welcome! I'll capture a scene with depth through a lens array, then bring it back." }],
   A: () => scene.kind === 'lytro'
-    ? ['本物のLytroカメラのデータです。光がレンズを通って、小さな像になります。', { ko: `실제 Lytro 카메라 데이터입니다. 점들은 라이트필드에서 추정한 깊이에 놓았고, 그 빛이 ${NL}×${NL}개 렌즈를 지나 요소 영상이 됩니다.`, en: `Real Lytro data. The points sit at the depth estimated from the light field; their light passes ${NL}×${NL} lenses into elemental images.` }]
+    ? ['本物のLytroが記録した画像です。拡大すると、レンズごとに小さな丸い像があります。', { ko: '이건 실제 Lytro 카메라가 센서에 기록한 영상이에요. 확대하면 렌즈마다 작고 둥근 영상이 있고, 그 가운데 8×8 픽셀이 8×8개 시점이 됩니다. 3D 형상이 없으니 촬영은 흉내 내지 않아요.', en: 'This is what a real Lytro camera recorded on its sensor. Zoom in and each lens holds a small round image; its central 8×8 pixels become the 8×8 views. There is no 3D shape here, so the capture is not simulated.' }]
     : scene.kind === 'blender'
     ? ['では全体を撮影。すべての点の光がレンズを通って、小さな像になります。', { ko: `이제 장면 전체를 찍습니다. 모든 점의 빛이 ${NL}×${NL}개 렌즈를 지나, 렌즈마다 작고 뒤집힌 영상이 생겨요. 블렌더로 렌더링한 8×8 시점 영상을 요소 영상으로 바꾼 것입니다.`, en: `Now the whole scene: light from every point passes ${NL}×${NL} lenses, and each lens forms a small, flipped elemental image, built here from 8×8 views rendered in Blender.` }]
     : ['では全体を撮影。すべての点の光がレンズを通って、小さな像になります。', { ko: `이제 장면 전체를 찍습니다. 모든 점의 빛이 ${NL}×${NL}개 렌즈를 지나, 렌즈마다 작고 뒤집힌 영상이 생겨요. 이것이 요소 영상입니다.`, en: `Now the whole scene: light from every point passes ${NL}×${NL} lenses, and each lens forms a small, flipped elemental image.` }],
@@ -250,12 +250,17 @@ const L = {
   views: ['ほら、視点ごとに手前と奥のずれ方がちがいます。', { ko: '보세요. 시점마다 앞의 물체와 뒤의 물체가 서로 다르게 움직여요. 같은 그림이 아니라 서로 다른 방향에서 본 영상입니다.', en: 'Look: from view to view, near and far objects move differently. They are not copies but views from different directions.' }],
   C: ['最後に再構成。重ねる面を奥へ動かすと、その奥行きの物体がくっきり戻ります。', { ko: `마지막으로 재구성입니다. 시점 영상 ${VIEWS}장을 한 면에 겹치는데, 그 면을 뒤로 옮기면 그 깊이에 있던 물체가 선명하게 되살아나요.`, en: `Reconstruct. The ${VIEWS} views are overlapped on one plane; move the plane back and whatever stood at that depth comes back sharp.` }],
   done: () => ['ピクセルはひとつも失われていません。奥行きごとにピントを合わせ直せます。', { ko: `${fmt(COUNT)}개 픽셀을 하나도 버리지 않고, 깊이마다 초점을 다시 맞출 수 있어요.`, en: `Not one of the ${fmt(COUNT)} pixels was lost, and focus can be set at any depth.` }],
-  idle: ['距離のつまみを動かしてみてください。並べ替えのあとは、マウスで視点も変えられます。', { ko: '재구성 거리를 움직여 초점을 옮겨 보세요. "2 재배열"을 누른 뒤 화면 위에서 마우스를 움직이면 시점도 바꿔 볼 수 있어요.', en: 'Move the distance slider. After "2 Rearrange", move the mouse over the stage to change the view.' }],
+  idle: () => scene.kind === 'lytro'
+    ? ['画面を押すと、その場所にピントを合わせます。', { ko: '화면을 누르면 그 자리에 초점이 맞아요. "추정 깊이 층"을 켜면 시점들이 어느 깊이에서 잘 맞는지 볼 수 있어요.', en: 'Click the picture to focus there. Turn on "Estimated depth layers" to see at which depths the views agree.' }]
+    : ['距離のつまみを動かしてみてください。並べ替えのあとは、マウスで視点も変えられます。', { ko: '재구성 거리를 움직여 초점을 옮겨 보세요. "2 재배열"을 누른 뒤 화면 위에서 마우스를 움직이면 시점도 바꿔 볼 수 있어요.', en: 'Move the distance slider. After "2 Rearrange", move the mouse over the stage to change the view.' }],
+  lay: ['視点がよく合う奥行きを、層にして広げました。推定ですよ。', { ko: '64개 시점이 깊이마다 얼마나 잘 맞는지를 층으로 펼쳤어요. 측정한 3D가 아니라 추정이라, 애매한 곳은 여러 층에 흐리게 퍼집니다.', en: 'How well the 64 views agree at each depth, spread out as layers. This is an estimate, not measured 3D, so ambiguous places spread faintly over several layers.' }],
+  flat: ['ここは模様がなくて、どの奥行きでも同じくらい合います。', { ko: '여기는 무늬가 거의 없어서, 시점들이 어느 깊이에서든 비슷하게 맞아요. 이런 곳에서는 초점을 고를 수 없어요.', en: 'There is almost no texture here, so the views match about equally at every depth; no focus can be chosen from this spot.' }],
+  pickf: ['ここで視点がいちばんよく合う面に、ピントを合わせました。', { ko: '누른 자리에서 시점들이 가장 잘 맞는 면으로 초점을 옮겼어요.', en: 'Focus moved to the plane where the views agree best at that spot.' }],
   rev: ['逆再生もできます。一対一の並べ替えですから。', { ko: 'RIM은 일대일 재배열이라 픽셀 하나 잃지 않고 요소 영상으로 되돌아갑니다.', en: 'RIM is one-to-one, so the elemental images come back without losing a pixel.' }],
   bad: ['あれ？ この画像は開けませんでした。', { ko: '이 파일은 열 수 없어요. JPG, PNG, WebP 이미지를 넣어 주세요.', en: "I can't open this file. Try a JPG, PNG or WebP image." }],
   load2: ['画像、受け取りました！ 主役と背景の二層に分けますね。', { ko: '이미지를 받았습니다! 가장자리 색을 배경으로 보고, 주인공과 배경 두 층으로 세웠어요.', en: 'Got it! I split it into a subject layer and a background layer using the edge colour.' }],
   scene: ['ブレンダーの景色です。8×8の視点から描きました。', { ko: '블렌더로 8×8 시점을 렌더링한 장면이에요. 앞에서부터 원숭이 머리, 원환체, 정육면체, 원뿔, 구가 놓여 있습니다.', en: 'A scene rendered in Blender from 8×8 viewpoints: monkey head, torus, cube, cone and sphere, from near to far.' }],
-  lytro: ['スタンフォードのLytroデータです。本物のカメラで撮った景色ですよ。', { ko: '실제 Lytro 라이트필드 카메라로 찍은 장면이에요. Stanford Lytro Light Field Archive의 데이터입니다.', en: 'A real scene shot with a Lytro light-field camera, from the Stanford Lytro Light Field Archive.' }],
+  lytro: ['スタンフォードのLytroデータです。本物のカメラで撮った景色ですよ。', { ko: '실제 Lytro 라이트필드 카메라로 찍은 장면이에요. Stanford Lytro Light Field Archive의 사진에서, 정지 표지판을 나뭇가지가 가리는 부분을 렌즈 128×128개만큼 잘라 왔어요.', en: 'A real scene shot with a Lytro light-field camera, from the Stanford Lytro Light Field Archive: 128×128 lenses cut from the photo where a branch hides part of a stop sign.' }],
   load1: ['画像、受け取りました！ 一枚の板として置きますね。', { ko: '이미지를 받았습니다! 배경을 가려내기 어려워 한 장의 판으로 세웠어요.', en: "Got it! The background was hard to separate, so it stands as one flat card." }]
 };
 const FOCUS = [
@@ -410,11 +415,41 @@ void main(){ vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2); gl_Position
 const QF = `#version 300 es
 precision highp float;
 uniform sampler2D uAcc;
+uniform float uOp;
 out vec4 o;
 void main(){
   vec4 a = texelFetch(uAcc, ivec2(gl_FragCoord.xy), 0);
   if (a.a <= 0.) discard;
-  o = vec4(a.rgb / a.a, clamp(a.a, 0., 1.));
+  o = vec4(a.rgb / a.a, clamp(a.a, 0., 1.) * uOp);
+}`;
+/* estimated depth layers (real light field): one quad per plane of the plane sweep, far ones first.
+   Colour: the views shifted to that plane and averaged; weight: how well the 64 views agree there,
+   relative to the other planes (softmax of the variance), so a clear match stands on one layer and an
+   ambiguous one spreads thinly over several. The layer at the slider's depth is drawn brighter. */
+const YV = `#version 300 es
+uniform mat4 uVP; uniform float uW, uZa, uZb, uK0, uK1, uN;
+out vec2 vUV; flat out int vK; out float vD;
+void main(){
+  vec2 Q[6] = vec2[6](vec2(0., 0.), vec2(1., 0.), vec2(1., 1.), vec2(0., 0.), vec2(1., 1.), vec2(0., 1.));
+  int k = int(uN) - 1 - gl_InstanceID;
+  float d = uK0 + (uK1 - uK0) * float(k) / (uN - 1.);
+  vec2 n = Q[gl_VertexID];
+  vUV = n; vK = k; vD = d;
+  gl_Position = uVP * vec4((n.x - .5) * uW, (.5 - n.y) * uW, uZa + uZb * d, 1.);
+}`;
+const YF = `#version 300 es
+precision highp float;
+uniform sampler2D uLay, uLayA; uniform float uNL, uCols, uFade, uDsel, uK0, uK1;
+in vec2 vUV; flat in int vK; in float vD; out vec4 o;
+void main(){
+  ivec2 cell = ivec2(vK % int(uCols), vK / int(uCols));
+  ivec2 t = cell * int(uNL) + ivec2(min(floor(vUV * uNL), vec2(uNL - 1.)));
+  vec3 c = texelFetch(uLay, t, 0).rgb;
+  float a = texelFetch(uLayA, t, 0).r;
+  float sel = exp(-pow((vD - uDsel) / (.06 * (uK1 - uK0)), 2.));
+  float g = uFade * mix(.5, 1., sel);
+  if (a * g < .004) discard;
+  o = vec4(c * a * g, a * g);
 }`;
 const LV = `#version 300 es
 in vec3 aPos; uniform mat4 uVP; uniform float uZ;
@@ -450,8 +485,8 @@ void main(){
   vec3 col = vK > .5 ? vec3(.89, .77, .5) : mix(vec3(.62, .64, .68), vec3(.95, .82, .55), vG);
   o = vec4(col, vA * (vK > .5 ? smoothstep(.5, 0., d) : smoothstep(.5, .3, d)));
 }`;
-let P, Q, LN, E;
-try { P = prog(PV, PF); Q = prog(QV, QF); LN = prog(LV, LF); E = prog(EV, EF); }
+let P, Q, LN, E, Y;
+try { P = prog(PV, PF); Q = prog(QV, QF); LN = prog(LV, LF); E = prog(EV, EF); Y = prog(YV, YF); }
 catch (err) { fallback(); return; }
 const emptyVAO = gl.createVertexArray();
 
@@ -547,7 +582,7 @@ const easeIO = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const lerp = (a, b, t) => a + (b - a) * t;
 const lerp3 = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
 
-const st = { A: 0, B: 0, C: 0, D: 0, cam: 0, ray: 0, V: 0, vt: 0 };
+const st = { A: 0, B: 0, C: 0, D: 0, cam: 0, ray: 0, V: 0, vt: 0, Lay: 0 };
 const ptr = { x: 0, y: 0, sx: 0, sy: 0, tx: 0, ty: 0, mx: 0, my: 0, ma: 0, inside: false };
 let VP = null, P11 = 1, hasImage = false;
 const T0 = performance.now();
@@ -631,7 +666,19 @@ function draw(now) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
       gl.useProgram(Q.p); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, accTex); gl.uniform1i(Q.u.uAcc, 0);
+      gl.uniform1f(Q.u.uOp, 1 - easeIO(st.Lay));
       gl.bindVertexArray(emptyVAO); gl.drawArrays(gl.TRIANGLES, 0, 3);
+      gl.disable(gl.BLEND);
+    }
+    if (st.Lay > 0.001 && layTex) {
+      gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      gl.useProgram(Y.p); gl.uniformMatrix4fv(Y.u.uVP, false, VP);
+      gl.uniform1f(Y.u.uW, W); gl.uniform1f(Y.u.uZa, scene.za); gl.uniform1f(Y.u.uZb, scene.zb);
+      gl.uniform1f(Y.u.uK0, LYTRO.k0); gl.uniform1f(Y.u.uK1, LYTRO.k1); gl.uniform1f(Y.u.uN, LAYERS);
+      gl.uniform1f(Y.u.uNL, NL); gl.uniform1f(Y.u.uCols, LAYER_COLS); gl.uniform1f(Y.u.uFade, easeIO(st.Lay)); gl.uniform1f(Y.u.uDsel, st.D);
+      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, layTex); gl.uniform1i(Y.u.uLay, 0);
+      gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, layATex); gl.uniform1i(Y.u.uLayA, 1); gl.activeTexture(gl.TEXTURE0);
+      gl.bindVertexArray(emptyVAO); gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, LAYERS);
       gl.disable(gl.BLEND);
     }
   }
@@ -660,7 +707,7 @@ function draw(now) {
   // where no name hides behind the robot, the ray diagram or the dialogue box or overlaps another name
   // (which spot is free depends on the screen width); it is kept while it stays clear, so names do not jump
   const sr = stage.getBoundingClientRect();
-  const boxes = [robotEl, raybox && !raybox.hidden ? raybox : null, dialogEl].filter(Boolean).map((el) => {
+  const boxes = [robotEl, raybox, lfzoom, laynote, dialogEl].filter((el) => el && !el.hidden).map((el) => {
     const r = el.getBoundingClientRect(); return [r.left - sr.left, r.top - sr.top, r.right - sr.left, r.bottom - sr.top];
   });
   const hit = (r, list) => list.some((b) => r[0] < b[2] && r[2] > b[0] && r[1] < b[3] && r[3] > b[1]);
@@ -674,7 +721,8 @@ function draw(now) {
     p.el.style.transform = `translate(${p.s[0]}px, ${p.s[1] + (cy > 0 ? -6 : 6)}px) translate(${cx >= 0 ? '-100%' : '0'}, ${cy > 0 ? '-100%' : '0'})`;
     p.el.style.opacity = o.toFixed(2);
   };
-  const group = [[tags.obj, scene.za + scene.zb * scene.targets[0].d], [tags.lens, 0], [tags.sen, ZS]];
+  const group = [...(scene.kind === 'lytro' ? [] : [[tags.obj, scene.za + scene.zb * scene.targets[0].d]]), [tags.lens, 0], [tags.sen, ZS]];
+  if (scene.kind === 'lytro') tags.obj.style.opacity = '0';
   if (fade > 0.01 && tags.lens.offsetWidth) {
     let best = null;
     for (const k of [spotK, ...SPOTS.keys()]) {
@@ -691,7 +739,7 @@ function draw(now) {
     best.ps.forEach((p, i) => {
       const ok = !hit(p.r, boxes) && !hit(p.r, shown);
       if (ok) shown.push(p.r);
-      put(p, ok ? (i === 0 ? fade * (1 - rc) : fade) : 0);
+      put(p, ok ? (p.el === tags.obj ? fade * (1 - rc) : fade) : 0);
     });
   } else group.forEach(([el]) => { el.style.opacity = '0'; });
   if (fade * rc > 0.01 && tags.rec.offsetWidth) {
@@ -764,9 +812,9 @@ const NAMES = {
   bg: { ko: '배경', jp: '背景', en: 'background' },
   subject: { ko: '주인공', jp: '主役', en: 'subject' },
   card: { ko: '이미지', jp: '画像', en: 'image' },
-  bush: { ko: '앞쪽 덤불', jp: '手前の茂み', en: 'bushes in front' },
+  bush: { ko: '앞쪽 나뭇가지', jp: '手前の枝', en: 'branch in front' },
   stop: { ko: '정지 표지판', jp: '止まれの標識', en: 'stop sign' },
-  building: { ko: '건물과 차', jp: '建物と車', en: 'building and cars' }
+  building: { ko: '차와 건물', jp: '車と建物', en: 'cars and building' }
 };
 /* a scene says where focus can go: targets (depth d, name) from near to far, the slider range, and
    how a depth maps to a distance in front of the lens array (z = za + zb * d) */
@@ -774,14 +822,21 @@ function synthScene(names, used, point) {
   return { kind: 'synth', real: false, nl: NL_SIM, targets: used.map((k) => ({ d: K[k] / NP, name: names[k] })),
     dMin: 0, dMax: K[3] / NP * 1.1, za: 0, zb: -NP * ZS, tol: 0.05, point: point || [0.5, 0.5] };
 }
-/* Lytro sample (Stanford Lytro Light Field Archive, occlusions_26): depths in lens units at this lens
-   count, measured offline where the 64 views agree best; lo/hi is the range stored in the depth map */
-const LYTRO = { 128: { lo: -0.3478, hi: 0.3478, d: [-0.1739, 0.0696, 0.2957] }, 64: { lo: -0.1407, hi: 0.1739, d: [-0.087, 0.0348, 0.1478] } }[NL_REAL];
+/* Lytro sample (Stanford Lytro Light Field Archive, occlusions_26). The archive's decoded lenslet image
+   has 541 x 376 lenses with 14 x 14 pixels under each; 128 x 128 lenses are cut from it without
+   resampling and the central 8 x 8 pixels of each are used (phones: 2 x 2 lenses averaged). There is no
+   3D shape, so nothing is placed in space: the capture starts on the sensor. d: shift per view step
+   (lens units) of the three focus stops, where the 64 views agree best over the branch, the sign and the
+   cars behind. Layers: the planes of the plane sweep (k0 ... k1) drawn as the estimated depth layers;
+   depth along the stack is this shift (disparity), not metres. */
+const LYTRO = { 128: { d: [-0.5, 0.2, 0.6], k0: -1.2, k1: 1.2 }, 64: { d: [-0.2, 0.1, 0.3], k0: -0.6, k1: 0.6 } }[NL_REAL];
+const LAYERS = 25, LAYER_COLS = 5;
+const layerD = (k) => LYTRO.k0 + (LYTRO.k1 - LYTRO.k0) * k / (LAYERS - 1);
 function lytroScene() {
   const d = LYTRO.d, names = [NAMES.bush, NAMES.stop, NAMES.building], span = d[2] - d[0];
   const zNear = -K[0] * ZS, zFar = -K[2] * ZS, zb = (zFar - zNear) / span;
   return { kind: 'lytro', real: true, nl: NL_REAL, targets: d.map((x, i) => ({ d: x, name: names[i] })),
-    dMin: d[0] - span * 0.25, dMax: d[2] + span * 0.25, za: zNear - zb * d[0], zb, tol: span * 0.06, lo: LYTRO.lo, hi: LYTRO.hi, point: [0.5, 0.5] };
+    dMin: LYTRO.k0, dMax: LYTRO.k1, za: zNear - zb * d[0], zb, tol: span * 0.06, point: [0.5, 0.5] };
 }
 /* Blender sample: the ICCAS 2026 scene rendered from 8 x 8 cameras (the paper's script), with a depth
    pass for every view. A camera array shifts near objects most; each view was shifted to line the
@@ -839,15 +894,141 @@ const stepBtns = [...root.querySelectorAll('[data-step]')];
 function steps(n) { stepBtns.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.step) === n))); }
 /* the diagram beside the robot: one point, three lenses, and where the light lands under each */
 const raybox = q('.raybox');
+/* step 1 of the real capture: the whole photo (each lens's central 8 x 8 averaged), then the 128 x 128
+   lenses used, then the decoded lenslet image itself at 14 pixels per lens, with one lens's central
+   8 x 8 outlined: those are the 8 x 8 views */
+const lfzoom = q('.lfzoom'), lfc = lfzoom && lfzoom.querySelector('canvas');
+const LFZ = { all: [541, 376], crop: [88, 60, 128], zoom: [88 + 26, 60 + 34, 32, 24] };
+let lfImgs = null, lfRaf = 0;
+function lfDraw(t) {
+  const g = lfc.getContext('2d'), Wc = lfc.width, Hc = lfc.height, asp = Wc / Hc;
+  const [zx, zy, zw, zh] = LFZ.zoom, [cx0, cy0, cn] = LFZ.crop;
+  const fit = (x, y, w, h) => { const ww = Math.max(w, h * asp); return [x + w / 2 - ww / 2, y + h / 2 - ww / asp / 2, ww]; };
+  // the lens outlined at the end (one whose small image shows an edge of the sign letters behind the
+  // branch), and a view about ten lenses wide around it
+  const lx = zx + 9, ly = zy + 15, R2 = [lx + .5 - 5, ly + .5 - 5 / asp, 10];
+  const R0 = fit(0, 0, LFZ.all[0], LFZ.all[1]), R1 = fit(cx0, cy0, cn, cn);
+  const e = (a, b, k) => a.map((v, i) => v + (b[i] - v) * easeIO(Math.min(1, Math.max(0, k))));
+  const R = t < .45 ? e(R0, R1, (t - .1) / .3) : e(R1, R2, (t - .5) / .3);
+  const [x, y, w] = R, h = w / asp, s = Wc / w;
+  g.fillStyle = '#0e1013'; g.fillRect(0, 0, Wc, Hc);
+  g.imageSmoothingEnabled = true; g.drawImage(lfImgs.photo, x, y, w, h, 0, 0, Wc, Hc);
+  // the decoded lenslet image takes over once single lenses are a few pixels wide
+  const k = Math.min(1, Math.max(0, (70 - w) / 30));
+  if (k > 0) {
+    g.globalAlpha = k; g.imageSmoothingEnabled = false;
+    g.drawImage(lfImgs.zoom, 0, 0, zw * 14, zh * 14, (zx - x) * s, (zy - y) * s, zw * s, zh * s);
+    g.globalAlpha = 1;
+  }
+  g.lineWidth = 2; g.strokeStyle = '#e3c27f';
+  if (w > 150) g.strokeRect((cx0 - x) * s, (cy0 - y) * s, cn * s, cn * s);
+  else if (w > 16) g.strokeRect((R2[0] - x) * s, (R2[1] - y) * s, 10 * s, 10 / asp * s);
+  if (t > .85) {
+    // one lens: its 14 x 14 pixels, and the central 8 x 8 that are used
+    const a = Math.min(1, (t - .85) / .08);
+    g.globalAlpha = a; g.lineWidth = 1.5; g.strokeStyle = '#ece8df';
+    g.strokeRect((lx - x) * s, (ly - y) * s, s, s);
+    g.strokeStyle = '#e3c27f'; g.lineWidth = 2;
+    g.strokeRect((lx - x + 3 / 14) * s, (ly - y + 3 / 14) * s, 8 / 14 * s, 8 / 14 * s);
+    g.globalAlpha = 1;
+  }
+}
+function lfZoom(on) {
+  if (!lfzoom) return;
+  cancelAnimationFrame(lfRaf);
+  lfzoom.hidden = !(on && lfImgs);
+  if (lfzoom.hidden) return;
+  const t0 = performance.now(), dur = 6800;
+  const frame = (now) => {
+    const t = reduce ? 1 : Math.min(1, (now - t0) / dur);
+    lfDraw(t);
+    if (t < 1 && !lfzoom.hidden) lfRaf = requestAnimationFrame(frame);
+  };
+  lfRaf = requestAnimationFrame(frame);
+}
+/* step 3 of the real capture: the estimated depth layers, switched on by the visitor */
+const layBtn = q('[data-layers-btn]'), laynote = q('[data-laynote]');
+function layersOff() {
+  st.Lay = 0;
+  if (layBtn) layBtn.setAttribute('aria-pressed', 'false');
+  if (laynote) laynote.hidden = true;
+}
+if (layBtn) layBtn.addEventListener('click', async () => {
+  Snd.ui(); const my = ++token, on = layBtn.getAttribute('aria-pressed') !== 'true';
+  layBtn.setAttribute('aria-pressed', String(on)); laynote.hidden = !on;
+  lfZoom(false); viewDrive = false; st.A = 1; st.B = 1; st.V = 0;
+  if (st.C < 1) { steps(3); await tween('C', 1, 900, my); if (my !== token) return; }
+  setDepthUI(true); finish();
+  if (on) say('lay');
+  await Promise.all([tween('Lay', on ? 1 : 0, 1300, my), tween('cam', on ? 0.02 : CAM_REC, 1300, my)]);
+});
+/* click-to-focus on the reconstruction of the real capture: the click is followed onto the plane in
+   view, and the focus goes to the layer where the 64 views agree best in the 5 x 5 lenses around it
+   (the same agreement as the depth layers); every pixel shown is still an average of captured views */
+function inv4(m) {
+  const a = m, o = new Array(16);
+  const b00 = a[0] * a[5] - a[1] * a[4], b01 = a[0] * a[6] - a[2] * a[4], b02 = a[0] * a[7] - a[3] * a[4], b03 = a[1] * a[6] - a[2] * a[5];
+  const b04 = a[1] * a[7] - a[3] * a[5], b05 = a[2] * a[7] - a[3] * a[6], b06 = a[8] * a[13] - a[9] * a[12], b07 = a[8] * a[14] - a[10] * a[12];
+  const b08 = a[8] * a[15] - a[11] * a[12], b09 = a[9] * a[14] - a[10] * a[13], b10 = a[9] * a[15] - a[11] * a[13], b11 = a[10] * a[15] - a[11] * a[14];
+  const det = 1 / (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
+  o[0] = (a[5] * b11 - a[6] * b10 + a[7] * b09) * det; o[1] = (a[2] * b10 - a[1] * b11 - a[3] * b09) * det;
+  o[2] = (a[13] * b05 - a[14] * b04 + a[15] * b03) * det; o[3] = (a[10] * b04 - a[9] * b05 - a[11] * b03) * det;
+  o[4] = (a[6] * b08 - a[4] * b11 - a[7] * b07) * det; o[5] = (a[0] * b11 - a[2] * b08 + a[3] * b07) * det;
+  o[6] = (a[14] * b02 - a[12] * b05 - a[15] * b01) * det; o[7] = (a[8] * b05 - a[10] * b02 + a[11] * b01) * det;
+  o[8] = (a[4] * b10 - a[5] * b08 + a[7] * b06) * det; o[9] = (a[1] * b08 - a[0] * b10 - a[3] * b06) * det;
+  o[10] = (a[12] * b04 - a[13] * b02 + a[15] * b00) * det; o[11] = (a[9] * b02 - a[8] * b04 - a[11] * b00) * det;
+  o[12] = (a[5] * b07 - a[4] * b09 - a[6] * b06) * det; o[13] = (a[0] * b09 - a[1] * b07 + a[2] * b06) * det;
+  o[14] = (a[13] * b01 - a[12] * b03 - a[14] * b00) * det; o[15] = (a[8] * b03 - a[9] * b01 + a[10] * b00) * det;
+  return o;
+}
+function unproject(m, x, y, z) {
+  const v = [0, 1, 2, 3].map((r) => m[r] * x + m[4 + r] * y + m[8 + r] * z + m[12 + r]);
+  return [v[0] / v[3], v[1] / v[3], v[2] / v[3]];
+}
+canvas.addEventListener('click', (e) => {
+  if (scene.kind !== 'lytro' || st.C < 0.99 || st.Lay > 0.5 || !layA || !VP) return;
+  const r = canvas.getBoundingClientRect(), nx = (e.clientX - r.left) / r.width * 2 - 1, ny = 1 - (e.clientY - r.top) / r.height * 2;
+  const m = inv4(VP), p0 = unproject(m, nx, ny, -1), p1 = unproject(m, nx, ny, 1), zr = scene.za + scene.zb * st.D;
+  const u = (zr - p0[2]) / (p1[2] - p0[2]), X = p0[0] + (p1[0] - p0[0]) * u, Yw = p0[1] + (p1[1] - p0[1]) * u;
+  const sx = Math.floor((X / W + .5) * NL), sy = Math.floor((.5 - Yw / W) * NL);
+  if (sx < 0 || sy < 0 || sx >= NL || sy >= NL) return;
+  let bk = 0, bs = -1, total = 0;
+  for (let k = 0; k < LAYERS; k++) {
+    const ox = (k % LAYER_COLS) * NL, oy = Math.floor(k / LAYER_COLS) * NL;
+    let sum = 0;
+    for (let j = -2; j <= 2; j++) for (let i = -2; i <= 2; i++) {
+      const x = Math.min(NL - 1, Math.max(0, sx + i)), y = Math.min(NL - 1, Math.max(0, sy + j));
+      sum += layA.data[((oy + y) * layA.w + ox + x) * 4];
+    }
+    total += sum;
+    if (sum > bs) { bs = sum; bk = k; }
+  }
+  const my = ++token; let moving = true;
+  // where the views match about equally at every depth (no texture), no plane can be chosen: say so
+  if (bs < 2 * total / LAYERS) { Face.set('idle'); say('flat'); return; }
+  Snd.focus(); say('pickf');
+  tween('D', layerD(bk), 900, my).then(() => { moving = false; if (my === token) setDepthUI(true); });
+  const tick = () => { if (moving && my === token) { setDepthUI(true); requestAnimationFrame(tick); } };
+  requestAnimationFrame(tick);
+});
 function rayBox(on) {
   if (!raybox) return;
   raybox.classList.remove('on');
   if (on) { raybox.hidden = false; void raybox.offsetWidth; raybox.classList.add('on'); } else raybox.hidden = true;
 }
 async function doCapture(my) {
-  steps(1); setDepthUI(false); Face.set('work'); viewDrive = false;
+  steps(1); setDepthUI(false); Face.set('work'); viewDrive = false; layersOff();
   st.B = 0; st.C = 0; st.cam = 0; st.A = 0; st.V = 0; st.ray = 0;
-  if (scene.kind !== 'lytro') {
+  if (scene.kind === 'lytro') {
+    // a real capture: the recorded lenslet image is the data, so it is shown on the sensor as it is and
+    // zoomed into beside the robot; nothing is placed in space
+    st.A = 1; request();
+    say('A'); lfZoom(true);
+    await tween('cam', 1, 2600, my); if (my !== token) return false;
+    await wait(4600); if (my !== token) return false;
+    return true;
+  }
+  {
     // before the capture, one point: its light reaches several lenses and lands at a different spot under each
     say('ray'); rayBox(true);
     await tween('ray', 1, 900, my); if (my !== token) return false;
@@ -861,7 +1042,7 @@ async function doCapture(my) {
   await tween('cam', 1, 1200, my); return my === token;
 }
 async function doRim(my) {
-  steps(2); setDepthUI(false); Face.set('work'); say('B'); viewDrive = false; rayBox(false);
+  steps(2); setDepthUI(false); Face.set('work'); say('B'); viewDrive = false; rayBox(false); lfZoom(false); layersOff();
   st.A = 1; st.cam = 1; st.C = 0; st.B = 0; st.V = 0; st.vt = 0; st.ray = 0;
   await wait(600); if (my !== token) return false;
   Snd.ticks(16, 2.6); Snd.motor(2.8);
@@ -873,7 +1054,7 @@ async function doRim(my) {
   viewDrive = true; return true;
 }
 async function doRecon(my) {
-  steps(3); Face.set('work'); say('C'); viewDrive = false; rayBox(false);
+  steps(3); Face.set('work'); say('C'); viewDrive = false; rayBox(false); lfZoom(false); layersOff();
   st.A = 1; st.B = 1; st.D = 0; st.C = 0; st.cam = 1; st.ray = 0;
   await wait(250); if (my !== token) return false;
   Snd.motor(2.0);
@@ -904,13 +1085,13 @@ async function playAll(my) {
   await wait(300); if (my !== token) return;
   await doRecon(my);
 }
-function jumpToEnd() { st.A = 1; st.cam = CAM_REC; st.B = 1; st.C = 1; st.D = scene.targets[0].d; setDepthUI(true); steps(3); Face.set('happy'); finish(); say('done'); request(); }
+function jumpToEnd() { lfZoom(false); layersOff(); st.A = 1; st.cam = CAM_REC; st.B = 1; st.C = 1; st.D = scene.targets[0].d; setDepthUI(true); steps(3); Face.set('happy'); finish(); say('done'); request(); }
 stepBtns.forEach((b) => b.addEventListener('click', () => {
   Snd.ui(); const my = ++token; const n = Number(b.dataset.step);
   if (n === 1) doCapture(my); else if (n === 2) doRim(my); else doRecon(my);
 }));
 q('[data-reverse]').addEventListener('click', async () => {
-  Snd.ui(); const my = ++token;
+  Snd.ui(); const my = ++token; lfZoom(false); layersOff();
   if (st.B === 0 && st.C === 0) { st.A = 1; st.cam = 1; st.B = 1; }
   setDepthUI(false); steps(2); Face.set('work'); say('rev');
   Snd.motor(st.C > 0 ? 4 : 2.6);
@@ -919,7 +1100,7 @@ q('[data-reverse]').addEventListener('click', async () => {
   await tween('B', 0, 2600, my); if (my === token) Face.set('idle');
 });
 depth.addEventListener('input', () => {
-  token++; st.A = 1; st.B = 1; st.C = 1; st.cam = CAM_REC;
+  token++; st.A = 1; st.B = 1; st.C = 1; if (st.Lay < 0.5) st.cam = CAM_REC;
   const before = focusedLayer();
   st.D = scene.dMin + (scene.dMax - scene.dMin) * Number(depth.value) / 100;
   setDepthUI(true); request();
@@ -984,7 +1165,9 @@ function useLayers(info, mode) {
   scene = info.scene; setNL(scene.nl); buildRays();
   uploadAtlas(info.atlas);
   if (credit) credit.hidden = scene.kind !== 'lytro';
-  st.A = 0; st.B = 0; st.C = 0; st.cam = 0; st.D = 0; st.ray = 0; st.V = 0; st.vt = 0; viewDrive = false; rayBox(false);
+  // the real capture has no 3D shape: its samples start on the sensor
+  st.A = scene.kind === 'lytro' ? 1 : 0; st.B = 0; st.C = 0; st.cam = 0; st.D = 0; st.ray = 0; st.V = 0; st.vt = 0; viewDrive = false; rayBox(false);
+  lfZoom(false); layersOff(); if (layBtn) layBtn.hidden = scene.kind !== 'lytro';
   setDepthUI(false); steps(0);
   if (mode === 'still') return;
   if (mode === 'wait' && !waiting) mode = 'opening'; // the click came while the scene was loading
@@ -1011,7 +1194,30 @@ function loadLightField(viewsURL, depURL, make, line, mode) {
   views.src = viewsURL; dep.src = depURL;
 }
 const loadScene = (mode) => loadLightField('/img/lab-blender-views.webp', '/img/lab-blender-depth.png', blenderScene, 'scene', mode);
-const loadLytro = (mode) => loadLightField(`/img/lytro-views-${NL_REAL}.webp`, `/img/lytro-depth-${NL_REAL}.png`, lytroScene, 'lytro', mode);
+const loadImg = (src) => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+let layTex = null, layATex = null, layA = null;
+function dataTexture(img) {
+  // texels read one by one, as values
+  const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+  for (const [p, v] of [[gl.TEXTURE_MIN_FILTER, gl.NEAREST], [gl.TEXTURE_MAG_FILTER, gl.NEAREST], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, p, v);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+  gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+  gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.BROWSER_DEFAULT_WEBGL);
+  return t;
+}
+function loadLytro(mode) {
+  const files = [`lytro-views-${NL_REAL}.webp`, 'lytro-photo.webp', 'lytro-eslf-zoom.webp', `lytro-layers-${NL_REAL}.webp`, `lytro-layers-a-${NL_REAL}.png`];
+  Promise.all(files.map((f) => loadImg('/img/' + f))).then(([views, photo, zoom, lay, layAimg]) => {
+    lfImgs = { photo, zoom };
+    if (!layTex) { layTex = dataTexture(lay); layATex = dataTexture(layAimg); }
+    // the agreement weights are also read here, for click-to-focus
+    const c = document.createElement('canvas'); c.width = layAimg.width; c.height = layAimg.height;
+    const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(layAimg, 0, 0);
+    layA = { w: c.width, data: g.getImageData(0, 0, c.width, c.height).data };
+    useLayers({ atlas: views, scene: lytroScene(), line: 'lytro' }, mode);
+  }).catch(() => { Face.set('idle'); say('bad'); });
+}
 const sampleBtns = [...root.querySelectorAll('[data-sample-btn]')];
 function pick(which) { sampleBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sampleBtn === which))); }
 sampleBtns.forEach((b) => b.addEventListener('click', () => {
