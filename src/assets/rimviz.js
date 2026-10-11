@@ -51,7 +51,8 @@ async function views(fig) {
   const a0 = Math.atan2(3 - C, 6 - C), r = Math.hypot(6 - C, 3 - C), u = [6, 3];
   const onCircle = (t) => { u[0] = C + r * Math.cos(a0 + 2 * Math.PI * t); u[1] = C + r * Math.sin(a0 + 2 * Math.PI * t); };
   viewer(fig, {
-    pointer(x, y) { u[0] = x * (NP - 1); u[1] = y * (NP - 1); },
+    // the pointer stays within the auto circle's radius: farther out, the empty backs of the layers show
+    pointer(x, y) { u[0] = C + (x * 2 - 1) * r; u[1] = C + (y * 2 - 1) * r; },
     slider(t) { onCircle(t); },
     auto(now) { const t = (now / 6000) % 1; onCircle(t); input.value = String(Math.round(t * 100)); },
     draw() {
@@ -72,12 +73,14 @@ async function refocus(fig) {
   const g = fig.querySelector('canvas').getContext('2d'), input = fig.querySelector('input'), label = fig.querySelector('.vizlabel');
   const names = { ko: ['앞쪽 원환체', '가운데 원숭이 머리', '뒤쪽 원뿔·정육면체'], en: ['torus in front', 'monkey head in the middle', 'cone and cube at the back'] }[lang];
   const at = (k) => (K[k] / NP - D0) / (DS * (N - 1));   // slider position where layer k is in focus
+  // the pointer and the slider span the three objects, from the torus to the cone
+  const lo = at(0) - 0.06, hi = at(2) + 0.06, span = (t) => lo + (hi - lo) * t;
   let v = at(0);
   const tileAt = (i) => g.drawImage(sheet, (i % COLS) * tile, Math.floor(i / COLS) * tile, tile, tile, 0, 0, S, S);
   viewer(fig, {
-    pointer(x) { v = x; },
-    slider(t) { v = t; },
-    auto(now) { v = at(0) + (at(2) - at(0)) * (0.5 - 0.5 * Math.cos(2 * Math.PI * now / 7000)); input.value = String(Math.round(v * 100)); },
+    pointer(x) { v = span(x); },
+    slider(t) { v = span(t); },
+    auto(now) { v = at(0) + (at(2) - at(0)) * (0.5 - 0.5 * Math.cos(2 * Math.PI * now / 7000)); input.value = String(Math.round((v - lo) / (hi - lo) * 100)); },
     draw() {
       const f = v * (N - 1), i = Math.min(N - 2, Math.floor(f)), a = f - i;
       g.globalAlpha = 1; tileAt(i);
