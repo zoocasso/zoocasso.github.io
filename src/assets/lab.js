@@ -1176,7 +1176,7 @@ function useLayers(info, mode) {
   if (credit) credit.hidden = scene.kind !== 'lytro';
   // the real capture has no 3D shape: its samples start on the sensor
   st.A = scene.kind === 'lytro' ? 1 : 0; st.B = 0; st.C = 0; st.cam = 0; st.D = 0; st.icons = 0; st.V = 0; st.vt = 0; viewDrive = false; rayBox(false);
-  lfZoom(false); layersOff(); if (layBtn) layBtn.hidden = scene.kind !== 'lytro';
+  lfZoom(false); layersOff(); unfinish(); if (layBtn) layBtn.hidden = scene.kind !== 'lytro';
   setDepthUI(false); steps(0);
   if (mode === 'still') return;
   if (mode === 'wait' && !waiting) mode = 'opening'; // the click came while the scene was loading
