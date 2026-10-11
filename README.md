@@ -5,7 +5,7 @@ Personal site of Hyeongju Lee (이형주), data and backend engineer and 3D visi
 - Korean: https://zoocasso.github.io/
 - English: https://zoocasso.github.io/en/
 
-The home page opens on a lens array lab: an image is captured through a simulated pinhole array,
+The home page opens on a lens array lab: a light field is captured through a pinhole array model,
 rearranged with RIM, and reconstructed at different depths, with synthesized music and sound.
 
 ## Data
@@ -16,6 +16,18 @@ G. Wetzstein, 2016, http://lightfields.stanford.edu/LF2016.html). The central 8 
 lens-array image were cropped to 368 × 368 lenses, resized to 128 and 64 lenses, colour-matched to the
 archive's processed image, and stored as a mosaic of views. The depth map is the per-lens refocus shift
 at which the 64 views agree best. The page credits the archive wherever the sample is shown.
+
+The Blender sample (`src/img/lab-blender-*`) and the RIM page viewers (`src/img/iccas/`) come from the
+ICCAS 2026 scene rendered with the paper's script (`render_multiview.py`, unmodified apart from its
+parameters) at 8 × 8 views, 1920 × 1080 per view, 256 samples, plus a depth pass for every view.
+
+- `iccas/v{r}{c}.webp`: the 64 views, the same 1000 × 1000 crop around the objects at native resolution
+  (`iccas/s/`: 500 px for phones).
+- `iccas/f{ii}.webp`: shift-and-sum of the 64 full-resolution views at depths spaced evenly from
+  0.36 to 1.55 m (31 steps).
+- `lab-blender-views.webp`, `lab-blender-depth.png`: the views shifted to line up on a plane at 0.28 m
+  (so every object's shift per view is positive and grows with distance, as for a lens array), at
+  64 lenses, and the per-sample shift from each view's depth pass.
 
 ## Layout
 

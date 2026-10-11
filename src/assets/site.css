@@ -34,11 +34,13 @@ p{margin:0 0 1em}
 
 /* header and footer */
 .site-head{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:60px;padding-inline:var(--gutter);border-bottom:1px solid var(--rule)}
-.brand{font-family:var(--display);font-weight:700;font-size:19px;color:var(--paper);text-decoration:none}
+.brand{font-family:var(--display);font-weight:700;font-size:19px;color:var(--paper);text-decoration:none;white-space:nowrap}
 .site-head nav{display:flex;gap:4px}
 .site-head nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;color:var(--mute);text-decoration:none;font-size:15px}
 .site-head nav a:hover,.site-head nav a[aria-current=page]{color:var(--paper)}
 .site-head nav a[aria-current=page]{box-shadow:inset 0 -2px 0 var(--brass)}
+/* on a phone the menu goes under the name when both do not fit on one line (the English name is longer) */
+@media (max-width:480px){.site-head{flex-wrap:wrap;column-gap:8px;row-gap:0}.site-head nav{gap:0;margin-left:-9px}.site-head nav a{padding:0 9px;min-width:44px;justify-content:center}}
 .site-foot{max-width:var(--wide);margin:96px auto 0;padding:28px var(--gutter) 48px;border-top:1px solid var(--rule);color:var(--mute);font-size:14px}
 .foot-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 22px;margin-bottom:8px}
 .foot-name{font-family:var(--display);font-weight:700;color:var(--paper);font-size:16px}
