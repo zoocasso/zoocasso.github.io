@@ -53,6 +53,8 @@ p{margin:0 0 1em}
 .btn.primary{background:var(--brass);border-color:var(--brass);color:var(--bench);font-weight:700}
 .btn.primary:hover{background:var(--brass-hi);border-color:var(--brass-hi);color:var(--bench)}
 .btn[aria-pressed=true]{border-color:var(--brass);color:var(--brass-hi)}
+.btn:disabled{opacity:.45;cursor:progress}
+.btn:disabled:hover{border-color:var(--rule)}
 
 /* ---------- home: the lab ---------- */
 .lab{position:relative;background:var(--plate);border-bottom:1px solid var(--rule);display:flex;flex-direction:column;touch-action:manipulation}

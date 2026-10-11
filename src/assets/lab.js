@@ -258,6 +258,8 @@ const L = {
   pickf: ['ここで視点がいちばんよく合う面に、ピントを合わせました。', { ko: '누른 자리에서 시점들이 가장 잘 맞는 면으로 초점을 옮겼어요.', en: 'Focus moved to the plane where the views agree best at that spot.' }],
   rev: ['逆再生もできます。一対一の並べ替えですから。', { ko: 'RIM은 일대일 재배열이라 픽셀 하나 잃지 않고 요소 영상으로 되돌아갑니다.', en: 'RIM is one-to-one, so the elemental images come back without losing a pixel.' }],
   bad: ['あれ？ この画像は開けませんでした。', { ko: '이 파일은 열 수 없어요. JPG, PNG, WebP 이미지를 넣어 주세요.', en: "I can't open this file. Try a JPG, PNG or WebP image." }],
+  wait: ['読み込んでいます。少し待ってくださいね。', { ko: '데이터를 불러오는 중이에요. 잠시만 기다려 주세요.', en: 'Loading the data. One moment, please.' }],
+  netbad: ['あれ？ データを読み込めませんでした。', { ko: '데이터를 불러오지 못했어요. 버튼을 다시 눌러 주세요.', en: "I couldn't load the data. Please press the button again." }],
   load2: ['画像、受け取りました！ 主役と背景の二層に分けますね。', { ko: '이미지를 받았습니다! 가장자리 색을 배경으로 보고, 주인공과 배경 두 층으로 세웠어요.', en: 'Got it! I split it into a subject layer and a background layer using the edge colour.' }],
   scene: ['ブレンダーの景色です。8×8の視点から描きました。', { ko: '블렌더로 8×8 시점을 렌더링한 장면이에요. 앞에서부터 원숭이 머리, 원환체, 정육면체, 원뿔, 구가 놓여 있습니다.', en: 'A scene rendered in Blender from 8×8 viewpoints: monkey head, torus, cube, cone and sphere, from near to far.' }],
   lytro: ['スタンフォードのLytroデータです。本物のカメラで撮った景色ですよ。', { ko: '실제 Lytro 라이트필드 카메라로 찍은 장면이에요. Stanford Lytro Light Field Archive의 사진에서, 정지 표지판을 나뭇가지가 가리는 부분을 렌즈 128×128개만큼 잘라 왔어요.', en: 'A real scene shot with a Lytro light-field camera, from the Stanford Lytro Light Field Archive: 128×128 lenses cut from the photo where a branch hides part of a stop sign.' }],
@@ -995,7 +997,7 @@ function unproject(m, x, y, z) {
   return [v[0] / v[3], v[1] / v[3], v[2] / v[3]];
 }
 canvas.addEventListener('click', (e) => {
-  if (scene.kind !== 'lytro' || st.C < 0.99 || st.Lay > 0.5 || !layA || !VP) return;
+  if (busy || scene.kind !== 'lytro' || st.C < 0.99 || st.Lay > 0.5 || !layA || !VP) return;
   const r = canvas.getBoundingClientRect(), nx = (e.clientX - r.left) / r.width * 2 - 1, ny = 1 - (e.clientY - r.top) / r.height * 2;
   const m = inv4(VP), p0 = unproject(m, nx, ny, -1), p1 = unproject(m, nx, ny, 1), zr = scene.za + scene.zb * st.D;
   const u = (zr - p0[2]) / (p1[2] - p0[2]), X = p0[0] + (p1[0] - p0[0]) * u, Yw = p0[1] + (p1[1] - p0[1]) * u;
@@ -1171,6 +1173,7 @@ function opening(my) {
   say('greet', () => { if (my === token) setTimeout(() => { if (my === token) playAll(my); }, 400); });
 }
 function useLayers(info, mode) {
+  endLoad();
   scene = info.scene; setNL(scene.nl); buildIcons();
   uploadAtlas(info.atlas);
   if (credit) credit.hidden = scene.kind !== 'lytro';
@@ -1188,11 +1191,36 @@ function useLayers(info, mode) {
   sayLine(L[info.line] || L.load2, () => { if (my === token) playAll(my); });
 }
 const credit = q('[data-credit]');
+/* a sample is downloaded before it replaces the scene. Meanwhile the old story stops and the controls
+   wait, so they never act on the scene being replaced, and a load overtaken by a later choice is dropped */
+let loadSeq = 0, busy = false, busyTimer = 0, depthWas = false;
+const holdBtns = () => [...stepBtns, q('[data-reverse]'), layBtn].filter(Boolean);
+function beginLoad(mode) {
+  const me = ++loadSeq;
+  if (mode !== 'load') return me;
+  if (!busy) depthWas = depth.disabled;
+  busy = true; token++; lfZoom(false); unfinish();
+  holdBtns().forEach((b) => { b.disabled = true; }); depth.disabled = true;
+  clearTimeout(busyTimer);
+  busyTimer = setTimeout(() => { if (me === loadSeq && busy) { Face.set('work'); say('wait'); } }, 250);
+  return me;
+}
+function endLoad() {
+  if (!busy) return;
+  busy = false; clearTimeout(busyTimer);
+  holdBtns().forEach((b) => { b.disabled = false; }); depth.disabled = depthWas;
+}
+function loadFailed(me, line) {
+  if (me !== loadSeq) return;
+  endLoad(); pick(scene.kind === 'lytro' ? 'lytro' : scene.kind === 'blender' ? 'scene' : 'none');
+  Face.set('idle'); say(line || 'netbad');
+}
 function loadLightField(viewsURL, depURL, make, line, mode) {
   // the view mosaic and its depth map are both needed before the scene can stand
-  const views = new Image(), dep = new Image(); let n = 0;
+  const me = beginLoad(mode);
+  const views = new Image(), dep = new Image(); let n = 0, failed = false;
   const ready = () => {
-    if (++n < 2) return;
+    if (++n < 2 || failed || me !== loadSeq) return;
     gl.bindTexture(gl.TEXTURE_2D, depTex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
     gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);   // values, not colours
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, dep);
@@ -1200,6 +1228,7 @@ function loadLightField(viewsURL, depURL, make, line, mode) {
     useLayers({ atlas: views, scene: make(), line }, mode);
   };
   views.onload = ready; dep.onload = ready;
+  views.onerror = dep.onerror = () => { if (!failed) { failed = true; loadFailed(me); } };
   views.src = viewsURL; dep.src = depURL;
 }
 const loadScene = (mode) => loadLightField('/img/lab-blender-views.webp', '/img/lab-blender-depth.png', blenderScene, 'scene', mode);
@@ -1215,9 +1244,15 @@ function dataTexture(img) {
   gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.BROWSER_DEFAULT_WEBGL);
   return t;
 }
+// the real capture is about 1.9 MB (1 MB on small screens); it is fetched once and kept
+let lytroP = null;
+const lytroFiles = () => lytroP || (lytroP = Promise.all(
+  [`lytro-views-${NL_REAL}.webp`, 'lytro-photo.webp', 'lytro-eslf-zoom.webp', `lytro-layers-${NL_REAL}.webp`, `lytro-layers-a-${NL_REAL}.png`]
+    .map((f) => loadImg('/img/' + f))).catch((e) => { lytroP = null; throw e; }));
 function loadLytro(mode) {
-  const files = [`lytro-views-${NL_REAL}.webp`, 'lytro-photo.webp', 'lytro-eslf-zoom.webp', `lytro-layers-${NL_REAL}.webp`, `lytro-layers-a-${NL_REAL}.png`];
-  Promise.all(files.map((f) => loadImg('/img/' + f))).then(([views, photo, zoom, lay, layAimg]) => {
+  const me = beginLoad(mode);
+  lytroFiles().then(([views, photo, zoom, lay, layAimg]) => {
+    if (me !== loadSeq) return;
     lfImgs = { photo, zoom };
     if (!layTex) { layTex = dataTexture(lay); layATex = dataTexture(layAimg); }
     // the agreement weights are also read here, for click-to-focus
@@ -1225,7 +1260,7 @@ function loadLytro(mode) {
     const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(layAimg, 0, 0);
     layA = { w: c.width, data: g.getImageData(0, 0, c.width, c.height).data };
     useLayers({ atlas: views, scene: lytroScene(), line: 'lytro' }, mode);
-  }).catch(() => { Face.set('idle'); say('bad'); });
+  }).catch(() => loadFailed(me));
 }
 const sampleBtns = [...root.querySelectorAll('[data-sample-btn]')];
 function pick(which) { sampleBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sampleBtn === which))); }
@@ -1233,13 +1268,17 @@ sampleBtns.forEach((b) => b.addEventListener('click', () => {
   Snd.ui(); pick(b.dataset.sampleBtn);
   if (b.dataset.sampleBtn === 'lytro') loadLytro('load'); else loadScene('load');
 }));
+// a pointer resting on the real-capture button starts its download, so the click waits less
+const lytroBtn = sampleBtns.find((b) => b.dataset.sampleBtn === 'lytro');
+if (lytroBtn) lytroBtn.addEventListener('pointerenter', () => { lytroFiles().catch(() => {}); }, { once: true });
 function takeFile(f) {
   if (!f) return;
   if (!f.type.startsWith('image/')) { Face.set('idle'); say('bad'); return; }
   pick('none');
+  const me = beginLoad('load');
   const url = URL.createObjectURL(f), img = new Image();
-  img.onload = () => { useLayers(atlasFromPicture(img), 'load'); URL.revokeObjectURL(url); };
-  img.onerror = () => { Face.set('idle'); say('bad'); URL.revokeObjectURL(url); };
+  img.onload = () => { URL.revokeObjectURL(url); if (me === loadSeq) useLayers(atlasFromPicture(img), 'load'); };
+  img.onerror = () => { URL.revokeObjectURL(url); loadFailed(me, 'bad'); };
   img.src = url;
 }
 q('[data-file]').addEventListener('change', (e) => takeFile(e.target.files[0]));
