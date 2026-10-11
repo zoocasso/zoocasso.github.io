@@ -241,12 +241,12 @@ const L = {
   tap: ['画面をクリックすると、音といっしょに始まります。', { ko: '화면을 한 번 누르면 소리와 함께 시작해요.', en: 'Click anywhere to start, with sound.' }],
   greet: ['いらっしゃいませ！ 奥行きのある景色を、レンズで撮って元に戻してみますね。', { ko: '어서 오세요! 깊이가 다른 물체들을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "Welcome! I'll capture a scene with depth through a lens array, then bring it back." }],
   A: () => scene.kind === 'lytro'
-    ? ['本物のLytroで撮った、レンズごとの画像です。拡大すると、小さな丸い像が並んでいます。', { ko: '이건 실제 Lytro 카메라로 찍어 Lytro 소프트웨어가 디코딩한 렌즈릿 영상이에요. 확대하면 렌즈마다 작고 둥근 영상이 있고, 그 가운데 8×8 픽셀이 8×8개 시점이 됩니다. 3D 형상이 없으니 촬영은 흉내 내지 않아요.', en: 'This is a real Lytro capture: the lenslet image as decoded by Lytro\'s software. Zoom in and each lens holds a small round image; its central 8×8 pixels become the 8×8 views. There is no 3D shape here, so the capture is not simulated.' }]
+    ? ['本物のLytroで撮った、レンズごとの画像です。拡大すると、小さな丸い像が並んでいます。', { ko: '이건 실제 Lytro 카메라로 찍어 Lytro 소프트웨어가 디코딩한 렌즈릿 영상이에요. 확대하면 렌즈마다 작고 둥근 사진이 있어요. 렌즈 하나하나가 작은 카메라인 셈이고, 그 가운데 8×8 픽셀이 8×8개 시점이 됩니다. 3D 형상이 없으니 촬영은 흉내 내지 않아요.', en: 'This is a real Lytro capture: the lenslet image as decoded by Lytro\'s software. Zoom in and each lens holds a small round picture: every lens is a tiny camera, and its central 8×8 pixels become the 8×8 views. There is no 3D shape here, so the capture is not simulated.' }]
     : scene.kind === 'blender'
-    ? ['では全体を撮影。すべての点の光がレンズを通って、小さな像になります。', { ko: `이제 장면 전체를 찍습니다. 모든 점의 빛이 ${NL}×${NL}개 렌즈를 지나, 렌즈마다 작고 뒤집힌 영상이 생겨요. 블렌더로 렌더링한 8×8 시점 영상을 요소 영상으로 바꾼 것입니다.`, en: `Now the whole scene: light from every point passes ${NL}×${NL} lenses, and each lens forms a small, flipped elemental image, built here from 8×8 views rendered in Blender.` }]
-    : ['では全体を撮影。すべての点の光がレンズを通って、小さな像になります。', { ko: `이제 장면 전체를 찍습니다. 모든 점의 빛이 ${NL}×${NL}개 렌즈를 지나, 렌즈마다 작고 뒤집힌 영상이 생겨요. 이것이 요소 영상입니다.`, en: `Now the whole scene: light from every point passes ${NL}×${NL} lenses, and each lens forms a small, flipped elemental image.` }],
-  ray: ['撮る前に、一点だけ見てみましょう。光はレンズごとに、ちがう場所に届きます。', { ko: '찍기 전에 한 점만 볼게요. 한 점에서 나온 빛은 여러 렌즈를 지나, 렌즈마다 아래의 다른 자리에 닿아요. 그 자리가 빛이 들어온 방향입니다.', en: 'First, one point. Its light passes several lenses and lands at a different spot under each; that spot is the direction the light came from.' }],
-  B: ['次は並べ替え。同じ位置のピクセル、つまり同じ方向の光を集めると、ひとつの視点になります。', { ko: `다음은 재배열(RIM)입니다. 모든 렌즈에서 같은 자리의 픽셀, 즉 같은 방향에서 온 빛만 모으면 시점 영상 한 장이 돼요. 자리마다 한 장씩, ${VIEWS}장입니다.`, en: `Rearrange (RIM). Gather the pixel at the same spot under every lens, light from one direction, and you get one view; one per spot, ${VIEWS} in all.` }],
+    ? ['カシャッ。小さなカメラごとに、小さな写真が一枚ずつ撮れました。', { ko: `찰칵. 작은 카메라마다 8×8 픽셀짜리 사진이 센서에 한 장씩 찍혔어요. 이것이 요소 영상입니다. 여기서는 블렌더로 렌더링한 8×8 시점 영상으로 만들었어요.`, en: `Click. Each tiny camera left an 8×8-pixel picture on the sensor: the elemental images, built here from 8×8 views rendered in Blender.` }]
+    : ['カシャッ。小さなカメラごとに、小さな写真が一枚ずつ撮れました。', { ko: `찰칵. 작은 카메라마다 8×8 픽셀짜리 사진이 센서에 한 장씩 찍혔어요. 이것이 요소 영상입니다.`, en: `Click. Each tiny camera left an 8×8-pixel picture on the sensor: these are the elemental images.` }],
+  cams: () => ['レンズの一つひとつが、小さなカメラです。少しずつ違う場所から、同時に撮ります。', { ko: `렌즈 배열의 렌즈 하나하나는 아주 작은 카메라예요. ${NL}×${NL}대가 조금씩 다른 자리에서 동시에 찍습니다.`, en: `Each lens in the array is a tiny camera. ${NL}×${NL} of them take the picture at once, each from a slightly different spot.` }],
+  B: ['次は並べ替え。小さな写真から同じ位置のピクセルを集めると、ひとつの方向から見た写真になります。', { ko: `다음은 재배열(RIM)입니다. 작은 사진들에서 같은 자리의 픽셀만 모으면, 한 방향에서 본 큰 사진 한 장이 돼요. 자리마다 한 장씩, ${VIEWS}장입니다.`, en: `Rearrange (RIM). Take the pixel at the same spot from every tiny picture and you get one larger picture seen from one direction; one per spot, ${VIEWS} in all.` }],
   views: ['ほら、視点ごとに手前と奥のずれ方がちがいます。', { ko: '보세요. 시점마다 앞의 물체와 뒤의 물체가 서로 다르게 움직여요. 같은 그림이 아니라 서로 다른 방향에서 본 영상입니다.', en: 'Look: from view to view, near and far objects move differently. They are not copies but views from different directions.' }],
   C: ['最後に再構成。重ねる面を奥へ動かすと、その奥行きの物体がくっきり戻ります。', { ko: `마지막으로 재구성입니다. 시점 영상 ${VIEWS}장을 한 면에 겹치는데, 그 면을 뒤로 옮기면 그 깊이에 있던 물체가 선명하게 되살아나요.`, en: `Reconstruct. The ${VIEWS} views are overlapped on one plane; move the plane back and whatever stood at that depth comes back sharp.` }],
   done: () => ['ピクセルはひとつも失われていません。奥行きごとにピントを合わせ直せます。', { ko: `${fmt(COUNT)}개 픽셀을 하나도 버리지 않고, 깊이마다 초점을 다시 맞출 수 있어요.`, en: `Not one of the ${fmt(COUNT)} pixels was lost, and focus can be set at any depth.` }],
@@ -504,26 +504,35 @@ function buildLines(nl) {
 const lineVAO = gl.createVertexArray(); gl.bindVertexArray(lineVAO);
 buildLines(NL);
 const aPos = gl.getAttribLocation(LN.p, 'aPos'); gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 0, 0);
-/* step 1 opens on the light cone from one point of the nearest object through the 3 x 3 lenses
-   around it (the only ones that see it, at this depth) to the sensor, with a cross where each lands */
-const rayBuf = gl.createBuffer(), rayVAO = gl.createVertexArray();
-gl.bindVertexArray(rayVAO); gl.bindBuffer(gl.ARRAY_BUFFER, rayBuf);
-gl.bufferData(gl.ARRAY_BUFFER, 4 * 3 * 140, gl.DYNAMIC_DRAW);
+/* step 1 opens on camera models standing in the lens array: every lens with the sensor behind it is a
+   tiny camera looking at the scene. A few of them are drawn, larger than a lens so they can be seen:
+   the body between the lens array and the sensor, a lens barrel in front, and the way it looks */
+const iconBuf = gl.createBuffer(), iconVAO = gl.createVertexArray();
+gl.bindVertexArray(iconVAO); gl.bindBuffer(gl.ARRAY_BUFFER, iconBuf);
 gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 0, 0);
 gl.bindVertexArray(null);
-let rayCount = 0;
-function buildRays() {
-  const pt = scene.point, zo = scene.za + scene.zb * (scene.pointD ?? scene.targets[0].d);
-  const O = [(pt[0] - .5) * W, (.5 - pt[1]) * W, zo], v = [], e = W / NL * 0.3;
-  const sx = Math.floor(pt[0] * NL), sy = Math.floor(pt[1] * NL), k = (ZS - zo) / -zo;
-  v.push(O[0] - e, O[1], zo, O[0] + e, O[1], zo, O[0], O[1] - e, zo, O[0], O[1] + e, zo);
-  for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) {
-    const L = [((sx + i + .5) / NL - .5) * W, (.5 - (sy + j + .5) / NL) * W, 0];
-    const S = [O[0] + (L[0] - O[0]) * k, O[1] + (L[1] - O[1]) * k, ZS];
-    v.push(...O, ...L, ...L, ...S, S[0] - e, S[1], ZS, S[0] + e, S[1], ZS, S[0], S[1] - e, ZS, S[0], S[1] + e, ZS);
+let iconCount = 0;
+function buildIcons() {
+  const v = [], seg = (a, b) => v.push(...a, ...b), bw = 0.075, bh = 0.055, r = 0.036, zf = -0.05;
+  for (const fy of [0.2, 0.5, 0.8]) for (const fx of [0.2, 0.5, 0.8]) {
+    // the nearest lens centre
+    const x = ((Math.floor(fx * NL) + .5) / NL - .5) * W, y = (.5 - (Math.floor(fy * NL) + .5) / NL) * W;
+    const c = [[-bw, -bh], [bw, -bh], [bw, bh], [-bw, bh]];
+    for (let i = 0; i < 4; i++) {
+      const [ax, ay] = c[i], [bx, by] = c[(i + 1) % 4];
+      seg([x + ax, y + ay, 0.01], [x + bx, y + by, 0.01]); seg([x + ax, y + ay, ZS], [x + bx, y + by, ZS]);
+      seg([x + ax, y + ay, 0.01], [x + ax, y + ay, ZS]);
+    }
+    for (let i = 0; i < 12; i++) {
+      const a0 = i / 12 * 2 * Math.PI, a1 = (i + 1) / 12 * 2 * Math.PI;
+      seg([x + r * Math.cos(a0), y + r * Math.sin(a0), zf], [x + r * Math.cos(a1), y + r * Math.sin(a1), zf]);
+      if (i % 3 === 0) seg([x + r * Math.cos(a0), y + r * Math.sin(a0), zf], [x + r * Math.cos(a0), y + r * Math.sin(a0), 0.01]);
+    }
+    // where it looks: a short, narrow cone toward the scene
+    for (const [ax, ay] of c) seg([x, y, zf], [x + ax * 1.6, y + ay * 1.6, -0.42]);
   }
-  gl.bindBuffer(gl.ARRAY_BUFFER, rayBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(v));
-  rayCount = v.length / 3;
+  gl.bindBuffer(gl.ARRAY_BUFFER, iconBuf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(v), gl.DYNAMIC_DRAW);
+  iconCount = v.length / 3;
 }
 function setNL(nl) { if (nl === NL) return; NL = nl; R = NL * NP; COUNT = R * R; buildLines(NL); }
 
@@ -582,7 +591,7 @@ const easeIO = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const lerp = (a, b, t) => a + (b - a) * t;
 const lerp3 = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
 
-const st = { A: 0, B: 0, C: 0, D: 0, cam: 0, ray: 0, V: 0, vt: 0, Lay: 0 };
+const st = { A: 0, B: 0, C: 0, D: 0, cam: 0, icons: 0, V: 0, vt: 0, Lay: 0 };
 const ptr = { x: 0, y: 0, sx: 0, sy: 0, tx: 0, ty: 0, mx: 0, my: 0, ma: 0, inside: false };
 let VP = null, P11 = 1, hasImage = false;
 const T0 = performance.now();
@@ -695,9 +704,9 @@ function draw(now) {
     gl.uniform1f(LN.u.uZ, zRec - ZS); gl.uniform4f(LN.u.uCol, 0.89, 0.77, 0.5, 0.8 * rc);
     gl.drawArrays(gl.LINES, gridCount, 8);
   }
-  if (st.ray > 0.01 && hasImage) {
-    gl.bindVertexArray(rayVAO); gl.uniform1f(LN.u.uZ, 0);
-    gl.uniform4f(LN.u.uCol, 0.99, 0.9, 0.62, 0.9 * st.ray); gl.drawArrays(gl.LINES, 0, rayCount);
+  if (st.icons > 0.01 && hasImage) {
+    gl.bindVertexArray(iconVAO); gl.uniform1f(LN.u.uZ, 0);
+    gl.uniform4f(LN.u.uCol, 0.99, 0.9, 0.62, 0.85 * st.icons); gl.drawArrays(gl.LINES, 0, iconCount);
   }
   gl.disable(gl.BLEND); gl.bindVertexArray(null);
   const sw = stage.clientWidth, shh = stage.clientHeight;
@@ -892,7 +901,7 @@ function finish() { root.classList.add('played'); if (cta) cta.hidden = false; }
 function unfinish() { root.classList.remove('played'); if (cta) cta.hidden = true; }
 const stepBtns = [...root.querySelectorAll('[data-step]')];
 function steps(n) { stepBtns.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.step) === n))); }
-/* the diagram beside the robot: one point, three lenses, and where the light lands under each */
+/* the panel beside the introduction: three tiny cameras and the pictures they take */
 const raybox = q('.raybox');
 /* step 1 of the real capture: the whole photo (each lens's central 8 x 8 averaged), then the 128 x 128
    lenses used, then the decoded lenslet image itself at 14 pixels per lens, with one lens's central
@@ -1018,7 +1027,7 @@ function rayBox(on) {
 }
 async function doCapture(my) {
   steps(1); setDepthUI(false); Face.set('work'); viewDrive = false; layersOff();
-  st.B = 0; st.C = 0; st.cam = 0; st.A = 0; st.V = 0; st.ray = 0;
+  st.B = 0; st.C = 0; st.cam = 0; st.A = 0; st.V = 0; st.icons = 0;
   if (scene.kind === 'lytro') {
     // a real capture: the recorded lenslet image is the data, so it is shown on the sensor as it is and
     // zoomed into beside the robot; nothing is placed in space
@@ -1029,21 +1038,21 @@ async function doCapture(my) {
     return true;
   }
   {
-    // before the capture, one point: its light reaches several lenses and lands at a different spot under each
-    say('ray'); rayBox(true);
-    await tween('ray', 1, 900, my); if (my !== token) return false;
+    // before the capture: each lens is a tiny camera
+    say('cams'); rayBox(true);
+    await tween('icons', 1, 900, my); if (my !== token) return false;
     await wait(4200); if (my !== token) return false;
   }
   say('A');
   await wait(300); if (my !== token) return false;
   Snd.shutter(); Snd.motor(3.2);
   rayBox(false);
-  await Promise.all([tween('A', 1, 3200, my), tween('ray', 0, 1200, my)]); if (my !== token) return false;
+  await Promise.all([tween('A', 1, 3200, my), tween('icons', 0, 1600, my)]); if (my !== token) return false;
   await tween('cam', 1, 1200, my); return my === token;
 }
 async function doRim(my) {
   steps(2); setDepthUI(false); Face.set('work'); say('B'); viewDrive = false; rayBox(false); lfZoom(false); layersOff();
-  st.A = 1; st.cam = 1; st.C = 0; st.B = 0; st.V = 0; st.vt = 0; st.ray = 0;
+  st.A = 1; st.cam = 1; st.C = 0; st.B = 0; st.V = 0; st.vt = 0; st.icons = 0;
   await wait(600); if (my !== token) return false;
   Snd.ticks(16, 2.6); Snd.motor(2.8);
   await tween('B', 1, 2800, my); if (my !== token) return false;
@@ -1055,7 +1064,7 @@ async function doRim(my) {
 }
 async function doRecon(my) {
   steps(3); Face.set('work'); say('C'); viewDrive = false; rayBox(false); lfZoom(false); layersOff();
-  st.A = 1; st.B = 1; st.D = 0; st.C = 0; st.cam = 1; st.ray = 0;
+  st.A = 1; st.B = 1; st.D = 0; st.C = 0; st.cam = 1; st.icons = 0;
   await wait(250); if (my !== token) return false;
   Snd.motor(2.0);
   // the views leave the sensor for the reconstruction plane while the camera steps back to show the depth
@@ -1162,11 +1171,11 @@ function opening(my) {
   say('greet', () => { if (my === token) setTimeout(() => { if (my === token) playAll(my); }, 400); });
 }
 function useLayers(info, mode) {
-  scene = info.scene; setNL(scene.nl); buildRays();
+  scene = info.scene; setNL(scene.nl); buildIcons();
   uploadAtlas(info.atlas);
   if (credit) credit.hidden = scene.kind !== 'lytro';
   // the real capture has no 3D shape: its samples start on the sensor
-  st.A = scene.kind === 'lytro' ? 1 : 0; st.B = 0; st.C = 0; st.cam = 0; st.D = 0; st.ray = 0; st.V = 0; st.vt = 0; viewDrive = false; rayBox(false);
+  st.A = scene.kind === 'lytro' ? 1 : 0; st.B = 0; st.C = 0; st.cam = 0; st.D = 0; st.icons = 0; st.V = 0; st.vt = 0; viewDrive = false; rayBox(false);
   lfZoom(false); layersOff(); if (layBtn) layBtn.hidden = scene.kind !== 'lytro';
   setDepthUI(false); steps(0);
   if (mode === 'still') return;
