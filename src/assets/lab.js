@@ -580,6 +580,10 @@ function project(p, w, hh) {
   return [(x / ww * .5 + .5) * w, (1 - (y / ww * .5 + .5)) * hh];
 }
 const BG = [0x1c / 255, 0x20 / 255, 0x27 / 255];
+// spots for a plane's name, as (x, y) on the plane from -1 to 1: along the top edge from the right
+// corner, then along the bottom edge; a name at or right of the middle ends at its spot, others start there
+const SPOT_X = [1, 0.5, 0, -0.5, -1], SPOTS = [...SPOT_X.map((x) => [x, 1]), ...SPOT_X.map((x) => [x, -1])], robotEl = q('.robot');
+let spotK = 0, recK = 0;
 const tags = { obj: q('[data-tag=obj]'), lens: q('[data-tag=lens]'), sen: q('[data-tag=sen]'), rec: q('[data-tag=rec]') };
 const recLabel = tags.rec.textContent;
 function draw(now) {
@@ -651,14 +655,50 @@ function draw(now) {
   gl.disable(gl.BLEND); gl.bindVertexArray(null);
   const sw = stage.clientWidth, shh = stage.clientHeight;
   showViewMap(vs);
-  const place = (el, p, o, right) => {
-    const s = project(p, sw, shh);
-    el.style.transform = `translate(${s[0]}px, ${s[1] - 6}px) translate(${right ? '-100%' : '0'}, -100%)`;
-    el.style.opacity = o.toFixed(2);
+  // the names of the object, lens array and sensor planes share one spot on their planes' top (or else
+  // bottom) edges, so from left to right they read in the order the light travels. The spot is the first
+  // where no name hides behind the robot, the ray diagram or the dialogue box or overlaps another name
+  // (which spot is free depends on the screen width); it is kept while it stays clear, so names do not jump
+  const sr = stage.getBoundingClientRect();
+  const boxes = [robotEl, raybox && !raybox.hidden ? raybox : null, dialogEl].filter(Boolean).map((el) => {
+    const r = el.getBoundingClientRect(); return [r.left - sr.left, r.top - sr.top, r.right - sr.left, r.bottom - sr.top];
+  });
+  const hit = (r, list) => list.some((b) => r[0] < b[2] && r[2] > b[0] && r[1] < b[3] && r[3] > b[1]);
+  const at = (el, z, k) => {
+    const [cx, cy] = SPOTS[k], s = project([cx * h, cy * h, z], sw, shh), w = el.offsetWidth, hh = el.offsetHeight;
+    const x0 = cx >= 0 ? s[0] - w : s[0], y0 = cy > 0 ? s[1] - 6 - hh : s[1] + 6;
+    return { el, s, k, r: [x0, y0, x0 + w, y0 + hh] };
   };
-  place(tags.obj, [h, h, scene.za + scene.zb * scene.targets[0].d], fade * (1 - rc), true);
-  place(tags.lens, [h, h, 0], fade, true); place(tags.sen, [h, h, ZS], fade, true);
-  place(tags.rec, [h, h, zRec], fade * rc, true);
+  const put = (p, o) => {
+    const [cx, cy] = SPOTS[p.k];
+    p.el.style.transform = `translate(${p.s[0]}px, ${p.s[1] + (cy > 0 ? -6 : 6)}px) translate(${cx >= 0 ? '-100%' : '0'}, ${cy > 0 ? '-100%' : '0'})`;
+    p.el.style.opacity = o.toFixed(2);
+  };
+  const group = [[tags.obj, scene.za + scene.zb * scene.targets[0].d], [tags.lens, 0], [tags.sen, ZS]];
+  if (fade > 0.01 && tags.lens.offsetWidth) {
+    let best = null;
+    for (const k of [spotK, ...SPOTS.keys()]) {
+      const ps = group.map(([el, z]) => at(el, z, k)), done = [];
+      let bad = 0;
+      for (const p of ps) { if (hit(p.r, boxes) || hit(p.r, done)) bad++; done.push(p.r); }
+      if (!best || bad < best.bad) best = { k, ps, bad };
+      if (!bad) break;
+    }
+    // where no spot is clear for all three (narrow screens), a name that would hide behind a box or
+    // another name is left out rather than drawn half covered
+    spotK = best.k;
+    const shown = [];
+    best.ps.forEach((p, i) => {
+      const ok = !hit(p.r, boxes) && !hit(p.r, shown);
+      if (ok) shown.push(p.r);
+      put(p, ok ? (i === 0 ? fade * (1 - rc) : fade) : 0);
+    });
+  } else group.forEach(([el]) => { el.style.opacity = '0'; });
+  if (fade * rc > 0.01 && tags.rec.offsetWidth) {
+    let p = null;
+    for (const k of [recK, ...SPOTS.keys()]) { p = at(tags.rec, zRec, k); if (!hit(p.r, boxes)) break; }
+    recK = p.k; put(p, hit(p.r, boxes) ? 0 : fade * rc);
+  } else tags.rec.style.opacity = '0';
   if (cta && !cta.hidden) {
     // the link to the paper page sits just above the dialogue box, whatever its height
     const b = Math.round(shh - dialogEl.offsetTop + 10);
