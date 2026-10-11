@@ -324,7 +324,6 @@ uniform mat4 uVP;
 uniform float uK[4];
 uniform float uNL, uNP, uW, uZs, uA, uB, uC, uD, uPx, uP11, uReal, uDlo, uDhi, uZa, uZb, uVw, uAvg;
 uniform vec2 uVs;
-uniform vec3 uHi;
 out vec4 vCol;
 out float vW;
 float ease(float t){ return t < .5 ? 4.*t*t*t : 1. - pow(-2.*t + 2., 3.) / 2.; }
@@ -362,8 +361,6 @@ void main(){
     dk = kap / uNP;
   }
   vec2 obj = lens - dk * uo / uNL;
-  // step 2 begins by lighting up the same spot under every lens: those pixels become one view
-  col.rgb *= mix(1., all(equal(u, uHi.xy)) ? 1.35 : .16, uHi.z);
   vec2 ei = (px + .5) / R;
   vec2 sai = (u * uNL + s + .5) / R;
   vec2 rec = lens - uD * uo / uNL;
@@ -535,7 +532,7 @@ const easeIO = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const lerp = (a, b, t) => a + (b - a) * t;
 const lerp3 = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
 
-const st = { A: 0, B: 0, C: 0, D: 0, cam: 0, ray: 0, hi: 0, V: 0, vt: 0 };
+const st = { A: 0, B: 0, C: 0, D: 0, cam: 0, ray: 0, V: 0, vt: 0 };
 const ptr = { x: 0, y: 0, sx: 0, sy: 0, tx: 0, ty: 0, mx: 0, my: 0, ma: 0, inside: false };
 let VP = null, P11 = 1, hasImage = false;
 const T0 = performance.now();
@@ -605,7 +602,6 @@ function draw(now) {
     gl.uniform1f(P.u.uA, st.A); gl.uniform1f(P.u.uB, st.B); gl.uniform1f(P.u.uC, st.C); gl.uniform1f(P.u.uD, st.D);
     gl.uniform1f(P.u.uPx, ch); gl.uniform1f(P.u.uP11, P11);
     gl.uniform1f(P.u.uVw, st.V); gl.uniform2f(P.u.uVs, vs[0], vs[1]); gl.uniform1f(P.u.uAvg, averaging ? 1 : 0);
-    gl.uniform3f(P.u.uHi, HI[0], HI[1], st.hi);
     gl.bindVertexArray(emptyVAO); gl.drawArrays(gl.POINTS, 0, COUNT);
     gl.disable(gl.BLEND); gl.disable(gl.DEPTH_TEST);
     if (averaging) {
@@ -651,8 +647,8 @@ function draw(now) {
   }
   Face.frame(now);
 }
-/* which view step 2 shows: the highlighted one first, then a circle around the centre; after the
-   step is over the pointer chooses (left-right and up-down over the stage) */
+/* which view step 2 shows: it starts at view HI and circles the centre; after the step is over
+   the pointer chooses (left-right and up-down over the stage) */
 const HI = [6, 3], VC = (NP - 1) / 2;
 let viewDrive = false;
 const vsNow = [HI[0], HI[1]];
@@ -778,7 +774,7 @@ function rayBox(on) {
 }
 async function doCapture(my) {
   steps(1); setDepthUI(false); Face.set('work'); viewDrive = false;
-  st.B = 0; st.C = 0; st.cam = 0; st.A = 0; st.V = 0; st.hi = 0; st.ray = 0;
+  st.B = 0; st.C = 0; st.cam = 0; st.A = 0; st.V = 0; st.ray = 0;
   if (!scene.real) {
     // before the capture, one point: its light reaches several lenses and lands at a different spot under each
     say('ray'); rayBox(true);
@@ -795,12 +791,10 @@ async function doCapture(my) {
 async function doRim(my) {
   steps(2); setDepthUI(false); Face.set('work'); say('B'); viewDrive = false; rayBox(false);
   st.A = 1; st.cam = 1; st.C = 0; st.B = 0; st.V = 0; st.vt = 0; st.ray = 0;
-  await tween('hi', 1, 600, my); if (my !== token) return false;
-  await wait(1200); if (my !== token) return false;
+  await wait(600); if (my !== token) return false;
   Snd.ticks(16, 2.6); Snd.motor(2.8);
   await tween('B', 1, 2800, my); if (my !== token) return false;
-  await tween('hi', 0, 500, my); if (my !== token) return false;
-  // the lit view fills the sensor, then the view travels around: near and far objects shift differently
+  // one view fills the sensor, then the view travels around: near and far objects shift differently
   say('views');
   await tween('V', 1, 1000, my); if (my !== token) return false;
   await tween('vt', 1, 3400, my); if (my !== token) return false;
@@ -808,7 +802,7 @@ async function doRim(my) {
 }
 async function doRecon(my) {
   steps(3); Face.set('work'); say('C'); viewDrive = false; rayBox(false);
-  st.A = 1; st.B = 1; st.D = 0; st.C = 0; st.cam = 1; st.hi = 0; st.ray = 0;
+  st.A = 1; st.B = 1; st.D = 0; st.C = 0; st.cam = 1; st.ray = 0;
   await wait(250); if (my !== token) return false;
   Snd.motor(2.0);
   // the views leave the sensor for the reconstruction plane while the camera steps back to show the depth
@@ -915,7 +909,7 @@ function useLayers(info, mode) {
   scene = info.scene; setNL(scene.nl); buildRays();
   uploadAtlas(info.atlas);
   if (credit) credit.hidden = !scene.real;
-  st.A = 0; st.B = 0; st.C = 0; st.cam = 0; st.D = 0; st.ray = 0; st.hi = 0; st.V = 0; st.vt = 0; viewDrive = false; rayBox(false);
+  st.A = 0; st.B = 0; st.C = 0; st.cam = 0; st.D = 0; st.ray = 0; st.V = 0; st.vt = 0; viewDrive = false; rayBox(false);
   setDepthUI(false); steps(0);
   if (mode === 'still') return;
   if (mode === 'wait' && !waiting) mode = 'opening'; // the click came while the scene was loading

@@ -10,9 +10,24 @@
 <div class="doc">
   <nav class="toc" aria-label="On this page">
     <p>On this page</p>
-    <a href="#problem">Problem</a><a href="#rim">RIM</a><a href="#result">Results</a><a href="#irim">iRIM</a><a href="#lab">The home page lab</a><a href="#code">Code</a>
+    <a href="#glance">At a glance</a><a href="#problem">Problem</a><a href="#rim">RIM</a><a href="#result">Results</a><a href="#irim">iRIM</a><a href="#lab">The home page lab</a><a href="#code">Code</a>
   </nav>
   <div>
+    <section id="glance" aria-labelledby="h-glance">
+      <h2 id="h-glance">At a glance</h2>
+      <div class="pair">
+        <figure class="fig dark">
+          <picture><source srcset="/img/rim-views-still.webp" media="(prefers-reduced-motion: reduce)"><img src="/img/rim-views.webp" width="640" height="640" alt="Looping animation flipping through the views produced by RIM. As the viewpoint circles, the torus in front and the monkey head and cone behind move differently" loading="lazy"></picture>
+          <figcaption>1. Views. The 64 views from RIM, flipped through in a circle. They are not copies but views from different directions, so near and far objects move differently.</figcaption>
+        </figure>
+        <figure class="fig dark">
+          <picture><source srcset="/img/rim-refocus-still.webp" media="(prefers-reduced-motion: reduce)"><img src="/img/rim-refocus.webp" width="640" height="640" alt="Looping animation of reconstruction as the overlap distance of the 64 views changes. Focus moves from the torus to the monkey head and the cone, and back" loading="lazy"></picture>
+          <figcaption>2. Reconstruction by depth. Changing the distance at which the 64 views are overlapped moves the focus from the torus to the monkey head to the cone.</figcaption>
+        </figure>
+      </div>
+      <p class="muted" style="margin-top:6px;font-size:14px">The same scene as the lab on the home page (the ICCAS 2026 Blender scene split into four layers by depth), computed the same way at 640 × 640.</p>
+    </section>
+
     <section id="problem" aria-labelledby="h-problem">
       <h2 id="h-problem">Problem</h2>
       <p>A lens array camera divides its sensor pixels between the number of lenses and the pixels under each lens. More lenses give richer depth information, but each lens then forms an elemental image only a few pixels wide. As it is, the image is too coarse both for people to look at and for a detector to work on.</p>
