@@ -284,6 +284,17 @@ table.data tfoot td{color:var(--paper);font-weight:700;border-bottom:0}
 .fig{margin:0 0 8px}
 .fig img{border:1px solid var(--rule);background:#fff}
 .fig.dark img{background:var(--plate)}
+.fig.clear img{background:none;border:0}
+.viz .vizbox{position:relative;border:1px solid var(--rule);background:var(--plate);touch-action:pan-y}
+.viz .vizbox img{border:0}
+.viz canvas{display:block;width:100%;height:auto;aspect-ratio:1/1;cursor:crosshair}
+.vmap.mini{right:8px;top:8px;grid-template-columns:repeat(8,6px);gap:2px;padding:5px}
+.vmap.mini i{width:6px;height:6px}
+.vmap.mini::after{content:none}
+.viz .vizlabel{position:absolute;left:8px;bottom:8px;padding:2px 8px;font-size:13px;color:var(--brass-hi);background:var(--veil);border:1px solid var(--rule)}
+.viz .vizlabel:empty{display:none}
+.vizctl{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:13.5px;color:var(--mute)}
+.vizctl input{flex:1;min-width:0;accent-color:var(--brass);height:32px}
 .fig figcaption{font-size:14px;color:var(--mute);margin-top:8px}
 .pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .method{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}

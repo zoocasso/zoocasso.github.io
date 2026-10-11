@@ -1,4 +1,4 @@
-<!--meta {"title": "RIM and iRIM", "description": "RIM (ICMV 2026) rearranges the pixels of a lens array image one to one, without interpolation, into views; its inverse iRIM (ICCAS 2026) synthesizes the elemental image of a virtual lens array from multi-view images.", "nav": "research"} -->
+<!--meta {"title": "RIM and iRIM", "description": "RIM (ICMV 2026) rearranges the pixels of a lens array image one to one, without interpolation, into views; its inverse iRIM (ICCAS 2026) synthesizes the elemental image of a virtual lens array from multi-view images.", "nav": "research", "head": "<script src=\"/assets/rimviz.js?v={{v}}\" defer></script>\n"} -->
 <div class="doc-head">
   <p class="crumb"><a href="/en/research/">Research</a> / RIM and iRIM</p>
   <div class="badges"><span>ICMV 2026 accepted, Budapest</span><span>ICCAS 2026 accepted, Sapporo, poster on Oct 30</span></div>
@@ -16,16 +16,18 @@
     <section id="glance" aria-labelledby="h-glance">
       <h2 id="h-glance">At a glance</h2>
       <div class="pair">
-        <figure class="fig dark">
-          <picture><source srcset="/img/rim-views-still.webp" media="(prefers-reduced-motion: reduce)"><img src="/img/rim-views.webp" width="640" height="640" alt="Looping animation flipping through the views produced by RIM. As the viewpoint circles, the torus in front and the monkey head and cone behind move differently" loading="lazy"></picture>
-          <figcaption>1. Views. The 64 views from RIM, flipped through in a circle. They are not copies but views from different directions, so near and far objects move differently.</figcaption>
+        <figure class="fig dark viz" data-viz="views" data-src="/img/lab-scene-layers.webp">
+          <div class="vizbox"><img src="/img/rim-views-still.webp" width="640" height="640" alt="Views produced by RIM. As you change the viewing direction with the mouse, the torus in front and the monkey head and cone behind move differently"><canvas hidden></canvas><div class="vmap mini" aria-hidden="true"></div></div>
+          <label class="vizctl"><span>View</span><input type="range" min="0" max="100" value="0"></label>
+          <figcaption>1. Views. Move the mouse over the picture to change the viewing direction (drag on a phone). They are not copies but views from different directions, so near and far objects move differently. The dot at the top right is the current view.</figcaption>
         </figure>
-        <figure class="fig dark">
-          <picture><source srcset="/img/rim-refocus-still.webp" media="(prefers-reduced-motion: reduce)"><img src="/img/rim-refocus.webp" width="640" height="640" alt="Looping animation of reconstruction as the overlap distance of the 64 views changes. Focus moves from the torus to the monkey head and the cone, and back" loading="lazy"></picture>
-          <figcaption>2. Reconstruction by depth. Changing the distance at which the 64 views are overlapped moves the focus from the torus to the monkey head to the cone.</figcaption>
+        <figure class="fig dark viz" data-viz="refocus" data-src="/img/rim-refocus-stack.webp">
+          <div class="vizbox"><img src="/img/rim-refocus-still.webp" width="640" height="640" alt="Reconstruction from the 64 overlapped views. Changing the overlap distance moves the focus from the torus to the monkey head to the cone"><canvas hidden></canvas><span class="vizlabel"></span></div>
+          <label class="vizctl"><span>Focus distance</span><input type="range" min="0" max="100" value="10"></label>
+          <figcaption>2. Reconstruction by depth. Move the mouse from left to right to change the distance at which the 64 views are overlapped; the focus travels from the torus in front to the cone at the back.</figcaption>
         </figure>
       </div>
-      <p class="muted" style="margin-top:6px;font-size:14px">The same scene as the lab on the home page (the ICCAS 2026 Blender scene split into four layers by depth), computed the same way at 640 × 640.</p>
+      <p class="muted" style="margin-top:6px;font-size:14px">The same scene as the lab on the home page (the ICCAS 2026 Blender scene split into four layers by depth), computed the same way at 640 × 640. Left alone, both move by themselves.</p>
     </section>
 
     <section id="problem" aria-labelledby="h-problem">
@@ -36,8 +38,8 @@
     <section id="rim" aria-labelledby="h-rim">
       <h2 id="h-rim">RIM: ray-based inverse mapping</h2>
       <p>Think of each pixel of the elemental image as re-emitted through a virtual lens array and captured again by a virtual camera. Under telecentric capture and orthographic recapture, this turns into a one-to-one swap of (lens index, position under the lens) into (position under the lens, lens index). There is no interpolation and therefore no quantization error, and it produces as many views as there are pixels under a lens, each with as many pixels as there are lenses. The paper uses the result as the first stage of computational integral imaging reconstruction (CIIR).</p>
-      <figure class="fig">
-        <img src="/img/rim-usaf.webp" width="1600" height="473" alt="A USAF resolution chart in three panels: a single elemental image as coarse blocks, a RIM virtual image where the chart is readable, and the reference image" loading="lazy">
+      <figure class="fig clear">
+        <img src="/img/rim-usaf-panels.webp" width="1600" height="521" alt="A USAF resolution chart in three panels: a single elemental image as coarse blocks, a RIM virtual image where the chart is readable, and the reference image" loading="lazy">
         <figcaption>A synthetic USAF 1951 chart. From left: one raw elemental image, one RIM virtual image (ours), and the ground-truth image at the same viewpoint. ICMV 2026</figcaption>
       </figure>
     </section>
