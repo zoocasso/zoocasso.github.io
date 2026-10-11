@@ -326,7 +326,7 @@ precision highp float;
 uniform sampler2D uImg, uDep;
 uniform mat4 uVP;
 uniform float uK[4];
-uniform float uNL, uNP, uW, uZs, uA, uB, uC, uD, uPx, uP11, uReal, uDepV, uDlo, uDhi, uZa, uZb, uVw, uAvg;
+uniform float uNL, uNP, uW, uZs, uA, uB, uC, uD, uPx, uP11, uReal, uDepV, uDlo, uDhi, uZa, uZb, uVw, uAvg, uSky, uGrow;
 uniform vec2 uVs;
 out vec4 vCol;
 out float vW;
@@ -347,13 +347,15 @@ void main(){
   vec2 uo = u - c;
   vec2 lens = (s + .5) / uNL;
   // dk: the shift per view step that brings this sample back into focus (its depth)
-  vec4 col = vec4(0.); float dk;
+  vec4 col = vec4(0.); float dk, sky = 0.;
   if (uReal > .5) {
     // a light field: elemental-image pixel (s, u) is view u at position s, stored as a mosaic of views;
     // its depth is either one map per lens (estimated) or a mosaic like the views (rendered)
     ivec2 at = ivec2(u * uNL + s);
     col = vec4(texelFetch(uImg, at, 0).rgb, 1.);
-    dk = mix(uDlo, uDhi, texelFetch(uDep, uDepV > .5 ? at : ivec2(s), 0).r);
+    float dz = texelFetch(uDep, uDepV > .5 ? at : ivec2(s), 0).r;
+    dk = mix(uDlo, uDhi, dz);
+    sky = uSky * step(.998, dz);
   } else {
     // follow the ray outward and keep the first opaque layer it meets
     float kap = uK[3];
@@ -372,6 +374,8 @@ void main(){
   float a = ease(lag(uA, length(lens - .5) * 1.4142, .45));
   vec3 O = plane(obj, clamp(uZa + uZb * dk, -2.9, -.3)), P = plane(lens, 0.), S = plane(ei, uZs);
   vec3 pos = a < .5 ? mix(O, P, a * 2.) : mix(P, S, a * 2. - 1.);
+  if (sky > .5 && a < .5) col.a = 0.;
+  float grow = mix(uGrow, 1., min(1., a * 2.));
   float dB = (u.y * uNP + u.x) / (uNP * uNP - 1.);
   float b = ease(lag(uB, dB, .55));
   pos = mix(pos, plane(sai, uZs), b);
@@ -394,7 +398,7 @@ void main(){
   float cells = mix(mix(1., uNP, vw), cellsC, cc);
   vec4 v = uVP * vec4(pos, 1.);
   gl_Position = v;
-  gl_PointSize = clamp(uPx * uP11 * (uW / R) * cells / (2. * v.w) * 1.12, 1., 64.);
+  gl_PointSize = clamp(uPx * uP11 * (uW / R) * cells * grow / (2. * v.w) * 1.12, 1., 64.);
   vCol = col;
 }`;
 const PF = `#version 300 es
@@ -506,8 +510,14 @@ gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 0]));
+// depth is data, read texel by texel: without these settings the texture has no mipmaps for its
+// default filter, is incomplete, and every read returns 0 (all points at one depth)
 const depTex = gl.createTexture();
 gl.bindTexture(gl.TEXTURE_2D, depTex);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 0]));
 
 /* accumulation target: overlapping views are averaged, which is what reconstruction does */
@@ -553,8 +563,10 @@ function camera(asp, now) {
   const drift = reduce ? 0 : Math.sin(now / 5200) * 0.08;
   const amp = 1 - 0.35 * k;
   const ox = (ptr.sx * 1.05 + drift) * amp, oy = (ptr.sy * 0.62 + drift * 0.5) * amp;
-  // the oblique view stands beside the camera body and looks through the lens array at the scene
-  const eObl = small ? [2.0 + ox, 1.2 + oy, 4.6] : [2.6 + ox, 1.35 + oy, 3.9];
+  // the oblique view stands beside the camera body, on its left, and looks through the lens array at
+  // the scene: light then travels left to right (object, lens array, sensor) as in the diagram beside
+  // the robot, and objects at different depths stand apart instead of lining up behind one another
+  const eObl = small ? [-2.0 + ox, 1.2 + oy, 4.6] : [-2.6 + ox, 1.35 + oy, 3.9];
   // on phones the dialogue covers more of the stage, so the side view aims lower to lift the scene
   const tObl = [0, small ? -0.5 : -0.1, -0.9];
   const eFr = [ox * 0.9, lift + oy * 0.9, ZS + fit];
@@ -599,6 +611,7 @@ function draw(now) {
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex); gl.uniform1i(P.u.uImg, 0);
     gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, depTex); gl.uniform1i(P.u.uDep, 1); gl.activeTexture(gl.TEXTURE0);
     gl.uniform1f(P.u.uReal, scene.real ? 1 : 0); gl.uniform1f(P.u.uDepV, scene.perView ? 1 : 0);
+    gl.uniform1f(P.u.uSky, scene.sky ? 1 : 0); gl.uniform1f(P.u.uGrow, scene.grow || 1);
     gl.uniform1f(P.u.uDlo, scene.lo || 0); gl.uniform1f(P.u.uDhi, scene.hi || 0);
     gl.uniform1f(P.u.uZa, scene.za); gl.uniform1f(P.u.uZb, scene.zb);
     gl.uniformMatrix4fv(P.u.uVP, false, VP);
@@ -643,8 +656,8 @@ function draw(now) {
     el.style.transform = `translate(${s[0]}px, ${s[1] - 6}px) translate(${right ? '-100%' : '0'}, -100%)`;
     el.style.opacity = o.toFixed(2);
   };
-  place(tags.obj, [-h, h, scene.za + scene.zb * scene.targets[0].d], fade * (1 - rc));
-  place(tags.lens, [-h, h, 0], fade); place(tags.sen, [-h, h, ZS], fade);
+  place(tags.obj, [h, h, scene.za + scene.zb * scene.targets[0].d], fade * (1 - rc), true);
+  place(tags.lens, [h, h, 0], fade, true); place(tags.sen, [h, h, ZS], fade, true);
   place(tags.rec, [h, h, zRec], fade * rc, true);
   if (cta && !cta.hidden) {
     // the link to the paper page sits just above the dialogue box, whatever its height
@@ -739,7 +752,7 @@ const BLENDER = { lo: 0.3552, hi: 1.2, d: [0.3747, 0.7553, 0.9327, 1.0354, 1.097
 function blenderScene() {
   const names = [NAMES.monkey, NAMES.torus, NAMES.cube, NAMES.cone, NAMES.sphere];
   return { kind: 'blender', real: true, perView: true, nl: 64, targets: BLENDER.d.map((x, i) => ({ d: x, name: names[i] })),
-    walk: [0, 1, 3], dMin: 0.3, dMax: 1.2, za: 0, zb: -NP * ZS, tol: 0.025, lo: BLENDER.lo, hi: BLENDER.hi,
+    sky: true, grow: 1.6, walk: [0, 1, 3], dMin: 0.3, dMax: 1.2, za: 0, zb: -NP * ZS, tol: 0.025, lo: BLENDER.lo, hi: BLENDER.hi,
     point: BLENDER.point, pointD: BLENDER.pointD };
 }
 let scene = blenderScene();
@@ -949,7 +962,9 @@ function loadLightField(viewsURL, depURL, make, line, mode) {
   const ready = () => {
     if (++n < 2) return;
     gl.bindTexture(gl.TEXTURE_2D, depTex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+    gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);   // values, not colours
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, dep);
+    gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.BROWSER_DEFAULT_WEBGL);
     useLayers({ atlas: views, scene: make(), line }, mode);
   };
   views.onload = ready; dep.onload = ready;
