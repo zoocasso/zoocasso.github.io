@@ -261,7 +261,8 @@ const L = {
 const FOCUS = [
   (n) => [`${n.jp}の位置で、くっきり。`, { ko: `${n.ko} 자리에서 선명해졌어요.`, en: `Sharp where the ${n.en} stood.` }],
   (n) => [`もっと奥へ。${n.jp}。`, { ko: `더 뒤로 가면 ${n.ko}.`, en: `Further back: the ${n.en}.` }],
-  (n) => [`いちばん奥は${n.jp}。`, { ko: `가장 뒤의 ${n.ko}까지.`, en: `And the farthest: the ${n.en}.` }]
+  (n) => [`いちばん奥は${n.jp}。`, { ko: `가장 뒤의 ${n.ko}까지.`, en: `And the farthest: the ${n.en}.` }],
+  (n) => [`その奥の${n.jp}まで。`, { ko: `그 뒤의 ${n.ko}까지.`, en: `On to the ${n.en} behind it.` }]
 ];
 const ej = q('.dialog .jp'), ek = q('.dialog .ko'), liveEl = q('[data-live]');
 let sayTimer = 0;
@@ -683,7 +684,8 @@ let running = false, visible = true, raf = 0;
 function loop(now) { raf = 0; draw(now); if (running && visible && !document.hidden) raf = requestAnimationFrame(loop); }
 function request() { if (!raf) raf = requestAnimationFrame(loop); }
 function start() { if (reduce) { request(); return; } running = true; request(); }
-new ResizeObserver(() => request()).observe(stage);
+// the dialogue box's height sets the camera framing and the link above it, so a longer line redraws
+const resized = new ResizeObserver(() => request()); resized.observe(stage); resized.observe(dialogEl);
 new IntersectionObserver((es) => { visible = es[0].isIntersecting; if (visible) start(); }).observe(stage);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) start(); });
 window.addEventListener('pointermove', (e) => {
@@ -737,7 +739,7 @@ const BLENDER = { lo: 0.3552, hi: 1.2, d: [0.3747, 0.7553, 0.9327, 1.0354, 1.097
 function blenderScene() {
   const names = [NAMES.monkey, NAMES.torus, NAMES.cube, NAMES.cone, NAMES.sphere];
   return { kind: 'blender', real: true, perView: true, nl: 64, targets: BLENDER.d.map((x, i) => ({ d: x, name: names[i] })),
-    walk: [0, 1, 4], dMin: 0.3, dMax: 1.2, za: 0, zb: -NP * ZS, tol: 0.025, lo: BLENDER.lo, hi: BLENDER.hi,
+    walk: [0, 1, 3], dMin: 0.3, dMax: 1.2, za: 0, zb: -NP * ZS, tol: 0.025, lo: BLENDER.lo, hi: BLENDER.hi,
     point: BLENDER.point, pointD: BLENDER.pointD };
 }
 let scene = blenderScene();
@@ -831,7 +833,8 @@ async function doRecon(my) {
     const t = scene.targets[walk[i]];
     await tween('D', t.d, 1100, my); if (my !== token) return false;
     Snd.focus(); setDepthUI(true);
-    const line = i === 0 ? FOCUS[0] : i === walk.length - 1 ? FOCUS[2] : FOCUS[1];
+    // the last stop is "the farthest" only when nothing stands behind it
+    const line = i === 0 ? FOCUS[0] : i < walk.length - 1 ? FOCUS[1] : walk[i] === scene.targets.length - 1 ? FOCUS[2] : FOCUS[3];
     await new Promise((r) => sayLine(line(t.name), r)); if (my !== token) return false;
     await wait(500); if (my !== token) return false;
   }
