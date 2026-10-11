@@ -25,15 +25,17 @@ FACTS = json.loads((ROOT / "data" / "facts.json").read_text(encoding="utf-8"))
 UI = {
     "ko": {"skip": "본문 바로가기", "work": "작업", "research": "연구", "cv": "이력서", "nav": "주 메뉴",
            "switch": "EN", "switch_label": "English", "copy": "이메일 주소 복사", "copied": "복사했습니다",
-           "updated": "마지막 업데이트", "note": "사이트의 숫자는 모두 이력서와 같은 기준 문서에서 가져옵니다.",
+           "updated": "마지막 업데이트", "note": "경력·학력·논문의 숫자는 이력서와 같은 기준 문서를 따르고, 연구 페이지의 기술 수치는 각 논문과 데이터 출처를 따릅니다.",
            "locale": "ko_KR", "site": "이형주"},
     "en": {"skip": "Skip to content", "work": "Work", "research": "Research", "cv": "CV", "nav": "Main menu",
            "switch": "한국어", "switch_label": "Korean", "copy": "Copy email address", "copied": "Copied",
-           "updated": "Last updated", "note": "Every number on this site comes from the same source document as my CV.",
+           "updated": "Last updated", "note": "Numbers on career, education and papers follow the same source document as my CV; technical figures on the research pages follow each paper and data source.",
            "locale": "en_US", "site": "Hyeongju Lee"},
 }
 EXISTING = set()
-PHONE = re.compile(r"010-\d{3,4}-\d{4}|\+8[12][ -]?\d")
+# any Korean or Japanese mobile number, in any common spelling, and international prefixes; the
+# check holds no real number, since this file is public
+PHONE = re.compile(r"(?<!\d)01[016-9][-. ]?\d{3,4}[-. ]?\d{4}(?!\d)|(?<!\d)0[789]0[-. ]?\d{4}[-. ]?\d{4}(?!\d)|\+8[12][ -]?\d")
 
 
 def fact(key, lang):

@@ -241,7 +241,7 @@ const L = {
   tap: ['画面をクリックすると、音といっしょに始まります。', { ko: '화면을 한 번 누르면 소리와 함께 시작해요.', en: 'Click anywhere to start, with sound.' }],
   greet: ['いらっしゃいませ！ 奥行きのある景色を、レンズで撮って元に戻してみますね。', { ko: '어서 오세요! 깊이가 다른 물체들을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "Welcome! I'll capture a scene with depth through a lens array, then bring it back." }],
   A: () => scene.kind === 'lytro'
-    ? ['本物のLytroが記録した画像です。拡大すると、レンズごとに小さな丸い像があります。', { ko: '이건 실제 Lytro 카메라가 센서에 기록한 영상이에요. 확대하면 렌즈마다 작고 둥근 영상이 있고, 그 가운데 8×8 픽셀이 8×8개 시점이 됩니다. 3D 형상이 없으니 촬영은 흉내 내지 않아요.', en: 'This is what a real Lytro camera recorded on its sensor. Zoom in and each lens holds a small round image; its central 8×8 pixels become the 8×8 views. There is no 3D shape here, so the capture is not simulated.' }]
+    ? ['本物のLytroで撮った、レンズごとの画像です。拡大すると、小さな丸い像が並んでいます。', { ko: '이건 실제 Lytro 카메라로 찍어 Lytro 소프트웨어가 디코딩한 렌즈릿 영상이에요. 확대하면 렌즈마다 작고 둥근 영상이 있고, 그 가운데 8×8 픽셀이 8×8개 시점이 됩니다. 3D 형상이 없으니 촬영은 흉내 내지 않아요.', en: 'This is a real Lytro capture: the lenslet image as decoded by Lytro\'s software. Zoom in and each lens holds a small round image; its central 8×8 pixels become the 8×8 views. There is no 3D shape here, so the capture is not simulated.' }]
     : scene.kind === 'blender'
     ? ['では全体を撮影。すべての点の光がレンズを通って、小さな像になります。', { ko: `이제 장면 전체를 찍습니다. 모든 점의 빛이 ${NL}×${NL}개 렌즈를 지나, 렌즈마다 작고 뒤집힌 영상이 생겨요. 블렌더로 렌더링한 8×8 시점 영상을 요소 영상으로 바꾼 것입니다.`, en: `Now the whole scene: light from every point passes ${NL}×${NL} lenses, and each lens forms a small, flipped elemental image, built here from 8×8 views rendered in Blender.` }]
     : ['では全体を撮影。すべての点の光がレンズを通って、小さな像になります。', { ko: `이제 장면 전체를 찍습니다. 모든 점의 빛이 ${NL}×${NL}개 렌즈를 지나, 렌즈마다 작고 뒤집힌 영상이 생겨요. 이것이 요소 영상입니다.`, en: `Now the whole scene: light from every point passes ${NL}×${NL} lenses, and each lens forms a small, flipped elemental image.` }],
@@ -781,10 +781,10 @@ function showViewMap(vs) {
   if (on >= 0) vcells[on].className = 'on';
   vmap.hidden = on < 0; vmapOn = on;
 }
-let running = false, visible = true, raf = 0;
+let running = false, visible = true, raf = 0, still = false;
 function loop(now) { raf = 0; draw(now); if (running && visible && !document.hidden) raf = requestAnimationFrame(loop); }
 function request() { if (!raf) raf = requestAnimationFrame(loop); }
-function start() { if (reduce) { request(); return; } running = true; request(); }
+function start() { if (reduce || still) { request(); return; } running = true; request(); }
 // the dialogue box's height sets the camera framing and the link above it, so a longer line redraws
 const resized = new ResizeObserver(() => request()); resized.observe(stage); resized.observe(dialogEl);
 new IntersectionObserver((es) => { visible = es[0].isIntersecting; if (visible) start(); }).observe(stage);
@@ -1264,7 +1264,7 @@ function startSound() {
   Snd.enable().then((ok) => { if (ok) Snd.chime(); soundUI(); });
 }
 function beginStory() {
-  if (!waiting) return;
+  if (!waiting || still) return;
   endWait(); opening(++token);
 }
 const GESTURES = ['pointerdown', 'keydown', 'touchend'];
@@ -1281,6 +1281,15 @@ soundBtn.addEventListener('click', () => {
   soundUI(); beginStory();
 });
 soundUI();
+/* moving content can be stopped (WCAG 2.2.2): the story stops and the scene stands still; steps and
+   sliders still work, and the motion comes back on request */
+const motionBtn = q('[data-motion]');
+const motionText = { ko: ['움직임 멈춤', '움직임 다시 시작'], en: ['Pause motion', 'Resume motion'] }[lang];
+if (motionBtn) motionBtn.addEventListener('click', () => {
+  Snd.ui(); still = !still;
+  motionBtn.setAttribute('aria-pressed', String(still)); motionBtn.textContent = motionText[still ? 1 : 0];
+  if (still) { token++; running = false; lfZoom(false); Face.set('idle'); request(); } else start();
+});
 
 /* the Blender sample scene stands in front of the lens array */
 setDepthUI(false);

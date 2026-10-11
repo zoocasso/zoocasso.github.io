@@ -1,4 +1,4 @@
-<!--meta {"title": "KISTI 공공 R&D 플랫폼 데이터 수집·적재", "description": "KISTI 발주 공공 R&D 가치창출 플랫폼(SMART K2C)에서 상품·조달 데이터 8,000만 행 이상을 혼자 수집·적재하고 모델 배치와 관리 화면까지 만든 데이터 엔지니어링 사례.", "nav": "work"} -->
+<!--meta {"title": "KISTI 공공 R&D 플랫폼 데이터 수집·적재", "description": "KISTI 발주 공공 R&D 가치창출 플랫폼(SMART K2C)에서 상품·조달 데이터 8,000만 행 이상을 비전인사이드 쪽 데이터 엔지니어로 혼자 수집·적재하고 모델 배치와 관리 화면까지 만든 데이터 엔지니어링 사례.", "nav": "work"} -->
 <div class="doc-head">
   <p class="crumb"><a href="/work/">작업</a> / KISTI 데이터 플랫폼</p>
   <h1>공공 R&amp;D 플랫폼에 상품·조달 데이터 {{f:kisti_rows}}을 공급한 수집·적재 파이프라인</h1>
@@ -21,7 +21,7 @@
       <h2 id="h-result">결과</h2>
       <dl class="results">
         <div><dt>{{f:kisti_rows}}</dt><dd>누적 적재 행 수 (2023년 11월 기준)</dd></div>
-        <div><dt>{{f:kisti_asin_dedup}}</dt><dd>중복을 걷어 낸 Amazon 상품 (수집 {{f:kisti_asin}}에서)</dd></div>
+        <div><dt>{{f:kisti_asin_dedup}}</dt><dd>중복을 걷어 낸 Amazon 상품 ID (2022년 9월 수집분 {{f:kisti_asin}}에서)</dd></div>
         <div><dt>2,481개</dt><dd>수집한 다나와 카테고리 (전체 2,517개 중)</dd></div>
         <div><dt>{{f:kisti_match}}</dt><dd>NTIS 과제와 기업을 키워드로 이은 매칭 (SQL)</dd></div>
       </dl>
@@ -30,7 +30,7 @@
 
     <section id="context" aria-labelledby="h-context">
       <h2 id="h-context">맥락</h2>
-      <p>플랫폼은 공공 R&amp;D 성과를 시장의 상품과 이어 주는 분석 모델 여러 개로 이루어집니다. 경쟁 제품 탐색, 리뷰에서 요구 품질 뽑기, 과제와 기업 매칭 같은 모델입니다. 모델 일부는 대학 위탁연구팀(성균관대, 국민대)이 설계했고, 비전인사이드는 그 모델들이 쓰는 데이터와 서빙 계층을 맡았습니다. 그 데이터 쪽 일을 처음부터 끝까지 혼자 했습니다.</p>
+      <p>플랫폼은 공공 R&amp;D 성과를 시장의 상품과 이어 주는 분석 모델 여러 개로 이루어집니다. 경쟁 제품 탐색, 리뷰에서 요구 품질 뽑기, 과제와 기업 매칭 같은 모델입니다. 모델 일부는 대학 위탁연구팀(성균관대, 국민대)이 설계했고, 비전인사이드는 그 모델들이 쓰는 데이터와 서빙 계층을 맡았습니다. 그 데이터 계층(수집·적재·배치·서빙)을 비전인사이드 쪽 데이터 엔지니어 1인으로 맡았습니다.</p>
     </section>
 
     <section id="scope" aria-labelledby="h-scope">

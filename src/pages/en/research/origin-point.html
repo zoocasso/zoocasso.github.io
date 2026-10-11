@@ -34,12 +34,12 @@
     <section id="what" aria-labelledby="h-what">
       <h2 id="h-what">What it does</h2>
       <p>Volumetric computational reconstruction (VCR) builds slices of a 3D scene by shifting elemental images, taken from many viewpoints, by an amount that depends on depth and overlapping them. The images can only move by whole pixels, which causes quantization error and blurs the result.</p>
-      <p>The 2025 paper reduced that error by optimizing the origin point that the overlap is measured from, but finding the best origin meant reconstructing many times, which was slow. The 2026 paper computes the same origin directly from the camera parameters, independent of the image. The SSIM of the result is identical to the iterative search; only the time drops.</p>
+      <p>The 2025 paper reduced that error by optimizing the origin point that the overlap is measured from, but finding the best origin meant reconstructing many times, which was slow. The 2026 paper computes the origin directly from the camera parameters, independent of the image. The SSIM of the result is identical to the iterative search; only the time drops.</p>
     </section>
 
     <section id="vcr" aria-labelledby="h-vcr">
       <h2 id="h-vcr">What VCR is</h2>
-      <figure class="fig">
+      <figure class="fig paper">
         <img src="/img/vcr-principle.webp" width="1200" height="669" alt="Diagram: a 3D object captured through a pinhole array as elemental images, back-projected through a virtual pinhole array to a reconstruction plane" loading="lazy">
         <figcaption>Elemental images are back-projected through a virtual pinhole array to form a reconstruction plane at the chosen depth. ITC-CSCC 2026 Fig. 1</figcaption>
       </figure>
@@ -56,7 +56,7 @@
         <div>
           <h3>Proposed: direct calculation</h3>
           <ol><li>Acquire elemental images</li><li>Enter the camera parameters and depth</li><li>Compute the origin with the smallest quantization error</li><li>Run VCR once</li></ol>
-          <p>Only the parameters are used, not the image, so there is no loop. The output matches the iterative search.</p>
+          <p>Only the parameters are used, not the image, so there is no loop. Image quality (SSIM) matches the iterative search.</p>
         </div>
       </div>
     </section>

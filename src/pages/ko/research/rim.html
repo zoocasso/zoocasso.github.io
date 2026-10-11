@@ -23,11 +23,11 @@
         </figure>
         <figure class="fig dark viz" data-viz="refocus" data-dir="/img/iccas/">
           <div class="vizbox"><img src="/img/iccas/f01.webp" width="1000" height="1000" alt="64장의 시점 영상을 겹쳐 재구성한 영상. 겹치는 거리를 바꾸면 원숭이 머리, 원환체, 정육면체, 원뿔, 구 순서로 초점이 옮겨 간다"><canvas hidden></canvas><span class="vizlabel"></span></div>
-          <label class="vizctl"><span>초점 거리</span><input type="range" min="0" max="100" value="4"></label>
+          <label class="vizctl"><span>초점 깊이</span><input type="range" min="0" max="100" value="4"></label>
           <figcaption>2. 깊이별 재구성. 아래 막대를 움직이면 64장을 겹치는 거리가 바뀌어, 앞의 원숭이 머리(0.39 m)부터 원환체, 정육면체, 원뿔, 뒤의 구(1.41 m)까지 초점이 옮겨 갑니다.</figcaption>
         </figure>
       </div>
-      <p class="muted" style="margin-top:6px;font-size:14px">ICCAS 2026 논문의 블렌더 장면을 논문의 렌더링 스크립트로, 시점 수와 해상도만 바꿔 8×8 카메라 위치에서 렌더링했습니다(논문은 6×6). 시점마다 1920×1080으로 렌더링해, 물체 둘레 1000×1000 영역을 축소 없이 씁니다(휴대폰은 500×500). 재구성은 64장을 거리만큼 밀어 평균한 것으로, 0.36–1.55 m를 31단계로 미리 계산했습니다. 손대지 않으면 저절로 움직입니다.</p>
+      <p class="muted" style="margin-top:6px;font-size:14px">ICCAS 2026 논문의 블렌더 장면을 논문의 렌더링 스크립트로, 시점 수와 해상도만 바꿔 8×8 카메라 위치에서 렌더링했습니다(논문은 6×6). 시점마다 1920×1080으로 렌더링해, 물체 둘레 1000×1000 영역을 축소 없이 씁니다(휴대폰은 500×500). 재구성은 64장을 거리만큼 밀어 평균한 것으로, 0.36–1.55 m를 31단계로 미리 계산했습니다. 만지기 전까지는 저절로 움직이고, 마우스나 막대를 쓰면 그 자리에서 멈춥니다.</p>
     </section>
 
     <section id="problem" aria-labelledby="h-problem">

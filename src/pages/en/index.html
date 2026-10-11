@@ -39,7 +39,7 @@
 
   <div class="lab-tools">
     <div class="group needs-gl">
-      <label class="btn primary" for="lab-file">Add an image<input class="vh" type="file" id="lab-file" accept="image/*" data-file></label>
+      <label class="btn" for="lab-file">Add an image<input class="vh" type="file" id="lab-file" accept="image/*" data-file></label>
       <button class="btn" type="button" data-sample-btn="scene" aria-pressed="true">Blender scene</button>
       <button class="btn" type="button" data-sample-btn="lytro" aria-pressed="false">Lytro (real capture)</button>
     </div>
@@ -57,6 +57,7 @@
     </div>
     <a class="lab-how" href="/en/research/rim/#lab">How it works</a>
     <span class="sound-hint needs-gl" data-sound-hint>Click anywhere for sound</span>
+    <button class="btn needs-gl" type="button" data-motion aria-pressed="false">Pause motion</button>
     <button class="btn sound needs-gl" type="button" data-sound aria-pressed="true">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path class="x" d="M17 9l5 6M22 9l-5 6" style="display:none"></path><path class="w" d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"></path></svg>
       <span class="label">Sound off</span>
@@ -67,8 +68,8 @@
 <section class="section" aria-labelledby="h-facts">
   <header><h2 id="h-facts">In numbers</h2></header>
   <dl class="facts">
-    <div><dt>{{f:kisti_rows}}</dt><dd>Product and procurement data I collected and loaded alone for a KISTI public R&amp;D platform<small>As of November 2023, including 16M Danawa reviews and 42M procurement attribute rows</small></dd></div>
-    <div><dt>{{f:bio_ref}}</dt><dd>Public reference data behind a genomic variant annotation system<small>dbSNP 237 GB, 1000 Genomes 770 GB and more. I built the system alone</small></dd></div>
+    <div><dt>{{f:kisti_rows}}</dt><dd>Product and procurement data I collected and loaded for a KISTI public R&amp;D platform<small>Sole data engineer on Vision Inside's side. As of November 2023, including 16M Danawa reviews and 42M procurement attribute rows</small></dd></div>
+    <div><dt>{{f:bio_ref}}</dt><dd>Public reference data behind a genomic variant annotation system<small>dbSNP 237 GB, 1000 Genomes 770 GB and more. I built the backend on my own</small></dd></div>
     <div><dt>4 papers</dt><dd>First-author papers at international conferences on light field and integral imaging<small>ICMV 2026, ICCAS 2026, ITC-CSCC 2026, ITC-CSCC 2025</small></dd></div>
     <div><dt>{{f:wjmax_peak}}</dt><dd>Peak concurrent players on the WJMax game server during updates<small>{{f:wjmax_avg}} on average. I handled server, database and security in a team of two</small></dd></div>
   </dl>
@@ -76,7 +77,7 @@
 
 <section class="section" aria-labelledby="h-work">
   <header><h2 id="h-work">Work</h2><a class="more" href="/en/work/">All work</a></header>
-  <ol class="log">
+  <ol class="log work">
     <li><a class="row" href="/en/work/kisti/">
       <span class="when">{{f:kisti_period}}<br>Vision Inside, contract work</span>
       <div><h3>Data collection and loading for a KISTI public R&amp;D platform</h3>
