@@ -242,11 +242,13 @@ const L = {
   greet: ['いらっしゃいませ！ 奥行きのある景色を、レンズで撮って元に戻してみますね。', { ko: '어서 오세요! 깊이가 다른 물체들을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "Welcome! I'll capture a scene with depth through a lens array, then bring it back." }],
   A: () => scene.real
     ? ['本物のLytroカメラのデータです。光がレンズを通って、小さな像になります。', { ko: `실제 Lytro 카메라 데이터입니다. 점들은 라이트필드에서 추정한 깊이에 놓았고, 그 빛이 ${NL}×${NL}개 렌즈를 지나 요소 영상이 됩니다.`, en: `Real Lytro data. The points sit at the depth estimated from the light field; their light passes ${NL}×${NL} lenses into elemental images.` }]
-    : ['まずは撮影。奥行きの違う物体からの光が、レンズを通って小さな像になります。', { ko: `먼저 찍습니다. 깊이가 다른 물체에서 나온 빛이 ${NL}×${NL}개 렌즈를 지나 저마다 작고 뒤집힌 영상을 만듭니다. 이것이 요소 영상입니다.`, en: `Capture. Light from objects at different depths passes ${NL}×${NL} lenses and forms small, flipped elemental images.` }],
-  B: ['次は並べ替え。同じ位置のピクセルを集めると、ひとつの視点になります。', { ko: `다음은 재배열(RIM)입니다. 모든 렌즈에서 같은 자리의 픽셀만 모으면 한 방향에서 본 시점 영상 ${VIEWS}장이 돼요.`, en: `Rearrange (RIM). Taking the same pixel from every lens gives ${VIEWS} views, each from one direction.` }],
+    : ['では全体を撮影。すべての点の光がレンズを通って、小さな像になります。', { ko: `이제 장면 전체를 찍습니다. 모든 점의 빛이 ${NL}×${NL}개 렌즈를 지나, 렌즈마다 작고 뒤집힌 영상이 생겨요. 이것이 요소 영상입니다.`, en: `Now the whole scene: light from every point passes ${NL}×${NL} lenses, and each lens forms a small, flipped elemental image.` }],
+  ray: ['撮る前に、一点だけ見てみましょう。光はレンズごとに、ちがう場所に届きます。', { ko: '찍기 전에 한 점만 볼게요. 한 점에서 나온 빛은 여러 렌즈를 지나, 렌즈마다 아래의 다른 자리에 닿아요. 그 자리가 빛이 들어온 방향입니다.', en: 'First, one point. Its light passes several lenses and lands at a different spot under each; that spot is the direction the light came from.' }],
+  B: ['次は並べ替え。同じ位置のピクセル、つまり同じ方向の光を集めると、ひとつの視点になります。', { ko: `다음은 재배열(RIM)입니다. 모든 렌즈에서 같은 자리의 픽셀, 즉 같은 방향에서 온 빛만 모으면 시점 영상 한 장이 돼요. 자리마다 한 장씩, ${VIEWS}장입니다.`, en: `Rearrange (RIM). Gather the pixel at the same spot under every lens, light from one direction, and you get one view; one per spot, ${VIEWS} in all.` }],
+  views: ['ほら、視点ごとに手前と奥のずれ方がちがいます。', { ko: '보세요. 시점마다 앞의 물체와 뒤의 물체가 서로 다르게 움직여요. 같은 그림이 아니라 서로 다른 방향에서 본 영상입니다.', en: 'Look: from view to view, near and far objects move differently. They are not copies but views from different directions.' }],
   C: ['最後に再構成。重ねる面を奥へ動かすと、その奥行きの物体がくっきり戻ります。', { ko: `마지막으로 재구성입니다. 시점 영상 ${VIEWS}장을 한 면에 겹치는데, 그 면을 뒤로 옮기면 그 깊이에 있던 물체가 선명하게 되살아나요.`, en: `Reconstruct. The ${VIEWS} views are overlapped on one plane; move the plane back and whatever stood at that depth comes back sharp.` }],
   done: () => ['ピクセルはひとつも失われていません。奥行きごとにピントを合わせ直せます。', { ko: `${fmt(COUNT)}개 픽셀을 하나도 버리지 않고, 깊이마다 초점을 다시 맞출 수 있어요.`, en: `Not one of the ${fmt(COUNT)} pixels was lost, and focus can be set at any depth.` }],
-  idle: ['距離のつまみを動かしたり、画像を入れたりしてみてください。', { ko: '재구성 거리를 움직여 초점을 옮겨 보세요. 직접 이미지를 넣어도 됩니다.', en: 'Move the distance slider, or try your own image.' }],
+  idle: ['距離のつまみを動かしてみてください。並べ替えのあとは、マウスで視点も変えられます。', { ko: '재구성 거리를 움직여 초점을 옮겨 보세요. "2 재배열"을 누른 뒤 화면 위에서 마우스를 움직이면 시점도 바꿔 볼 수 있어요.', en: 'Move the distance slider. After "2 Rearrange", move the mouse over the stage to change the view.' }],
   rev: ['逆再生もできます。一対一の並べ替えですから。', { ko: 'RIM은 일대일 재배열이라 픽셀 하나 잃지 않고 요소 영상으로 되돌아갑니다.', en: 'RIM is one-to-one, so the elemental images come back without losing a pixel.' }],
   bad: ['あれ？ この画像は開けませんでした。', { ko: '이 파일은 열 수 없어요. JPG, PNG, WebP 이미지를 넣어 주세요.', en: "I can't open this file. Try a JPG, PNG or WebP image." }],
   load2: ['画像、受け取りました！ 主役と背景の二層に分けますね。', { ko: '이미지를 받았습니다! 가장자리 색을 배경으로 보고, 주인공과 배경 두 층으로 세웠어요.', en: 'Got it! I split it into a subject layer and a background layer using the edge colour.' }],
@@ -320,8 +322,11 @@ precision highp float;
 uniform sampler2D uImg, uDep;
 uniform mat4 uVP;
 uniform float uK[4];
-uniform float uNL, uNP, uW, uZs, uA, uB, uC, uD, uPx, uP11, uReal, uDlo, uDhi, uZa, uZb;
+uniform float uNL, uNP, uW, uZs, uA, uB, uC, uD, uPx, uP11, uReal, uDlo, uDhi, uZa, uZb, uVw, uAvg;
+uniform vec2 uVs;
+uniform vec3 uHi;
 out vec4 vCol;
+out float vW;
 float ease(float t){ return t < .5 ? 4.*t*t*t : 1. - pow(-2.*t + 2., 3.) / 2.; }
 float lag(float t, float d, float spread){ return clamp((t - d * spread) / (1. - spread), 0., 1.); }
 vec3 plane(vec2 n, float z){ return vec3((n.x - .5) * uW, (.5 - n.y) * uW, z); }
@@ -357,6 +362,8 @@ void main(){
     dk = kap / uNP;
   }
   vec2 obj = lens - dk * uo / uNL;
+  // step 2 begins by lighting up the same spot under every lens: those pixels become one view
+  col.rgb *= mix(1., all(equal(u, uHi.xy)) ? 1.35 : .16, uHi.z);
   vec2 ei = (px + .5) / R;
   vec2 sai = (u * uNL + s + .5) / R;
   vec2 rec = lens - uD * uo / uNL;
@@ -367,13 +374,22 @@ void main(){
   float b = ease(lag(uB, dB, .55));
   pos = mix(pos, plane(sai, uZs), b);
   pos.z += sin(3.14159 * b) * .22 * (.5 + .5 * dB);
+  // then one view at a time fills the sensor; uVs picks the view, blending the nearest four
+  float vw = ease(clamp(uVw, 0., 1.));
+  pos = mix(pos, plane(lens, uZs), vw);
+  pos.z += sin(3.14159 * vw) * .12;
+  vec2 dv = max(1. - abs(u - uVs), 0.);
+  float w = dv.x * dv.y;
   float cc = ease(lag(uC, length(uo) / (c * 1.4143), .4));
+  // reconstruction opens up again: every view counts the same
+  vW = mix(1., uAvg > .5 ? w : step(.5, w), vw * (1. - cc));
   // the views are overlapped on a plane in front of the lens array: shifting by d per view step
   // brings back what stands at depth d, so the plane is drawn at that depth in the scene
   pos = mix(pos, plane(rec, uZa + uZb * uD), cc);
   float focus = 1. - smoothstep(0., .2, abs(uD - dk) / max(dk, .05));
-  // a real light field is refocused by shift-and-sum, so each view sample covers a whole lens
-  float cells = uReal > .5 ? mix(1., uNP, cc) : mix(1., mix(uNP, 1., focus), cc);
+  // a single view, and a real light field refocused by shift-and-sum, cover a whole lens per sample
+  float cellsC = uReal > .5 ? uNP : mix(uNP, 1., focus);
+  float cells = mix(mix(1., uNP, vw), cellsC, cc);
   vec4 v = uVP * vec4(pos, 1.);
   gl_Position = v;
   gl_PointSize = clamp(uPx * uP11 * (uW / R) * cells / (2. * v.w) * 1.12, 1., 64.);
@@ -381,8 +397,8 @@ void main(){
 }`;
 const PF = `#version 300 es
 precision mediump float;
-in vec4 vCol; out vec4 o;
-void main(){ if (vCol.a < .03) discard; o = vec4(vCol.rgb, 1.); }`;
+in vec4 vCol; in float vW; out vec4 o;
+void main(){ if (vCol.a < .03 || vW < .002) discard; o = vec4(vCol.rgb * vW, vW); }`;
 const QV = `#version 300 es
 void main(){ vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2); gl_Position = vec4(p * 2. - 1., 0., 1.); }`;
 const QF = `#version 300 es
@@ -447,6 +463,27 @@ function buildLines(nl) {
 const lineVAO = gl.createVertexArray(); gl.bindVertexArray(lineVAO);
 buildLines(NL);
 const aPos = gl.getAttribLocation(LN.p, 'aPos'); gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 0, 0);
+/* step 1 opens on the light cone from one point of the nearest object through the 3 x 3 lenses
+   around it (the only ones that see it, at this depth) to the sensor, with a cross where each lands */
+const rayBuf = gl.createBuffer(), rayVAO = gl.createVertexArray();
+gl.bindVertexArray(rayVAO); gl.bindBuffer(gl.ARRAY_BUFFER, rayBuf);
+gl.bufferData(gl.ARRAY_BUFFER, 4 * 3 * 140, gl.DYNAMIC_DRAW);
+gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 0, 0);
+gl.bindVertexArray(null);
+let rayCount = 0;
+function buildRays() {
+  const pt = scene.point, zo = scene.za + scene.zb * scene.targets[0].d;
+  const O = [(pt[0] - .5) * W, (.5 - pt[1]) * W, zo], v = [], e = W / NL * 0.3;
+  const sx = Math.floor(pt[0] * NL), sy = Math.floor(pt[1] * NL), k = (ZS - zo) / -zo;
+  v.push(O[0] - e, O[1], zo, O[0] + e, O[1], zo, O[0], O[1] - e, zo, O[0], O[1] + e, zo);
+  for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) {
+    const L = [((sx + i + .5) / NL - .5) * W, (.5 - (sy + j + .5) / NL) * W, 0];
+    const S = [O[0] + (L[0] - O[0]) * k, O[1] + (L[1] - O[1]) * k, ZS];
+    v.push(...O, ...L, ...L, ...S, S[0] - e, S[1], ZS, S[0] + e, S[1], ZS, S[0], S[1] - e, ZS, S[0], S[1] + e, ZS);
+  }
+  gl.bindBuffer(gl.ARRAY_BUFFER, rayBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(v));
+  rayCount = v.length / 3;
+}
 function setNL(nl) { if (nl === NL) return; NL = nl; R = NL * NP; COUNT = R * R; buildLines(NL); }
 
 /* environment: an optical breadboard (holes on a regular pitch) below the bench, and dust in the light */
@@ -498,7 +535,7 @@ const easeIO = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const lerp = (a, b, t) => a + (b - a) * t;
 const lerp3 = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
 
-const st = { A: 0, B: 0, C: 0, D: 0, cam: 0 };
+const st = { A: 0, B: 0, C: 0, D: 0, cam: 0, ray: 0, hi: 0, V: 0, vt: 0 };
 const ptr = { x: 0, y: 0, sx: 0, sy: 0, tx: 0, ty: 0, mx: 0, my: 0, ma: 0, inside: false };
 let VP = null, P11 = 1, hasImage = false;
 const T0 = performance.now();
@@ -549,10 +586,11 @@ function draw(now) {
   gl.uniform1f(E.u.uAsp, cw / ch); gl.uniform2f(E.u.uM, ptr.mx, ptr.my); gl.uniform1f(E.u.uMA, ptr.ma);
   gl.bindVertexArray(envVAO); gl.drawArrays(gl.POINTS, 0, envCount);
   gl.disable(gl.BLEND);
+  const vs = viewSel();
   if (hasImage) {
     // while the layers stand in 3D, near points hide far ones (depth test); once views overlap for
     // reconstruction, they are averaged in a float buffer instead
-    const averaging = floatOK && st.C > 0.001;
+    const averaging = floatOK && (st.C > 0.001 || st.V > 0.001);
     if (averaging) { gl.bindFramebuffer(gl.FRAMEBUFFER, acc); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE); }
     else { gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LESS); }
     gl.useProgram(P.p);
@@ -566,6 +604,8 @@ function draw(now) {
     gl.uniform1f(P.u.uW, W); gl.uniform1f(P.u.uZs, ZS);
     gl.uniform1f(P.u.uA, st.A); gl.uniform1f(P.u.uB, st.B); gl.uniform1f(P.u.uC, st.C); gl.uniform1f(P.u.uD, st.D);
     gl.uniform1f(P.u.uPx, ch); gl.uniform1f(P.u.uP11, P11);
+    gl.uniform1f(P.u.uVw, st.V); gl.uniform2f(P.u.uVs, vs[0], vs[1]); gl.uniform1f(P.u.uAvg, averaging ? 1 : 0);
+    gl.uniform3f(P.u.uHi, HI[0], HI[1], st.hi);
     gl.bindVertexArray(emptyVAO); gl.drawArrays(gl.POINTS, 0, COUNT);
     gl.disable(gl.BLEND); gl.disable(gl.DEPTH_TEST);
     if (averaging) {
@@ -589,8 +629,13 @@ function draw(now) {
     gl.uniform1f(LN.u.uZ, zRec - ZS); gl.uniform4f(LN.u.uCol, 0.89, 0.77, 0.5, 0.8 * rc);
     gl.drawArrays(gl.LINES, gridCount, 8);
   }
+  if (st.ray > 0.01 && hasImage) {
+    gl.bindVertexArray(rayVAO); gl.uniform1f(LN.u.uZ, 0);
+    gl.uniform4f(LN.u.uCol, 0.99, 0.9, 0.62, 0.9 * st.ray); gl.drawArrays(gl.LINES, 0, rayCount);
+  }
   gl.disable(gl.BLEND); gl.bindVertexArray(null);
   const sw = stage.clientWidth, shh = stage.clientHeight;
+  showViewMap(vs);
   const place = (el, p, o, right) => {
     const s = project(p, sw, shh);
     el.style.transform = `translate(${s[0]}px, ${s[1] - 6}px) translate(${right ? '-100%' : '0'}, -100%)`;
@@ -605,6 +650,33 @@ function draw(now) {
     if (b !== ctaBottom) { ctaBottom = b; cta.style.bottom = b + 'px'; }
   }
   Face.frame(now);
+}
+/* which view step 2 shows: the highlighted one first, then a circle around the centre; after the
+   step is over the pointer chooses (left-right and up-down over the stage) */
+const HI = [6, 3], VC = (NP - 1) / 2;
+let viewDrive = false;
+const vsNow = [HI[0], HI[1]];
+function viewSel() {
+  let tx, ty;
+  if (viewDrive && ptr.inside) {
+    tx = VC + Math.max(-1, Math.min(1, ptr.tx * 1.15)) * VC; ty = VC - Math.max(-1, Math.min(1, ptr.ty * 1.15)) * VC;
+  } else {
+    const a0 = Math.atan2(HI[1] - VC, HI[0] - VC), r = Math.hypot(HI[0] - VC, HI[1] - VC), a = a0 + st.vt * Math.PI * 2;
+    tx = VC + r * Math.cos(a); ty = VC + r * Math.sin(a);
+  }
+  vsNow[0] += (tx - vsNow[0]) * (viewDrive ? 0.25 : 1); vsNow[1] += (ty - vsNow[1]) * (viewDrive ? 0.25 : 1);
+  return vsNow;
+}
+const vmap = q('.vmap'), vcells = [];
+if (vmap) for (let i = 0; i < NP * NP; i++) vcells.push(vmap.appendChild(document.createElement('i')));
+let vmapOn = -2;
+function showViewMap(vs) {
+  if (!vmap) return;
+  const on = st.V > 0.5 && st.C < 0.3 ? Math.round(vs[1]) * NP + Math.round(vs[0]) : -1;
+  if (on === vmapOn) return;
+  if (vmapOn >= 0) vcells[vmapOn].className = '';
+  if (on >= 0) vcells[on].className = 'on';
+  vmap.hidden = on < 0; vmapOn = on;
 }
 let running = false, visible = true, raf = 0;
 function loop(now) { raf = 0; draw(now); if (running && visible && !document.hidden) raf = requestAnimationFrame(loop); }
@@ -640,9 +712,9 @@ const NAMES = {
 };
 /* a scene says where focus can go: targets (depth d, name) from near to far, the slider range, and
    how a depth maps to a distance in front of the lens array (z = za + zb * d) */
-function synthScene(names, used) {
+function synthScene(names, used, point) {
   return { real: false, nl: NL_SIM, targets: used.map((k) => ({ d: K[k] / NP, name: names[k] })),
-    dMin: 0, dMax: K[3] / NP * 1.1, za: 0, zb: -NP * ZS, tol: 0.05 };
+    dMin: 0, dMax: K[3] / NP * 1.1, za: 0, zb: -NP * ZS, tol: 0.05, point: point || [0.5, 0.5] };
 }
 /* Lytro sample (Stanford Lytro Light Field Archive, occlusions_26): depths in lens units at this lens
    count, measured offline where the 64 views agree best; lo/hi is the range stored in the depth map */
@@ -651,9 +723,11 @@ function lytroScene() {
   const d = LYTRO.d, names = [NAMES.bush, NAMES.stop, NAMES.building], span = d[2] - d[0];
   const zNear = -K[0] * ZS, zFar = -K[2] * ZS, zb = (zFar - zNear) / span;
   return { real: true, nl: NL_REAL, targets: d.map((x, i) => ({ d: x, name: names[i] })),
-    dMin: d[0] - span * 0.25, dMax: d[2] + span * 0.25, za: zNear - zb * d[0], zb, tol: span * 0.06, lo: LYTRO.lo, hi: LYTRO.hi };
+    dMin: d[0] - span * 0.25, dMax: d[2] + span * 0.25, za: zNear - zb * d[0], zb, tol: span * 0.06, lo: LYTRO.lo, hi: LYTRO.hi, point: [0.5, 0.5] };
 }
-let scene = synthScene([NAMES.torus, NAMES.monkey, NAMES.back, NAMES.bg], [0, 1, 2]);
+// the light cone starts on the upper part of the torus ring
+const TORUS_PT = [0.42, 0.34];
+let scene = synthScene([NAMES.torus, NAMES.monkey, NAMES.back, NAMES.bg], [0, 1, 2], TORUS_PT);
 
 /* ================= timeline ================= */
 let token = 0;
@@ -695,24 +769,46 @@ function finish() { root.classList.add('played'); if (cta) cta.hidden = false; }
 function unfinish() { root.classList.remove('played'); if (cta) cta.hidden = true; }
 const stepBtns = [...root.querySelectorAll('[data-step]')];
 function steps(n) { stepBtns.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.step) === n))); }
+/* the diagram beside the robot: one point, three lenses, and where the light lands under each */
+const raybox = q('.raybox');
+function rayBox(on) {
+  if (!raybox) return;
+  raybox.classList.remove('on');
+  if (on) { raybox.hidden = false; void raybox.offsetWidth; raybox.classList.add('on'); } else raybox.hidden = true;
+}
 async function doCapture(my) {
-  steps(1); setDepthUI(false); Face.set('work'); say('A');
-  st.B = 0; st.C = 0; st.cam = 0; st.A = 0;
+  steps(1); setDepthUI(false); Face.set('work'); viewDrive = false;
+  st.B = 0; st.C = 0; st.cam = 0; st.A = 0; st.V = 0; st.hi = 0; st.ray = 0;
+  if (!scene.real) {
+    // before the capture, one point: its light reaches several lenses and lands at a different spot under each
+    say('ray'); rayBox(true);
+    await tween('ray', 1, 900, my); if (my !== token) return false;
+    await wait(4200); if (my !== token) return false;
+  }
+  say('A');
   await wait(300); if (my !== token) return false;
   Snd.shutter(); Snd.motor(3.2);
-  await tween('A', 1, 3200, my); if (my !== token) return false;
+  rayBox(false);
+  await Promise.all([tween('A', 1, 3200, my), tween('ray', 0, 1200, my)]); if (my !== token) return false;
   await tween('cam', 1, 1200, my); return my === token;
 }
 async function doRim(my) {
-  steps(2); setDepthUI(false); Face.set('work'); say('B');
-  st.A = 1; st.cam = 1; st.C = 0; st.B = 0;
-  await wait(250); if (my !== token) return false;
+  steps(2); setDepthUI(false); Face.set('work'); say('B'); viewDrive = false; rayBox(false);
+  st.A = 1; st.cam = 1; st.C = 0; st.B = 0; st.V = 0; st.vt = 0; st.ray = 0;
+  await tween('hi', 1, 600, my); if (my !== token) return false;
+  await wait(1200); if (my !== token) return false;
   Snd.ticks(16, 2.6); Snd.motor(2.8);
-  await tween('B', 1, 2800, my); return my === token;
+  await tween('B', 1, 2800, my); if (my !== token) return false;
+  await tween('hi', 0, 500, my); if (my !== token) return false;
+  // the lit view fills the sensor, then the view travels around: near and far objects shift differently
+  say('views');
+  await tween('V', 1, 1000, my); if (my !== token) return false;
+  await tween('vt', 1, 3400, my); if (my !== token) return false;
+  viewDrive = true; return true;
 }
 async function doRecon(my) {
-  steps(3); Face.set('work'); say('C');
-  st.A = 1; st.B = 1; st.D = 0; st.C = 0; st.cam = 1;
+  steps(3); Face.set('work'); say('C'); viewDrive = false; rayBox(false);
+  st.A = 1; st.B = 1; st.D = 0; st.C = 0; st.cam = 1; st.hi = 0; st.ray = 0;
   await wait(250); if (my !== token) return false;
   Snd.motor(2.0);
   // the views leave the sensor for the reconstruction plane while the camera steps back to show the depth
@@ -749,7 +845,8 @@ q('[data-reverse]').addEventListener('click', async () => {
   if (st.B === 0 && st.C === 0) { st.A = 1; st.cam = 1; st.B = 1; }
   setDepthUI(false); steps(2); Face.set('work'); say('rev');
   Snd.motor(st.C > 0 ? 4 : 2.6);
-  if (st.C > 0) { await Promise.all([tween('C', 0, 1400, my), tween('cam', 1, 1400, my)]); if (my !== token) return; }
+  viewDrive = false;
+  if (st.C > 0 || st.V > 0) { await Promise.all([tween('C', 0, 1400, my), tween('V', 0, 1400, my), tween('cam', 1, 1400, my)]); if (my !== token) return; }
   await tween('B', 0, 2600, my); if (my === token) Face.set('idle');
 });
 depth.addEventListener('input', () => {
@@ -784,12 +881,13 @@ function atlasFromPicture(img) {
     const i = (y * CELL + x) * 4; r += px[i]; gg += px[i + 1]; b += px[i + 2]; n++;
   }
   r /= n; gg /= n; b /= n;
-  const alpha = new Uint8ClampedArray(N); let cover = 0;
+  const alpha = new Uint8ClampedArray(N); let cover = 0, mx = 0, my = 0;
   for (let i = 0; i < N; i++) {
     const d = Math.hypot(px[i * 4] - r, px[i * 4 + 1] - gg, px[i * 4 + 2] - b);
     const a = Math.max(0, Math.min(1, (d - 38) / 30));
-    alpha[i] = a * 255; if (a > 0.5) cover++;
+    alpha[i] = a * 255; if (a > 0.5) { cover++; mx += i % CELL; my += Math.floor(i / CELL); }
   }
+  const centre = cover ? [mx / cover / CELL, my / cover / CELL] : [0.5, 0.5];
   cover /= N;
   const atlas = document.createElement('canvas'); atlas.width = atlas.height = CELL * 2;
   const ag = atlas.getContext('2d');
@@ -805,7 +903,7 @@ function atlasFromPicture(img) {
     back.data[o] = keep ? px[o] : r; back.data[o + 1] = keep ? px[o + 1] : gg; back.data[o + 2] = keep ? px[o + 2] : b; back.data[o + 3] = 255;
   }
   ag.putImageData(sub, 0, 0); ag.putImageData(back, CELL, CELL);
-  return { atlas, scene: synthScene([NAMES.subject, NAMES.bg, NAMES.bg, NAMES.bg], [0, 3]), line: 'load2' };
+  return { atlas, scene: synthScene([NAMES.subject, NAMES.bg, NAMES.bg, NAMES.bg], [0, 3], centre), line: 'load2' };
 }
 /* before the first click the scene is alive but the story waits, so it can start with its sound */
 let waiting = false, waitTimer = 0;
@@ -814,10 +912,11 @@ function opening(my) {
   say('greet', () => { if (my === token) setTimeout(() => { if (my === token) playAll(my); }, 400); });
 }
 function useLayers(info, mode) {
-  scene = info.scene; setNL(scene.nl);
+  scene = info.scene; setNL(scene.nl); buildRays();
   uploadAtlas(info.atlas);
   if (credit) credit.hidden = !scene.real;
-  st.A = 0; st.B = 0; st.C = 0; st.cam = 0; st.D = 0; setDepthUI(false); steps(0);
+  st.A = 0; st.B = 0; st.C = 0; st.cam = 0; st.D = 0; st.ray = 0; st.hi = 0; st.V = 0; st.vt = 0; viewDrive = false; rayBox(false);
+  setDepthUI(false); steps(0);
   if (mode === 'still') return;
   if (mode === 'wait' && !waiting) mode = 'opening'; // the click came while the scene was loading
   if (mode !== 'wait') endWait();
@@ -830,7 +929,7 @@ function useLayers(info, mode) {
 const sceneURL = root.dataset.layers;
 function loadScene(mode) {
   const img = new Image();
-  img.onload = () => useLayers({ atlas: img, scene: synthScene([NAMES.torus, NAMES.monkey, NAMES.back, NAMES.bg], [0, 1, 2]), line: 'scene' }, mode);
+  img.onload = () => useLayers({ atlas: img, scene: synthScene([NAMES.torus, NAMES.monkey, NAMES.back, NAMES.bg], [0, 1, 2], TORUS_PT), line: 'scene' }, mode);
   img.src = sceneURL;
 }
 const credit = q('[data-credit]');
