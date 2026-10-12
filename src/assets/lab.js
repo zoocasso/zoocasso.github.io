@@ -787,10 +787,10 @@ function showViewMap(vs) {
   if (on >= 0) vcells[on].className = 'on';
   vmap.hidden = on < 0; vmapOn = on;
 }
-let running = false, visible = true, raf = 0, still = false;
+let running = false, visible = true, raf = 0;
 function loop(now) { raf = 0; draw(now); if (running && visible && !document.hidden) raf = requestAnimationFrame(loop); }
 function request() { if (!raf) raf = requestAnimationFrame(loop); }
-function start() { if (reduce || still) { request(); return; } running = true; request(); }
+function start() { if (reduce) { request(); return; } running = true; request(); }
 // the dialogue box's height sets the camera framing and the link above it, so a longer line redraws
 const resized = new ResizeObserver(() => request()); resized.observe(stage); resized.observe(dialogEl);
 new IntersectionObserver((es) => { visible = es[0].isIntersecting; if (visible) start(); }).observe(stage);
@@ -1241,7 +1241,7 @@ function startSound() {
   Snd.enable().then((ok) => { if (ok) Snd.chime(); soundUI(); });
 }
 function beginStory() {
-  if (!waiting || still) return;
+  if (!waiting) return;
   endWait(); opening(++token);
 }
 const GESTURES = ['pointerdown', 'keydown', 'touchend'];
@@ -1258,15 +1258,6 @@ soundBtn.addEventListener('click', () => {
   soundUI(); beginStory();
 });
 soundUI();
-/* moving content can be stopped (WCAG 2.2.2): the story stops and the scene stands still; steps and
-   sliders still work, and the motion comes back on request */
-const motionBtn = q('[data-motion]');
-const motionText = { ko: ['움직임 멈춤', '움직임 다시 시작'], en: ['Pause motion', 'Resume motion'] }[lang];
-if (motionBtn) motionBtn.addEventListener('click', () => {
-  Snd.ui(); still = !still;
-  motionBtn.setAttribute('aria-pressed', String(still)); motionBtn.textContent = motionText[still ? 1 : 0];
-  if (still) { token++; running = false; lfZoom(false); Face.set('idle'); request(); } else start();
-});
 
 /* the Blender sample scene stands in front of the lens array */
 setDepthUI(false);
