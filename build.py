@@ -136,6 +136,7 @@ def layout(lang, meta, body, path, alt_path, v):
     {item('work', pre + '/work/')}
     {item('research', pre + '/research/')}
     {item('cv', pre + '/cv/')}
+    <a class="ext" href="{FACTS['github']}">GitHub<span aria-hidden="true">↗</span></a>
     <a href="{switch_href}" hreflang="{switch_lang}" lang="{switch_lang}" aria-label="{t['switch_label']}">{t['switch']}</a>
   </nav>
 </header>
