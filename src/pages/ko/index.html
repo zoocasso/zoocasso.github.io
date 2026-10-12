@@ -68,7 +68,7 @@
 <section class="section" aria-labelledby="h-facts">
   <header><h2 id="h-facts">숫자로 보면</h2></header>
   <dl class="facts">
-    <div><dt>{{f:kisti_rows}}</dt><dd>KISTI 발주 공공 R&amp;D 플랫폼에 수집·적재한 상품·조달 데이터<small>비전인사이드 쪽 데이터 엔지니어링 단독. 2023년 11월 기준, 다나와 리뷰 1,605만 건, 조달 속성 4,192만 건 포함</small></dd></div>
+    <div><dt>{{f:kisti_rows}}</dt><dd>KISTI 발주 공공 R&amp;D 플랫폼에 수집·적재한 상품·조달 데이터<small>데이터 엔지니어로 수집·적재·서빙 전담. 2023년 11월 기준, 다나와 리뷰 1,605만 건, 조달 속성 4,192만 건 포함</small></dd></div>
     <div><dt>{{f:bio_ref}}</dt><dd>유전체 변이 주석 시스템이 쓰는 공개 레퍼런스<small>dbSNP 237 GB, 1000 Genomes 770 GB 등. 백엔드는 혼자 개발</small></dd></div>
     <div><dt>1저자 4편</dt><dd>라이트필드·집적영상 3D 재구성 국제학회 논문<small>ICMV 2026, ICCAS 2026, ITC-CSCC 2026, ITC-CSCC 2025</small></dd></div>
     <div><dt>{{f:wjmax_peak}}</dt><dd>WJMax 게임 서버가 업데이트 때 받은 최대 동시 접속<small>평균 {{f:wjmax_avg}}. 2인 팀에서 서버·DB·보안 담당</small></dd></div>
@@ -82,7 +82,7 @@
       <span class="when">{{f:kisti_period}}<br>비전인사이드, 외주 용역</span>
       <div><h3>KISTI 공공 R&amp;D 플랫폼의 데이터 수집·적재</h3>
         <p>Amazon·다나와 크롤러와 조달청 API 수집기를 만들고, {{f:kisti_farm}}에 나눠 돌려 원격 DB 한 곳에 적재했습니다. 그 데이터로 모델 배치와 FastAPI 관리 화면까지 냈습니다.</p>
-        <span class="key"><b>{{f:kisti_rows}}</b>, 데이터 엔지니어링 단독</span></div>
+        <span class="key"><b>{{f:kisti_rows}}</b>, 수집·적재·서빙 전담</span></div>
       <span class="flow" aria-label="처리 흐름"><span>크롤러 {{f:kisti_farm}}</span><i></i><span class="core">원격 DB</span><i></i><span>모델 배치</span><i></i><span>FastAPI</span></span>
     </a></li>
     <li><a class="row" href="/work/genomics/">
