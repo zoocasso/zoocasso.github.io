@@ -150,17 +150,44 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 @keyframes askclick{50%{border-color:var(--brass);box-shadow:0 0 0 3px rgba(201,164,92,.18)}}
 .lab-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:12px var(--gutter) 14px;background:var(--bench);border-top:1px solid var(--rule)}
 .lab-tools .group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.lab-tools .btn{min-height:40px;padding:0 13px;font-size:14px;background:var(--veil)}
-.lab-tools .btn.primary{background:var(--brass)}
-.lab-tools .seg .btn{border-radius:0;margin-left:-1px}
-.lab-tools .seg .btn:first-child{border-radius:3px 0 0 3px;margin-left:0}
-.lab-tools .seg .btn:last-child{border-radius:0 3px 3px 0}
+/* each kind of control looks like what it does: the sample is a connected choice, the steps a numbered
+   sequence, reversing a one-off command, the depth layers an on/off switch, the slider a value, the
+   explanation a link, and sound a utility at the end */
+.lab-tools button{font:inherit;font-size:14px;color:var(--mute);background:none;border:0;cursor:pointer}
+.lab-tools button:hover{color:var(--paper)}
+.lab-tools button:disabled{opacity:.45;cursor:progress}
+.lab-tools button:disabled:hover{color:var(--mute)}
+.lab-tools .pick{gap:0}
+.lab-tools .pick .cap{margin-right:8px;font-size:12px;letter-spacing:.08em;color:var(--mute)}
+.lab-tools .pick .opt{min-height:40px;padding:0 13px;border:1px solid var(--rule);background:var(--veil);margin-left:-1px}
+.lab-tools .pick .opt:first-of-type{border-radius:3px 0 0 3px;margin-left:0}
+.lab-tools .pick .opt:last-of-type{border-radius:0 3px 3px 0}
+.lab-tools .pick .opt[aria-pressed=true]{position:relative;background:rgba(201,164,92,.16);border-color:var(--brass);color:var(--brass-hi)}
+.lab-tools .steps{gap:0}
+.lab-tools .step{display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:0 7px}
+.lab-tools .step b{display:inline-grid;place-items:center;width:22px;height:22px;border:1px solid var(--rule);border-radius:50%;font-size:12px;font-weight:700;color:var(--mute)}
+.lab-tools .step+.step::before{content:'';width:12px;height:1px;margin-right:2px;background:var(--rule)}
+.lab-tools .step[aria-pressed=true]{color:var(--paper)}
+.lab-tools .step[aria-pressed=true] b{background:var(--brass);border-color:var(--brass);color:var(--bench)}
+.lab-tools .act{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 11px;border:1px dashed var(--rule);border-radius:3px}
+.lab-tools .act svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.lab-tools .act:hover{border-color:var(--mute)}
+.lab-tools .tog{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 6px}
+.lab-tools .tog[hidden]{display:none}
+.lab-tools .tog i{position:relative;flex:none;width:30px;height:16px;border-radius:8px;background:var(--rule);transition:background .2s}
+.lab-tools .tog i::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:var(--paper);transition:transform .2s}
+.lab-tools .tog[aria-pressed=true]{color:var(--paper)}
+.lab-tools .tog[aria-pressed=true] i{background:var(--brass)}
+.lab-tools .tog[aria-pressed=true] i::after{transform:translateX(14px)}
 .lab-tools .depth{display:flex;align-items:center;gap:8px;flex:1 1 220px;min-width:0;font-size:13.5px;color:var(--mute)}
 .lab-tools .depth input{flex:1;min-width:0;accent-color:var(--brass);height:40px}
 .lab-tools .depth output{min-width:7em;text-align:right;font-variant-numeric:tabular-nums;color:var(--paper)}
 .sound{display:inline-flex;align-items:center;gap:8px}
+.lab-tools .sound{min-height:40px;padding:0 4px 0 14px;border-left:1px solid var(--rule)}
+@media (max-width:640px){.lab-tools .sound{padding-left:4px;border-left:0}}
 .sound-hint{font-size:13px;color:var(--brass-hi)}
-.lab-how{font-size:13px;color:var(--mute);margin-left:auto;display:inline-flex;align-items:center;min-height:40px}
+.lab-how{font-size:13px;color:var(--mute);margin-left:auto;display:inline-flex;align-items:center;gap:4px;min-height:40px;text-decoration:none}
+.lab-how:hover{color:var(--paper);text-decoration:underline;text-underline-offset:3px}
 .sound svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .lab .fallback{position:absolute;right:var(--gutter);bottom:90px;width:min(46%,560px);z-index:1}
 .lab .fallback img{border:1px solid var(--rule)}

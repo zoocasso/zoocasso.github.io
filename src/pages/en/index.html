@@ -37,25 +37,26 @@
   </div>
 
   <div class="lab-tools">
-    <div class="group needs-gl">
-      <button class="btn" type="button" data-sample-btn="scene" aria-pressed="true">Blender scene</button>
-      <button class="btn" type="button" data-sample-btn="lytro" aria-pressed="false">Lytro (real capture)</button>
+    <div class="group pick needs-gl" role="group" aria-label="Sample">
+      <span class="cap" aria-hidden="true">Sample</span>
+      <button class="opt" type="button" data-sample-btn="scene" aria-pressed="true">Blender scene</button>
+      <button class="opt" type="button" data-sample-btn="lytro" aria-pressed="false">Lytro (real capture)</button>
     </div>
-    <div class="group seg needs-gl" role="group" aria-label="Steps">
-      <button class="btn" type="button" data-step="1">1 Capture</button>
-      <button class="btn" type="button" data-step="2">2 Rearrange</button>
-      <button class="btn" type="button" data-step="3">3 Reconstruct</button>
+    <div class="group steps needs-gl" role="group" aria-label="Steps">
+      <button class="step" type="button" data-step="1"><b>1</b>Capture</button>
+      <button class="step" type="button" data-step="2"><b>2</b>Rearrange</button>
+      <button class="step" type="button" data-step="3"><b>3</b>Reconstruct</button>
     </div>
-    <button class="btn needs-gl" type="button" data-reverse>Reverse RIM</button>
-    <button class="btn needs-gl" type="button" data-layers-btn aria-pressed="false" hidden>Estimated depth layers</button>
+    <button class="act needs-gl" type="button" data-reverse><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4.5h4.5"></path></svg>Reverse RIM</button>
+    <button class="tog needs-gl" type="button" data-layers-btn aria-pressed="false" hidden><i aria-hidden="true"></i>Estimated depth layers</button>
     <div class="depth needs-gl">
       <label for="lab-depth">Distance</label>
       <input type="range" id="lab-depth" min="0" max="100" step="1" value="0" disabled data-depth>
       <output for="lab-depth" data-depth-out>–</output>
     </div>
-    <a class="lab-how" href="/en/research/rim/#lab">How it works</a>
+    <a class="lab-how" href="/en/research/rim/#lab">How it works<span aria-hidden="true">→</span></a>
     <span class="sound-hint needs-gl" data-sound-hint>Click anywhere for sound</span>
-    <button class="btn sound needs-gl" type="button" data-sound aria-pressed="true">
+    <button class="sound needs-gl" type="button" data-sound aria-pressed="true">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path class="x" d="M17 9l5 6M22 9l-5 6" style="display:none"></path><path class="w" d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"></path></svg>
       <span class="label">Sound off</span>
     </button>
