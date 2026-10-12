@@ -84,7 +84,7 @@
 
     <section id="lab" aria-labelledby="h-lab">
       <h2 id="h-lab">How the home page lab is made</h2>
-      <p>The lab computes lens array capture, RIM and reconstruction in the browser and animates them. Both samples use real light-field data (a Blender rendering and a Lytro capture); only your own images use a simplified layer model for the capture.</p>
+      <p>The lab computes lens array capture, RIM and reconstruction in the browser and animates them. Both samples use real light-field data (a Blender rendering and a Lytro capture).</p>
       <ul>
         <li><b>Blender sample</b>: the same rendering as in "At a glance" (8 × 8 views), with a depth pass rendered for every view. Parts hidden in one view are really rendered in the others. In a camera array, near objects shift most between views, so every view was shifted to line up on a plane just in front of the monkey head (0.28 m), which gives the lens array's form (farther objects shift more). The spatial resolution is 64 × 64 lenses. The empty background is not set up as a wall in space; its light is shown from the lens array on.</li>
         <li><b>Capture</b>: a pinhole array model. Each elemental-image pixel starts at the 3D position of the point it recorded (from the depth above) and travels through its lens to the sensor. The camera models in step 1 show that a lens with the sensor patch behind it is a tiny camera; they are drawn larger than a lens so they can be seen. How the light actually passes the lenses is shown above, in "What a lens array records".</li>

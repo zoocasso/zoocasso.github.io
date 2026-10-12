@@ -162,7 +162,6 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 .sound-hint{font-size:13px;color:var(--brass-hi)}
 .lab-how{font-size:13px;color:var(--mute);margin-left:auto;display:inline-flex;align-items:center;min-height:40px}
 .sound svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.lab .drop{position:absolute;inset:12px;border:2px dashed var(--brass);display:flex;align-items:center;justify-content:center;background:var(--veil);font-size:18px;z-index:5}
 .lab .fallback{position:absolute;right:var(--gutter);bottom:90px;width:min(46%,560px);z-index:1}
 .lab .fallback img{border:1px solid var(--rule)}
 .lab .fallback p{font-size:14px;color:var(--mute);margin:8px 0 0}

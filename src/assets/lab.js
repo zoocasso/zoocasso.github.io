@@ -9,7 +9,7 @@ const stage = q('.stage'), canvas = q('canvas.gl'), dialogEl = q('.dialog');
 const lang = document.documentElement.lang === 'en' ? 'en' : 'ko';
 const NP = 8, W = 2.0, ZS = 0.3;
 const small = Math.min(window.innerWidth, screen.width || 9999) < 640;
-// the synthetic scenes use fewer lenses; the real Lytro light field needs more to stay recognisable
+// lens count before a sample loads; the real Lytro light field needs more to stay recognisable
 const NL_SIM = small ? 32 : 48, NL_REAL = small ? 64 : 128, VIEWS = NP * NP;
 let NL = NL_SIM, R = NL * NP, COUNT = R * R;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -242,9 +242,7 @@ const L = {
   greet: ['いらっしゃいませ！ 奥行きのある景色を、レンズで撮って元に戻してみますね。', { ko: '어서 오세요! 깊이가 다른 물체들을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "Welcome! I'll capture a scene with depth through a lens array, then bring it back." }],
   A: () => scene.kind === 'lytro'
     ? ['本物のLytroで撮った、レンズごとの画像です。拡大すると、小さな丸い像が並んでいます。', { ko: '이건 실제 Lytro 카메라로 찍어 Lytro 소프트웨어가 디코딩한 렌즈릿 영상이에요. 확대하면 렌즈마다 작고 둥근 사진이 있어요. 렌즈 하나하나가 작은 카메라인 셈이고, 그 가운데 8×8 픽셀이 8×8개 시점이 됩니다. 3D 형상이 없으니 촬영은 흉내 내지 않아요.', en: 'This is a real Lytro capture: the lenslet image as decoded by Lytro\'s software. Zoom in and each lens holds a small round picture: every lens is a tiny camera, and its central 8×8 pixels become the 8×8 views. There is no 3D shape here, so the capture is not simulated.' }]
-    : scene.kind === 'blender'
-    ? ['カシャッ。小さなカメラごとに、小さな写真が一枚ずつ撮れました。', { ko: `찰칵. 작은 카메라마다 8×8 픽셀짜리 사진이 센서에 한 장씩 찍혔어요. 이것이 요소 영상입니다. 여기서는 블렌더로 렌더링한 8×8 시점 영상으로 만들었어요.`, en: `Click. Each tiny camera left an 8×8-pixel picture on the sensor: the elemental images, built here from 8×8 views rendered in Blender.` }]
-    : ['カシャッ。小さなカメラごとに、小さな写真が一枚ずつ撮れました。', { ko: `찰칵. 작은 카메라마다 8×8 픽셀짜리 사진이 센서에 한 장씩 찍혔어요. 이것이 요소 영상입니다.`, en: `Click. Each tiny camera left an 8×8-pixel picture on the sensor: these are the elemental images.` }],
+    : ['カシャッ。小さなカメラごとに、小さな写真が一枚ずつ撮れました。', { ko: `찰칵. 작은 카메라마다 8×8 픽셀짜리 사진이 센서에 한 장씩 찍혔어요. 이것이 요소 영상입니다. 여기서는 블렌더로 렌더링한 8×8 시점 영상으로 만들었어요.`, en: `Click. Each tiny camera left an 8×8-pixel picture on the sensor: the elemental images, built here from 8×8 views rendered in Blender.` }],
   cams: () => ['レンズの一つひとつが、小さなカメラです。少しずつ違う場所から、同時に撮ります。', { ko: `렌즈 배열의 렌즈 하나하나는 아주 작은 카메라예요. ${NL}×${NL}대가 조금씩 다른 자리에서 동시에 찍습니다.`, en: `Each lens in the array is a tiny camera. ${NL}×${NL} of them take the picture at once, each from a slightly different spot.` }],
   B: ['次は並べ替え。小さな写真から同じ位置のピクセルを集めると、ひとつの方向から見た写真になります。', { ko: `다음은 재배열(RIM)입니다. 작은 사진들에서 같은 자리의 픽셀만 모으면, 한 방향에서 본 큰 사진 한 장이 돼요. 자리마다 한 장씩, ${VIEWS}장입니다.`, en: `Rearrange (RIM). Take the pixel at the same spot from every tiny picture and you get one larger picture seen from one direction; one per spot, ${VIEWS} in all.` }],
   views: ['ほら、視点ごとに手前と奥のずれ方がちがいます。', { ko: '보세요. 시점마다 앞의 물체와 뒤의 물체가 서로 다르게 움직여요. 같은 그림이 아니라 서로 다른 방향에서 본 영상입니다.', en: 'Look: from view to view, near and far objects move differently. They are not copies but views from different directions.' }],
@@ -257,13 +255,10 @@ const L = {
   flat: ['ここは模様がなくて、どの奥行きでも同じくらい合います。', { ko: '여기는 무늬가 거의 없어서, 시점들이 어느 깊이에서든 비슷하게 맞아요. 이런 곳에서는 초점을 고를 수 없어요.', en: 'There is almost no texture here, so the views match about equally at every depth; no focus can be chosen from this spot.' }],
   pickf: ['ここで視点がいちばんよく合う面に、ピントを合わせました。', { ko: '누른 자리에서 시점들이 가장 잘 맞는 면으로 초점을 옮겼어요.', en: 'Focus moved to the plane where the views agree best at that spot.' }],
   rev: ['逆再生もできます。一対一の並べ替えですから。', { ko: 'RIM은 일대일 재배열이라 픽셀 하나 잃지 않고 요소 영상으로 되돌아갑니다.', en: 'RIM is one-to-one, so the elemental images come back without losing a pixel.' }],
-  bad: ['あれ？ この画像は開けませんでした。', { ko: '이 파일은 열 수 없어요. JPG, PNG, WebP 이미지를 넣어 주세요.', en: "I can't open this file. Try a JPG, PNG or WebP image." }],
   wait: ['読み込んでいます。少し待ってくださいね。', { ko: '데이터를 불러오는 중이에요. 잠시만 기다려 주세요.', en: 'Loading the data. One moment, please.' }],
   netbad: ['あれ？ データを読み込めませんでした。', { ko: '데이터를 불러오지 못했어요. 버튼을 다시 눌러 주세요.', en: "I couldn't load the data. Please press the button again." }],
-  load2: ['画像、受け取りました！ 主役と背景の二層に分けますね。', { ko: '이미지를 받았습니다! 가장자리 색을 배경으로 보고, 주인공과 배경 두 층으로 세웠어요.', en: 'Got it! I split it into a subject layer and a background layer using the edge colour.' }],
   scene: ['ブレンダーの景色です。8×8の視点から描きました。', { ko: '블렌더로 8×8 시점을 렌더링한 장면이에요. 앞에서부터 원숭이 머리, 원환체, 정육면체, 원뿔, 구가 놓여 있습니다.', en: 'A scene rendered in Blender from 8×8 viewpoints: monkey head, torus, cube, cone and sphere, from near to far.' }],
   lytro: ['スタンフォードのLytroデータです。本物のカメラで撮った景色ですよ。', { ko: '실제 Lytro 라이트필드 카메라로 찍은 장면이에요. Stanford Lytro Light Field Archive의 사진에서, 정지 표지판을 나뭇가지가 가리는 부분을 렌즈 128×128개만큼 잘라 왔어요.', en: 'A real scene shot with a Lytro light-field camera, from the Stanford Lytro Light Field Archive: 128×128 lenses cut from the photo where a branch hides part of a stop sign.' }],
-  load1: ['画像、受け取りました！ 一枚の板として置きますね。', { ko: '이미지를 받았습니다! 배경을 가려내기 어려워 한 장의 판으로 세웠어요.', en: "Got it! The background was hard to separate, so it stands as one flat card." }]
 };
 const FOCUS = [
   (n) => [`${n.jp}の位置で、くっきり。`, { ko: `${n.ko} 자리에서 선명해졌어요.`, en: `Sharp where the ${n.en} stood.` }],
@@ -820,19 +815,12 @@ const NAMES = {
   cube: { ko: '정육면체', jp: '立方体', en: 'cube' },
   cone: { ko: '원뿔', jp: '円すい', en: 'cone' },
   sphere: { ko: '구', jp: '球', en: 'sphere' },
-  bg: { ko: '배경', jp: '背景', en: 'background' },
-  subject: { ko: '주인공', jp: '主役', en: 'subject' },
-  card: { ko: '이미지', jp: '画像', en: 'image' },
   bush: { ko: '앞쪽 나뭇가지', jp: '手前の枝', en: 'branch in front' },
   stop: { ko: '정지 표지판', jp: '止まれの標識', en: 'stop sign' },
   building: { ko: '차와 건물', jp: '車と建物', en: 'cars and building' }
 };
 /* a scene says where focus can go: targets (depth d, name) from near to far, the slider range, and
    how a depth maps to a distance in front of the lens array (z = za + zb * d) */
-function synthScene(names, used, point) {
-  return { kind: 'synth', real: false, nl: NL_SIM, targets: used.map((k) => ({ d: K[k] / NP, name: names[k] })),
-    dMin: 0, dMax: K[3] / NP * 1.1, za: 0, zb: -NP * ZS, tol: 0.05, point: point || [0.5, 0.5] };
-}
 /* Lytro sample (Stanford Lytro Light Field Archive, occlusions_26). The archive's decoded lenslet image
    has 541 x 376 lenses with 14 x 14 pixels under each; 128 x 128 lenses are cut from it without
    resampling and the central 8 x 8 pixels of each are used (phones: 2 x 2 lenses averaged). There is no
@@ -1119,52 +1107,11 @@ depth.addEventListener('input', () => {
   if (now >= 0 && now !== before) Snd.focus();
 });
 
-/* ================= images in: build a 2 x 2 atlas of depth layers ================= */
-const CELL = 512;
+/* ================= the sample's view mosaic goes to the GPU ================= */
 function uploadAtlas(source) {
   gl.bindTexture(gl.TEXTURE_2D, tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
   hasImage = true; request();
-}
-function squareCrop(img) {
-  const w = document.createElement('canvas'); w.width = w.height = CELL;
-  const g = w.getContext('2d', { willReadFrequently: true }), iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height, s = Math.min(iw, ih);
-  g.drawImage(img, (iw - s) / 2, (ih - s) / 2, s, s, 0, 0, CELL, CELL);
-  return w;
-}
-function atlasFromPicture(img) {
-  // a single photo has no depth: estimate the background from the border colour, stand the rest in front
-  const w = squareCrop(img), g = w.getContext('2d', { willReadFrequently: true });
-  const src = g.getImageData(0, 0, CELL, CELL), px = src.data, N = CELL * CELL;
-  let r = 0, gg = 0, b = 0, n = 0;
-  for (let y = 0; y < CELL; y++) for (let x = 0; x < CELL; x++) {
-    if (x > 7 && x < CELL - 8 && y > 7 && y < CELL - 8) continue;
-    const i = (y * CELL + x) * 4; r += px[i]; gg += px[i + 1]; b += px[i + 2]; n++;
-  }
-  r /= n; gg /= n; b /= n;
-  const alpha = new Uint8ClampedArray(N); let cover = 0, mx = 0, my = 0;
-  for (let i = 0; i < N; i++) {
-    const d = Math.hypot(px[i * 4] - r, px[i * 4 + 1] - gg, px[i * 4 + 2] - b);
-    const a = Math.max(0, Math.min(1, (d - 38) / 30));
-    alpha[i] = a * 255; if (a > 0.5) { cover++; mx += i % CELL; my += Math.floor(i / CELL); }
-  }
-  const centre = cover ? [mx / cover / CELL, my / cover / CELL] : [0.5, 0.5];
-  cover /= N;
-  const atlas = document.createElement('canvas'); atlas.width = atlas.height = CELL * 2;
-  const ag = atlas.getContext('2d');
-  if (cover < 0.04 || cover > 0.8) {
-    ag.drawImage(w, CELL, 0);
-    return { atlas, scene: synthScene([NAMES.bg, NAMES.card, NAMES.bg, NAMES.bg], [1]), line: 'load1' };
-  }
-  const sub = new ImageData(CELL, CELL), back = new ImageData(CELL, CELL);
-  for (let i = 0; i < N; i++) {
-    const o = i * 4;
-    sub.data[o] = px[o]; sub.data[o + 1] = px[o + 1]; sub.data[o + 2] = px[o + 2]; sub.data[o + 3] = alpha[i];
-    const keep = alpha[i] < 50;
-    back.data[o] = keep ? px[o] : r; back.data[o + 1] = keep ? px[o + 1] : gg; back.data[o + 2] = keep ? px[o + 2] : b; back.data[o + 3] = 255;
-  }
-  ag.putImageData(sub, 0, 0); ag.putImageData(back, CELL, CELL);
-  return { atlas, scene: synthScene([NAMES.subject, NAMES.bg, NAMES.bg, NAMES.bg], [0, 3], centre), line: 'load2' };
 }
 /* before the first click the scene is alive but the story waits, so it can start with its sound */
 let waiting = false, waitTimer = 0;
@@ -1188,7 +1135,7 @@ function useLayers(info, mode) {
   if (reduce) { jumpToEnd(); return; }
   if (mode === 'wait') { Face.set('idle'); say('tap'); return; }
   if (mode === 'opening') { opening(my); return; }
-  sayLine(L[info.line] || L.load2, () => { if (my === token) playAll(my); });
+  sayLine(L[info.line], () => { if (my === token) playAll(my); });
 }
 const credit = q('[data-credit]');
 /* a sample is downloaded before it replaces the scene. Meanwhile the old story stops and the controls
@@ -1210,10 +1157,10 @@ function endLoad() {
   busy = false; clearTimeout(busyTimer);
   holdBtns().forEach((b) => { b.disabled = false; }); depth.disabled = depthWas;
 }
-function loadFailed(me, line) {
+function loadFailed(me) {
   if (me !== loadSeq) return;
-  endLoad(); pick(scene.kind === 'lytro' ? 'lytro' : scene.kind === 'blender' ? 'scene' : 'none');
-  Face.set('idle'); say(line || 'netbad');
+  endLoad(); pick(scene.kind === 'lytro' ? 'lytro' : 'scene');
+  Face.set('idle'); say('netbad');
 }
 function loadLightField(viewsURL, depURL, make, line, mode) {
   // the view mosaic and its depth map are both needed before the scene can stand
@@ -1271,24 +1218,6 @@ sampleBtns.forEach((b) => b.addEventListener('click', () => {
 // a pointer resting on the real-capture button starts its download, so the click waits less
 const lytroBtn = sampleBtns.find((b) => b.dataset.sampleBtn === 'lytro');
 if (lytroBtn) lytroBtn.addEventListener('pointerenter', () => { lytroFiles().catch(() => {}); }, { once: true });
-function takeFile(f) {
-  if (!f) return;
-  if (!f.type.startsWith('image/')) { Face.set('idle'); say('bad'); return; }
-  pick('none');
-  const me = beginLoad('load');
-  const url = URL.createObjectURL(f), img = new Image();
-  img.onload = () => { URL.revokeObjectURL(url); if (me === loadSeq) useLayers(atlasFromPicture(img), 'load'); };
-  img.onerror = () => { URL.revokeObjectURL(url); loadFailed(me, 'bad'); };
-  img.src = url;
-}
-q('[data-file]').addEventListener('change', (e) => takeFile(e.target.files[0]));
-const drop = q('.drop');
-let dragDepth = 0;
-stage.addEventListener('dragenter', (e) => { e.preventDefault(); dragDepth++; drop.hidden = false; });
-stage.addEventListener('dragover', (e) => e.preventDefault());
-stage.addEventListener('dragleave', () => { dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) drop.hidden = true; });
-stage.addEventListener('drop', (e) => { e.preventDefault(); dragDepth = 0; drop.hidden = true; takeFile(e.dataTransfer.files[0]); });
-window.addEventListener('paste', (e) => { const f = [...(e.clipboardData?.files || [])].find((x) => x.type.startsWith('image/')); if (f) takeFile(f); });
 
 /* ================= sound: on by default ================= */
 /* Browsers only allow audio after the visitor's first click, tap or key press. So, like the
