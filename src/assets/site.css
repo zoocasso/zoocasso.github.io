@@ -189,6 +189,21 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 .lab-how{font-size:13px;color:var(--mute);margin-left:auto;display:inline-flex;align-items:center;gap:4px;min-height:40px;text-decoration:none}
 .lab-how:hover{color:var(--paper);text-decoration:underline;text-underline-offset:3px}
 .sound svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lab-tools .fs{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 4px}
+@media (max-width:640px){.lab-tools .fs{min-width:40px;justify-content:center}.lab-tools .fs .label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
+.lab-tools .fs svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* full screen: the stage and its controls fill the screen and the introduction steps aside
+   (real full screen, or the lab fixed over the page where the browser cannot do that) */
+.lab.is-fs{position:fixed;inset:0;z-index:50;width:100%;height:100vh;height:100dvh;border-bottom:0;padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left)}
+.lab.is-fs .intro{display:none}
+.lab.is-fs .stage{flex:1 1 auto;height:auto;min-height:0}
+.lab.is-fs .lab-tools{padding-bottom:max(14px,env(safe-area-inset-bottom))}
+html.lab-fs{overflow:hidden}
+@media (min-width:1180px){
+  .lab.is-fs .dialog{left:50%;width:min(600px,calc(100% - 48px))}
+  .lab.is-fs .lab-cta{left:50%}
+  .lab.is-fs .raybox,.lab.is-fs .lfzoom,.lab.is-fs .laynote{left:var(--gutter)}
+}
 .lab .fallback{position:absolute;right:var(--gutter);bottom:90px;width:min(46%,560px);z-index:1}
 .lab .fallback img{border:1px solid var(--rule)}
 .lab .fallback p{font-size:14px;color:var(--mute);margin:8px 0 0}
