@@ -595,7 +595,8 @@ const st = { A: 0, B: 0, C: 0, D: 0, cam: 0, icons: 0, V: 0, vt: 0, Lay: 0 };
 const ptr = { x: 0, y: 0, sx: 0, sy: 0, tx: 0, ty: 0, mx: 0, my: 0, ma: 0, inside: false };
 let VP = null, P11 = 1, hasImage = false;
 const T0 = performance.now();
-const wideLayout = () => window.innerWidth >= 1180;
+// in full screen the introduction is hidden, so the scene is centred again
+const wideLayout = () => window.innerWidth >= 1180 && !root.classList.contains('is-fs');
 function camera(asp, now) {
   // on wide screens the introduction sits on the left, so the scene is drawn off-axis to the right
   const shift = wideLayout() ? 0.36 : 0;
@@ -1261,6 +1262,40 @@ soundBtn.addEventListener('click', () => {
   soundUI(); beginStory();
 });
 soundUI();
+
+/* ================= full screen ================= */
+/* The whole lab (stage and controls) goes full screen and the introduction steps aside. Browsers
+   without the Fullscreen API for elements (Safari on iPhone) get the same layout by fixing the lab
+   over the page instead; Esc or the same button leaves it. */
+const fsBtn = q('[data-fullscreen]');
+const fsText = { ko: ['전체화면', '전체화면 끝내기'], en: ['Full screen', 'Exit full screen'] }[lang];
+const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement || null;
+const fsReq = root.requestFullscreen || root.webkitRequestFullscreen;
+const fsExit = document.exitFullscreen || document.webkitExitFullscreen;
+let pseudoFs = false;
+function fsUI() {
+  const on = fsEl() === root || pseudoFs;
+  root.classList.toggle('is-fs', on);
+  document.documentElement.classList.toggle('lab-fs', pseudoFs);
+  fsBtn.setAttribute('aria-pressed', String(on));
+  fsBtn.querySelector('.label').textContent = fsText[on ? 1 : 0];
+  fsBtn.querySelector('.in').style.display = on ? 'none' : '';
+  fsBtn.querySelector('.out').style.display = on ? '' : 'none';
+  request();
+}
+function setPseudo(on) { pseudoFs = on; fsUI(); }
+fsBtn.addEventListener('click', () => {
+  if (pseudoFs) { setPseudo(false); return; }
+  if (fsEl()) { fsExit.call(document); return; }
+  if (!fsReq) { setPseudo(true); return; }
+  try {
+    const p = fsReq.call(root);
+    if (p && p.catch) p.catch(() => setPseudo(true));
+  } catch (e) { setPseudo(true); }
+});
+document.addEventListener('fullscreenchange', fsUI);
+document.addEventListener('webkitfullscreenchange', fsUI);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && pseudoFs) setPseudo(false); });
 
 /* the Blender sample scene stands in front of the lens array */
 setDepthUI(false);
