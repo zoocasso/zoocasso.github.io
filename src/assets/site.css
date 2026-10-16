@@ -279,6 +279,13 @@ figure{margin:0}
 .papers .state{color:var(--mute);font-size:14px;white-space:nowrap}
 
 .contact{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+/* a QR code to the site, beside the contact buttons (below them on narrow screens) */
+.contact-wrap{display:flex;align-items:flex-start;justify-content:space-between;gap:24px 48px}
+.contact-main{flex:1 1 auto;min-width:0}
+.qr{flex:none;margin:0;display:flex;flex-direction:column;align-items:center}
+.qr img{display:block;width:148px;height:148px;border:1px solid var(--rule);border-radius:3px;image-rendering:pixelated}
+.qr figcaption{margin-top:8px;font-size:13px;line-height:1.4;color:var(--mute);white-space:nowrap}
+@media (max-width:640px){.contact-wrap{flex-direction:column}.qr{align-items:flex-start}.qr img{width:120px;height:120px}}
 
 @media (max-width:860px){
   .facts{grid-template-columns:minmax(0,1fr)}

@@ -9,7 +9,7 @@ const stage = q('.stage'), canvas = q('canvas.gl'), dialogEl = q('.dialog');
 const lang = document.documentElement.lang === 'en' ? 'en' : 'ko';
 const NP = 8, W = 2.0, ZS = 0.3;
 const small = Math.min(window.innerWidth, screen.width || 9999) < 640;
-// the viewpoint follows a mouse; on touch screens the idle line does not offer it
+// the viewpoint follows a mouse; on phones and tablets it follows the device's tilt instead
 const mouse = matchMedia('(hover: hover) and (pointer: fine)').matches;
 // lens count before a sample loads; the real Lytro light field needs more to stay recognisable
 const NL_SIM = small ? 32 : 48, NL_REAL = small ? 64 : 128, VIEWS = NP * NP;
@@ -253,6 +253,7 @@ const L = {
   idle: () => scene.kind === 'lytro'
     ? ['画面を押すと、その場所にピントを合わせます。', { ko: '화면을 누르면 그 자리에 초점이 맞아요. "추정 깊이 층"을 켜면 시점들이 어느 깊이에서 잘 맞는지 볼 수 있어요.', en: 'Click the picture to focus there. Turn on "Estimated depth layers" to see at which depths the views agree.' }]
     : mouse ? ['距離のつまみを動かしてみてください。並べ替えのあとは、マウスで視点も変えられます。', { ko: '재구성 거리를 움직여 초점을 옮겨 보세요. "2 재배열"을 누른 뒤 화면 위에서 마우스를 움직이면 시점도 바꿔 볼 수 있어요.', en: 'Move the distance slider. After "2 Rearrange", move the mouse over the stage to change the view.' }]
+    : tilt.on ? ['距離のつまみを動かしてみてください。並べ替えのあとは、端末を傾けると視点も変わります。', { ko: '재구성 거리를 움직여 초점을 옮겨 보세요. "2 재배열"을 누른 뒤 기기를 기울이면 시점도 바꿔 볼 수 있어요.', en: 'Move the distance slider. After "2 Rearrange", tilt your device to change the view.' }]
     : ['距離のつまみを動かして、ピントを合わせ直してみてください。', { ko: '재구성 거리를 움직여 초점을 옮겨 보세요.', en: 'Move the distance slider to shift the focus.' }],
   lay: ['視点がよく合う奥行きを、層にして広げました。推定ですよ。', { ko: '64개 시점이 깊이마다 얼마나 잘 맞는지를 층으로 펼쳤어요. 측정한 3D가 아니라 추정이라, 애매한 곳은 여러 층에 흐리게 퍼집니다.', en: 'How well the 64 views agree at each depth, spread out as layers. This is an estimate, not measured 3D, so ambiguous places spread faintly over several layers.' }],
   flat: ['ここは模様がなくて、どの奥行きでも同じくらい合います。', { ko: '여기는 무늬가 거의 없어서, 시점들이 어느 깊이에서든 비슷하게 맞아요. 이런 곳에서는 초점을 고를 수 없어요.', en: 'There is almost no texture here, so the views match about equally at every depth; no focus can be chosen from this spot.' }],
@@ -593,6 +594,8 @@ const lerp3 = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2],
 
 const st = { A: 0, B: 0, C: 0, D: 0, cam: 0, icons: 0, V: 0, vt: 0, Lay: 0 };
 const ptr = { x: 0, y: 0, sx: 0, sy: 0, tx: 0, ty: 0, mx: 0, my: 0, ma: 0, inside: false };
+// device tilt on phones and tablets, from -1 to 1 around the way the device is being held
+const tilt = { on: false, x: 0, y: 0, x0: null, y0: null };
 let VP = null, P11 = 1, hasImage = false;
 const T0 = performance.now();
 // in full screen the introduction is hidden, so the scene is centred again
@@ -773,6 +776,8 @@ function viewSel() {
   let tx, ty;
   if (viewDrive && ptr.inside) {
     tx = VC + Math.max(-1, Math.min(1, ptr.tx * 1.15)) * VC; ty = VC - Math.max(-1, Math.min(1, ptr.ty * 1.15)) * VC;
+  } else if (viewDrive && tilt.on) {
+    tx = VC + Math.max(-1, Math.min(1, tilt.x * 1.15)) * VC; ty = VC - Math.max(-1, Math.min(1, tilt.y * 1.15)) * VC;
   } else {
     const a0 = Math.atan2(HI[1] - VC, HI[0] - VC), r = Math.hypot(HI[0] - VC, HI[1] - VC), a = a0 + st.vt * Math.PI * 2;
     tx = VC + r * Math.cos(a); ty = VC + r * Math.sin(a);
@@ -1296,6 +1301,40 @@ fsBtn.addEventListener('click', () => {
 document.addEventListener('fullscreenchange', fsUI);
 document.addEventListener('webkitfullscreenchange', fsUI);
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && pseudoFs) setPseudo(false); });
+
+/* ================= tilt: the viewpoint on phones and tablets ================= */
+/* Tilting the device moves the viewpoint the way the mouse does on a computer, and after step 2 it
+   chooses the view. The neutral angle is however the device is held, and it follows slowly, so
+   holding it at any angle comes back to the middle. Safari asks for permission on the first tap. */
+if (!mouse && !reduce && 'DeviceOrientationEvent' in window) {
+  const clamp = (v) => Math.max(-1, Math.min(1, v));
+  const faceEl = q('.robot canvas');
+  const onTilt = (e) => {
+    if (e.beta == null || e.gamma == null) return;
+    const ang = ((screen.orientation ? screen.orientation.angle : window.orientation || 0) % 360 + 360) % 360;
+    // turn the device's axes into the screen's: x left to right, y bottom to top
+    const g = e.gamma, b = e.beta;
+    const x = ang === 90 ? b : ang === 180 ? -g : ang === 270 ? -b : g;
+    const y = ang === 90 ? -g : ang === 180 ? b : ang === 270 ? g : -b;
+    if (tilt.x0 === null) { tilt.x0 = x; tilt.y0 = y; }
+    tilt.x0 += (x - tilt.x0) * 0.004; tilt.y0 += (y - tilt.y0) * 0.004;
+    tilt.x = clamp((x - tilt.x0) / 18); tilt.y = clamp((y - tilt.y0) / 18);
+    tilt.on = true;
+    if (!ptr.inside) { ptr.x = tilt.x; ptr.y = tilt.y; }
+    const r = faceEl.getBoundingClientRect();
+    Face.look(r.left + r.width / 2 + tilt.x * 400, r.top + r.height / 2 - tilt.y * 400);
+  };
+  const listen = () => window.addEventListener('deviceorientation', onTilt);
+  const DOE = window.DeviceOrientationEvent;
+  if (typeof DOE.requestPermission === 'function') {
+    // Safari only grants it inside a tap or click
+    const ask = () => {
+      ['touchend', 'click'].forEach((t) => window.removeEventListener(t, ask, true));
+      DOE.requestPermission().then((r) => { if (r === 'granted') listen(); }).catch(() => { /* declined */ });
+    };
+    ['touchend', 'click'].forEach((t) => window.addEventListener(t, ask, true));
+  } else listen();
+}
 
 /* the Blender sample scene stands in front of the lens array */
 setDepthUI(false);
