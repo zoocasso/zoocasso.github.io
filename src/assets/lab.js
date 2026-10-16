@@ -1318,7 +1318,8 @@ if (!mouse && !reduce && 'DeviceOrientationEvent' in window) {
     const y = ang === 90 ? -g : ang === 180 ? b : ang === 270 ? g : -b;
     if (tilt.x0 === null) { tilt.x0 = x; tilt.y0 = y; }
     tilt.x0 += (x - tilt.x0) * 0.004; tilt.y0 += (y - tilt.y0) * 0.004;
-    tilt.x = clamp((x - tilt.x0) / 18); tilt.y = clamp((y - tilt.y0) / 18);
+    // tilting one way moves the eye the other way, like looking past the edge of a window
+    tilt.x = clamp(-(x - tilt.x0) / 18); tilt.y = clamp(-(y - tilt.y0) / 18);
     tilt.on = true;
     if (!ptr.inside) { ptr.x = tilt.x; ptr.y = tilt.y; }
     const r = faceEl.getBoundingClientRect();
