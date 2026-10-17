@@ -1111,7 +1111,9 @@ depth.addEventListener('input', () => {
   token++; st.A = 1; st.B = 1; st.C = 1; if (st.Lay < 0.5) st.cam = CAM_REC;
   const before = focusedLayer();
   st.D = scene.dMin + (scene.dMax - scene.dMin) * Number(depth.value) / 100;
-  setDepthUI(true); request();
+  // the slider opens during step 3's walk through the depths; moving it ends that walk, so the
+  // lab counts as finished here too (otherwise "Reverse RIM" and the link to the RIM page never show)
+  setDepthUI(true); finish(); request();
   const now = focusedLayer();
   if (now >= 0 && now !== before) Snd.focus();
 });
@@ -1305,22 +1307,36 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && pseudoFs
 /* ================= tilt: the viewpoint on phones and tablets ================= */
 /* Tilting the device moves the viewpoint the way the mouse does on a computer, and after step 2 it
    chooses the view. The neutral angle is however the device is held, and it follows slowly, so
-   holding it at any angle comes back to the middle. Safari asks for permission on the first tap. */
+   holding it at any angle comes back to the middle. Safari asks for permission on the first tap.
+   The tilt is read from where "up" lies relative to the screen, not from beta and gamma directly:
+   those are Euler angles, which near upright make a sideways tilt swing gamma several times too far
+   and make a front-back tilt in landscape jump by 180°. Whatever way the device is held or turned,
+   the right edge dropping moves the view right and the top edge leaning back moves it down. */
 if (!mouse && !reduce && 'DeviceOrientationEvent' in window) {
-  const clamp = (v) => Math.max(-1, Math.min(1, v));
+  const clamp = (v) => Math.max(-1, Math.min(1, v)), D2R = Math.PI / 180, R2D = 180 / Math.PI;
+  const wrap = (a) => ((a + 180) % 360 + 360) % 360 - 180;
   const faceEl = q('.robot canvas');
+  // how the content is turned from the device's natural orientation; without the API, the edge of
+  // the device pointing up is taken as the top, as the system's own rotation would do
+  const screenAngle = (ux, uy) => {
+    const o = screen.orientation && typeof screen.orientation.angle === 'number' ? screen.orientation.angle
+      : typeof window.orientation === 'number' ? window.orientation : null;
+    if (o !== null) return (o % 360 + 360) % 360;
+    if (window.innerWidth > window.innerHeight) return ux > 0 ? 90 : 270;
+    return uy >= 0 ? 0 : 180;
+  };
+  let lastAng = -1;
   const onTilt = (e) => {
     if (e.beta == null || e.gamma == null) return;
-    const ang = ((screen.orientation ? screen.orientation.angle : window.orientation || 0) % 360 + 360) % 360;
-    // turn the device's axes into the screen's: x left to right, y bottom to top
-    const g = e.gamma, b = e.beta;
-    const x = ang === 90 ? b : ang === 180 ? -g : ang === 270 ? -b : g;
-    const y = ang === 90 ? -g : ang === 180 ? b : ang === 270 ? g : -b;
-    if (tilt.x0 === null) { tilt.x0 = x; tilt.y0 = y; }
-    tilt.x0 += (x - tilt.x0) * 0.004; tilt.y0 += (y - tilt.y0) * 0.004;
-    // on real phones, in portrait and landscape alike, the two axes came out swapped, so each one
-    // drives the other direction of the view
-    tilt.x = clamp((y - tilt.y0) / 18); tilt.y = clamp((x - tilt.x0) / 18);
+    const b = e.beta * D2R, g = e.gamma * D2R;
+    // "up" in the device's frame (x to the right edge, y to the top edge, z out of the screen)
+    const ux = -Math.cos(b) * Math.sin(g), uy = Math.sin(b), uz = Math.cos(b) * Math.cos(g);
+    const ang = screenAngle(ux, uy), a = ang * D2R;
+    const sx = ux * Math.cos(a) - uy * Math.sin(a), sy = ux * Math.sin(a) + uy * Math.cos(a);
+    const x = Math.asin(clamp(-sx)) * R2D, y = -Math.atan2(sy, uz) * R2D;
+    if (tilt.x0 === null || ang !== lastAng) { tilt.x0 = x; tilt.y0 = y; lastAng = ang; } // a turn starts afresh
+    tilt.x0 += (x - tilt.x0) * 0.004; tilt.y0 = wrap(tilt.y0 + wrap(y - tilt.y0) * 0.004);
+    tilt.x = clamp((x - tilt.x0) / 18); tilt.y = clamp(wrap(y - tilt.y0) / 18);
     tilt.on = true;
     if (!ptr.inside) { ptr.x = tilt.x; ptr.y = tilt.y; }
     const r = faceEl.getBoundingClientRect();
