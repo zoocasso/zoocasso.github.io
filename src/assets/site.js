@@ -41,3 +41,22 @@ document.addEventListener('click', async (e) => {
   }
   setTimeout(() => { b.textContent = original; }, 2500);
 });
+
+/* Table of contents: marks the section being read. */
+const toc = document.querySelector('.toc');
+if (toc) {
+  const links = [...toc.querySelectorAll('a[href^="#"]')];
+  const sections = links.map((a) => document.getElementById(a.getAttribute('href').slice(1)));
+  let ticking = false;
+  const mark = () => {
+    ticking = false;
+    const line = innerHeight * 0.3;
+    let i = 0;
+    sections.forEach((s, k) => { if (s && s.getBoundingClientRect().top <= line) i = k; });
+    // at the very bottom the last sections may never reach the line
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) i = sections.length - 1;
+    links.forEach((a, k) => (k === i ? a.setAttribute('aria-current', 'location') : a.removeAttribute('aria-current')));
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(mark); } }, { passive: true });
+  mark();
+}
