@@ -81,19 +81,19 @@
 <section class="section" aria-labelledby="h-work">
   <header><h2 id="h-work">작업</h2><a class="more" href="/work/">모든 작업 보기</a></header>
   <ol class="log work">
+    <li><a class="row" href="/work/hitachi/">
+      <span class="when">2025.04 – 현재<br>수탁연구, 파트타임</span>
+      <div><h3>히타치 수탁연구 이미지 데이터 파이프라인</h3>
+        <p>유지보수할 수 없던 기존 코드를 다시 써서, 산업용 머신비전 카메라 제어·촬영부터 학습용 데이터셋 전처리까지 Python 파이프라인으로 만들고 비개발자 연구원용 PyQt GUI를 제공했습니다.</p>
+        <span class="key">후임 2명 리드, 2026년 9~10월 네덜란드 출장·현지 배포</span></div>
+      <span class="flow" aria-label="처리 흐름"><span>카메라 제어</span><i></i><span>촬영</span><i></i><span class="core">전처리</span><i></i><span>데이터셋</span></span>
+    </a></li>
     <li><a class="row" href="/work/kisti/">
       <span class="when">{{f:kisti_period}}<br>비전인사이드, 외주 용역</span>
       <div><h3>KISTI 공공 R&amp;D 플랫폼의 데이터 수집·적재</h3>
         <p>Amazon·다나와 크롤러와 조달청 API 수집기를 만들고, {{f:kisti_farm}}에 나눠 돌려 원격 DB 한 곳에 적재했습니다. 그 데이터로 모델 배치와 FastAPI 관리 화면까지 냈습니다.</p>
         <span class="key"><b>{{f:kisti_rows}}</b>, 수집·적재·서빙 전담</span></div>
       <span class="flow" aria-label="처리 흐름"><span>크롤러 {{f:kisti_farm}}</span><i></i><span class="core">원격 DB</span><i></i><span>모델 배치</span><i></i><span>FastAPI</span></span>
-    </a></li>
-    <li><a class="row" href="/work/genomics/">
-      <span class="when">{{f:bio_period}}<br>비전인사이드, 사내 과제</span>
-      <div><h3>유전체 변이 주석·위험도 리포트 백엔드</h3>
-        <p>FASTQ에서 VCF까지의 변이 호출 파이프라인, 공개 레퍼런스를 4단계 SQL 조인으로 붙이는 주석 계층, FastAPI JSON API를 혼자 만들고 Docker로 배포했습니다.</p>
-        <span class="key"><b>{{f:bio_ref}}</b> 레퍼런스, 단독 개발</span></div>
-      <span class="flow" aria-label="처리 흐름"><span>FASTQ</span><i></i><span>BWA·GATK</span><i></i><span>VCF</span><i></i><span class="core">주석 SQL</span><i></i><span>JSON API</span></span>
     </a></li>
     <li><a class="row" href="/work/wjmax/">
       <span class="when">{{f:wjmax_period}}<br>사이드 프로젝트, 2인 팀</span>
@@ -102,12 +102,12 @@
         <span class="key">업데이트 때 최대 <b>{{f:wjmax_peak}}</b> 동시 접속</span></div>
       <span class="flow" aria-label="처리 흐름"><span>Cloudflare</span><i></i><span class="core">FastAPI·EC2</span><i></i><span>RDS MySQL</span></span>
     </a></li>
-    <li><a class="row" href="/work/hitachi/">
-      <span class="when">2025.04 – 현재<br>수탁연구, 파트타임</span>
-      <div><h3>히타치 수탁연구 이미지 데이터 파이프라인</h3>
-        <p>유지보수할 수 없던 기존 코드를 다시 써서, 산업용 머신비전 카메라 제어·촬영부터 학습용 데이터셋 전처리까지 Python 파이프라인으로 만들고 비개발자 연구원용 PyQt GUI를 제공했습니다.</p>
-        <span class="key">후임 2명 리드, 2026년 9~10월 네덜란드 출장·현지 배포</span></div>
-      <span class="flow" aria-label="처리 흐름"><span>카메라 제어</span><i></i><span>촬영</span><i></i><span class="core">전처리</span><i></i><span>데이터셋</span></span>
+    <li><a class="row" href="/work/genomics/">
+      <span class="when">{{f:bio_period}}<br>비전인사이드, 사내 과제</span>
+      <div><h3>유전체 변이 주석·위험도 리포트 백엔드</h3>
+        <p>FASTQ에서 VCF까지의 변이 호출 파이프라인, 공개 레퍼런스를 4단계 SQL 조인으로 붙이는 주석 계층, FastAPI JSON API를 혼자 만들고 Docker로 배포했습니다.</p>
+        <span class="key"><b>{{f:bio_ref}}</b> 레퍼런스, 단독 개발</span></div>
+      <span class="flow" aria-label="처리 흐름"><span>FASTQ</span><i></i><span>BWA·GATK</span><i></i><span>VCF</span><i></i><span class="core">주석 SQL</span><i></i><span>JSON API</span></span>
     </a></li>
   </ol>
 </section>
@@ -116,6 +116,16 @@
   <header><h2 id="h-research">연구</h2><a class="more" href="/research/">연구 전체 보기</a></header>
   <p class="lead">학습 없이 기하광학만으로 렌즈 배열 영상을 다시 배열하고 재구성합니다. 규슈공업대학교 석사과정, 지도교수 이민철(Min-Chul Lee).</p>
   <ol class="log">
+    <li><a class="row" href="/research/rim/">
+      <span class="when">ICMV 2026 최우수 포스터상<br>ICCAS 2026 채택</span>
+      <div><h3>RIM·iRIM: 렌즈 배열 영상의 각도 정보를 공간 해상도로</h3>
+        <p>RIM은 렌즈 배열 영상의 픽셀을 보간 없이 일대일로 재배열해 시점 영상을 만듭니다. 위의 실험실이 이 방법입니다. 역변환 iRIM은 다시점 영상으로 임의의 가상 렌즈 배열 요소 영상을 합성합니다.</p>
+        <span class="key">Stanford Lytro 7개 장면에서 <b>PSNR +2.39 dB</b>, SSIM +0.14 (논문 기재값)</span></div>
+      <figure class="wide-thumb">
+        <img src="/img/ei-synth-800.webp" width="800" height="450" alt="iRIM으로 합성한 6×6 렌즈 배열 요소 영상" loading="lazy">
+        <figcaption>iRIM으로 합성한 6×6 렌즈 배열 요소 영상. ICCAS 2026</figcaption>
+      </figure>
+    </a></li>
     <li><a class="row" href="/research/origin-point/">
       <span class="when">ITC-CSCC 2025, 2026<br>코드 공개</span>
       <div><h3>원점 최적화: 체적 컴퓨터 재생을 선명하게, 그리고 빠르게</h3>
@@ -125,16 +135,6 @@
         <img src="/img/vcr-fixed.webp" width="640" height="640" alt="고정 원점으로 재생한 USAF 해상도 차트" loading="lazy">
         <img src="/img/vcr-proposed.webp" width="640" height="640" alt="최적화한 원점으로 재생한 USAF 해상도 차트" loading="lazy">
         <figcaption>고정 원점(왼쪽)과 최적화한 원점(오른쪽). ITC-CSCC 2026 Fig. 6</figcaption>
-      </figure>
-    </a></li>
-    <li><a class="row" href="/research/rim/">
-      <span class="when">ICMV 2026 최우수 포스터상<br>ICCAS 2026 채택</span>
-      <div><h3>RIM·iRIM: 렌즈 배열 영상의 각도 정보를 공간 해상도로</h3>
-        <p>RIM은 렌즈 배열 영상의 픽셀을 보간 없이 일대일로 재배열해 시점 영상을 만듭니다. 위의 실험실이 이 방법입니다. 역변환 iRIM은 다시점 영상으로 임의의 가상 렌즈 배열 요소 영상을 합성합니다.</p>
-        <span class="key">Stanford Lytro 7개 장면에서 <b>PSNR +2.39 dB</b>, SSIM +0.14 (논문 기재값)</span></div>
-      <figure class="wide-thumb">
-        <img src="/img/ei-synth-800.webp" width="800" height="450" alt="iRIM으로 합성한 6×6 렌즈 배열 요소 영상" loading="lazy">
-        <figcaption>iRIM으로 합성한 6×6 렌즈 배열 요소 영상. ICCAS 2026</figcaption>
       </figure>
     </a></li>
   </ol>
