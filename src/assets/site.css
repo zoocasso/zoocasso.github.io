@@ -78,6 +78,10 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 .intro .role{font-size:18px;margin:22px 0 0;color:var(--paper)}
 .intro .lede{font-size:16px;color:var(--mute);margin:12px 0 0;max-width:42ch}
 .intro .status{margin:16px 0 0;font-size:15px;color:var(--brass-hi)}
+.intro .honor{margin:12px 0 0}
+.intro .honor a{display:inline-flex;align-items:center;gap:7px;padding:3px 10px;border:1px solid var(--brass);border-radius:3px;background:var(--veil);color:var(--brass-hi);font-size:13.5px;text-decoration:none}
+.intro .honor a:hover{color:var(--paper)}
+.intro .honor svg{width:13px;height:13px;flex:none;fill:currentColor}
 .intro .ctas{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
 .intro .ctas .btn{background:var(--veil)}
 .intro .ctas .btn.primary{background:var(--brass)}
@@ -243,6 +247,11 @@ html.lab-fs{overflow:hidden}
 .facts dt{font-family:var(--display);font-weight:700;font-size:clamp(24px,2.4vw,32px);line-height:1.15;color:var(--brass-hi);font-variant-numeric:tabular-nums;white-space:nowrap}
 .facts dd{margin:0;color:var(--paper)}
 .facts dd small{display:block;color:var(--mute);font-size:14px;margin-top:2px}
+/* each fact sat in its own grid, so a wider number pushed its text right; sharing the columns lines them up */
+@supports (grid-template-columns:subgrid){@media (min-width:861px){
+  .facts{grid-template-columns:max-content minmax(0,1fr) max-content minmax(0,1fr)}
+  .facts > div{grid-column:span 2;grid-template-columns:subgrid;column-gap:24px}
+}}
 
 .log{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
 .log > li{border-bottom:1px solid var(--rule)}
@@ -316,6 +325,7 @@ figure{margin:0}
 .toc p{color:var(--mute);margin:0 0 6px}
 .toc a{display:block;padding:7px 0 7px 12px;border-left:2px solid var(--rule);color:var(--mute);text-decoration:none}
 .toc a:hover{color:var(--paper);border-left-color:var(--mute)}
+.toc a[aria-current]{color:var(--paper);border-left-color:var(--brass)}
 .doc > div{min-width:0}
 .doc section{padding-bottom:52px;max-width:78ch}
 .doc section.full{max-width:none}
@@ -435,4 +445,31 @@ table.data tfoot td{color:var(--paper);font-weight:700;border-bottom:0}
   .diagram .arrow{flex-basis:22px}
   .diagram .arrow svg{transform:rotate(90deg)}
   .archive > li,.timeline li{grid-template-columns:minmax(0,1fr)}
+}
+
+/* Print: dark ink on white paper, no controls; the email, kept out of the page text, is printed from its parts */
+@media print{
+  :root{--bench:#fff;--plate:#fff;--rule:#c8c8c8;--paper:#111;--mute:#444;--brass:#8a6420;--brass-hi:#6e4f17;--veil:#fff;color-scheme:light}
+  @page{margin:16mm 14mm}
+  html,body{background:#fff;color:#111;font-size:11pt;line-height:1.55}
+  .skip,.site-head nav,.lab .stage,.lab-tools,.toc,.pager,.ctas,.contact,.qr,.more,section:has(.downloads),button:not(.linkish),input[type=range]{display:none!important}
+  .site-head{min-height:0;padding:0 0 6mm;border:0}
+  .home .site-head{display:none}
+  .lab{background:#fff;border:0}
+  .intro{position:static;width:auto;padding:0}
+  .intro .honor a{border-color:#8a6420}
+  .section,.doc-head,.doc,.site-foot{max-width:none;padding-left:0;padding-right:0}
+  .section{padding-top:10mm}
+  .doc{display:block;padding-top:6mm}
+  .doc section{max-width:none;padding-bottom:6mm}
+  .log a.row{padding:4mm 0;margin:0}
+  .log a.row h3::after{content:none}
+  a{color:inherit}
+  h2,h3{break-after:avoid}
+  li,figure,table,.diagram,.facts > div,.decisions > li{break-inside:avoid}
+  img{max-height:80mm;width:auto}
+  .site-foot{margin-top:10mm;padding-top:4mm;padding-bottom:0}
+  .site-foot .linkish{font-size:0;min-height:0;text-decoration:none}
+  .site-foot .linkish::after{content:attr(data-email-user) "@" attr(data-email-domain);font-size:11pt;color:#111}
+  .foot-name::after{content:"  zoocasso.github.io";font-family:var(--body);font-weight:400;color:#444}
 }
