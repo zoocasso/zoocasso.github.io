@@ -341,6 +341,14 @@ figure{margin:0}
 .diagram .box.core b{color:var(--brass-hi)}
 .diagram .arrow{flex:0 0 26px;display:flex;align-items:center;justify-content:center;color:var(--mute)}
 .diagram .arrow svg{width:20px;height:12px;fill:none;stroke:currentColor;stroke-width:1.6}
+/* five boxes need 704px in a row; stack them when the column beside the table of contents is narrower */
+.doc section.full{container-type:inline-size}
+@container (max-width:719px){
+  .diagram:has(> .box:nth-of-type(5)){flex-direction:column}
+  .diagram:has(> .box:nth-of-type(5)){overflow-x:visible}
+  .diagram:has(> .box:nth-of-type(5)) .arrow{flex-basis:22px}
+  .diagram:has(> .box:nth-of-type(5)) .arrow svg{transform:rotate(90deg)}
+}
 .tablewrap{overflow-x:auto;border-top:1px solid var(--rule)}
 table.data{border-collapse:collapse;width:100%;font-size:15px}
 table.data caption{text-align:left;color:var(--mute);font-size:14px;padding:0 0 10px}
@@ -423,7 +431,8 @@ table.data tfoot td{color:var(--paper);font-weight:700;border-bottom:0}
   .meta > div:nth-child(3){padding-left:0;border-left:0}
   .results,.scope,.method,.pair{grid-template-columns:minmax(0,1fr)}
   .results > div:nth-child(even){padding-left:0;border-left:0}
-  .diagram{flex-direction:column}
-  .diagram .arrow{flex-basis:22px;transform:rotate(90deg)}
+  .diagram{flex-direction:column;overflow-x:visible}
+  .diagram .arrow{flex-basis:22px}
+  .diagram .arrow svg{transform:rotate(90deg)}
   .archive > li,.timeline li{grid-template-columns:minmax(0,1fr)}
 }
