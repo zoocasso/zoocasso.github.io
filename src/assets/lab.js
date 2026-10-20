@@ -240,8 +240,8 @@ const Face = (() => {
 
 /* ================= dialogue: Japanese voice line, subtitle in the page language ================= */
 const L = {
-  tap: ['ヒョンジュさんがWebGLで作った実験室です。画面をクリックすると、音といっしょに始まります。', { ko: '형주 님이 WebGL로 직접 만든 실험실이에요. 화면을 누르면 소리와 함께 시작해요.', en: 'Hyeongju built this lab in WebGL. Click anywhere to start, with sound.' }],
-  greet: ['いらっしゃいませ！ 九州から来たレンズくんです。奥行きのある景色を、レンズで撮って元に戻してみますね。', { ko: '어서 오세요! 규슈에서 온 렌즈쿤이에요. 일본어로 말하고 자막을 달게요. 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "Welcome! I'm Lens-kun, from Kyushu. I speak Japanese, with subtitles. Let's capture a scene through a lens array, then bring it back." }],
+  tap: ['クリックすると、音といっしょに始まります。', { ko: '누르면 소리와 함께 시작해요.', en: 'Click to start, with sound.' }],
+  greet: ['いらっしゃいませ。奥行きのちがう物を、レンズで撮って、元に戻してみます。', { ko: '어서 오세요. 깊이가 다른 물체들을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "Welcome. Let's capture objects at different depths through a lens array, then bring them back." }],
   between: ['いまの面は、物と物のあいだです。もう少し動かしてみてください。', { ko: '재구성 면이 물체들 사이에 있어요. 거리를 조금 더 움직여 보세요.', en: 'The plane is between the objects; move the distance a little more.' }],
   A: () => scene.kind === 'lytro'
     ? ['本物のLytroで撮った、レンズごとの画像です。拡大すると、小さな丸い像が並んでいます。', { ko: '실제 Lytro 카메라의 렌즈릿 영상이에요. 렌즈마다 작고 둥근 사진이 있고, 렌즈 하나가 작은 카메라예요.', en: 'A real Lytro capture, as its lenslet image: each lens holds a small round picture, so every lens is a tiny camera.' }]
@@ -251,7 +251,7 @@ const L = {
   views: ['ほら、視点ごとに手前と奥のずれ方がちがいます。', { ko: '보세요. 시점마다 앞 물체와 뒤 물체가 다르게 움직여요. 서로 다른 방향에서 본 영상이에요.', en: 'Look: near and far objects move differently from view to view. Each one is seen from another direction.' }],
   C: ['最後に再構成。重ねる面を奥へ動かすと、その奥行きの物体がくっきり戻ります。', { ko: `마지막은 재구성. 시점 영상 ${VIEWS}장을 한 면에 겹치고, 그 면을 옮기면 그 깊이의 물체가 선명해져요.`, en: `Reconstruct: the ${VIEWS} views overlap on one plane, and whatever stands at the plane's depth turns sharp.` }],
   // the last line hands the visitor from the research demo to the work below
-  outro: ['これはヒョンジュさんの修士研究です。会社で作ったデータパイプラインは、下の「作業」にあります。', { ko: '이건 형주 님의 석사 연구예요. 회사에서 만든 데이터 파이프라인은 아래 "작업"에 있어요.', en: "That was Hyeongju's master's research. The data pipelines Hyeongju built at work are below, under Work." }],
+  outro: ['これは修士研究です。会社で作ったデータパイプラインは、下の「作業」にあります。', { ko: '여기까지가 석사 연구예요. 회사에서 만든 데이터 파이프라인은 아래 "작업"에 있어요.', en: "That was the master's research. The data pipelines built at work are below, under Work." }],
   done: () => ['ピクセルはひとつも失われていません。奥行きごとにピントを合わせ直せます。', { ko: `${fmt(COUNT)}개 픽셀을 하나도 버리지 않고, 깊이마다 초점을 다시 맞출 수 있어요.`, en: `Not one of the ${fmt(COUNT)} pixels was lost, and focus can be set at any depth.` }],
   idle: () => scene.kind === 'lytro'
     ? ['画面を押すと、その場所にピントを合わせます。', { ko: '화면을 누르면 그 자리에 초점이 맞아요. "추정 깊이 층"을 켜면 시점들이 어느 깊이에서 잘 맞는지 볼 수 있어요.', en: 'Click the picture to focus there. Turn on "Estimated depth layers" to see at which depths the views agree.' }]
@@ -266,7 +266,7 @@ const L = {
   rev: ['逆再生もできます。一対一の並べ替えですから。', { ko: 'RIM은 일대일 재배열이라 픽셀 하나 잃지 않고 요소 영상으로 되돌아갑니다.', en: 'RIM is one-to-one, so the elemental images come back without losing a pixel.' }],
   wait: ['読み込んでいます。少し待ってくださいね。', { ko: '데이터를 불러오는 중이에요. 잠시만 기다려 주세요.', en: 'Loading the data. One moment, please.' }],
   netbad: ['あれ？ データを読み込めませんでした。', { ko: '데이터를 불러오지 못했어요. 버튼을 다시 눌러 주세요.', en: "I couldn't load the data. Please press the button again." }],
-  scene: ['ブレンダーの景色です。8×8の視点から描きました。', { ko: '블렌더로 8×8 시점을 렌더링한 장면이에요. 앞에서부터 원숭이 머리, 원환체, 정육면체, 원뿔, 구.', en: 'A scene rendered in Blender from 8×8 viewpoints: monkey head, torus, cube, cone and sphere, from near to far.' }],
+  scene: ['ブレンダーの景色です。8×8の視点から描きました。', { ko: '블렌더로 8×8 시점을 렌더링한 장면이에요. 앞에 원숭이 머리, 뒤에 원환체가 있어요.', en: 'A scene rendered in Blender from 8×8 viewpoints: a monkey head in front, a torus behind.' }],
   lytro: ['スタンフォードのLytroデータです。本物のカメラで撮った景色ですよ。', { ko: '실제 Lytro 카메라로 찍은 장면이에요. Stanford 공개 데이터에서 나뭇가지가 정지 표지판을 가리는 부분을 잘라 왔어요.', en: 'A real scene shot with a Lytro camera, cut from the Stanford archive where a branch hides part of a stop sign.' }],
 };
 const FOCUS = [
@@ -879,13 +879,16 @@ function lytroScene() {
    pass for every view. A camera array shifts near objects most; each view was shifted to line the
    views up on a plane 0.28 m away, just in front of the monkey (as when refocusing there), and then
    each object's dk is positive and grows with distance, as for a lens array: z = -NP * ZS * dk holds
-   exactly, so the light cone drawn from the point lands where its pixels are. At 64 lenses. */
-const BLENDER = { lo: 0.3552, hi: 1.2, d: [0.3747, 0.7553, 0.9327, 1.0354, 1.0974], point: [0.768, 0.373], pointD: 0.3579 };
+   exactly, so the light cone drawn from the point lands where its pixels are. At 64 lenses.
+   Only the two nearest objects are kept: the monkey head and the torus. The cube, cone and sphere behind
+   them (dk 0.93 and more) are turned into background when the sample loads (cut). lo and hi are the
+   depth map's encoding and stay as rendered. */
+const BLENDER = { lo: 0.3552, hi: 1.2, d: [0.3747, 0.7553], cut: 0.85, point: [0.768, 0.373], pointD: 0.3579 };
 function blenderScene() {
-  const names = [NAMES.monkey, NAMES.torus, NAMES.cube, NAMES.cone, NAMES.sphere];
+  const names = [NAMES.monkey, NAMES.torus];
   return { kind: 'blender', real: true, perView: true, nl: 64, targets: BLENDER.d.map((x, i) => ({ d: x, name: names[i] })),
-    sky: true, grow: 1.6, walk: [0, 1, 3], dMin: 0.3, dMax: 1.2, za: 0, zb: -NP * ZS, tol: 0.025, lo: BLENDER.lo, hi: BLENDER.hi,
-    point: BLENDER.point, pointD: BLENDER.pointD };
+    sky: true, grow: 1.6, walk: [0, 1], dMin: 0.3, dMax: 0.9, za: 0, zb: -NP * ZS, tol: 0.025, lo: BLENDER.lo, hi: BLENDER.hi,
+    cut: BLENDER.cut, point: BLENDER.point, pointD: BLENDER.pointD };
 }
 let scene = blenderScene();
 
@@ -1280,12 +1283,15 @@ function loadLightField(viewsURL, depURL, make, line, mode) {
   const views = new Image(), dep = new Image(); let n = 0, failed = false;
   const ready = () => {
     if (++n < 2 || failed || me !== loadSeq) return;
+    const sc = make();
+    depA = readPixels(dep);
+    let atlas = views, depSrc = dep;
+    if (sc.cut) { const c = cutBehind(views, sc); if (c) { atlas = c.views; depSrc = c.dep; depA = c.depA; } }
     gl.bindTexture(gl.TEXTURE_2D, depTex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
     gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);   // values, not colours
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, dep);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, depSrc);
     gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.BROWSER_DEFAULT_WEBGL);
-    depA = readPixels(dep);
-    useLayers({ atlas: views, scene: make(), line }, mode);
+    useLayers({ atlas, scene: sc, line }, mode);
   };
   views.onload = ready; dep.onload = ready;
   views.onerror = dep.onerror = () => { if (!failed) { failed = true; loadFailed(me); } };
@@ -1294,6 +1300,26 @@ function loadLightField(viewsURL, depURL, make, line, mode) {
 const loadScene = (mode) => loadLightField('/img/lab-blender-views.webp', '/img/lab-blender-depth.png', blenderScene, 'scene', mode);
 const loadImg = (src) => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
 let layTex = null, layATex = null, layA = null, depA = null;
+/* samples behind sc.cut (shift per view step) become background: the depth of the sky and the mean
+   colour of the sky pixels, so nothing behind the kept objects is drawn, captured or reconstructed.
+   The view mosaic and the depth mosaic share one layout; if their sizes differ, nothing is cut. */
+function cutBehind(views, sc) {
+  const w = views.width, h = views.height;
+  if (!depA || depA.w !== w || depA.data.length !== w * h * 4) return null;
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(views, 0, 0);
+  const img = g.getImageData(0, 0, w, h), px = img.data, dz = new Uint8ClampedArray(depA.data);
+  const sky = 0.998 * 255, cut = (sc.cut - sc.lo) / (sc.hi - sc.lo) * 255;
+  let r = 0, gr = 0, b = 0, k = 0;
+  for (let i = 0; i < dz.length; i += 4) if (dz[i] >= sky) { r += px[i]; gr += px[i + 1]; b += px[i + 2]; k++; }
+  if (k) { r /= k; gr /= k; b /= k; }
+  for (let i = 0; i < dz.length; i += 4) {
+    if (dz[i] < sky && dz[i] > cut) { dz[i] = dz[i + 1] = dz[i + 2] = 255; px[i] = r; px[i + 1] = gr; px[i + 2] = b; }
+  }
+  g.putImageData(img, 0, 0);
+  const d = new ImageData(dz, w, h);
+  return { views: c, dep: d, depA: { w, data: dz } };
+}
 /* an image's pixels on the CPU, for the clicks that pick a depth */
 function readPixels(img) {
   const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
