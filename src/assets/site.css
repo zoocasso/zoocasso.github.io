@@ -117,8 +117,6 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 .dialog .ko{font-size:16px;line-height:1.55;color:var(--paper);min-height:1.55em;margin-top:3px}
 .dialog .ko.fade{animation:subin .35s ease-out}
 @keyframes subin{from{opacity:0}to{opacity:1}}
-.lab-cta{position:absolute;left:calc(50% + min(235px,20%));bottom:150px;transform:translateX(-50%);z-index:3;display:flex;gap:8px;animation:subin .5s ease-out}
-.lab-cta .btn{background:var(--veil);border-color:var(--brass)}
 /* during the story: a way straight to the result, on the dialogue's top right corner (placed by lab.js) */
 .lab-skip{position:absolute;left:0;bottom:0;transform:translateX(-100%);z-index:3;display:inline-flex;white-space:nowrap;align-items:center;gap:6px;min-height:32px;padding:0 12px;border:1px solid var(--mute);border-radius:3px;background:var(--veil);color:var(--paper);font:inherit;font-size:13.5px;cursor:pointer;animation:subin .4s ease-out}
 .lab-skip:hover{border-color:var(--brass);color:var(--brass-hi)}
@@ -256,7 +254,6 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 html.lab-fs{overflow:hidden}
 @media (min-width:1180px){
   .lab.is-fs .dialog{left:50%;width:min(600px,calc(100% - 48px))}
-  .lab.is-fs .lab-cta{left:50%}
   .lab.is-fs .raybox,.lab.is-fs .lfzoom,.lab.is-fs .laynote{left:var(--gutter)}
 }
 .lab .fallback{position:absolute;right:var(--gutter);bottom:90px;width:min(46%,560px);z-index:1}
@@ -267,7 +264,6 @@ html.lab-fs{overflow:hidden}
   .intro{position:static;width:auto;padding:32px var(--gutter) 24px;background:var(--bench)}
   .lab .stage{height:min(118vw,620px)}
   .dialog{left:50%;bottom:12px;width:calc(100% - 24px)}
-  .lab-cta{left:50%}
   .lab .credit{left:12px;right:110px;top:12px;bottom:auto;font-size:11px}
   .vmap{top:78px;right:12px;grid-template-columns:repeat(8,7px);gap:2px;padding:6px}
   .raybox{right:auto;left:12px;top:12px;width:min(320px,calc(100% - 120px))}
