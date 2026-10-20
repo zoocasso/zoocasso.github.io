@@ -4,10 +4,11 @@
 
   "name": {"ko": "이형주", "en": "Hyeongju Lee"},
   "name_alt": {"ko": "Hyeongju Lee", "en": "이형주"},
-  "role": {"ko": "데이터·백엔드 엔지니어, 3D 비전 연구", "en": "Data & backend engineer, 3D vision researcher", "src": "MASTER §0 포지셔닝"},
+  "role": {"ko": "데이터·백엔드 엔지니어", "en": "Data & backend engineer", "src": "MASTER §0 포지셔닝"},
   "status": {"ko": "2027년 3월 석사 졸업 예정, 4월부터 국내 입사 가능", "en": "Finishing my master's in March 2027, available in Korea from April 2027", "src": "MASTER §0"},
   "based": {"ko": "일본 후쿠오카 거주", "en": "Based in Fukuoka, Japan", "src": "MASTER §0"},
   "career_len": {"ko": "2년 5개월", "en": "29 months", "src": "MASTER §2 기간 2022-07 ~ 2024-11"},
+  "career_span": {"ko": "2022.07 – 2024.11", "en": "Jul 2022 – Nov 2024", "src": "MASTER §2 기간 2022-07 ~ 2024-11"},
 
   "kisti_rows": {"ko": "8,000만 행 이상", "en": "80M+ rows", "src": "MASTER §2-1 누적 규모 (2023-11)"},
   "kisti_rows_short": {"ko": "8,000만+", "en": "80M+", "src": "MASTER §2-1"},
@@ -15,6 +16,8 @@
   "kisti_farm": {"ko": "노트북 10~20대", "en": "10–20 laptops", "src": "MASTER §2-1 분산 크롤링 팜"},
   "kisti_asin": {"ko": "2,217,720개", "en": "2,217,720", "src": "MASTER §2-1"},
   "kisti_asin_dedup": {"ko": "1,221,128개", "en": "1,221,128", "src": "MASTER §2-1"},
+  "kisti_asin_short": {"ko": "221만 → 122만", "en": "2.22M → 1.22M", "src": "MASTER §2-1 (kisti_asin → kisti_asin_dedup)"},
+  "kisti_api": {"ko": "2023.06", "en": "Jun 2023", "src": "MASTER §2-1 API 전환 제안·반영"},
   "kisti_match": {"ko": "24만 8천 건", "en": "248K", "src": "MASTER §2-1 모델3"},
 
   "bio_ref": {"ko": "약 1 TB", "en": "~1 TB", "src": "MASTER §2-2 공개 레퍼런스"},

@@ -240,20 +240,22 @@ const Face = (() => {
 
 /* ================= dialogue: Japanese voice line, subtitle in the page language ================= */
 const L = {
-  tap: ['画面をクリックすると、音といっしょに始まります。', { ko: '화면을 한 번 누르면 소리와 함께 시작해요.', en: 'Click anywhere to start, with sound.' }],
-  greet: ['いらっしゃいませ！ 九州から来たレンズくんです。奥行きのある景色を、レンズで撮って元に戻してみますね。', { ko: '어서 오세요! 규슈에서 온 렌즈쿤이에요. 일본어로 말하지만 자막을 달아 둘게요. 깊이가 다른 물체들을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "Welcome! I'm Lens-kun, from Kyushu. I speak Japanese, so here are subtitles. I'll capture a scene with depth through a lens array, then bring it back." }],
+  tap: ['ヒョンジュさんがWebGLで作った実験室です。画面をクリックすると、音といっしょに始まります。', { ko: '형주 님이 WebGL로 직접 만든 실험실이에요. 화면을 누르면 소리와 함께 시작해요.', en: 'Hyeongju built this lab in WebGL. Click anywhere to start, with sound.' }],
+  greet: ['いらっしゃいませ！ 九州から来たレンズくんです。奥行きのある景色を、レンズで撮って元に戻してみますね。', { ko: '어서 오세요! 규슈에서 온 렌즈쿤이에요. 일본어로 말하고 자막을 달게요. 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "Welcome! I'm Lens-kun, from Kyushu. I speak Japanese, with subtitles. Let's capture a scene through a lens array, then bring it back." }],
   between: ['いまの面は、物と物のあいだです。もう少し動かしてみてください。', { ko: '재구성 면이 물체들 사이에 있어요. 거리를 조금 더 움직여 보세요.', en: 'The plane is between the objects; move the distance a little more.' }],
   A: () => scene.kind === 'lytro'
-    ? ['本物のLytroで撮った、レンズごとの画像です。拡大すると、小さな丸い像が並んでいます。', { ko: '이건 실제 Lytro 카메라로 찍어 Lytro 소프트웨어가 디코딩한 렌즈릿 영상이에요. 확대하면 렌즈마다 작고 둥근 사진이 있어요. 렌즈 하나하나가 작은 카메라인 셈이고, 그 가운데 8×8 픽셀이 8×8개 시점이 됩니다. 3D 형상이 없으니 촬영은 흉내 내지 않아요.', en: 'This is a real Lytro capture: the lenslet image as decoded by Lytro\'s software. Zoom in and each lens holds a small round picture: every lens is a tiny camera, and its central 8×8 pixels become the 8×8 views. There is no 3D shape here, so the capture is not simulated.' }]
-    : ['カシャッ。小さなカメラごとに、小さな写真が一枚ずつ撮れました。', { ko: `찰칵. 작은 카메라마다 8×8 픽셀짜리 사진이 센서에 한 장씩 찍혔어요. 이것이 요소 영상입니다. 여기서는 블렌더로 렌더링한 8×8 시점 영상으로 만들었어요.`, en: `Click. Each tiny camera left an 8×8-pixel picture on the sensor: the elemental images, built here from 8×8 views rendered in Blender.` }],
-  cams: () => ['レンズの一つひとつが、小さなカメラです。少しずつ違う場所から、同時に撮ります。', { ko: `렌즈 배열의 렌즈 하나하나는 아주 작은 카메라예요. ${NL}×${NL}대가 조금씩 다른 자리에서 동시에 찍습니다.`, en: `Each lens in the array is a tiny camera. ${NL}×${NL} of them take the picture at once, each from a slightly different spot.` }],
-  B: ['次は並べ替え。小さな写真から同じ位置のピクセルを集めると、ひとつの方向から見た写真になります。', { ko: `다음은 재배열(RIM)입니다. 작은 사진들에서 같은 자리의 픽셀만 모으면, 한 방향에서 본 큰 사진 한 장이 돼요. 자리마다 한 장씩, ${VIEWS}장입니다.`, en: `Rearrange (RIM). Take the pixel at the same spot from every tiny picture and you get one larger picture seen from one direction; one per spot, ${VIEWS} in all.` }],
-  views: ['ほら、視点ごとに手前と奥のずれ方がちがいます。', { ko: '보세요. 시점마다 앞의 물체와 뒤의 물체가 서로 다르게 움직여요. 같은 그림이 아니라 서로 다른 방향에서 본 영상입니다.', en: 'Look: from view to view, near and far objects move differently. They are not copies but views from different directions.' }],
-  C: ['最後に再構成。重ねる面を奥へ動かすと、その奥行きの物体がくっきり戻ります。', { ko: `마지막으로 재구성입니다. 시점 영상 ${VIEWS}장을 한 면에 겹치는데, 그 면을 뒤로 옮기면 그 깊이에 있던 물체가 선명하게 되살아나요.`, en: `Reconstruct. The ${VIEWS} views are overlapped on one plane; move the plane back and whatever stood at that depth comes back sharp.` }],
+    ? ['本物のLytroで撮った、レンズごとの画像です。拡大すると、小さな丸い像が並んでいます。', { ko: '실제 Lytro 카메라의 렌즈릿 영상이에요. 렌즈마다 작고 둥근 사진이 있고, 렌즈 하나가 작은 카메라예요.', en: 'A real Lytro capture, as its lenslet image: each lens holds a small round picture, so every lens is a tiny camera.' }]
+    : ['カシャッ。小さなカメラごとに、小さな写真が一枚ずつ撮れました。', { ko: `찰칵. 작은 카메라마다 8×8 픽셀짜리 사진이 한 장씩 찍혔어요. 이게 요소 영상이에요.`, en: `Click. Each tiny camera took an 8×8-pixel picture: the elemental images.` }],
+  cams: () => ['レンズの一つひとつが、小さなカメラです。少しずつ違う場所から、同時に撮ります。', { ko: `렌즈 하나하나가 아주 작은 카메라예요. ${NL}×${NL}대가 조금씩 다른 자리에서 동시에 찍어요.`, en: `Each lens is a tiny camera; ${NL}×${NL} of them shoot at once from slightly different spots.` }],
+  B: ['次は並べ替え。小さな写真から同じ位置のピクセルを集めると、ひとつの方向から見た写真になります。', { ko: `다음은 재배열(RIM). 작은 사진들에서 같은 자리의 픽셀만 모으면 한 방향에서 본 사진이 돼요. 모두 ${VIEWS}장.`, en: `Rearrange (RIM): the same pixel from every tiny picture makes one picture seen from one direction, ${VIEWS} in all.` }],
+  views: ['ほら、視点ごとに手前と奥のずれ方がちがいます。', { ko: '보세요. 시점마다 앞 물체와 뒤 물체가 다르게 움직여요. 서로 다른 방향에서 본 영상이에요.', en: 'Look: near and far objects move differently from view to view. Each one is seen from another direction.' }],
+  C: ['最後に再構成。重ねる面を奥へ動かすと、その奥行きの物体がくっきり戻ります。', { ko: `마지막은 재구성. 시점 영상 ${VIEWS}장을 한 면에 겹치고, 그 면을 옮기면 그 깊이의 물체가 선명해져요.`, en: `Reconstruct: the ${VIEWS} views overlap on one plane, and whatever stands at the plane's depth turns sharp.` }],
+  // the last line hands the visitor from the research demo to the work below
+  outro: ['これはヒョンジュさんの修士研究です。会社で作ったデータパイプラインは、下の「作業」にあります。', { ko: '이건 형주 님의 석사 연구예요. 회사에서 만든 데이터 파이프라인은 아래 "작업"에 있어요.', en: "That was Hyeongju's master's research. The data pipelines Hyeongju built at work are below, under Work." }],
   done: () => ['ピクセルはひとつも失われていません。奥行きごとにピントを合わせ直せます。', { ko: `${fmt(COUNT)}개 픽셀을 하나도 버리지 않고, 깊이마다 초점을 다시 맞출 수 있어요.`, en: `Not one of the ${fmt(COUNT)} pixels was lost, and focus can be set at any depth.` }],
   idle: () => scene.kind === 'lytro'
     ? ['画面を押すと、その場所にピントを合わせます。', { ko: '화면을 누르면 그 자리에 초점이 맞아요. "추정 깊이 층"을 켜면 시점들이 어느 깊이에서 잘 맞는지 볼 수 있어요.', en: 'Click the picture to focus there. Turn on "Estimated depth layers" to see at which depths the views agree.' }]
-    : mouse ? ['物をクリックすると、そこにピントが合います。並べ替えのあとは、マウスで視点も変えられます。', { ko: '물체를 누르면 그 깊이로 초점이 옮겨가요. 재구성 거리로도 움직일 수 있고, "2 재배열"을 누른 뒤 마우스를 움직이면 시점도 바뀌어요.', en: 'Click an object to focus on it, or move the distance slider. After "2 Rearrange", move the mouse over the stage to change the view.' }]
+    : mouse ? ['物をクリックすると、そこにピントが合います。並べ替えのあとは、マウスで視点も変えられます。', { ko: '물체를 누르면 그 깊이로 초점이 옮겨가요. "2 재배열" 뒤에는 마우스로 시점도 바뀌어요.', en: 'Click an object to focus on it. After "2 Rearrange", the mouse changes the view.' }]
     : tilt.on ? ['物をタップすると、そこにピントが合います。並べ替えのあとは、端末を傾けると視点も変わります。', { ko: '물체를 누르면 그 깊이로 초점이 옮겨가요. "2 재배열"을 누른 뒤 기기를 기울이면 시점도 바뀌어요.', en: 'Tap an object to focus on it, or move the distance slider. After "2 Rearrange", tilt your device to change the view.' }]
     : ['物をタップするか、距離のつまみで、ピントを合わせ直してみてください。', { ko: '물체를 누르거나 재구성 거리를 움직여 초점을 옮겨 보세요.', en: 'Tap an object or move the distance slider to shift the focus.' }],
   lay: ['視点がよく合う奥行きを、層にして広げました。推定ですよ。', { ko: '64개 시점이 깊이마다 얼마나 잘 맞는지를 층으로 펼쳤어요. 측정한 3D가 아니라 추정이라, 애매한 곳은 여러 층에 흐리게 퍼집니다.', en: 'How well the 64 views agree at each depth, spread out as layers. This is an estimate, not measured 3D, so ambiguous places spread faintly over several layers.' }],
@@ -264,8 +266,8 @@ const L = {
   rev: ['逆再生もできます。一対一の並べ替えですから。', { ko: 'RIM은 일대일 재배열이라 픽셀 하나 잃지 않고 요소 영상으로 되돌아갑니다.', en: 'RIM is one-to-one, so the elemental images come back without losing a pixel.' }],
   wait: ['読み込んでいます。少し待ってくださいね。', { ko: '데이터를 불러오는 중이에요. 잠시만 기다려 주세요.', en: 'Loading the data. One moment, please.' }],
   netbad: ['あれ？ データを読み込めませんでした。', { ko: '데이터를 불러오지 못했어요. 버튼을 다시 눌러 주세요.', en: "I couldn't load the data. Please press the button again." }],
-  scene: ['ブレンダーの景色です。8×8の視点から描きました。', { ko: '블렌더로 8×8 시점을 렌더링한 장면이에요. 앞에서부터 원숭이 머리, 원환체, 정육면체, 원뿔, 구가 놓여 있습니다.', en: 'A scene rendered in Blender from 8×8 viewpoints: monkey head, torus, cube, cone and sphere, from near to far.' }],
-  lytro: ['スタンフォードのLytroデータです。本物のカメラで撮った景色ですよ。', { ko: '실제 Lytro 라이트필드 카메라로 찍은 장면이에요. Stanford Lytro Light Field Archive의 사진에서, 정지 표지판을 나뭇가지가 가리는 부분을 렌즈 128×128개만큼 잘라 왔어요.', en: 'A real scene shot with a Lytro light-field camera, from the Stanford Lytro Light Field Archive: 128×128 lenses cut from the photo where a branch hides part of a stop sign.' }],
+  scene: ['ブレンダーの景色です。8×8の視点から描きました。', { ko: '블렌더로 8×8 시점을 렌더링한 장면이에요. 앞에서부터 원숭이 머리, 원환체, 정육면체, 원뿔, 구.', en: 'A scene rendered in Blender from 8×8 viewpoints: monkey head, torus, cube, cone and sphere, from near to far.' }],
+  lytro: ['スタンフォードのLytroデータです。本物のカメラで撮った景色ですよ。', { ko: '실제 Lytro 카메라로 찍은 장면이에요. Stanford 공개 데이터에서 나뭇가지가 정지 표지판을 가리는 부분을 잘라 왔어요.', en: 'A real scene shot with a Lytro camera, cut from the Stanford archive where a branch hides part of a stop sign.' }],
 };
 const FOCUS = [
   (n) => [`${n.jp}の位置で、くっきり。`, { ko: `${n.ko} 자리에서 선명해졌어요.`, en: `Sharp where the ${n.en} stood.` }],
@@ -946,6 +948,11 @@ function placeSkip(sr = stage.getBoundingClientRect()) {
   skipBtn.style.bottom = Math.round(sr.bottom - d.top + 8) + 'px';
   skipBtn.style.left = Math.round(d.right - sr.left) + 'px';
 }
+// after the result: the done line, then the hand-off to the work section, then how to play with it
+function ending(my) {
+  const later = (ms, f) => setTimeout(() => { if (my === token) f(); }, ms);
+  say('done', () => later(2200, () => say('outro', () => later(4000, () => say('idle')))));
+}
 function finish() { root.classList.add('played'); if (cta) cta.hidden = false; if (skipBtn) skipBtn.hidden = true; }
 function unfinish() { root.classList.remove('played'); if (cta) cta.hidden = true; if (skipBtn) skipBtn.hidden = true; }
 const stepBtns = [...root.querySelectorAll('[data-step]')];
@@ -1161,7 +1168,7 @@ async function doRecon(my) {
   }
   await tween('D', scene.targets[0].d, 1000, my); if (my !== token) return false;
   setDepthUI(true); Face.set('happy'); finish(); turnR(1, 1500);
-  say('done', () => { if (my === token) setTimeout(() => { if (my === token) say('idle'); }, 2600); });
+  ending(my);
   return true;
 }
 async function playAll(my) {
@@ -1173,7 +1180,7 @@ async function playAll(my) {
   await wait(300); if (my !== token) return;
   await doRecon(my);
 }
-function jumpToEnd() { lfZoom(false); layersOff(); st.A = 1; st.cam = CAM_REC; st.B = 1; st.C = 1; st.R = 1; rSeq++; st.D = scene.targets[0].d; setDepthUI(true); steps(3); Face.set('happy'); finish(); say('done'); request(); }
+function jumpToEnd() { lfZoom(false); layersOff(); st.A = 1; st.cam = CAM_REC; st.B = 1; st.C = 1; st.R = 1; rSeq++; st.D = scene.targets[0].d; setDepthUI(true); steps(3); Face.set('happy'); finish(); ending(token); request(); }
 /* "Skip to the result": the story stops and the finished reconstruction is shown head on */
 if (skipBtn) skipBtn.addEventListener('click', () => {
   Snd.ui(); const my = ++token;
@@ -1181,7 +1188,7 @@ if (skipBtn) skipBtn.addEventListener('click', () => {
   st.A = 1; st.B = 1; st.C = 1; st.V = 0; st.vt = 0; st.icons = 0; st.cam = CAM_REC; st.D = scene.targets[0].d;
   steps(3); setDepthUI(true); Face.set('happy'); finish(); request();
   turnR(1, 1200);
-  say('done', () => { if (my === token) setTimeout(() => { if (my === token) say('idle'); }, 2600); });
+  ending(my);
 });
 stepBtns.forEach((b) => b.addEventListener('click', () => {
   Snd.ui(); const my = ++token; const n = Number(b.dataset.step);
@@ -1219,8 +1226,8 @@ function uploadAtlas(source) {
   hasImage = true; request();
 }
 /* before the first click the scene is alive but the story waits, so it can start with its sound */
-let waiting = false, waitTimer = 0;
-function endWait() { waiting = false; clearTimeout(waitTimer); stage.classList.remove('waiting'); }
+let waiting = false;
+function endWait() { waiting = false; stage.classList.remove('waiting'); }
 function opening(my) {
   say('greet', () => { if (my === token) setTimeout(() => { if (my === token) playAll(my); }, 400); });
 }
@@ -1334,8 +1341,8 @@ if (lytroBtn) lytroBtn.addEventListener('pointerenter', () => { lytroFiles().cat
    reference site, the robot first asks for a click and the story waits for it; the first gesture
    inside the lab starts the music and the story together (a click elsewhere on the page, on a link
    or the resume button, starts nothing). If the browser already allows
-   sound, the story starts at once; if nobody clicks within a few seconds, it starts silently and
-   the sound joins at the first click. A visitor who turns the sound off is remembered on this device. */
+   sound, the story starts at once; otherwise it waits for that click, so lines changing on their own
+   never pull the eye from the introduction beside it. A visitor who turns the sound off is remembered on this device. */
 const soundBtn = q('[data-sound]'), soundHint = q('[data-sound-hint]');
 const soundText = { ko: ['소리 켜기', '소리 끄기'], en: ['Sound on', 'Sound off'] }[lang];
 let wantSound = true;
@@ -1461,7 +1468,6 @@ start();
 if (reduce) loadScene('still');
 else if (wantSound && !Snd.autoplayOK()) {
   waiting = true; stage.classList.add('waiting');
-  waitTimer = setTimeout(beginStory, 10000);
   loadScene('wait');
 } else { startSound(); loadScene('opening'); }
 })();

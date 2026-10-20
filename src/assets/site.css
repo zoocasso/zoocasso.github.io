@@ -1,5 +1,5 @@
 /* Layout: a graphite optical bench. The home opens on the full-width lens array lab with the introduction
-   laid over its left side; everything below is plain reading: a facts table, a work log, research, papers. */
+   laid over its left side; everything below is plain reading: a facts table, a work log, research with its papers. */
 :root{
   --bench:#15181d;      /* page ground: graphite with a slight blue bias */
   --plate:#1c2027;      /* raised surfaces: the lab stage, figures */
@@ -93,12 +93,17 @@ p{margin:0 0 1em}
 .intro{position:absolute;left:var(--gutter);top:clamp(28px,6vh,64px);width:min(470px,40%);z-index:2}
 .intro h1{font-size:clamp(46px,5.2vw,74px);letter-spacing:-.02em;line-height:1.02}
 .intro h1 .alt{display:block;font-weight:200;font-size:.42em;letter-spacing:0;color:var(--mute);margin-top:10px}
+/* English runs longer, so its introduction gets a little more width */
+html[lang=en] .intro{width:min(530px,40%)}
 html[lang=en] .intro h1{font-size:clamp(40px,4vw,58px)}
 html[lang=en] .intro h1 .alt{font-size:.5em}
 .intro .role{font-size:18px;margin:22px 0 0;color:var(--paper)}
 .intro .lede{font-size:16px;color:var(--mute);margin:12px 0 0;max-width:42ch}
-.intro .status{margin:16px 0 0;font-size:15px;color:var(--brass-hi)}
-.intro .ctas{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.intro .stack{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:14px 0 0;padding:0}
+.intro .stack li{padding:3px 8px;border:1px solid var(--rule);border-radius:3px;background:var(--veil);font-size:13px;line-height:1.4;color:var(--paper)}
+.intro .status{margin:12px 0 0;font-size:15px;color:var(--brass-hi)}
+.intro .cred{margin:4px 0 0;font-size:14px;color:var(--mute)}
+.intro .ctas{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
 .intro .ctas .btn{background:var(--veil)}
 .intro .ctas .btn.primary{background:var(--brass)}
 /* on phones the three buttons share one row instead of leaving GitHub alone on the next */
@@ -115,7 +120,8 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 .dialog .ko{font-size:16px;line-height:1.55;color:var(--paper);min-height:1.55em;margin-top:3px}
 .dialog .ko.fade{animation:subin .35s ease-out}
 @keyframes subin{from{opacity:0}to{opacity:1}}
-.lab-cta{position:absolute;left:calc(50% + min(235px,20%));bottom:150px;transform:translateX(-50%);z-index:3;animation:subin .5s ease-out;background:var(--veil);border-color:var(--brass)}
+.lab-cta{position:absolute;left:calc(50% + min(235px,20%));bottom:150px;transform:translateX(-50%);z-index:3;display:flex;gap:8px;animation:subin .5s ease-out}
+.lab-cta .btn{background:var(--veil);border-color:var(--brass)}
 /* during the story: a way straight to the result, on the dialogue's top right corner (placed by lab.js) */
 .lab-skip{position:absolute;left:0;bottom:0;transform:translateX(-100%);z-index:3;display:inline-flex;white-space:nowrap;align-items:center;gap:6px;min-height:32px;padding:0 12px;border:1px solid var(--mute);border-radius:3px;background:var(--veil);color:var(--paper);font:inherit;font-size:13.5px;cursor:pointer;animation:subin .4s ease-out}
 .lab-skip:hover{border-color:var(--brass);color:var(--brass-hi)}
@@ -340,6 +346,10 @@ figure{margin:0}
 .papers .authors{display:block;color:var(--mute);font-size:14px;margin-top:2px}
 .papers .state{color:var(--mute);font-size:14px;white-space:nowrap}
 .papers .state.award{color:var(--brass-hi)}
+/* the home lists the papers in one line under the research rows */
+.pubs{margin:18px 0 0;color:var(--mute);font-size:14.5px;max-width:var(--text)}
+.pubs span{margin-right:12px;color:var(--paper);font-weight:500}
+.pubs b{color:var(--brass-hi);font-weight:500}
 
 .contact{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
 /* a QR code to the site, beside the contact buttons (below them on narrow screens) */

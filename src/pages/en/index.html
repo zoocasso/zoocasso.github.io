@@ -3,8 +3,10 @@
   <div class="intro">
     <h1>{{f:name}}<span class="alt" lang="ko">{{f:name_alt}}</span></h1>
     <p class="role">{{f:role}}</p>
-    <p class="lede">I spent {{f:career_len}} at Vision Inside building data collection and loading pipelines and backends. Now, in my master's at Kyushu Institute of Technology, I research how to reconstruct 3D scenes from lens array images.</p>
+    <p class="lede">{{f:career_len}} at Vision Inside ({{f:career_span}}, assistant manager) building data pipelines and backends. Now a master's student at Kyushu Institute of Technology, researching 3D reconstruction from lens array images.</p>
+    <ul class="stack" aria-label="Main tools"><li>Python</li><li>SQL</li><li>FastAPI</li><li>MySQL·MariaDB</li><li>Docker</li><li>AWS</li></ul>
     <p class="status">{{f:status}}</p>
+    <p class="cred">SQLD · Korean military service completed</p>
     <div class="ctas">
       <a class="btn primary" href="/files/HyeongjuLee_CV_EN.pdf">CV (PDF)</a>
       <a class="btn" href="/files/HyeongjuLee_Portfolio_EN.pdf">Portfolio (PDF)</a>
@@ -27,7 +29,7 @@
     <p class="laynote" data-laynote hidden><b>Estimated</b> · layers showing how well the 64 views agree at each depth (plane). Not measured 3D; the depth axis is disparity (px/view), not metres. Faint, spread-out areas are where the views do not settle on one depth.</p>
     <div class="vmap" aria-hidden="true" hidden data-label="Current view"></div>
     <div class="dialog" aria-hidden="true"><div class="jp" lang="ja" data-who="Lens-kun"></div><div class="ko"></div></div>
-    <a class="btn lab-cta" href="/en/research/rim/" hidden>Read about RIM</a>
+    <div class="lab-cta" hidden><a class="btn" href="#h-work">See the work <span aria-hidden="true">↓</span></a><a class="btn" href="/en/research/rim/">Read about RIM</a></div>
     <button class="lab-skip" type="button" data-skip hidden>Skip to the result<span aria-hidden="true">⏭</span></button>
     <div class="vh" aria-live="polite" data-live></div>
     <p class="credit" data-credit hidden>Lytro data: Stanford Lytro Light Field Archive, occlusions_26 (Raj et al., 2016) · cropped for non-commercial demonstration</p>
@@ -71,16 +73,23 @@
 <section class="section" aria-labelledby="h-facts">
   <header><h2 id="h-facts">In numbers</h2></header>
   <dl class="facts">
-    <div><dt>{{f:kisti_rows}}</dt><dd>Product and procurement data I collected and loaded for a KISTI public R&amp;D platform<small>Sole data engineer on Vision Inside's side. As of November 2023, including 16M Danawa reviews and 42M procurement attribute rows</small></dd></div>
-    <div><dt>{{f:bio_ref}}</dt><dd>Public reference data behind a genomic variant annotation system<small>dbSNP 237 GB, 1000 Genomes 770 GB and more. I built the backend on my own</small></dd></div>
-    <div><dt>4 papers</dt><dd>First-author papers at international conferences on light field and integral imaging<small>ICMV 2026 (Best Poster Award), ICCAS 2026, ITC-CSCC 2026, ITC-CSCC 2025</small></dd></div>
-    <div><dt>{{f:wjmax_peak}}</dt><dd>Peak concurrent players on the WJMax game server during updates<small>{{f:wjmax_avg}} on average. I handled server, database and security in a team of two</small></dd></div>
+    <div><dt>{{f:kisti_rows}}</dt><dd>Product and procurement data I collected and loaded for a KISTI public R&amp;D platform<small>Collection, loading and serving were mine. As of November 2023, including 16M Danawa reviews and 42M procurement attribute rows</small></dd></div>
+    <div><dt>{{f:kisti_asin_short}}</dt><dd>Amazon products de-duplicated by product ID (ASIN)<small>The same product had been collected again under several categories ({{f:kisti_asin}} → {{f:kisti_asin_dedup}})</small></dd></div>
+    <div><dt>{{f:kisti_api}}</dt><dd>I proposed collecting through APIs instead of crawling shopping sites, and it was adopted<small>Agreed with the client, KISTI. Amazon through the Rainforest API, procurement data through the public data portal API</small></dd></div>
+    <div><dt>{{f:wjmax_peak}}</dt><dd>Peak concurrent players on the WJMax game server during updates<small>{{f:wjmax_avg}} on average. Run on Cloudflare, AWS EC2 and RDS; I handled server, database and security in a team of two</small></dd></div>
   </dl>
 </section>
 
 <section class="section" aria-labelledby="h-work">
   <header><h2 id="h-work">Work</h2><a class="more" href="/en/work/">All work</a></header>
   <ol class="log work">
+    <li><a class="row" href="/en/work/kisti/">
+      <span class="when">{{f:kisti_period}}<br>Vision Inside, KISTI project</span>
+      <div><h3>Data collection and loading for a KISTI public R&amp;D platform</h3>
+        <p>I built crawlers for Amazon and Danawa and collectors for the procurement service API, and loaded everything into one remote database; I also proposed moving from crawling shopping sites to APIs, which was adopted. On top of that data I shipped scheduled model runs and a FastAPI admin interface.</p>
+        <span class="key"><b>{{f:kisti_rows}}</b>; collection, loading and serving were mine</span></div>
+      <span class="flow" aria-label="Pipeline"><span>Crawlers and APIs</span><i></i><span class="core">Remote DB (MySQL)</span><i></i><span>Scheduled model runs</span><i></i><span>FastAPI</span></span>
+    </a></li>
     <li><a class="row" href="/en/work/hitachi/">
       <span class="when">Apr 2025 – now<br>Commissioned research, part-time</span>
       <div><h3>Image-data pipeline for commissioned research with Hitachi</h3>
@@ -88,62 +97,35 @@
         <span class="key">Led two junior researchers; deployed on site in the Netherlands, Sep–Oct 2026</span></div>
       <span class="flow" aria-label="Pipeline"><span>Camera control</span><i></i><span>Capture</span><i></i><span class="core">Preprocessing</span><i></i><span>Dataset</span></span>
     </a></li>
-    <li><a class="row" href="/en/work/kisti/">
-      <span class="when">{{f:kisti_period}}<br>Vision Inside, contract work</span>
-      <div><h3>Data collection and loading for a KISTI public R&amp;D platform</h3>
-        <p>I built crawlers for Amazon and Danawa and collectors for the procurement service API, spread them over {{f:kisti_farm}}, and loaded everything into one remote database. On top of that data I shipped model batches and a FastAPI admin interface.</p>
-        <span class="key"><b>{{f:kisti_rows}}</b>, sole data engineer on Vision Inside's side</span></div>
-      <span class="flow" aria-label="Pipeline"><span>Crawlers on {{f:kisti_farm}}</span><i></i><span class="core">Remote DB</span><i></i><span>Model batches</span><i></i><span>FastAPI</span></span>
-    </a></li>
     <li class="compact"><a class="row" href="/en/work/wjmax/">
       <span class="when">{{f:wjmax_period}}<br>Side project, team of two</span>
       <div><h3>Server for WJMax, a community rhythm game</h3>
-        <span class="key">Up to <b>{{f:wjmax_peak}}</b> concurrent players during updates</span></div>
+        <span class="key">Up to <b>{{f:wjmax_peak}}</b> concurrent players during updates; FastAPI, EC2, RDS</span></div>
     </a></li>
     <li class="compact"><a class="row" href="/en/work/genomics/">
       <span class="when">{{f:bio_period}}<br>Vision Inside, internal project</span>
       <div><h3>Backend for genomic variant annotation and risk reports</h3>
-        <span class="key"><b>{{f:bio_ref}}</b> of reference data, sole developer</span></div>
+        <span class="key"><b>{{f:bio_ref}}</b> of reference data, backend and pipeline developer</span></div>
     </a></li>
   </ol>
 </section>
 
 <section class="section" aria-labelledby="h-research">
-  <header><h2 id="h-research">Research</h2><a class="more" href="/en/research/">All research</a></header>
-  <p class="lead">I rearrange and reconstruct lens array images with geometric optics alone, without training. Master's program at Kyushu Institute of Technology, advised by Prof. Min-Chul Lee.</p>
+  <header><h2 id="h-research">Research</h2><a class="more" href="/en/research/">All research and papers</a></header>
+  <p class="lead">Master's program at Kyushu Institute of Technology, advised by Prof. Min-Chul Lee. I rearrange images taken through a lens array camera and reconstruct them in 3D with geometric optics alone, without training. Four first-author papers at international conferences, and the Best Poster Award at ICMV 2026.</p>
   <ol class="log">
-    <li><a class="row" href="/en/research/rim/">
+    <li class="compact"><a class="row" href="/en/research/rim/">
       <span class="when">ICMV 2026 Best Poster Award<br>ICCAS 2026 accepted</span>
-      <div><h3>RIM and iRIM: turning angular samples into spatial resolution</h3>
-        <p>RIM rearranges the pixels of a lens array image one to one, without interpolation, into views; the lab above runs it. Its inverse, iRIM, synthesizes the elemental image of any virtual lens array from multi-view images.</p>
-        <span class="key"><b>+2.39 dB PSNR</b> and +0.14 SSIM on 7 Stanford Lytro scenes (as reported in the paper)</span></div>
-      <figure class="wide-thumb">
-        <img src="/img/ei-synth-800.webp" width="800" height="450" alt="Elemental image of a 6 × 6 lens array synthesized with iRIM" loading="lazy">
-        <figcaption>Elemental image of a 6 × 6 lens array synthesized with iRIM. ICCAS 2026</figcaption>
-      </figure>
+      <div><h3>RIM and iRIM: turning lens array images into views and back</h3>
+        <span class="key">The lab above runs it: pixels rearranged one to one, without interpolation</span></div>
     </a></li>
-    <li><a class="row" href="/en/research/origin-point/">
+    <li class="compact"><a class="row" href="/en/research/origin-point/">
       <span class="when">ITC-CSCC 2025, 2026<br>Code public</span>
-      <div><h3>Origin point optimization: sharper and faster volumetric reconstruction</h3>
-        <p>Shifting elemental images by whole pixels causes quantization error. The 2025 paper reduced it by optimizing the origin point; the 2026 paper computes that origin directly from camera parameters instead of searching for it. Image quality (SSIM) is the same as the search.</p>
-        <span class="key">CPU <b>{{f:origin_cpu}}</b>, GPU {{f:origin_gpu}}</span></div>
-      <figure class="thumbs">
-        <img src="/img/vcr-fixed.webp" width="640" height="640" alt="USAF resolution chart reconstructed with a fixed origin" loading="lazy">
-        <img src="/img/vcr-proposed.webp" width="640" height="640" alt="USAF resolution chart reconstructed with the optimized origin" loading="lazy">
-        <figcaption>Fixed origin (left) and optimized origin (right). ITC-CSCC 2026 Fig. 6</figcaption>
-      </figure>
+      <div><h3>Origin point optimization: sharper 3D reconstruction without a search</h3>
+        <span class="key">A search that reconstructed 81 candidate origins one by one, replaced by a single calculation</span></div>
     </a></li>
   </ol>
-</section>
-
-<section class="section" aria-labelledby="h-papers">
-  <header><h2 id="h-papers">Papers</h2><a class="more" href="/en/research/#h-pubs">Full list, with the domestic poster</a></header>
-  <ul class="papers">
-    <li><span class="venue">ICMV 2026</span><span class="title">Angular-to-Spatial Information Redistribution via Ray-based Inverse Mapping<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee</span></span><span class="state award">Poster on Oct 16, Best Poster Award</span></li>
-    <li><span class="venue">ICCAS 2026</span><span class="title">Virtual Lens Array Synthesis from Multi-View Images via iRIM<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee</span></span><span class="state">Accepted, poster on Oct 30</span></li>
-    <li><span class="venue">ITC-CSCC 2026</span><span class="title">Accelerated Origin Point Optimization for Volumetric Computational Reconstruction<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee</span></span><span class="state">Oral, <a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">code</a></span></li>
-    <li><span class="venue">ITC-CSCC 2025</span><span class="title">Image Enhancement of Volumetric Computational Reconstruction Using Origin Point Optimization<span class="authors">Hyeongju Lee, Gilsu Yeo, Myungjin Cho, Min-Chul Lee</span></span><span class="state">Poster, <a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">code</a></span></li>
-  </ul>
+  <p class="pubs"><span>Papers</span>ICMV 2026 <b>Best Poster Award</b> · ICCAS 2026 accepted · ITC-CSCC 2026 oral · ITC-CSCC 2025 poster · <a href="/en/research/#h-pubs">Full list</a></p>
 </section>
 
 <section class="section" aria-labelledby="h-contact">
