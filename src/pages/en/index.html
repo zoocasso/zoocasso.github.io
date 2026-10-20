@@ -3,14 +3,13 @@
   <div class="intro">
     <h1>{{f:name}}<span class="alt" lang="ko">{{f:name_alt}}</span></h1>
     <p class="role">{{f:role}}</p>
-    <p class="honor"><a href="/en/research/rim/"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5.1 9.4 3.7 15.3 8 13.5l4.3 1.8-1.4-5.9z"/><circle cx="8" cy="5.9" r="5"/></svg>ICMV 2026 Best Poster Award</a></p>
     <p class="lede">I spent {{f:career_len}} at Vision Inside building data collection and loading pipelines and backends. Now, in my master's at Kyushu Institute of Technology, I research how to reconstruct 3D scenes from lens array images.</p>
     <p class="status">{{f:status}}</p>
     <div class="ctas">
       <a class="btn primary" href="/files/HyeongjuLee_CV_EN.pdf">CV (PDF)</a>
       <a class="btn" href="/files/HyeongjuLee_Portfolio_EN.pdf">Portfolio (PDF)</a>
       <a class="btn" href="https://github.com/zoocasso" target="_blank" rel="noopener">GitHub</a>
-      <button class="btn" type="button" data-email-user="{{f:email_user}}" data-email-domain="{{f:email_domain}}" data-copied="Copied">Copy email address</button>
+      <div class="email" data-email-user="{{f:email_user}}" data-email-domain="{{f:email_domain}}" hidden><a class="addr"><svg class="i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5.5 7-5.5"/></svg><span class="v"></span></a><button class="copy" type="button" aria-label="Copy email address" data-done="Copied"><svg class="i on-idle" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13H7"/></svg><svg class="i on-done" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10.5l4 4 8-9"/></svg><span class="t">Copy</span></button><span class="sr" aria-live="polite"></span></div>
     </div>
   </div>
 
@@ -95,19 +94,15 @@
         <span class="key"><b>{{f:kisti_rows}}</b>, sole data engineer on Vision Inside's side</span></div>
       <span class="flow" aria-label="Pipeline"><span>Crawlers on {{f:kisti_farm}}</span><i></i><span class="core">Remote DB</span><i></i><span>Model batches</span><i></i><span>FastAPI</span></span>
     </a></li>
-    <li><a class="row" href="/en/work/wjmax/">
+    <li class="compact"><a class="row" href="/en/work/wjmax/">
       <span class="when">{{f:wjmax_period}}<br>Side project, team of two</span>
       <div><h3>Server for WJMax, a community rhythm game</h3>
-        <p>I handled the server, database and security: FastAPI in Docker on EC2, RDS MySQL, a Cloudflare proxy and WAF, and an API that collects play logs.</p>
         <span class="key">Up to <b>{{f:wjmax_peak}}</b> concurrent players during updates</span></div>
-      <span class="flow" aria-label="Pipeline"><span>Cloudflare</span><i></i><span class="core">FastAPI on EC2</span><i></i><span>RDS MySQL</span></span>
     </a></li>
-    <li><a class="row" href="/en/work/genomics/">
+    <li class="compact"><a class="row" href="/en/work/genomics/">
       <span class="when">{{f:bio_period}}<br>Vision Inside, internal project</span>
       <div><h3>Backend for genomic variant annotation and risk reports</h3>
-        <p>I built the variant-calling pipeline from FASTQ to VCF, an annotation layer that joins public references in four SQL stages, and a FastAPI JSON API, and deployed it with Docker.</p>
         <span class="key"><b>{{f:bio_ref}}</b> of reference data, sole developer</span></div>
-      <span class="flow" aria-label="Pipeline"><span>FASTQ</span><i></i><span>BWA, GATK</span><i></i><span>VCF</span><i></i><span class="core">Annotation SQL</span><i></i><span>JSON API</span></span>
     </a></li>
   </ol>
 </section>
@@ -156,7 +151,7 @@
     <div class="contact-main">
       <p class="lead">{{f:status}}. I am looking for roles in data engineering, backend development and vision data pipelines.</p>
       <div class="contact">
-        <button class="btn primary" type="button" data-email-user="{{f:email_user}}" data-email-domain="{{f:email_domain}}" data-copied="Copied">Copy email address</button>
+        <div class="email strong" data-email-user="{{f:email_user}}" data-email-domain="{{f:email_domain}}" hidden><a class="addr"><svg class="i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5.5 7-5.5"/></svg><span class="v"></span></a><button class="copy" type="button" aria-label="Copy email address" data-done="Copied"><svg class="i on-idle" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13H7"/></svg><svg class="i on-done" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10.5l4 4 8-9"/></svg><span class="t">Copy</span></button><span class="sr" aria-live="polite"></span></div>
         <a class="btn" href="/files/HyeongjuLee_CV_EN.pdf">CV (PDF)</a>
         <a class="btn" href="/en/cv/">CV summary</a>
         <a class="btn" href="https://github.com/zoocasso" target="_blank" rel="noopener">GitHub</a>

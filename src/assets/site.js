@@ -1,18 +1,25 @@
-/* Email copy buttons: the address is assembled on click so it never sits in the page as plain text. */
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-email-user]');
-  if (!b) return;
-  const addr = `${b.dataset.emailUser}@${b.dataset.emailDomain}`;
-  const original = b.dataset.label || b.textContent;
-  b.dataset.label = original;
-  try {
-    await navigator.clipboard.writeText(addr);
-    b.textContent = `${b.dataset.copied}: ${addr}`;
-  } catch (err) {
-    b.textContent = addr;
-  }
-  clearTimeout(b._t);
-  b._t = setTimeout(() => { b.textContent = original; }, 4000);
+/* Email: the address is put together here, so it never sits in the page as plain text. The address
+   opens the mail app; the button copies it, or selects it where the clipboard is not allowed. */
+document.querySelectorAll('.email[data-email-user]').forEach((box) => {
+  const addr = `${box.dataset.emailUser}@${box.dataset.emailDomain}`;
+  const a = box.querySelector('.addr'), v = box.querySelector('.v'), b = box.querySelector('.copy'), sr = box.querySelector('.sr');
+  a.href = `mailto:${addr}`;
+  v.textContent = addr;
+  box.hidden = false;
+  b.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(addr);
+    } catch (err) {
+      const r = document.createRange(); r.selectNodeContents(v);
+      const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      return;
+    }
+    const t = b.querySelector('.t');
+    b.dataset.label = b.dataset.label || t.textContent;
+    t.textContent = b.dataset.done; box.classList.add('copied'); sr.textContent = b.dataset.done;
+    clearTimeout(b._t);
+    b._t = setTimeout(() => { t.textContent = b.dataset.label; box.classList.remove('copied'); sr.textContent = ''; }, 2500);
+  });
 });
 
 /* Before/after comparison: the slider moves the boundary between two images. */

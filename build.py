@@ -30,11 +30,11 @@ DOT_FONT = GFONTS + "family=DotGothic16&display=swap"
 
 UI = {
     "ko": {"skip": "본문 바로가기", "work": "작업", "research": "연구", "cv": "이력서", "nav": "주 메뉴",
-           "switch": "EN", "switch_label": "English", "copy": "이메일 주소 복사", "copied": "복사했습니다",
+           "switch": "EN", "switch_label": "English", "copy": "이메일 주소 복사", "copy_short": "복사", "copied": "복사됨",
            "updated": "마지막 업데이트", "note": "경력·학력·논문의 숫자는 이력서와 같은 기준 문서를 따르고, 연구 페이지의 기술 수치는 각 논문과 데이터 출처를 따릅니다.",
            "locale": "ko_KR", "site": "이형주"},
     "en": {"skip": "Skip to content", "work": "Work", "research": "Research", "cv": "CV", "nav": "Main menu",
-           "switch": "한국어", "switch_label": "Korean", "copy": "Copy email address", "copied": "Copied",
+           "switch": "한국어", "switch_label": "Korean", "copy": "Copy email address", "copy_short": "Copy", "copied": "Copied",
            "updated": "Last updated", "note": "Numbers on career, education and papers follow the same source document as my CV; technical figures on the research pages follow each paper and data source.",
            "locale": "en_US", "site": "Hyeongju Lee"},
 }
@@ -161,7 +161,7 @@ def layout(lang, meta, body, path, alt_path, v):
 <footer class="site-foot">
   <div class="foot-row">
     <span class="foot-name">{fact('name', lang)}</span>
-    <button class="linkish" type="button" data-email-user="{FACTS['email_user']}" data-email-domain="{FACTS['email_domain']}" data-copied="{t['copied']}">{t['copy']}</button>
+    <div class="email plain" data-email-user="{FACTS['email_user']}" data-email-domain="{FACTS['email_domain']}" hidden><a class="addr"><svg class="i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5.5 7-5.5"/></svg><span class="v"></span></a><button class="copy" type="button" aria-label="{t['copy']}" data-done="{t['copied']}"><svg class="i on-idle" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13H7"/></svg><svg class="i on-done" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10.5l4 4 8-9"/></svg><span class="t">{t['copy_short']}</span></button><span class="sr" aria-live="polite"></span></div>
     <a href="{FACTS['github']}" target="_blank" rel="noopener">GitHub</a>
   </div>
   <p>{t['note']} {t['updated']} {fact('updated', lang)}.</p>
@@ -247,7 +247,7 @@ def check():
         if PHONE.search(re.sub(r"<script.*?</script>", "", t, flags=re.S)):
             errors.append(f"{name}: looks like a phone number")
         if f"{FACTS['email_user']}@{FACTS['email_domain']}" in t:
-            errors.append(f"{name}: plain email address (use the copy button)")
+            errors.append(f"{name}: plain email address (use the email chip, which site.js fills in)")
         if t.count("<h1") != 1:
             errors.append(f"{name}: expected exactly one <h1>, found {t.count('<h1')}")
         for img in re.findall(r"<img\b[^>]*>", t):
