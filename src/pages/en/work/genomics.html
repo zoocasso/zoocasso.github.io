@@ -1,12 +1,12 @@
-<!--meta {"title": "Genomic variant backend", "description": "Sole developer of a backend that calls genomic variants from FASTQ to VCF, annotates them against about 1 TB of public reference data, and serves risk reports through a FastAPI JSON API.", "nav": "work"} -->
+<!--meta {"title": "Genomic variant backend", "description": "Backend and data-pipeline developer of a system that calls genomic variants from FASTQ to VCF, annotates them against about 1 TB of public reference data, and serves risk reports through a FastAPI JSON API; the algorithm was designed with the team lead.", "nav": "work"} -->
 <div class="doc-head">
   <p class="crumb"><a href="/en/work/">Work</a> / Genomics backend</p>
   <h1>A backend that annotates genomic variants against {{f:bio_ref}} of public reference data</h1>
-  <p class="lede">I built, alone, the backend of a system that links a person's genomic variants (VCF or genotyping-array files) to public references and reports disease and trait risk, population frequencies, and related drugs and herbal medicines. It was an international collaboration between Kyung Hee University's College of Korean Medicine and a Canadian bio research lab.</p>
+  <p class="lede">I was the backend and data-pipeline developer of a system that links a person's genomic variants (VCF or genotyping-array files) to public references and reports disease and trait risk, population frequencies, and related drugs and herbal medicines. It was an international collaboration between Kyung Hee University's College of Korean Medicine and a Canadian bio research lab.</p>
   <dl class="meta">
     <div><dt>Period</dt><dd>{{f:bio_period}}</dd></div>
     <div><dt>Company and type</dt><dd>Vision Inside, internal project</dd></div>
-    <div><dt>Role</dt><dd>Sole backend developer (frontend by another developer)</dd></div>
+    <div><dt>Role</dt><dd>Backend and data-pipeline developer (algorithm designed with the team lead, frontend by another developer)</dd></div>
     <div><dt>Stack</dt><dd>Python, FastAPI, MySQL, GATK, Docker, Harbor</dd></div>
   </dl>
   <div class="paper-links"><a class="btn" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener">Code (GitHub)</a></div>
@@ -24,7 +24,7 @@
         <div><dt>{{f:bio_ref}}</dt><dd>Public reference data loaded (dbSNP, 1000 Genomes and more)</dd></div>
         <div><dt>4 stages</dt><dd>SQL joins on (chrom, pos, ref, alt) to annotate variants</dd></div>
         <div><dt>26 populations</dt><dd>Allele frequencies compared across 1000 Genomes populations</dd></div>
-        <div><dt>Sole developer</dt><dd>From variant calling to the API and the production server</dd></div>
+        <div><dt>Built and deployed</dt><dd>From variant calling to the API and the production server (algorithm designed with the team lead)</dd></div>
       </dl>
     </section>
 

@@ -3,8 +3,10 @@
   <div class="intro">
     <h1>{{f:name}}<span class="alt" lang="en">{{f:name_alt}}</span></h1>
     <p class="role">{{f:role}}</p>
-    <p class="lede">비전인사이드에서 {{f:career_len}} 동안 데이터 <span class="nw">수집·적재</span> 파이프라인과 백엔드를 만들었고, 지금은 규슈공업대학교 석사과정에서 렌즈 배열 영상으로 3D 장면을 재구성하는 연구를 합니다.</p>
+    <p class="lede">비전인사이드에서 {{f:career_len}}({{f:career_span}}, 대리) 동안 데이터 <span class="nw">수집·적재</span> 파이프라인과 백엔드를 만들었고, 지금은 규슈공업대학교 석사과정에서 렌즈 배열 영상의 3D 재구성을 연구합니다.</p>
+    <ul class="stack" aria-label="주로 쓰는 기술"><li>Python</li><li>SQL</li><li>FastAPI</li><li>MySQL·MariaDB</li><li>Docker</li><li>AWS</li></ul>
     <p class="status">{{f:status}}</p>
+    <p class="cred">SQLD · 산업기능요원 만기 복무</p>
     <div class="ctas">
       <a class="btn primary" href="/files/HyeongjuLee_Resume_KR.pdf">이력서 PDF</a>
       <a class="btn" href="/files/HyeongjuLee_Portfolio_KR.pdf">포트폴리오 PDF</a>
@@ -27,7 +29,7 @@
     <p class="laynote" data-laynote hidden><b>추정</b> · 64개 시점이 깊이(평면)마다 얼마나 일치하는지 그린 층입니다. 측정한 3D가 아니며, 깊이 축은 미터가 아니라 시차(px/시점)입니다. 흐리게 퍼진 곳은 시점들이 한 깊이로 모이지 않은 곳입니다.</p>
     <div class="vmap" aria-hidden="true" hidden data-label="보고 있는 시점"></div>
     <div class="dialog" aria-hidden="true"><div class="jp" lang="ja" data-who="렌즈쿤"></div><div class="ko"></div></div>
-    <a class="btn lab-cta" href="/research/rim/" hidden>RIM 연구 자세히 보기</a>
+    <div class="lab-cta" hidden><a class="btn" href="#h-work">작업 보기 <span aria-hidden="true">↓</span></a><a class="btn" href="/research/rim/">RIM 연구 자세히</a></div>
     <button class="lab-skip" type="button" data-skip hidden>결과 바로 보기<span aria-hidden="true">⏭</span></button>
     <div class="vh" aria-live="polite" data-live></div>
     <p class="credit" data-credit hidden>Lytro 데이터: Stanford Lytro Light Field Archive, occlusions_26 (Raj 외, 2016) · 일부를 잘라 비상업적 시연에 사용</p>
@@ -71,16 +73,23 @@
 <section class="section" aria-labelledby="h-facts">
   <header><h2 id="h-facts">숫자로 보면</h2></header>
   <dl class="facts">
-    <div><dt>{{f:kisti_rows}}</dt><dd>KISTI 발주 공공 R&amp;D 플랫폼에 수집·적재한 상품·조달 데이터<small>데이터 엔지니어로 수집·적재·서빙 전담. 2023년 11월 기준, 다나와 리뷰 1,605만 건, 조달 속성 4,192만 건 포함</small></dd></div>
-    <div><dt>{{f:bio_ref}}</dt><dd>유전체 변이 주석 시스템이 쓰는 공개 레퍼런스<small>dbSNP 237 GB, 1000 Genomes 770 GB 등. 백엔드는 혼자 개발</small></dd></div>
-    <div><dt>1저자 4편</dt><dd>라이트필드·집적영상 3D 재구성 국제학회 논문<small>ICMV 2026(최우수 포스터상), ICCAS 2026, ITC-CSCC 2026, ITC-CSCC 2025</small></dd></div>
-    <div><dt>{{f:wjmax_peak}}</dt><dd>WJMax 게임 서버가 업데이트 때 받은 최대 동시 접속<small>평균 {{f:wjmax_avg}}. 2인 팀에서 서버·DB·보안 담당</small></dd></div>
+    <div><dt>{{f:kisti_rows}}</dt><dd>KISTI 발주 공공 R&amp;D 플랫폼에 <span class="nw">수집·적재</span>한 <span class="nw">상품·조달</span> 데이터<small>수집·적재·서빙 전담. 2023년 11월 기준, 다나와 리뷰 1,605만 건, 조달 속성 4,192만 건 포함</small></dd></div>
+    <div><dt>{{f:kisti_asin_short}}</dt><dd>Amazon 상품을 상품 ID(ASIN) 기준으로 중복 제거<small>여러 카테고리에 겹쳐 수집되던 같은 상품을 하나로 합쳤습니다 ({{f:kisti_asin}} → {{f:kisti_asin_dedup}})</small></dd></div>
+    <div><dt>{{f:kisti_api}}</dt><dd>쇼핑몰 직접 크롤링을 API 수집으로 바꾸자고 제안해 반영<small>발주처 KISTI와 협의. Amazon은 Rainforest API, 조달청은 공공데이터포털 API로 수집</small></dd></div>
+    <div><dt>{{f:wjmax_peak}}</dt><dd>WJMax 게임 서버가 업데이트 때 받은 최대 동시 접속<small>평균 {{f:wjmax_avg}}. Cloudflare·AWS EC2·RDS로 운영, 2인 팀에서 서버·DB·보안 담당</small></dd></div>
   </dl>
 </section>
 
 <section class="section" aria-labelledby="h-work">
   <header><h2 id="h-work">작업</h2><a class="more" href="/work/">모든 작업 보기</a></header>
   <ol class="log work">
+    <li><a class="row" href="/work/kisti/">
+      <span class="when">{{f:kisti_period}}<br>비전인사이드, KISTI 발주 과제</span>
+      <div><h3>KISTI 공공 R&amp;D 플랫폼의 데이터 수집·적재</h3>
+        <p>Amazon·다나와 크롤러와 조달청 API 수집기를 만들어 원격 DB 한 곳에 적재했고, 쇼핑몰 직접 크롤링을 API 수집으로 바꾸자고 제안해 반영했습니다. 그 데이터로 모델 일괄 실행(배치)과 FastAPI 관리 화면까지 냈습니다.</p>
+        <span class="key"><b>{{f:kisti_rows}}</b>, 수집·적재·서빙 전담</span></div>
+      <span class="flow" aria-label="처리 흐름"><span>크롤러·API 수집</span><i></i><span class="core">원격 DB(MySQL)</span><i></i><span>모델 일괄 실행</span><i></i><span>FastAPI</span></span>
+    </a></li>
     <li><a class="row" href="/work/hitachi/">
       <span class="when">2025.04 – 현재<br>수탁연구, 파트타임</span>
       <div><h3>히타치 수탁연구 이미지 데이터 파이프라인</h3>
@@ -88,62 +97,35 @@
         <span class="key">후임 2명 리드, 2026년 9~10월 네덜란드 출장·현지 배포</span></div>
       <span class="flow" aria-label="처리 흐름"><span>카메라 제어</span><i></i><span>촬영</span><i></i><span class="core">전처리</span><i></i><span>데이터셋</span></span>
     </a></li>
-    <li><a class="row" href="/work/kisti/">
-      <span class="when">{{f:kisti_period}}<br>비전인사이드, 외주 용역</span>
-      <div><h3>KISTI 공공 R&amp;D 플랫폼의 데이터 수집·적재</h3>
-        <p>Amazon·다나와 크롤러와 조달청 API 수집기를 만들고, {{f:kisti_farm}}에 나눠 돌려 원격 DB 한 곳에 적재했습니다. 그 데이터로 모델 배치와 FastAPI 관리 화면까지 냈습니다.</p>
-        <span class="key"><b>{{f:kisti_rows}}</b>, 수집·적재·서빙 전담</span></div>
-      <span class="flow" aria-label="처리 흐름"><span>크롤러 {{f:kisti_farm}}</span><i></i><span class="core">원격 DB</span><i></i><span>모델 배치</span><i></i><span>FastAPI</span></span>
-    </a></li>
     <li class="compact"><a class="row" href="/work/wjmax/">
       <span class="when">{{f:wjmax_period}}<br>사이드 프로젝트, 2인 팀</span>
       <div><h3>커뮤니티 리듬게임 WJMax 서버</h3>
-        <span class="key">업데이트 때 최대 <b>{{f:wjmax_peak}}</b> 동시 접속</span></div>
+        <span class="key">업데이트 때 최대 <b>{{f:wjmax_peak}}</b> 동시 접속, FastAPI·EC2·RDS</span></div>
     </a></li>
     <li class="compact"><a class="row" href="/work/genomics/">
       <span class="when">{{f:bio_period}}<br>비전인사이드, 사내 과제</span>
       <div><h3>유전체 변이 주석·위험도 리포트 백엔드</h3>
-        <span class="key"><b>{{f:bio_ref}}</b> 레퍼런스, 단독 개발</span></div>
+        <span class="key"><b>{{f:bio_ref}}</b> 레퍼런스, 백엔드·파이프라인 구현</span></div>
     </a></li>
   </ol>
 </section>
 
 <section class="section" aria-labelledby="h-research">
-  <header><h2 id="h-research">연구</h2><a class="more" href="/research/">연구 전체 보기</a></header>
-  <p class="lead">학습 없이 기하광학만으로 렌즈 배열 영상을 다시 배열하고 재구성합니다. 규슈공업대학교 석사과정, 지도교수 이민철(Min-Chul Lee).</p>
+  <header><h2 id="h-research">연구</h2><a class="more" href="/research/">연구·논문 전체 보기</a></header>
+  <p class="lead">규슈공업대학교 석사과정(지도교수 이민철). 렌즈 배열 카메라로 찍은 영상을 학습 없이 기하광학만으로 다시 배열하고 3D로 재구성합니다. 국제학회 1저자 논문 4편을 냈고, ICMV 2026에서 최우수 포스터상을 받았습니다.</p>
   <ol class="log">
-    <li><a class="row" href="/research/rim/">
+    <li class="compact"><a class="row" href="/research/rim/">
       <span class="when">ICMV 2026 최우수 포스터상<br>ICCAS 2026 채택</span>
-      <div><h3>RIM·iRIM: 렌즈 배열 영상의 각도 정보를 공간 해상도로</h3>
-        <p>RIM은 렌즈 배열 영상의 픽셀을 보간 없이 일대일로 재배열해 시점 영상을 만듭니다. 위의 실험실이 이 방법입니다. 역변환 iRIM은 다시점 영상으로 임의의 가상 렌즈 배열 요소 영상을 합성합니다.</p>
-        <span class="key">Stanford Lytro 7개 장면에서 <b>PSNR +2.39 dB</b>, SSIM +0.14 (논문 기재값)</span></div>
-      <figure class="wide-thumb">
-        <img src="/img/ei-synth-800.webp" width="800" height="450" alt="iRIM으로 합성한 6×6 렌즈 배열 요소 영상" loading="lazy">
-        <figcaption>iRIM으로 합성한 6×6 렌즈 배열 요소 영상. ICCAS 2026</figcaption>
-      </figure>
+      <div><h3>RIM·iRIM: 렌즈 배열 영상과 시점 영상을 서로 바꾸는 방법</h3>
+        <span class="key">위 실험실이 이 방법입니다. 보간 없이 픽셀을 일대일로 재배열</span></div>
     </a></li>
-    <li><a class="row" href="/research/origin-point/">
+    <li class="compact"><a class="row" href="/research/origin-point/">
       <span class="when">ITC-CSCC 2025, 2026<br>코드 공개</span>
-      <div><h3>원점 최적화: 체적 컴퓨터 재생을 선명하게, 그리고 빠르게</h3>
-        <p>요소 영상을 겹칠 때 픽셀 단위로만 옮길 수 있어 생기는 양자화 오차를 원점 최적화로 줄였고(2025), 그 원점을 반복 탐색 없이 카메라 파라미터로 바로 계산했습니다(2026). 화질(SSIM)은 반복 탐색과 같습니다.</p>
-        <span class="key">CPU <b>{{f:origin_cpu}}</b>, GPU {{f:origin_gpu}}</span></div>
-      <figure class="thumbs">
-        <img src="/img/vcr-fixed.webp" width="640" height="640" alt="고정 원점으로 재생한 USAF 해상도 차트" loading="lazy">
-        <img src="/img/vcr-proposed.webp" width="640" height="640" alt="최적화한 원점으로 재생한 USAF 해상도 차트" loading="lazy">
-        <figcaption>고정 원점(왼쪽)과 최적화한 원점(오른쪽). ITC-CSCC 2026 Fig. 6</figcaption>
-      </figure>
+      <div><h3>원점 최적화: 3D 재구성을 더 선명하게, 반복 탐색 없이</h3>
+        <span class="key">후보 원점 81개를 하나씩 재구성해 보던 탐색을 계산 한 번으로 대체</span></div>
     </a></li>
   </ol>
-</section>
-
-<section class="section" aria-labelledby="h-papers">
-  <header><h2 id="h-papers">논문</h2><a class="more" href="/research/#h-pubs">국내 발표 포함 전체 목록</a></header>
-  <ul class="papers">
-    <li><span class="venue">ICMV 2026</span><span class="title" lang="en">Angular-to-Spatial Information Redistribution via Ray-based Inverse Mapping<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee</span></span><span class="state award">10월 16일 포스터 발표, 최우수 포스터상</span></li>
-    <li><span class="venue">ICCAS 2026</span><span class="title" lang="en">Virtual Lens Array Synthesis from Multi-View Images via iRIM<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee</span></span><span class="state">채택, 10월 30일 포스터 발표</span></li>
-    <li><span class="venue">ITC-CSCC 2026</span><span class="title" lang="en">Accelerated Origin Point Optimization for Volumetric Computational Reconstruction<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee</span></span><span class="state">구두 발표, <a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">코드</a></span></li>
-    <li><span class="venue">ITC-CSCC 2025</span><span class="title" lang="en">Image Enhancement of Volumetric Computational Reconstruction Using Origin Point Optimization<span class="authors">Hyeongju Lee, Gilsu Yeo, Myungjin Cho, Min-Chul Lee</span></span><span class="state">포스터 발표, <a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">코드</a></span></li>
-  </ul>
+  <p class="pubs"><span>논문</span>ICMV 2026 <b>최우수 포스터상</b> · ICCAS 2026 채택 · ITC-CSCC 2026 구두 발표 · ITC-CSCC 2025 포스터 발표 · <a href="/research/#h-pubs">전체 목록</a></p>
 </section>
 
 <section class="section" aria-labelledby="h-contact">
