@@ -15,12 +15,18 @@ import json
 import re
 import shutil
 import sys
+import urllib.parse
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SRC, DIST = ROOT / "src", ROOT / "dist"
 BASE = "https://zoocasso.github.io"
 FACTS = json.loads((ROOT / "data" / "facts.json").read_text(encoding="utf-8"))
+# Korean and Japanese webfonts come with hundreds of subsets, so their stylesheets are large. Every page
+# gets the two families it uses; only the home page, which has the robot and the light name line, gets more.
+GFONTS = "https://fonts.googleapis.com/css2?"
+FONTS = GFONTS + "family=Gothic+A1:wght@400;500;700&family=Hahmlet:wght@700&display=swap"
+DOT_FONT = GFONTS + "family=DotGothic16&display=swap"
 
 UI = {
     "ko": {"skip": "본문 바로가기", "work": "작업", "research": "연구", "cv": "이력서", "nav": "주 메뉴",
@@ -101,6 +107,14 @@ def layout(lang, meta, body, path, alt_path, v):
                   "award": "ICMV 2026 Best Poster Award"}
         jsonld = f'<script type="application/ld+json">{json.dumps(person, ensure_ascii=False)}</script>\n'
     extra_head = meta.get("head", "").replace("{{v}}", v)
+    fonts = f'<link rel="stylesheet" href="{FONTS}">\n'
+    if meta.get("home"):
+        # the light weight only sets the name line under the h1, so it is cut down to those letters
+        alt = urllib.parse.quote(fact("name_alt", lang))
+        fonts += f'<link rel="stylesheet" href="{GFONTS}family=Hahmlet:wght@200&text={alt}&display=swap">\n'
+        # the robot's lines appear only once the lab has started, so its font does not hold up the first paint
+        fonts += (f'<link rel="preload" as="style" href="{DOT_FONT}" onload="this.onload=null;this.rel=\'stylesheet\'">\n'
+                  f'<noscript><link rel="stylesheet" href="{DOT_FONT}"></noscript>\n')
     body_class = meta.get("body", "")
     return f"""<!doctype html>
 <html lang="{lang}">
@@ -125,8 +139,7 @@ def layout(lang, meta, body, path, alt_path, v):
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Gothic+A1:wght@400;500;700&family=Hahmlet:wght@200;700&display=swap">
-<link rel="stylesheet" href="/assets/site.css?v={v}">
+{fonts}<link rel="stylesheet" href="/assets/site.css?v={v}">
 <script src="/assets/site.js?v={v}" defer></script>
 {extra_head}{jsonld}</head>
 <body class="{body_class}">
