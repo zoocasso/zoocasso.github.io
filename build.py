@@ -97,7 +97,8 @@ def layout(lang, meta, body, path, alt_path, v):
         person = {"@context": "https://schema.org", "@type": "Person", "name": fact("name", lang),
                   "alternateName": fact("name_alt", lang), "jobTitle": fact("role", lang),
                   "url": BASE + home, "sameAs": [FACTS["github"]],
-                  "alumniOf": ["Kyushu Institute of Technology", "Hankyong National University"]}
+                  "alumniOf": ["Kyushu Institute of Technology", "Hankyong National University"],
+                  "award": "ICMV 2026 Best Poster Award"}
         jsonld = f'<script type="application/ld+json">{json.dumps(person, ensure_ascii=False)}</script>\n'
     extra_head = meta.get("head", "").replace("{{v}}", v)
     body_class = meta.get("body", "")

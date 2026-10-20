@@ -277,6 +277,7 @@ figure{margin:0}
 .papers .title{color:var(--paper)}
 .papers .authors{display:block;color:var(--mute);font-size:14px;margin-top:2px}
 .papers .state{color:var(--mute);font-size:14px;white-space:nowrap}
+.papers .state.award{color:var(--brass-hi)}
 
 .contact{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
 /* a QR code to the site, beside the contact buttons (below them on narrow screens) */
