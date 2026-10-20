@@ -241,7 +241,8 @@ const Face = (() => {
 /* ================= dialogue: Japanese voice line, subtitle in the page language ================= */
 const L = {
   tap: ['画面をクリックすると、音といっしょに始まります。', { ko: '화면을 한 번 누르면 소리와 함께 시작해요.', en: 'Click anywhere to start, with sound.' }],
-  greet: ['いらっしゃいませ！ 奥行きのある景色を、レンズで撮って元に戻してみますね。', { ko: '어서 오세요! 깊이가 다른 물체들을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "Welcome! I'll capture a scene with depth through a lens array, then bring it back." }],
+  greet: ['いらっしゃいませ！ 九州から来たレンズくんです。奥行きのある景色を、レンズで撮って元に戻してみますね。', { ko: '어서 오세요! 규슈에서 온 렌즈쿤이에요. 일본어로 말하지만 자막을 달아 둘게요. 깊이가 다른 물체들을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "Welcome! I'm Lens-kun, from Kyushu. I speak Japanese, so here are subtitles. I'll capture a scene with depth through a lens array, then bring it back." }],
+  between: ['いまの面は、物と物のあいだです。もう少し動かしてみてください。', { ko: '재구성 면이 물체들 사이에 있어요. 거리를 조금 더 움직여 보세요.', en: 'The plane is between the objects; move the distance a little more.' }],
   A: () => scene.kind === 'lytro'
     ? ['本物のLytroで撮った、レンズごとの画像です。拡大すると、小さな丸い像が並んでいます。', { ko: '이건 실제 Lytro 카메라로 찍어 Lytro 소프트웨어가 디코딩한 렌즈릿 영상이에요. 확대하면 렌즈마다 작고 둥근 사진이 있어요. 렌즈 하나하나가 작은 카메라인 셈이고, 그 가운데 8×8 픽셀이 8×8개 시점이 됩니다. 3D 형상이 없으니 촬영은 흉내 내지 않아요.', en: 'This is a real Lytro capture: the lenslet image as decoded by Lytro\'s software. Zoom in and each lens holds a small round picture: every lens is a tiny camera, and its central 8×8 pixels become the 8×8 views. There is no 3D shape here, so the capture is not simulated.' }]
     : ['カシャッ。小さなカメラごとに、小さな写真が一枚ずつ撮れました。', { ko: `찰칵. 작은 카메라마다 8×8 픽셀짜리 사진이 센서에 한 장씩 찍혔어요. 이것이 요소 영상입니다. 여기서는 블렌더로 렌더링한 8×8 시점 영상으로 만들었어요.`, en: `Click. Each tiny camera left an 8×8-pixel picture on the sensor: the elemental images, built here from 8×8 views rendered in Blender.` }],
@@ -739,7 +740,7 @@ function draw(now) {
   const boxes = [robotEl, raybox, lfzoom, laynote, dialogEl].filter((el) => el && !el.hidden).map((el) => {
     const r = el.getBoundingClientRect(); return [r.left - sr.left, r.top - sr.top, r.right - sr.left, r.bottom - sr.top];
   });
-  const hit = (r, list) => list.some((b) => r[0] < b[2] && r[2] > b[0] && r[1] < b[3] && r[3] > b[1]);
+  const hit = (r, list) => list.some((b) => r[0] - 8 < b[2] && r[2] + 8 > b[0] && r[1] - 4 < b[3] && r[3] + 4 > b[1]);
   const at = (el, z, k) => {
     const [cx, cy] = SPOTS[k], s = project([cx * h, cy * h, z], sw, shh), w = el.offsetWidth, hh = el.offsetHeight;
     const x0 = cx >= 0 ? s[0] - w : s[0], y0 = cy > 0 ? s[1] - 6 - hh : s[1] + 6;
@@ -814,9 +815,16 @@ function showViewMap(vs) {
   if (on >= 0) vcells[on].className = 'on';
   vmap.hidden = on < 0; vmapOn = on;
 }
-let running = false, visible = true, raf = 0;
-function loop(now) { raf = 0; draw(now); if (running && visible && !document.hidden) raf = requestAnimationFrame(loop); }
-function request() { if (!raf) raf = requestAnimationFrame(loop); }
+let running = false, visible = true, raf = 0, lastPoke = 0;
+// with nothing moving for this long (no tween, pointer, tilt or resize), the scene stops drawing until the
+// next change, so an idle page does not keep the GPU busy; the robot's face keeps blinking on a timer
+const IDLE_MS = 5000;
+function loop(now) {
+  raf = 0; draw(now);
+  if (running && visible && !document.hidden && now - lastPoke < IDLE_MS) raf = requestAnimationFrame(loop);
+}
+function request() { lastPoke = performance.now(); if (!raf) raf = requestAnimationFrame(loop); }
+setInterval(() => { if (!raf && visible && !document.hidden) Face.frame(performance.now()); }, 100);
 function start() { if (reduce) { request(); return; } running = true; request(); }
 // the dialogue box's height sets the camera framing and the link above it, so a longer line redraws
 const resized = new ResizeObserver(() => request()); resized.observe(stage); resized.observe(dialogEl);
@@ -832,6 +840,7 @@ window.addEventListener('pointermove', (e) => {
   stage.style.setProperty('--ty', (e.clientY - r.top) + 'px');
   stage.style.setProperty('--ta', ptr.inside ? '1' : '0');
   Face.look(e.clientX, e.clientY);
+  request();
 });
 root.addEventListener('pointerleave', () => { ptr.inside = false; stage.style.setProperty('--ta', '0'); });
 
@@ -842,7 +851,7 @@ const NAMES = {
   cube: { ko: '정육면체', jp: '立方体', en: 'cube' },
   cone: { ko: '원뿔', jp: '円すい', en: 'cone' },
   sphere: { ko: '구', jp: '球', en: 'sphere' },
-  bush: { ko: '앞쪽 나뭇가지', jp: '手前の枝', en: 'branch in front' },
+  bush: { ko: '나뭇가지', jp: '手前の枝', en: 'branch' },
   stop: { ko: '정지 표지판', jp: '止まれの標識', en: 'stop sign' },
   building: { ko: '차와 건물', jp: '車と建物', en: 'cars and building' }
 };
@@ -1200,6 +1209,7 @@ depth.addEventListener('input', () => {
   if (st.R < 0.999 && !rTurn && st.Lay < 0.5) { rTurn = true; turnR(1, 1200).then(() => { rTurn = false; }); }
   const now = focusedLayer();
   if (now >= 0 && now !== before) Snd.focus();
+  if (now !== before) sayLine(now >= 0 ? FOCUS[0](scene.targets[now].name) : L.between);
 });
 
 /* ================= the sample's view mosaic goes to the GPU ================= */
@@ -1322,7 +1332,8 @@ if (lytroBtn) lytroBtn.addEventListener('pointerenter', () => { lytroFiles().cat
 /* ================= sound: on by default ================= */
 /* Browsers only allow audio after the visitor's first click, tap or key press. So, like the
    reference site, the robot first asks for a click and the story waits for it; the first gesture
-   anywhere on the page starts the music and the story together. If the browser already allows
+   inside the lab starts the music and the story together (a click elsewhere on the page, on a link
+   or the resume button, starts nothing). If the browser already allows
    sound, the story starts at once; if nobody clicks within a few seconds, it starts silently and
    the sound joins at the first click. A visitor who turns the sound off is remembered on this device. */
 const soundBtn = q('[data-sound]'), soundHint = q('[data-sound-hint]');
@@ -1330,8 +1341,7 @@ const soundText = { ko: ['소리 켜기', '소리 끄기'], en: ['Sound on', 'So
 let wantSound = true;
 try { if (localStorage.getItem('lab-sound') === 'off') wantSound = false; } catch (e) { /* storage unavailable */ }
 function soundUI() {
-  soundBtn.setAttribute('aria-pressed', String(wantSound));
-  soundBtn.querySelector('.label').textContent = wantSound ? soundText[1] : soundText[0];
+  soundBtn.querySelector('.label').textContent = soundBtn.title = wantSound ? soundText[1] : soundText[0];
   soundBtn.querySelector('.x').style.display = wantSound ? 'none' : '';
   soundBtn.querySelector('.w').style.display = wantSound ? '' : 'none';
   soundHint.hidden = !(wantSound && !Snd.on);
@@ -1347,10 +1357,10 @@ function beginStory() {
 const GESTURES = ['pointerdown', 'keydown', 'touchend'];
 function firstGesture(e) {
   if (e.target && e.target.closest && e.target.closest('[data-sound]')) return;
-  GESTURES.forEach((t) => window.removeEventListener(t, firstGesture, true));
+  GESTURES.forEach((t) => root.removeEventListener(t, firstGesture, true));
   startSound(); beginStory();
 }
-GESTURES.forEach((t) => window.addEventListener(t, firstGesture, true));
+GESTURES.forEach((t) => root.addEventListener(t, firstGesture, true));
 soundBtn.addEventListener('click', () => {
   wantSound = !wantSound;
   try { localStorage.setItem('lab-sound', wantSound ? 'on' : 'off'); } catch (e) { /* storage unavailable */ }
@@ -1373,8 +1383,7 @@ function fsUI() {
   const on = fsEl() === root || pseudoFs;
   root.classList.toggle('is-fs', on);
   document.documentElement.classList.toggle('lab-fs', pseudoFs);
-  fsBtn.setAttribute('aria-pressed', String(on));
-  fsBtn.querySelector('.label').textContent = fsText[on ? 1 : 0];
+  fsBtn.querySelector('.label').textContent = fsBtn.title = fsText[on ? 1 : 0];
   fsBtn.querySelector('.in').style.display = on ? 'none' : '';
   fsBtn.querySelector('.out').style.display = on ? '' : 'none';
   request();
@@ -1425,8 +1434,11 @@ if (!mouse && !reduce && 'DeviceOrientationEvent' in window) {
     const x = Math.asin(clamp(-sx)) * R2D, y = -Math.atan2(sy, uz) * R2D;
     if (tilt.x0 === null || ang !== lastAng) { tilt.x0 = x; tilt.y0 = y; lastAng = ang; } // a turn starts afresh
     tilt.x0 += (x - tilt.x0) * 0.004; tilt.y0 = wrap(tilt.y0 + wrap(y - tilt.y0) * 0.004);
+    const px = tilt.x, py = tilt.y;
     tilt.x = clamp((x - tilt.x0) / 18); tilt.y = clamp(wrap(y - tilt.y0) / 18);
     tilt.on = true;
+    // the sensor reports even when the device is still; only a real move redraws
+    if (Math.abs(tilt.x - px) + Math.abs(tilt.y - py) > 0.004) request();
     if (!ptr.inside) { ptr.x = tilt.x; ptr.y = tilt.y; }
     const r = faceEl.getBoundingClientRect();
     Face.look(r.left + r.width / 2 + tilt.x * 400, r.top + r.height / 2 - tilt.y * 400);

@@ -7,16 +7,19 @@ document.querySelectorAll('.email[data-email-user]').forEach((box) => {
   v.textContent = addr;
   box.hidden = false;
   b.addEventListener('click', async () => {
+    let said = b.dataset.done;
     try {
       await navigator.clipboard.writeText(addr);
+      box.classList.add('copied');
     } catch (err) {
+      // the address is left selected, and the button says so, for the visitor to copy by hand
       const r = document.createRange(); r.selectNodeContents(v);
       const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
-      return;
+      said = b.dataset.manual;
     }
     const t = b.querySelector('.t');
     b.dataset.label = b.dataset.label || t.textContent;
-    t.textContent = b.dataset.done; box.classList.add('copied'); sr.textContent = b.dataset.done;
+    t.textContent = said; sr.textContent = said;
     clearTimeout(b._t);
     b._t = setTimeout(() => { t.textContent = b.dataset.label; box.classList.remove('copied'); sr.textContent = ''; }, 2500);
   });
@@ -45,6 +48,7 @@ document.addEventListener('click', async (e) => {
   } catch (err) {
     const r = document.createRange(); r.selectNodeContents(src);
     const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    b.textContent = b.dataset.manual || 'Selected';
   }
   setTimeout(() => { b.textContent = original; }, 2500);
 });

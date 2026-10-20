@@ -96,12 +96,12 @@
     <section id="decisions" aria-labelledby="h-decisions">
       <h2 id="h-decisions">Decisions</h2>
       <ol class="decisions">
-        <li><h3>Several laptops instead of one server</h3>
-          <dl><dt>Why</dt><dd>Sending many requests from one place gets blocked by the target sites, so the requests were spread across machines.</dd><dt>How</dt><dd>The crawlers ran on {{f:kisti_farm}} and wrote to one remote database (November 2022 to January 2023).</dd></dl></li>
-        <li><h3>De-duplication by product ID (ASIN)</h3>
-          <dl><dt>Why</dt><dd>The same product appeared in several categories, so collecting category by category produced duplicates.</dd><dt>Result</dt><dd>{{f:kisti_asin}} Amazon products became {{f:kisti_asin_dedup}}.</dd></dl></li>
         <li><h3>From crawling shopping sites to APIs</h3>
           <dl><dt>Origin</dt><dd>I proposed collecting through APIs instead of crawling shopping sites, and in June 2023 this was agreed with the client, KISTI, and adopted.</dd><dt>How</dt><dd>Procurement data had come from the public data portal API since April 2023. Amazon moved to the Rainforest API (selected in July 2023, built from February to May 2024).</dd></dl></li>
+        <li><h3>Before the API switch: collection spread over several laptops</h3>
+          <dl><dt>Why</dt><dd>While shopping sites were still crawled directly (2022 to early 2023), many requests from one place got cut off by the sites. Collection was therefore spread across machines, and I later proposed the switch to APIs above.</dd><dt>How</dt><dd>The crawlers ran on {{f:kisti_farm}} and wrote to one remote database (November 2022 to January 2023).</dd></dl></li>
+        <li><h3>De-duplication by product ID (ASIN)</h3>
+          <dl><dt>Why</dt><dd>The same product appeared in several categories, so collecting category by category produced duplicates.</dd><dt>Result</dt><dd>{{f:kisti_asin}} Amazon products became {{f:kisti_asin_dedup}}.</dd></dl></li>
       </ol>
     </section>
 
