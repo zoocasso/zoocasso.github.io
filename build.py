@@ -30,12 +30,12 @@ DOT_FONT = GFONTS + "family=DotGothic16&display=swap"
 
 UI = {
     "ko": {"skip": "본문 바로가기", "work": "작업", "research": "연구", "cv": "이력서", "nav": "주 메뉴",
-           "switch": "EN", "switch_label": "English", "copy": "이메일 주소 복사", "copy_short": "복사", "copied": "복사됨",
-           "updated": "마지막 업데이트", "note": "경력·학력·논문의 숫자는 이력서와 같은 기준 문서를 따르고, 연구 페이지의 기술 수치는 각 논문과 데이터 출처를 따릅니다.",
+           "switch": "EN", "switch_label": "English", "copy": "이메일 주소 복사", "copy_short": "복사", "copied": "복사됨", "selected": "선택됨",
+           "updated": "마지막 업데이트", "pdf": "이력서 PDF", "pdf_file": "HyeongjuLee_Resume_KR.pdf", "note": "경력·학력·논문의 숫자는 이력서와 같은 기준 문서를 따르고, 연구 페이지의 기술 수치는 각 논문과 데이터 출처를 따릅니다.",
            "locale": "ko_KR", "site": "이형주"},
     "en": {"skip": "Skip to content", "work": "Work", "research": "Research", "cv": "CV", "nav": "Main menu",
-           "switch": "한국어", "switch_label": "Korean", "copy": "Copy email address", "copy_short": "Copy", "copied": "Copied",
-           "updated": "Last updated", "note": "Numbers on career, education and papers follow the same source document as my CV; technical figures on the research pages follow each paper and data source.",
+           "switch": "한국어", "switch_label": "Korean", "copy": "Copy email address", "copy_short": "Copy", "copied": "Copied", "selected": "Selected",
+           "updated": "Last updated", "pdf": "CV (PDF)", "pdf_file": "HyeongjuLee_CV_EN.pdf", "note": "Numbers on career, education and papers follow the same source document as my CV; technical figures on the research pages follow each paper and data source.",
            "locale": "en_US", "site": "Hyeongju Lee"},
 }
 EXISTING = set()
@@ -116,6 +116,11 @@ def layout(lang, meta, body, path, alt_path, v):
         fonts += (f'<link rel="preload" as="style" href="{DOT_FONT}" onload="this.onload=null;this.rel=\'stylesheet\'">\n'
                   f'<noscript><link rel="stylesheet" href="{DOT_FONT}"></noscript>\n')
     body_class = meta.get("body", "")
+    # the 404 page is served at any missing address, so it names no address of its own and is not indexed
+    if path == "/404.html":
+        where = '<meta name="robots" content="noindex">\n'
+    else:
+        where = f'<link rel="canonical" href="{BASE}{path}">\n<meta property="og:url" content="{BASE}{path}">\n'
     return f"""<!doctype html>
 <html lang="{lang}">
 <head>
@@ -123,12 +128,10 @@ def layout(lang, meta, body, path, alt_path, v):
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{html.escape(full_title)}</title>
 <meta name="description" content="{html.escape(desc)}">
-<link rel="canonical" href="{BASE}{path}">
-{alts}<meta property="og:type" content="website">
+{where}{alts}<meta property="og:type" content="website">
 <meta property="og:site_name" content="{t['site']}">
 <meta property="og:title" content="{html.escape(full_title)}">
 <meta property="og:description" content="{html.escape(desc)}">
-<meta property="og:url" content="{BASE}{path}">
 <meta property="og:image" content="{BASE}{og}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -161,7 +164,8 @@ def layout(lang, meta, body, path, alt_path, v):
 <footer class="site-foot">
   <div class="foot-row">
     <span class="foot-name">{fact('name', lang)}</span>
-    <div class="email plain" data-email-user="{FACTS['email_user']}" data-email-domain="{FACTS['email_domain']}" hidden><a class="addr"><svg class="i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5.5 7-5.5"/></svg><span class="v"></span></a><button class="copy" type="button" aria-label="{t['copy']}" data-done="{t['copied']}"><svg class="i on-idle" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13H7"/></svg><svg class="i on-done" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10.5l4 4 8-9"/></svg><span class="t">{t['copy_short']}</span></button><span class="sr" aria-live="polite"></span></div>
+    <div class="email plain" data-email-user="{FACTS['email_user']}" data-email-domain="{FACTS['email_domain']}" hidden><a class="addr"><svg class="i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5.5 7-5.5"/></svg><span class="v"></span></a><button class="copy" type="button" aria-label="{t['copy']}" data-done="{t['copied']}" data-manual="{t['selected']}"><svg class="i on-idle" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13H7"/></svg><svg class="i on-done" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10.5l4 4 8-9"/></svg><span class="t">{t['copy_short']}</span></button><span class="sr" aria-live="polite"></span></div>
+    <a href="/files/{t['pdf_file']}">{t['pdf']}</a>
     <a href="{FACTS['github']}" target="_blank" rel="noopener">GitHub</a>
   </div>
   <p>{t['note']} {t['updated']} {fact('updated', lang)}.</p>

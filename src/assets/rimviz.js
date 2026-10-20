@@ -1,7 +1,8 @@
 /* RIM page: two viewers on the ICCAS 2026 scene, rendered with the paper's Blender script at 8 x 8 views.
    Views: the 64 rendered views (1000 px); the pointer picks a viewpoint and the nearest view is shown. Refocus: 31 images reconstructed from the 64 views (shift-and-sum) at depths spaced evenly
    from 0.36 to 1.55 m; the slider picks the depth.
-   Both have a slider (the refocus viewer only that) and move on their own until the visitor takes over. */
+   Both have a slider (the refocus viewer only that) and move on their own until the visitor takes over.
+   Each viewer loads its images when it comes within 600 px of the screen. */
 (() => {
 'use strict';
 const NP = 8, C = (NP - 1) / 2, NF = 31, Z0 = 0.36, Z1 = 1.55;
@@ -99,7 +100,10 @@ async function refocus(fig) {
   });
 }
 
-for (const fig of document.querySelectorAll('[data-viz]')) {
-  (fig.dataset.viz === 'views' ? views(fig) : refocus(fig)).catch(() => { /* the still image stays */ });
-}
+// the 95 images load only once a viewer comes near the screen; until then the still image stands in
+const start = (fig) => (fig.dataset.viz === 'views' ? views(fig) : refocus(fig)).catch(() => { /* the still image stays */ });
+const near = new IntersectionObserver((es) => {
+  for (const e of es) if (e.isIntersecting) { near.unobserve(e.target); start(e.target); }
+}, { rootMargin: '600px 0px' });
+document.querySelectorAll('[data-viz]').forEach((fig) => near.observe(fig));
 })();
