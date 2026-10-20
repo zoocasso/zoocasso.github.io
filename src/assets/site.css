@@ -22,8 +22,9 @@
 html{background:var(--bench);-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bench);color:var(--paper);font-family:var(--body);font-size:16.5px;line-height:1.7;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
 img{max-width:100%;height:auto;display:block}
-a{color:var(--brass-hi);text-underline-offset:3px;text-decoration-thickness:1px}
-a:hover{color:var(--paper)}
+/* links are white with a quiet underline, so gold stays for numbers, primary actions and badges */
+a{color:var(--paper);text-decoration-color:rgba(236,232,223,.4);text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{color:var(--brass-hi);text-decoration-color:currentColor}
 :focus-visible{outline:2px solid var(--brass-hi);outline-offset:3px}
 h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.2;text-wrap:balance;margin:0}
 p{margin:0 0 1em}
@@ -51,9 +52,27 @@ p{margin:0 0 1em}
 @media (max-width:480px){.site-head{flex-wrap:wrap;column-gap:8px;row-gap:0}.site-head nav{gap:0;margin-left:-9px}.site-head nav a{padding:0 9px;min-width:44px;justify-content:center}}
 .site-foot{max-width:var(--wide);margin:96px auto 0;padding:28px var(--gutter) 48px;border-top:1px solid var(--rule);color:var(--mute);font-size:14px}
 .foot-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 22px;margin-bottom:8px}
+/* Email: the address, which opens the mail app, and a copy button joined to it */
+.email{position:relative;display:inline-flex;align-items:stretch;min-height:44px;border:1px solid var(--rule);border-radius:3px;background:var(--veil);font-size:15px;max-width:100%}
+.email .addr{display:inline-flex;align-items:center;gap:9px;padding:0 14px;color:var(--paper);text-decoration:none;white-space:nowrap}
+.email .addr:hover{color:var(--brass-hi)}
+.email .copy{display:inline-flex;align-items:center;gap:6px;padding:0 13px;border:0;border-left:1px solid var(--rule);background:none;color:var(--mute);font:inherit;font-size:14px;cursor:pointer;white-space:nowrap}
+.email .copy:hover{color:var(--paper)}
+.email .i{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.email .addr .i{color:var(--mute)}
+.email .on-done{display:none}
+.email.copied .on-done{display:inline}
+.email.copied .on-idle{display:none}
+.email.copied .copy{color:var(--brass-hi)}
+.email.strong{border-color:var(--brass)}
+.email.strong .copy{border-left-color:var(--brass)}
+.email.plain{min-height:44px;border:0;background:none;font-size:14px}
+.email.plain .addr{padding:0 8px 0 0}
+.email.plain .copy{border-left:0;padding:0 6px}
+.email .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* the narrowest phones keep the address on one line; the copy button shows its icon only (its name stays for screen readers) */
+@media (max-width:400px){.email .copy{padding:0 12px}.email .copy .t{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
 .foot-name{font-family:var(--display);font-weight:700;color:var(--paper);font-size:16px}
-.linkish{background:none;border:0;padding:0;min-height:44px;color:var(--brass-hi);font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
-.linkish:hover{color:var(--paper)}
 
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border:1px solid var(--rule);border-radius:3px;background:transparent;color:var(--paper);font:inherit;font-size:15px;text-decoration:none;cursor:pointer;white-space:nowrap}
@@ -66,7 +85,7 @@ p{margin:0 0 1em}
 
 /* ---------- home: the lab ---------- */
 .lab{position:relative;background:var(--plate);border-bottom:1px solid var(--rule);display:flex;flex-direction:column;touch-action:manipulation}
-.lab .stage{position:relative;height:clamp(600px,76vh,840px);overflow:hidden}
+.lab .stage{position:relative;height:clamp(580px,64vh,760px);overflow:hidden}
 .lab canvas.gl{position:absolute;inset:0;width:100%;height:100%;display:block}
 .lab .poster{position:absolute;inset:0;background:var(--plate)}
 .lab .torch{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:var(--ta,0);transition:opacity .5s;background:radial-gradient(460px circle at var(--tx,50%) var(--ty,50%),rgba(227,196,127,.16),rgba(227,196,127,.05) 45%,transparent 70%)}
@@ -78,10 +97,6 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 .intro .role{font-size:18px;margin:22px 0 0;color:var(--paper)}
 .intro .lede{font-size:16px;color:var(--mute);margin:12px 0 0;max-width:42ch}
 .intro .status{margin:16px 0 0;font-size:15px;color:var(--brass-hi)}
-.intro .honor{margin:12px 0 0}
-.intro .honor a{display:inline-flex;align-items:center;gap:7px;padding:3px 10px;border:1px solid var(--brass);border-radius:3px;background:var(--veil);color:var(--brass-hi);font-size:13.5px;text-decoration:none}
-.intro .honor a:hover{color:var(--paper)}
-.intro .honor svg{width:13px;height:13px;flex:none;fill:currentColor}
 .intro .ctas{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
 .intro .ctas .btn{background:var(--veil)}
 .intro .ctas .btn.primary{background:var(--brass)}
@@ -90,8 +105,9 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 .robot span{position:absolute;right:0;bottom:-21px;font-family:var(--dot);font-size:11px;color:var(--brass);letter-spacing:.08em;white-space:nowrap}
 .tag3d{position:absolute;left:0;top:0;font-size:13px;line-height:1.3;color:var(--brass-hi);white-space:nowrap;pointer-events:none;z-index:1}
 .dialog{position:absolute;left:calc(50% + min(235px,20%));bottom:20px;transform:translateX(-50%);width:min(600px,calc(100% - 600px));background:var(--veil);border:1px solid var(--rule);padding:12px 18px 13px;text-align:center;z-index:2}
-.dialog .jp{font-family:var(--dot);font-size:17px;line-height:1.6;min-height:1.6em}
-.dialog .ko{font-size:14.5px;line-height:1.55;color:var(--mute);min-height:1.55em;margin-top:2px}
+/* the subtitle in the page language is what a visitor reads; the robot's Japanese voice line sits above it, quieter */
+.dialog .jp{font-family:var(--dot);font-size:14px;line-height:1.55;min-height:1.55em;color:var(--mute)}
+.dialog .ko{font-size:16px;line-height:1.55;color:var(--paper);min-height:1.55em;margin-top:3px}
 .dialog .ko.fade{animation:subin .35s ease-out}
 @keyframes subin{from{opacity:0}to{opacity:1}}
 .lab-cta{position:absolute;left:calc(50% + min(235px,20%));bottom:150px;transform:translateX(-50%);z-index:3;animation:subin .5s ease-out}
@@ -189,6 +205,24 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 .sound{display:inline-flex;align-items:center;gap:8px}
 .lab-tools .sound{min-height:40px;padding:0 4px 0 14px;border-left:1px solid var(--rule)}
 @media (max-width:640px){.lab-tools .sound{padding-left:4px;border-left:0}}
+/* phones: sample, sound and full screen share the first row, steps and the scene link the second, the slider the third */
+@media (max-width:640px){
+  .lab-tools{column-gap:6px}
+  .lab-tools .pick{order:1}
+  .lab-tools .pick .cap{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .lab-tools .sound{order:2;margin-left:auto;min-width:40px;justify-content:center;padding:0}
+  .lab-tools .sound .label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .lab-tools .fs{order:3}
+  .lab-tools .sound-hint{order:4;flex-basis:100%}
+  .lab-tools .steps{order:5}
+  .lab-tools .step{padding:0 5px}
+  .lab-how{order:6}
+  .lab-how .long{display:none}
+  .lab-tools .act,.lab-tools .tog{order:7}
+  .lab-tools .depth{order:8;flex-basis:100%}
+}
+.lab-how .short{display:none}
+@media (max-width:640px){.lab-how .short{display:inline}}
 .sound-hint{font-size:13px;color:var(--brass-hi)}
 .lab-how{font-size:13px;color:var(--mute);margin-left:auto;display:inline-flex;align-items:center;gap:4px;min-height:40px;text-decoration:none}
 .lab-how:hover{color:var(--paper);text-decoration:underline;text-underline-offset:3px}
@@ -228,14 +262,15 @@ html.lab-fs{overflow:hidden}
 }
 @media (max-width:640px){
   .tag3d{display:none}
-  .lab .stage{height:min(150vw,640px)}
+  .lab .stage{height:min(116vw,560px)}
   .dialog{padding:8px 12px 9px}
-  .dialog .jp{font-size:14.5px;line-height:1.5}
-  .dialog .ko{font-size:12.5px;line-height:1.45}
+  .dialog .jp{font-size:12px;line-height:1.45}
+  .dialog .ko{font-size:13.5px;line-height:1.45}
 }
 
 /* ---------- reading sections ---------- */
 .section{max-width:var(--wide);margin:0 auto;padding:88px var(--gutter) 0}
+.lab + .section{padding-top:48px}
 .section > header{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}
 .section h2{font-size:clamp(26px,3vw,34px)}
 .section .more{font-size:15px}
@@ -265,6 +300,10 @@ html.lab-fs{overflow:hidden}
 .log.work .flow{grid-column:2;margin-top:4px}
 .log .when{color:var(--mute);font-size:14.5px;font-variant-numeric:tabular-nums;padding-top:4px}
 .log h3{font-size:clamp(20px,2vw,24px);transition:color .15s}
+/* older work on the home page: a title and its one number, so the two current pieces lead */
+.log li.compact a.row{padding-top:18px;padding-bottom:18px}
+.log li.compact h3{font-size:clamp(18px,1.6vw,20px)}
+.log li.compact .key{margin-top:4px}
 .log p{color:var(--mute);margin:8px 0 0;max-width:60ch}
 .log .key{display:inline-block;margin-top:10px;color:var(--paper);font-size:15px}
 .log .key b{color:var(--brass-hi);font-weight:700}
@@ -452,12 +491,11 @@ table.data tfoot td{color:var(--paper);font-weight:700;border-bottom:0}
   :root{--bench:#fff;--plate:#fff;--rule:#c8c8c8;--paper:#111;--mute:#444;--brass:#8a6420;--brass-hi:#6e4f17;--veil:#fff;color-scheme:light}
   @page{margin:16mm 14mm}
   html,body{background:#fff;color:#111;font-size:11pt;line-height:1.55}
-  .skip,.site-head nav,.lab .stage,.lab-tools,.toc,.pager,.ctas,.contact,.qr,.more,section:has(.downloads),button:not(.linkish),input[type=range]{display:none!important}
+  .skip,.site-head nav,.lab .stage,.lab-tools,.toc,.pager,.ctas,.contact,.qr,.more,section:has(.downloads),button,input[type=range]{display:none!important}
   .site-head{min-height:0;padding:0 0 6mm;border:0}
   .home .site-head{display:none}
   .lab{background:#fff;border:0}
   .intro{position:static;width:auto;padding:0}
-  .intro .honor a{border-color:#8a6420}
   .section,.doc-head,.doc,.site-foot{max-width:none;padding-left:0;padding-right:0}
   .section{padding-top:10mm}
   .doc{display:block;padding-top:6mm}
@@ -469,7 +507,7 @@ table.data tfoot td{color:var(--paper);font-weight:700;border-bottom:0}
   li,figure,table,.diagram,.facts > div,.decisions > li{break-inside:avoid}
   img{max-height:80mm;width:auto}
   .site-foot{margin-top:10mm;padding-top:4mm;padding-bottom:0}
-  .site-foot .linkish{font-size:0;min-height:0;text-decoration:none}
-  .site-foot .linkish::after{content:attr(data-email-user) "@" attr(data-email-domain);font-size:11pt;color:#111}
+  .email{border:0;background:none;min-height:0}
+  .email .addr{padding:0;color:#111}
   .foot-name::after{content:"  zoocasso.github.io";font-family:var(--body);font-weight:400;color:#444}
 }
