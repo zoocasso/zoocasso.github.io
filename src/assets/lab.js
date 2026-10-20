@@ -1,5 +1,6 @@
 /* Lens array lab: a planar image is captured through a pinhole array (simulated), rearranged with RIM,
-   and reconstructed. Rendering is WebGL2; music, sound effects and the robot voice are synthesized with Web Audio. */
+   and reconstructed. Rendering is WebGL2; music and sound effects are synthesized with Web Audio, and the robot's
+   Japanese lines are short clips made once with VOICEVOX (tools/voice.py). */
 (() => {
 'use strict';
 const root = document.getElementById('lab');
@@ -16,10 +17,12 @@ const NL_SIM = small ? 32 : 48, NL_REAL = small ? 64 : 128, VIEWS = NP * NP;
 let NL = NL_SIM, R = NL * NP, COUNT = R * R;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fmt = (n) => n.toLocaleString(lang === 'ko' ? 'ko-KR' : 'en-US');
+// the build's asset version, so the voice clips are fetched fresh after each change
+const VQ = (document.currentScript && new URL(document.currentScript.src).search) || '';
 
 /* ================= sound: everything is synthesized here ================= */
 const Snd = (() => {
-  let ctx = null, master, music, sfx, voice, noiseBuf = null, on = false, nextT = 0, step = 0, loop = 0, timer = 0, room = false;
+  let ctx = null, master, music, sfx, voice, noiseBuf = null, on = false, nextT = 0, step = 0, loop = 0, timer = 0, room = false, speech = null;
   const midi = (n) => 440 * Math.pow(2, (n - 69) / 12);
   function init() {
     if (ctx) return;
@@ -136,7 +139,7 @@ const Snd = (() => {
     },
     disable() {
       if (!ctx) return;
-      on = false;
+      this.hush(); on = false;
       const t = ctx.currentTime;
       master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(master.gain.value, t); master.gain.linearRampToValueAtTime(0, t + 0.3);
       setTimeout(() => { if (!on && ctx) ctx.suspend(); }, 400);
@@ -184,7 +187,17 @@ const Snd = (() => {
       const k = (ch.charCodeAt(0) * 7) % 9 - 4;
       tone('square', 520 * Math.pow(2, k / 12), ctx.currentTime, 0.006, 0.09, 0.05, voice, 1900);
     },
-    ui() { if (live()) tone('sine', 1320, ctx.currentTime, 0.003, 0.05, 0.06, sfx); }
+    ui() { if (live()) tone('sine', 1320, ctx.currentTime, 0.003, 0.05, 0.06, sfx); },
+    decode(buf) { init(); return ctx ? ctx.decodeAudioData(buf) : Promise.reject(new Error('no audio')); },
+    // a spoken line over the voice bus; returns its length in seconds, or 0 when nothing plays
+    speak(clip) {
+      this.hush();
+      if (!live() || !clip) return 0;
+      const s = ctx.createBufferSource(), g = ctx.createGain();
+      s.buffer = clip; g.gain.value = 1.6; s.connect(g); g.connect(voice); s.start(); speech = s;
+      return clip.duration;
+    },
+    hush() { if (speech) { try { speech.stop(); } catch (e) { /* already ended */ } speech = null; } }
   };
 })();
 
@@ -276,31 +289,52 @@ const FOCUS = [
   (n) => [`その奥の${n.jp}まで。`, { ko: `그 뒤의 ${n.ko}까지.`, en: `On to the ${n.en} behind it.` }]
 ];
 const ej = q('.dialog .jp'), ek = q('.dialog .ko'), liveEl = q('[data-live]');
-let sayTimer = 0;
+/* the voice: assets/voice/index.json maps each Japanese line to its clip. The clips load once sound is on;
+   a line whose clip is missing, or slow to arrive, is typed with the blips instead */
+const Voice = (() => {
+  let map = null, loading = null;
+  const cache = new Map();
+  const load = () => loading || (loading = fetch('/assets/voice/index.json' + VQ).then((r) => (r.ok ? r.json() : null)).then((j) => { map = j; }).catch(() => {}));
+  function clip(jp) {
+    if (!map || !map[jp]) return Promise.resolve(null);
+    if (!cache.has(jp)) cache.set(jp, fetch('/assets/voice/' + map[jp] + VQ).then((r) => r.arrayBuffer()).then((b) => Snd.decode(b)).catch(() => null));
+    return cache.get(jp);
+  }
+  return { clip, prefetch() { load().then(() => { if (map) Object.keys(map).forEach(clip); }); } };
+})();
+let sayTimer = 0, sayId = 0;
 function sayLine(line, after) {
-  const jp = line[0], sub = line[1][lang];
+  const jp = line[0], sub = line[1][lang], me = ++sayId;
   liveEl.textContent = sub;
-  clearInterval(sayTimer);
+  clearInterval(sayTimer); Snd.hush();
   // the subtitle shows in full as the line starts, like a film subtitle, while the Japanese is typed out
   ek.textContent = sub;
-  if (reduce) { ej.textContent = jp; if (after) after(); return; }
+  if (reduce) { ej.textContent = jp; if (Snd.on) Voice.clip(jp).then((c) => { if (me === sayId) Snd.speak(c); }); if (after) after(); return; }
   ek.classList.remove('fade'); void ek.offsetWidth; ek.classList.add('fade');
-  // after the Japanese ends, hold as long as typing the subtitle used to take, so the pacing stays the same
-  let i = 0, hold = Math.ceil(sub.length / 2); ej.textContent = '';
+  ej.textContent = '';
+  const voiced = Snd.on ? Promise.race([Voice.clip(jp), new Promise((r) => setTimeout(r, 350))]) : Promise.resolve(null);
+  voiced.then((c) => { if (me === sayId) typeOut(jp, sub, c, after); });
+}
+function typeOut(jp, sub, clip, after) {
+  // with a clip, the Japanese is typed over its length; without, at 48 ms a character with a blip each.
+  // Afterwards it holds as long as typing the subtitle used to take, and never ends before the voice
+  const dur = Snd.speak(clip), tick = dur ? Math.min(140, Math.max(28, dur * 920 / jp.length)) : 48;
+  const endAt = performance.now() + dur * 1000;
+  let i = 0, hold = Math.ceil(sub.length / 2) * 48 / tick;
   const rest = Face.mode === 'talk' ? 'idle' : Face.mode;
   if (rest !== 'work') Face.set('talk');
   sayTimer = setInterval(() => {
     if (i < jp.length) {
       const ch = jp[i++]; ej.textContent = jp.slice(0, i);
-      if (!/[\s、。！？…]/.test(ch)) { Snd.blip(ch); Face.flap(); }
+      if (!/[\s、。！？…]/.test(ch)) { if (!dur) Snd.blip(ch); Face.flap(); }
       if (i === jp.length && Face.mode === 'talk') Face.set(rest);
-    } else if (hold > 0) {
+    } else if (hold > 0 || performance.now() < endAt) {
       hold--;
     } else {
       clearInterval(sayTimer);
       if (after) after();
     }
-  }, 48);
+  }, tick);
 }
 const say = (key, after) => sayLine(typeof L[key] === 'function' ? L[key]() : L[key], after);
 
@@ -619,7 +653,7 @@ function camera(asp, now) {
   // the oblique view stands beside the camera body, on its left, and looks through the lens array at
   // the scene: light then travels left to right (object, lens array, sensor) as in the diagram beside
   // the robot, and objects at different depths stand apart instead of lining up behind one another
-  const eObl = small ? [-2.0 + ox, 1.2 + oy, 4.6] : [-2.6 + ox, 1.35 + oy, 3.9];
+  const eObl = small ? [-2.0 + ox, 1.2 + oy, 4.6] : [-3.9 + ox, 1.25 + oy, 2.7];
   // on phones the dialogue covers more of the stage, so the side view aims lower to lift the scene
   const tObl = [0, small ? -0.5 : -0.1, -0.9];
   const eFr = [ox * 0.9, lift + oy * 0.9, ZS + fit];
@@ -630,9 +664,9 @@ function camera(asp, now) {
   const kr = easeIO(st.R);
   if (kr > 0) {
     // the result: the reconstruction plane head on, as large as the room between the stage top and the
-    // dialogue (less the link above it) allows, and kept there while the slider moves it in depth
+    // dialogue allows, and kept there while the slider moves it in depth
     const zRec = scene.za + scene.zb * st.D, top = 18;
-    const room = cta && !cta.hidden ? cta.offsetHeight + 22 : 16;
+    const room = 16;
     const avail = Math.max(0.3, (dialogEl.offsetTop - room - top) / sh2);
     // views shifted by D spread the reconstruction past the square by D * (NP - 1) / 2 lenses a side
     const ext = W * (1 + Math.abs(st.D) * (NP - 1) / NL);
@@ -781,11 +815,6 @@ function draw(now) {
   } else tags.rec.style.opacity = '0';
   placeSkip(sr);
   root.classList.toggle('pickable', hasImage && !busy && st.C > 0.99 && st.Lay < 0.5);
-  if (cta && !cta.hidden) {
-    // the link to the paper page sits just above the dialogue box, whatever its height
-    const b = Math.round(shh - dialogEl.offsetTop + 10);
-    if (b !== ctaBottom) { ctaBottom = b; cta.style.bottom = b + 'px'; }
-  }
   Face.frame(now);
 }
 /* which view step 2 shows: it starts at view HI and circles the centre; after the step is over
@@ -850,9 +879,6 @@ root.addEventListener('pointerleave', () => { ptr.inside = false; stage.style.se
 const NAMES = {
   monkey: { ko: '원숭이 머리', jp: 'サルの頭', en: 'monkey head' },
   torus: { ko: '원환체', jp: 'ドーナツ', en: 'torus' },
-  cube: { ko: '정육면체', jp: '立方体', en: 'cube' },
-  cone: { ko: '원뿔', jp: '円すい', en: 'cone' },
-  sphere: { ko: '구', jp: '球', en: 'sphere' },
   bush: { ko: '나뭇가지', jp: '手前の枝', en: 'branch' },
   stop: { ko: '정지 표지판', jp: '止まれの標識', en: 'stop sign' },
   building: { ko: '차와 건물', jp: '車と建物', en: 'cars and building' }
@@ -882,7 +908,8 @@ function lytroScene() {
    exactly, so the light cone drawn from the point lands where its pixels are. At 64 lenses.
    Only the two nearest objects are kept: the monkey head and the torus. The cube, cone and sphere behind
    them (dk 0.93 and more) are turned into background when the sample loads (cut). lo and hi are the
-   depth map's encoding and stay as rendered. */
+   depth map's encoding and stay as rendered. (Sliding the torus behind the monkey head does not work:
+   the views differ by under 3 px, so its hidden part is missing from every view and shows as a gap.) */
 const BLENDER = { lo: 0.3552, hi: 1.2, d: [0.3747, 0.7553], cut: 0.85, point: [0.768, 0.373], pointD: 0.3579 };
 function blenderScene() {
   const names = [NAMES.monkey, NAMES.torus];
@@ -941,8 +968,6 @@ function setDepthUI(enabled) {
 /* while reconstructing, the camera stands partway between the side view and the frontal one,
    so the plane can be seen moving into the depth of the scene */
 const CAM_REC = 0.3;
-const cta = q('.lab-cta');
-let ctaBottom = -1;
 const skipBtn = q('[data-skip]');
 // the skip button stands on the dialogue box's top right corner, whatever the box's size
 function placeSkip(sr = stage.getBoundingClientRect()) {
@@ -956,8 +981,8 @@ function ending(my) {
   const later = (ms, f) => setTimeout(() => { if (my === token) f(); }, ms);
   say('done', () => later(2200, () => say('outro', () => later(4000, () => say('idle')))));
 }
-function finish() { root.classList.add('played'); if (cta) cta.hidden = false; if (skipBtn) skipBtn.hidden = true; }
-function unfinish() { root.classList.remove('played'); if (cta) cta.hidden = true; if (skipBtn) skipBtn.hidden = true; }
+function finish() { root.classList.add('played'); if (skipBtn) skipBtn.hidden = true; }
+function unfinish() { root.classList.remove('played'); if (skipBtn) skipBtn.hidden = true; }
 const stepBtns = [...root.querySelectorAll('[data-step]')];
 function steps(n) { stepBtns.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.step) === n))); }
 /* the panel beside the introduction: three tiny cameras and the pictures they take */
@@ -1300,22 +1325,46 @@ function loadLightField(viewsURL, depURL, make, line, mode) {
 const loadScene = (mode) => loadLightField('/img/lab-blender-views.webp', '/img/lab-blender-depth.png', blenderScene, 'scene', mode);
 const loadImg = (src) => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
 let layTex = null, layATex = null, layA = null, depA = null;
-/* samples behind sc.cut (shift per view step) become background: the depth of the sky and the mean
-   colour of the sky pixels, so nothing behind the kept objects is drawn, captured or reconstructed.
-   The view mosaic and the depth mosaic share one layout; if their sizes differ, nothing is cut. */
+/* samples behind sc.cut (shift per view step) become background, so nothing behind the kept objects is
+   drawn, captured or reconstructed. A removed object's antialiased rim lies in sky pixels next to it, so
+   the removed area grows by two pixels within each view; it takes the sky's depth and the mean colour of
+   that view's remaining sky. The view mosaic (NP x NP views) and the depth mosaic share one layout; if
+   their sizes differ, the sample is shown as rendered. */
 function cutBehind(views, sc) {
-  const w = views.width, h = views.height;
+  const w = views.width, h = views.height, T = w / NP;
   if (!depA || depA.w !== w || depA.data.length !== w * h * 4) return null;
   const c = document.createElement('canvas'); c.width = w; c.height = h;
   const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(views, 0, 0);
   const img = g.getImageData(0, 0, w, h), px = img.data, dz = new Uint8ClampedArray(depA.data);
   const sky = 0.998 * 255, cut = (sc.cut - sc.lo) / (sc.hi - sc.lo) * 255;
-  let r = 0, gr = 0, b = 0, k = 0;
-  for (let i = 0; i < dz.length; i += 4) if (dz[i] >= sky) { r += px[i]; gr += px[i + 1]; b += px[i + 2]; k++; }
-  if (k) { r /= k; gr /= k; b /= k; }
-  for (let i = 0; i < dz.length; i += 4) {
-    if (dz[i] < sky && dz[i] > cut) { dz[i] = dz[i + 1] = dz[i + 2] = 255; px[i] = r; px[i + 1] = gr; px[i + 2] = b; }
+  const tileOf = (j) => Math.floor(j / w / T) * NP + Math.floor((j % w) / T);
+  // pixels within two of a marked pixel, inside the same view
+  const ring = (mark) => {
+    const out = new Uint8Array(w * h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const j = y * w + x;
+      if (mark[j] || dz[j * 4] < sky) continue;
+      const x0 = Math.floor(x / T) * T, y0 = Math.floor(y / T) * T;
+      near: for (let ny = Math.max(y0, y - 2); ny <= Math.min(y0 + T - 1, y + 2); ny++)
+        for (let nx = Math.max(x0, x - 2); nx <= Math.min(x0 + T - 1, x + 2); nx++) if (mark[ny * w + nx]) { out[j] = 1; break near; }
+    }
+    return out;
+  };
+  const gone = new Uint8Array(w * h);
+  for (let j = 0; j < w * h; j++) if (dz[j * 4] < sky && dz[j * 4] > cut) gone[j] = 1;
+  const goneRim = ring(gone);
+  // each view's sky colour, from the sky that stays where it is
+  const sum = new Float64Array(NP * NP * 4);
+  for (let j = 0; j < w * h; j++) {
+    if (dz[j * 4] < sky || goneRim[j]) continue;
+    const t = tileOf(j) * 4;
+    sum[t] += px[j * 4]; sum[t + 1] += px[j * 4 + 1]; sum[t + 2] += px[j * 4 + 2]; sum[t + 3]++;
   }
+  const clear = (j) => {
+    const t = tileOf(j) * 4, n = sum[t + 3] || 1, i = j * 4;
+    dz[i] = dz[i + 1] = dz[i + 2] = 255; px[i] = sum[t] / n; px[i + 1] = sum[t + 1] / n; px[i + 2] = sum[t + 2] / n;
+  };
+  for (let j = 0; j < w * h; j++) if (gone[j] || goneRim[j]) clear(j);
   g.putImageData(img, 0, 0);
   const d = new ImageData(dz, w, h);
   return { views: c, dep: d, depA: { w, data: dz } };
@@ -1381,7 +1430,7 @@ function soundUI() {
 }
 function startSound() {
   if (!wantSound || Snd.on) return;
-  Snd.enable().then((ok) => { if (ok) Snd.chime(); soundUI(); });
+  Snd.enable().then((ok) => { if (ok) { Snd.chime(); Voice.prefetch(); } soundUI(); });
 }
 function beginStory() {
   if (!waiting) return;
