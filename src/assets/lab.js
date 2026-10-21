@@ -784,7 +784,6 @@ function draw(now) {
     for (const k of [recK, ...SPOTS.keys()]) { p = at(tags.rec, zRec, k); if (!hit(p.r, boxes)) break; }
     recK = p.k; put(p, hit(p.r, boxes) ? 0 : fade * rc);
   } else tags.rec.style.opacity = '0';
-  placeSkip(sr);
   root.classList.toggle('pickable', hasImage && !busy && st.C > 0.99 && st.Lay < 0.5);
   Face.frame(now);
 }
@@ -1136,21 +1135,13 @@ function setDepthUI(enabled) {
 /* while reconstructing, the camera stands partway between the side view and the frontal one,
    so the plane can be seen moving into the depth of the scene */
 const CAM_REC = 0.3;
-const skipBtn = q('[data-skip]');
-// the skip button stands on the dialogue box's top right corner, whatever the box's size
-function placeSkip(sr = stage.getBoundingClientRect()) {
-  if (!skipBtn || skipBtn.hidden) return;
-  const d = dialogEl.getBoundingClientRect();
-  skipBtn.style.bottom = Math.round(sr.bottom - d.top + 8) + 'px';
-  skipBtn.style.left = Math.round(d.right - sr.left) + 'px';
-}
 // after the result: the done line, then the hand-off to the work section, then how to play with it
 function ending(my) {
   const later = (ms, f) => setTimeout(() => { if (my === token) f(); }, ms);
   say('done', () => later(2200, () => say('outro', () => later(4000, () => say('idle')))));
 }
-function finish() { root.classList.add('played'); if (skipBtn) skipBtn.hidden = true; }
-function unfinish() { root.classList.remove('played'); if (skipBtn) skipBtn.hidden = true; }
+function finish() { root.classList.add('played'); }
+function unfinish() { root.classList.remove('played'); }
 const stepBtns = [...root.querySelectorAll('[data-step]')];
 function steps(n) { stepBtns.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.step) === n))); }
 /* the panel beside the introduction: three tiny cameras and the pictures they take */
@@ -1369,7 +1360,6 @@ async function doRecon(my) {
 }
 async function playAll(my) {
   unfinish();
-  if (skipBtn) { skipBtn.hidden = false; placeSkip(); }
   if (!(await doCapture(my))) return;
   await wait(300); if (my !== token) return;
   if (!(await doRim(my))) return;
@@ -1377,18 +1367,8 @@ async function playAll(my) {
   await doRecon(my);
 }
 function jumpToEnd() { lfZoom(false); layersOff(); st.A = 1; st.cam = CAM_REC; st.B = 1; st.C = 1; st.R = 1; rSeq++; st.D = scene.targets[0].d; setDepthUI(true); steps(3); Face.set('happy'); finish(); ending(token); request(); }
-/* "Skip to the result": the story stops and the finished reconstruction is shown head on */
-if (skipBtn) skipBtn.addEventListener('click', () => {
-  Snd.ui(); const my = ++token;
-  lfZoom(false); layersOff(); rayBox(false); viewDrive = false;
-  st.A = 1; st.B = 1; st.C = 1; st.V = 0; st.vt = 0; st.icons = 0; st.cam = CAM_REC; st.D = scene.targets[0].d;
-  steps(3); setDepthUI(true); Face.set('happy'); finish(); request();
-  turnR(1, 1200);
-  ending(my);
-});
 stepBtns.forEach((b) => b.addEventListener('click', () => {
   Snd.ui(); const my = ++token; const n = Number(b.dataset.step);
-  if (skipBtn) skipBtn.hidden = true;
   if (n === 1) doCapture(my); else if (n === 2) doRim(my); else doRecon(my);
 }));
 q('[data-reverse]').addEventListener('click', async () => {
