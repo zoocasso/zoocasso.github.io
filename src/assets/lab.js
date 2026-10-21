@@ -337,7 +337,7 @@ precision highp float;
 uniform sampler2D uImg, uDep;
 uniform mat4 uVP;
 uniform float uK[4];
-uniform float uNL, uNP, uW, uZs, uA, uB, uC, uD, uPx, uP11, uReal, uDepV, uDlo, uDhi, uZa, uZb, uVw, uAvg, uSky, uGrow;
+uniform float uNL, uNP, uW, uZs, uA, uB, uC, uD, uPx, uP11, uReal, uDepV, uDlo, uDhi, uZa, uZb, uVw, uAvg, uSky, uGrow, uMesh;
 uniform vec2 uVs;
 out vec4 vCol;
 out float vW;
@@ -386,6 +386,8 @@ void main(){
   vec3 O = plane(obj, clamp(uZa + uZb * dk, -2.9, -.3)), P = plane(lens, 0.), S = plane(ei, uZs);
   vec3 pos = a < .5 ? mix(O, P, a * 2.) : mix(P, S, a * 2. - 1.);
   if (sky > .5 && a < .5) col.a = 0.;
+  // with the solid meshes on show, a sample appears only once it leaves the surface
+  if (uMesh > .5 && a < .02) col.a = 0.;
   float grow = mix(uGrow, 1., min(1., a * 2.));
   float dB = (u.y * uNP + u.x) / (uNP * uNP - 1.);
   float b = ease(lag(uB, dB, .55));
@@ -674,12 +676,15 @@ function draw(now) {
   gl.disable(gl.BLEND);
   const vs = viewSel();
   if (hasImage) {
+    // the solid meshes, fading as the capture starts
+    if (scene.kind === 'mesh') { const ma = 1 - Math.min(1, st.A * 2.5); if (ma > 0.002) drawMeshes(ma); }
     // while the layers stand in 3D, near points hide far ones (depth test); once views overlap for
     // reconstruction, they are averaged in a float buffer instead
     const averaging = floatOK && (st.C > 0.001 || st.V > 0.001);
     if (averaging) { gl.bindFramebuffer(gl.FRAMEBUFFER, acc); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE); }
     else { gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LESS); }
     gl.useProgram(P.p);
+    gl.uniform1f(P.u.uMesh, scene.kind === 'mesh' ? 1 : 0);
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex); gl.uniform1i(P.u.uImg, 0);
     gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, depTex); gl.uniform1i(P.u.uDep, 1); gl.activeTexture(gl.TEXTURE0);
     gl.uniform1f(P.u.uReal, scene.real ? 1 : 0); gl.uniform1f(P.u.uDepV, scene.perView ? 1 : 0);
@@ -882,6 +887,138 @@ function blenderScene() {
   return { kind: 'blender', real: true, perView: true, nl: 64, targets: BLENDER.d.map((x, i) => ({ d: x, name: names[i] })),
     sky: true, grow: 1.6, walk: [0, 1], dMin: 0.3, dMax: 0.9, za: 0, zb: -NP * ZS, tol: 0.025, lo: BLENDER.lo, hi: BLENDER.hi,
     cut: BLENDER.cut, point: BLENDER.point, pointD: BLENDER.pointD };
+}
+/* ================= 3D sample: real meshes, captured in the browser ================= */
+/* Two meshes, a monkey head and a torus, stand in front of the lens array as solid objects, and the
+   capture is computed here. In this lab's pinhole model the pixel u under every lens looks along one
+   direction, so view u is an oblique parallel projection: lens position x_s = x / W + 1/2 + dk (u - c) / NL,
+   with dk = -z / (NP ZS) the shift per view step. Each of the NP x NP views is drawn into its tile of a
+   mosaic, with its depth (dk, scaled to lo ... hi) in a second target: the same views + depth the rest of
+   the lab reads for a rendered light field. */
+const MESH = { lo: 0.15, hi: 1.05, d: [0.33, 0.75], sky: [16 / 255, 17 / 255, 40 / 255] };
+const MESH_LIGHT = (() => { const v = [-0.45, 0.6, 0.66], n = Math.hypot(...v); return v.map((x) => x / n); })();
+const SHADE = 'vec3 shade(vec3 c, vec3 n, vec3 l){ return c * (.3 + .7 * max(dot(normalize(n), l), 0.)); }';
+const MV = `#version 300 es
+layout(location = 0) in vec3 aPos; layout(location = 1) in vec3 aNrm;
+uniform mat4 uVP, uM; out vec3 vN;
+void main(){ vN = mat3(uM) * aNrm; gl_Position = uVP * (uM * vec4(aPos, 1.)); }`;
+const MF = `#version 300 es
+precision mediump float;
+uniform vec3 uCol, uL; uniform float uAlpha; in vec3 vN; out vec4 o;
+${SHADE}
+void main(){ o = vec4(shade(uCol, vN, uL), uAlpha); }`;
+const CV = `#version 300 es
+layout(location = 0) in vec3 aPos; layout(location = 1) in vec3 aNrm;
+uniform mat4 uM; uniform vec2 uUo; uniform float uNL, uW, uNPZS, uLo, uHi;
+out vec3 vN; out float vDz;
+void main(){
+  vec3 w = (uM * vec4(aPos, 1.)).xyz; vN = mat3(uM) * aNrm;
+  float dk = -w.z / uNPZS;
+  vDz = (dk - uLo) / (uHi - uLo);
+  gl_Position = vec4(2. * w.x / uW + 2. * dk * uUo.x / uNL, -2. * w.y / uW + 2. * dk * uUo.y / uNL, 2. * vDz - 1., 1.);
+}`;
+const CF = `#version 300 es
+precision highp float;
+uniform vec3 uCol, uL; in vec3 vN; in float vDz;
+layout(location = 0) out vec4 oCol; layout(location = 1) out vec4 oDep;
+${SHADE}
+void main(){ oCol = vec4(shade(uCol, vN, uL), 1.); float z = clamp(vDz, 0., .99); oDep = vec4(z, z, z, 1.); }`;
+let MP = null, CP = null;
+try { MP = prog(MV, MF); CP = prog(CV, CF); } catch (err) { MP = null; }
+function torusGeo(R0, r, nu, nv) {
+  const out = [], at = (i, j) => {
+    const a = i / nu * 2 * Math.PI, b = j / nv * 2 * Math.PI, ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b);
+    return [(R0 + r * cb) * ca, (R0 + r * cb) * sa, r * sb, cb * ca, cb * sa, sb];
+  };
+  for (let i = 0; i < nu; i++) for (let j = 0; j < nv; j++) {
+    const a = at(i, j), b = at(i + 1, j), c = at(i + 1, j + 1), d = at(i, j + 1);
+    out.push(...a, ...b, ...c, ...a, ...c, ...d);
+  }
+  return new Float32Array(out);
+}
+function sphereGeo(r, n) {
+  const out = [], at = (i, j) => {
+    const t = i / n * Math.PI, f = j / n * 2 * Math.PI, x = Math.sin(t) * Math.cos(f), y = Math.cos(t), z = Math.sin(t) * Math.sin(f);
+    return [r * x, r * y, r * z, x, y, z];
+  };
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+    const a = at(i, j), b = at(i + 1, j), c = at(i + 1, j + 1), d = at(i, j + 1);
+    out.push(...a, ...b, ...c, ...a, ...c, ...d);
+  }
+  return new Float32Array(out);
+}
+function meshVAO(data) {
+  const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);
+  gl.enableVertexAttribArray(1); gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 24, 12);
+  gl.bindVertexArray(null);
+  return { vao, count: data.length / 6 };
+}
+// a model matrix: rotation about x, then about y, a uniform scale, then a move to t
+function placeAt(t, rx, ry, k) {
+  const cx = Math.cos(rx), sx = Math.sin(rx), cy = Math.cos(ry), sy = Math.sin(ry);
+  return [cy * k, 0, -sy * k, 0, sy * sx * k, cx * k, cy * sx * k, 0, sy * cx * k, -sx * k, cy * cx * k, 0, t[0], t[1], t[2], 1];
+}
+let meshObjs = null;
+function meshObjects() {
+  if (meshObjs) return meshObjs;
+  const zOf = (dk) => -dk * NP * ZS;
+  meshObjs = [
+    // a sphere stands in for the monkey head until its mesh is exported from the paper's scene
+    { geo: meshVAO(sphereGeo(0.28, 48)), m: placeAt([0.4, 0.2, zOf(0.42)], 0, 0, 1), col: [0.66, 0.32, 0.25] },
+    { geo: meshVAO(torusGeo(0.4, 0.13, 96, 32)), m: placeAt([-0.3, -0.12, zOf(MESH.d[1])], 0.4, -0.6, 1), col: [0.36, 0.72, 0.86] }
+  ];
+  return meshObjs;
+}
+function meshScene() {
+  return { kind: 'mesh', real: true, perView: true, nl: 64, targets: [{ d: MESH.d[0], name: NAMES.monkey }, { d: MESH.d[1], name: NAMES.torus }],
+    sky: true, grow: 1.6, walk: [0, 1], dMin: 0.2, dMax: 0.95, za: 0, zb: -NP * ZS, tol: 0.03, lo: MESH.lo, hi: MESH.hi };
+}
+let capFBO = null, capRB = null;
+// the lens array capture: every view rendered into its tile of the mosaic, colour and depth together
+function captureMeshes(sc) {
+  const S = NL * NP, objs = meshObjects(), c = (NP - 1) / 2;
+  for (const t of [tex, depTex]) { gl.bindTexture(gl.TEXTURE_2D, t); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, S, S, 0, gl.RGBA, gl.UNSIGNED_BYTE, null); }
+  if (!capFBO) { capFBO = gl.createFramebuffer(); capRB = gl.createRenderbuffer(); }
+  gl.bindRenderbuffer(gl.RENDERBUFFER, capRB); gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, S, S);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, capFBO);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT1, gl.TEXTURE_2D, depTex, 0);
+  gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, capRB);
+  gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.COLOR_ATTACHMENT1]);
+  gl.viewport(0, 0, S, S);
+  gl.clearBufferfv(gl.COLOR, 0, [...MESH.sky, 1]); gl.clearBufferfv(gl.COLOR, 1, [1, 1, 1, 1]);
+  gl.clearDepth(1); gl.clear(gl.DEPTH_BUFFER_BIT);
+  gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LESS); gl.disable(gl.BLEND);
+  gl.useProgram(CP.p);
+  gl.uniform1f(CP.u.uNL, NL); gl.uniform1f(CP.u.uW, W); gl.uniform1f(CP.u.uNPZS, NP * ZS);
+  gl.uniform1f(CP.u.uLo, sc.lo); gl.uniform1f(CP.u.uHi, sc.hi); gl.uniform3fv(CP.u.uL, MESH_LIGHT);
+  for (let vy = 0; vy < NP; vy++) for (let vx = 0; vx < NP; vx++) {
+    gl.viewport(vx * NL, vy * NL, NL, NL); gl.uniform2f(CP.u.uUo, vx - c, vy - c);
+    for (const o of objs) {
+      gl.uniformMatrix4fv(CP.u.uM, false, o.m); gl.uniform3fv(CP.u.uCol, o.col);
+      gl.bindVertexArray(o.geo.vao); gl.drawArrays(gl.TRIANGLES, 0, o.geo.count);
+    }
+  }
+  gl.bindVertexArray(null); gl.disable(gl.DEPTH_TEST);
+  // the depth, also on the CPU for the clicks that pick a depth
+  gl.readBuffer(gl.COLOR_ATTACHMENT1);
+  const data = new Uint8Array(S * S * 4); gl.readPixels(0, 0, S, S, gl.RGBA, gl.UNSIGNED_BYTE, data);
+  depA = { w: S, data };
+  gl.readBuffer(gl.COLOR_ATTACHMENT0); gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  hasImage = true; request();
+}
+function drawMeshes(alpha) {
+  gl.useProgram(MP.p); gl.uniformMatrix4fv(MP.u.uVP, false, VP); gl.uniform3fv(MP.u.uL, MESH_LIGHT); gl.uniform1f(MP.u.uAlpha, alpha);
+  gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LESS);
+  if (alpha < 1) { gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); }
+  for (const o of meshObjects()) {
+    gl.uniformMatrix4fv(MP.u.uM, false, o.m); gl.uniform3fv(MP.u.uCol, o.col);
+    gl.bindVertexArray(o.geo.vao); gl.drawArrays(gl.TRIANGLES, 0, o.geo.count);
+  }
+  gl.bindVertexArray(null); gl.disable(gl.BLEND); gl.disable(gl.DEPTH_TEST);
 }
 let scene = blenderScene();
 
@@ -1215,6 +1352,7 @@ depth.addEventListener('input', () => {
 
 /* ================= the sample's view mosaic goes to the GPU ================= */
 function uploadAtlas(source) {
+  if (typeof source === 'function') { source(); return; }
   gl.bindTexture(gl.TEXTURE_2D, tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
   hasImage = true; request();
@@ -1288,7 +1426,12 @@ function loadLightField(viewsURL, depURL, make, line, mode) {
   views.onerror = dep.onerror = () => { if (!failed) { failed = true; loadFailed(me); } };
   views.src = viewsURL; dep.src = depURL;
 }
-const loadScene = (mode) => loadLightField('/img/lab-blender-views.webp', '/img/lab-blender-depth.png', blenderScene, 'scene', mode);
+const loadScene = (mode) => {
+  if (!MP) { loadLightField('/img/lab-blender-views.webp', '/img/lab-blender-depth.png', blenderScene, 'scene', mode); return; }
+  // nothing to download: the views are rendered from the meshes on the next frame
+  const me = beginLoad(mode);
+  requestAnimationFrame(() => { if (me === loadSeq) { const sc = meshScene(); useLayers({ atlas: () => captureMeshes(sc), scene: sc, line: 'scene' }, mode); } });
+};
 const loadImg = (src) => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
 let layTex = null, layATex = null, layA = null, depA = null;
 /* samples behind sc.cut (shift per view step) become background, so nothing behind the kept objects is
