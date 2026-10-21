@@ -621,7 +621,7 @@ function camera(asp, now) {
   // the oblique view stands beside the camera body, on its left, and looks through the lens array at
   // the scene: light then travels left to right (object, lens array, sensor) as in the diagram beside
   // the robot, and objects at different depths stand apart instead of lining up behind one another
-  const eObl = small ? [-2.0 + ox, 1.2 + oy, 4.6] : [-3.9 + ox, 1.25 + oy, 2.7];
+  const eObl = small ? [-3.6 + ox, 1.2 + oy, 3.0] : [-3.9 + ox, 1.25 + oy, 2.7];
   // on phones the dialogue covers more of the stage, so the side view aims lower to lift the scene
   const tObl = [0, small ? -0.5 : -0.1, -0.9];
   const eFr = [ox * 0.9, lift + oy * 0.9, ZS + fit];
