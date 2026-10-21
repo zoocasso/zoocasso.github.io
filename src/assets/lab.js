@@ -926,8 +926,23 @@ uniform vec3 uCol, uL; in vec3 vN; in float vDz;
 layout(location = 0) out vec4 oCol; layout(location = 1) out vec4 oDep;
 ${SHADE}
 void main(){ oCol = vec4(shade(uCol, vN, uL), 1.); float z = clamp(vDz, 0., .99); oDep = vec4(z, z, z, 1.); }`;
-let MP = null, CP = null;
-try { MP = prog(MV, MF); CP = prog(CV, CF); } catch (err) { MP = null; }
+// the views are rendered SS times larger and averaged down, so their edges are smooth as in a render;
+// a texel's depth is the nearest surface among its samples
+const SS = 3;
+const DF = `#version 300 es
+precision highp float;
+uniform sampler2D uC, uZ; uniform int uSS;
+layout(location = 0) out vec4 oCol; layout(location = 1) out vec4 oDep;
+void main(){
+  ivec2 p = ivec2(gl_FragCoord.xy) * uSS; vec3 c = vec3(0.); float z = 1.;
+  for (int j = 0; j < 4; j++) for (int i = 0; i < 4; i++) {
+    if (i >= uSS || j >= uSS) continue;
+    c += texelFetch(uC, p + ivec2(i, j), 0).rgb; z = min(z, texelFetch(uZ, p + ivec2(i, j), 0).r);
+  }
+  oCol = vec4(c / float(uSS * uSS), 1.); oDep = vec4(z, z, z, 1.);
+}`;
+let MP = null, CP = null, DP = null;
+try { MP = prog(MV, MF); CP = prog(CV, CF); DP = prog(QV, DF); } catch (err) { MP = null; }
 function torusGeo(R0, r, nu, nv) {
   const out = [], at = (i, j) => {
     const a = i / nu * 2 * Math.PI, b = j / nv * 2 * Math.PI, ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b);
@@ -978,19 +993,25 @@ function meshScene() {
   return { kind: 'mesh', real: true, perView: true, nl: 64, targets: [{ d: MESH.d[0], name: NAMES.monkey }, { d: MESH.d[1], name: NAMES.torus }],
     sky: true, grow: 1.6, walk: [0, 1], dMin: 0.2, dMax: 1.0, za: 0, zb: -NP * ZS, tol: 0.03, lo: MESH.lo, hi: MESH.hi };
 }
-let capFBO = null, capRB = null;
+let capFBO = null, outFBO = null;
+function rawTex(t, w, hh) {
+  gl.bindTexture(gl.TEXTURE_2D, t);
+  for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.NEAREST], [gl.TEXTURE_MAG_FILTER, gl.NEAREST], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, hh, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+}
 // the lens array capture: every view rendered into its tile of the mosaic, colour and depth together
 function captureMeshes(sc) {
-  const S = NL * NP, objs = meshObjects(), c = (NP - 1) / 2;
+  const S = NL * NP, B = S * SS, T = NL * SS, objs = meshObjects(), c = (NP - 1) / 2;
   for (const t of [tex, depTex]) { gl.bindTexture(gl.TEXTURE_2D, t); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, S, S, 0, gl.RGBA, gl.UNSIGNED_BYTE, null); }
-  if (!capFBO) { capFBO = gl.createFramebuffer(); capRB = gl.createRenderbuffer(); }
-  gl.bindRenderbuffer(gl.RENDERBUFFER, capRB); gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, S, S);
-  gl.bindFramebuffer(gl.FRAMEBUFFER, capFBO);
-  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT1, gl.TEXTURE_2D, depTex, 0);
-  gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, capRB);
+  if (!capFBO) capFBO = { fb: gl.createFramebuffer(), col: gl.createTexture(), dep: gl.createTexture(), rb: gl.createRenderbuffer() };
+  rawTex(capFBO.col, B, B); rawTex(capFBO.dep, B, B);
+  gl.bindRenderbuffer(gl.RENDERBUFFER, capFBO.rb); gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, B, B);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, capFBO.fb);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, capFBO.col, 0);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT1, gl.TEXTURE_2D, capFBO.dep, 0);
+  gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, capFBO.rb);
   gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.COLOR_ATTACHMENT1]);
-  gl.viewport(0, 0, S, S);
+  gl.viewport(0, 0, B, B);
   gl.clearBufferfv(gl.COLOR, 0, [...MESH.sky, 1]); gl.clearBufferfv(gl.COLOR, 1, [1, 1, 1, 1]);
   gl.clearDepth(1); gl.clear(gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LESS); gl.disable(gl.BLEND);
@@ -998,13 +1019,26 @@ function captureMeshes(sc) {
   gl.uniform1f(CP.u.uNL, NL); gl.uniform1f(CP.u.uW, W); gl.uniform1f(CP.u.uNPZS, NP * ZS);
   gl.uniform1f(CP.u.uLo, sc.lo); gl.uniform1f(CP.u.uHi, sc.hi); gl.uniform3fv(CP.u.uL, MESH_LIGHT);
   for (let vy = 0; vy < NP; vy++) for (let vx = 0; vx < NP; vx++) {
-    gl.viewport(vx * NL, vy * NL, NL, NL); gl.uniform2f(CP.u.uUo, vx - c, vy - c);
+    gl.viewport(vx * T, vy * T, T, T); gl.uniform2f(CP.u.uUo, vx - c, vy - c);
     for (const o of objs) {
       gl.uniformMatrix4fv(CP.u.uM, false, o.m); gl.uniform3fv(CP.u.uCol, o.col);
       gl.bindVertexArray(o.geo.vao); gl.drawArrays(gl.TRIANGLES, 0, o.geo.count);
     }
   }
   gl.bindVertexArray(null); gl.disable(gl.DEPTH_TEST);
+  // averaged down into the mosaic the lab reads
+  if (!outFBO) outFBO = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, outFBO);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT1, gl.TEXTURE_2D, depTex, 0);
+  gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.COLOR_ATTACHMENT1]);
+  gl.viewport(0, 0, S, S);
+  gl.useProgram(DP.p);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, capFBO.col); gl.uniform1i(DP.u.uC, 0);
+  gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, capFBO.dep); gl.uniform1i(DP.u.uZ, 1);
+  gl.uniform1i(DP.u.uSS, SS);
+  gl.bindVertexArray(emptyVAO); gl.drawArrays(gl.TRIANGLES, 0, 3); gl.bindVertexArray(null);
+  gl.activeTexture(gl.TEXTURE0);
   // the depth, also on the CPU for the clicks that pick a depth
   gl.readBuffer(gl.COLOR_ATTACHMENT1);
   const data = new Uint8Array(S * S * 4); gl.readPixels(0, 0, S, S, gl.RGBA, gl.UNSIGNED_BYTE, data);
