@@ -895,7 +895,9 @@ function blenderScene() {
    with dk = -z / (NP ZS) the shift per view step. Each of the NP x NP views is drawn into its tile of a
    mosaic, with its depth (dk, scaled to lo ... hi) in a second target: the same views + depth the rest of
    the lab reads for a rendered light field. */
-const MESH = { lo: 0.15, hi: 1.05, d: [0.33, 0.75], sky: [16 / 255, 17 / 255, 40 / 255] };
+// the monkey head stands in front of the torus, a little to its left: it hides part of the torus both from
+// the lens array and from the side view the scene opens with
+const MESH = { lo: 0.15, hi: 1.05, d: [0.3, 0.85], sky: [16 / 255, 17 / 255, 40 / 255] };
 const MESH_LIGHT = (() => { const v = [-0.45, 0.6, 0.66], n = Math.hypot(...v); return v.map((x) => x / n); })();
 const SHADE = 'vec3 shade(vec3 c, vec3 n, vec3 l){ return c * (.3 + .7 * max(dot(normalize(n), l), 0.)); }';
 const MV = `#version 300 es
@@ -966,14 +968,14 @@ function meshObjects() {
   const zOf = (dk) => -dk * NP * ZS;
   meshObjs = [
     // a sphere stands in for the monkey head until its mesh is exported from the paper's scene
-    { geo: meshVAO(sphereGeo(0.28, 48)), m: placeAt([0.4, 0.2, zOf(0.42)], 0, 0, 1), col: [0.66, 0.32, 0.25] },
-    { geo: meshVAO(torusGeo(0.4, 0.13, 96, 32)), m: placeAt([-0.3, -0.12, zOf(MESH.d[1])], 0.4, -0.6, 1), col: [0.36, 0.72, 0.86] }
+    { geo: meshVAO(sphereGeo(0.28, 48)), m: placeAt([-0.25, 0.1, zOf(0.35)], 0, 0, 1), col: [0.66, 0.32, 0.25] },
+    { geo: meshVAO(torusGeo(0.4, 0.13, 96, 32)), m: placeAt([0.25, -0.1, zOf(MESH.d[1])], 0.4, -0.6, 1), col: [0.36, 0.72, 0.86] }
   ];
   return meshObjs;
 }
 function meshScene() {
   return { kind: 'mesh', real: true, perView: true, nl: 64, targets: [{ d: MESH.d[0], name: NAMES.monkey }, { d: MESH.d[1], name: NAMES.torus }],
-    sky: true, grow: 1.6, walk: [0, 1], dMin: 0.2, dMax: 0.95, za: 0, zb: -NP * ZS, tol: 0.03, lo: MESH.lo, hi: MESH.hi };
+    sky: true, grow: 1.6, walk: [0, 1], dMin: 0.2, dMax: 1.0, za: 0, zb: -NP * ZS, tol: 0.03, lo: MESH.lo, hi: MESH.hi };
 }
 let capFBO = null, capRB = null;
 // the lens array capture: every view rendered into its tile of the mosaic, colour and depth together
