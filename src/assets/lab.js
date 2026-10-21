@@ -899,8 +899,9 @@ function blenderScene() {
 // the monkey head stands in front of the torus, a little to its left: it hides part of the torus both from
 // the lens array and from the side view the scene opens with
 const MESH = { lo: 0.15, hi: 1.05, d: [0.3, 0.85], sky: [16 / 255, 17 / 255, 40 / 255] };
-const MESH_LIGHT = (() => { const v = [-0.45, 0.6, 0.66], n = Math.hypot(...v); return v.map((x) => x / n); })();
-const SHADE = 'vec3 shade(vec3 c, vec3 n, vec3 l){ return c * (.3 + .7 * max(dot(normalize(n), l), 0.)); }';
+// as in the paper's scene: a key light from the upper right, in front of the objects, and a weaker fill from the left
+const MESH_LIGHT = (() => { const v = [0.5, 0.55, 0.65], n = Math.hypot(...v); return v.map((x) => x / n); })();
+const SHADE = 'vec3 shade(vec3 c, vec3 n, vec3 l){ vec3 m = normalize(n); return c * (.2 + .65 * max(dot(m, l), 0.) + .25 * max(dot(m, normalize(vec3(-.8, .15, .5))), 0.)); }';
 const MV = `#version 300 es
 layout(location = 0) in vec3 aPos; layout(location = 1) in vec3 aNrm;
 uniform mat4 uVP, uM; out vec3 vN;
@@ -965,13 +966,34 @@ function sphereGeo(r, n) {
   }
   return new Float32Array(out);
 }
-function meshVAO(data) {
+function meshVAO(data, idx) {
   const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
   gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
   gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);
   gl.enableVertexAttribArray(1); gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 24, 12);
+  if (idx) { gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW); }
   gl.bindVertexArray(null);
-  return { vao, count: data.length / 6 };
+  return { vao, count: idx ? idx.length : data.length / 6, indexed: !!idx };
+}
+const drawGeo = (g) => { gl.bindVertexArray(g.vao); if (g.indexed) gl.drawElements(gl.TRIANGLES, g.count, gl.UNSIGNED_SHORT, 0); else gl.drawArrays(gl.TRIANGLES, 0, g.count); };
+/* the monkey head and the torus of the ICCAS 2026 scene (exported from the paper's Blender script, packed
+   by tools/lab_models.py): each object's rotation is in its vertices, in metres; the lab places them */
+let modelLoad = null;
+const loadModels = () => modelLoad || (modelLoad = fetch('/img/lab-objects.bin').then((r) => (r.ok ? r.arrayBuffer() : null)).then(parseModels).catch(() => null));
+function parseModels(buf) {
+  if (!buf || buf.byteLength < 12 || String.fromCharCode(...new Uint8Array(buf, 0, 4)) !== 'LABM') return null;
+  const dv = new DataView(buf), n = dv.getUint32(8, true), al = (x) => (x + 3) & ~3, out = [];
+  let o = 12;
+  for (let k = 0; k < n; k++) {
+    const nv = dv.getUint32(o, true), ni = dv.getUint32(o + 4, true), sc = dv.getFloat32(o + 8, true); o += 12;
+    const p16 = new Int16Array(buf, o, nv * 3); o += al(nv * 6);
+    const n8 = new Int8Array(buf, o, nv * 3); o += al(nv * 3);
+    const idx = new Uint16Array(buf, o, ni); o += al(ni * 2);
+    const data = new Float32Array(nv * 6);
+    for (let i = 0; i < nv; i++) for (let c = 0; c < 3; c++) { data[i * 6 + c] = p16[i * 3 + c] / 32767 * sc; data[i * 6 + 3 + c] = n8[i * 3 + c] / 127; }
+    out.push({ data, idx });
+  }
+  return out.length >= 2 ? out : null;
 }
 // a model matrix: rotation about x, then about y, a uniform scale, then a move to t
 function placeAt(t, rx, ry, k) {
@@ -979,13 +1001,19 @@ function placeAt(t, rx, ry, k) {
   return [cy * k, 0, -sy * k, 0, sy * sx * k, cx * k, cy * sx * k, 0, sy * cx * k, -sx * k, cy * cx * k, 0, t[0], t[1], t[2], 1];
 }
 let meshObjs = null;
-function meshObjects() {
+// models: the paper's meshes, or null for stand-ins (a sphere and a torus) when the file cannot be loaded
+function meshObjects(models) {
   if (meshObjs) return meshObjs;
   const zOf = (dk) => -dk * NP * ZS;
-  meshObjs = [
-    // a sphere stands in for the monkey head until its mesh is exported from the paper's scene
-    { geo: meshVAO(sphereGeo(0.28, 48)), m: placeAt([-0.25, 0.1, zOf(0.35)], 0, 0, 1), col: [0.66, 0.32, 0.25] },
-    { geo: meshVAO(torusGeo(0.4, 0.13, 96, 32)), m: placeAt([0.25, -0.1, zOf(MESH.d[1])], 0.4, -0.6, 1), col: [0.36, 0.72, 0.86] }
+  // sizes as the paper's camera saw them: the monkey head at 0.396 m and the torus at 0.636 m, scaled by
+  // distance so they keep their apparent sizes (the lab's views are parallel projections)
+  const K = 6.36, near = [-0.25, 0.1, zOf(0.35)], far = [0.25, -0.1, zOf(MESH.d[1])], red = [0.72, 0.33, 0.27], cyan = [0.33, 0.7, 0.84];
+  meshObjs = models ? [
+    { geo: meshVAO(models[0].data, models[0].idx), m: placeAt(near, 0, 0, K / 0.396), col: red },
+    { geo: meshVAO(models[1].data, models[1].idx), m: placeAt(far, 0, 0, K / 0.636), col: cyan }
+  ] : [
+    { geo: meshVAO(sphereGeo(0.28, 48)), m: placeAt(near, 0, 0, 1), col: red },
+    { geo: meshVAO(torusGeo(0.4, 0.13, 96, 32)), m: placeAt(far, 0.4, -0.6, 1), col: cyan }
   ];
   return meshObjs;
 }
@@ -1022,7 +1050,7 @@ function captureMeshes(sc) {
     gl.viewport(vx * T, vy * T, T, T); gl.uniform2f(CP.u.uUo, vx - c, vy - c);
     for (const o of objs) {
       gl.uniformMatrix4fv(CP.u.uM, false, o.m); gl.uniform3fv(CP.u.uCol, o.col);
-      gl.bindVertexArray(o.geo.vao); gl.drawArrays(gl.TRIANGLES, 0, o.geo.count);
+      drawGeo(o.geo);
     }
   }
   gl.bindVertexArray(null); gl.disable(gl.DEPTH_TEST);
@@ -1053,7 +1081,7 @@ function drawMeshes(alpha) {
   if (alpha < 1) { gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); }
   for (const o of meshObjects()) {
     gl.uniformMatrix4fv(MP.u.uM, false, o.m); gl.uniform3fv(MP.u.uCol, o.col);
-    gl.bindVertexArray(o.geo.vao); gl.drawArrays(gl.TRIANGLES, 0, o.geo.count);
+    drawGeo(o.geo);
   }
   gl.bindVertexArray(null); gl.disable(gl.BLEND); gl.disable(gl.DEPTH_TEST);
 }
@@ -1465,9 +1493,13 @@ function loadLightField(viewsURL, depURL, make, line, mode) {
 }
 const loadScene = (mode) => {
   if (!MP) { loadLightField('/img/lab-blender-views.webp', '/img/lab-blender-depth.png', blenderScene, 'scene', mode); return; }
-  // nothing to download: the views are rendered from the meshes on the next frame
+  // only the meshes are downloaded; the views are rendered from them
   const me = beginLoad(mode);
-  requestAnimationFrame(() => { if (me === loadSeq) { const sc = meshScene(); useLayers({ atlas: () => captureMeshes(sc), scene: sc, line: 'scene' }, mode); } });
+  loadModels().then((models) => {
+    if (me !== loadSeq) return;
+    meshObjects(models);
+    const sc = meshScene(); useLayers({ atlas: () => captureMeshes(sc), scene: sc, line: 'scene' }, mode);
+  });
 };
 const loadImg = (src) => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
 let layTex = null, layATex = null, layA = null, depA = null;
