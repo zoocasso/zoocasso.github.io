@@ -1,6 +1,5 @@
 /* Lens array lab: a planar image is captured through a pinhole array (simulated), rearranged with RIM,
-   and reconstructed. Rendering is WebGL2; music and sound effects are synthesized with Web Audio, and the robot's
-   Japanese lines are short clips made once with VOICEVOX (tools/voice.py). */
+   and reconstructed. Rendering is WebGL2; music, sound effects and the robot voice are synthesized with Web Audio. */
 (() => {
 'use strict';
 const root = document.getElementById('lab');
@@ -17,12 +16,10 @@ const NL_SIM = small ? 32 : 48, NL_REAL = small ? 64 : 128, VIEWS = NP * NP;
 let NL = NL_SIM, R = NL * NP, COUNT = R * R;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fmt = (n) => n.toLocaleString(lang === 'ko' ? 'ko-KR' : 'en-US');
-// the build's asset version, so the voice clips are fetched fresh after each change
-const VQ = (document.currentScript && new URL(document.currentScript.src).search) || '';
 
 /* ================= sound: everything is synthesized here ================= */
 const Snd = (() => {
-  let ctx = null, master, music, sfx, voice, noiseBuf = null, on = false, nextT = 0, step = 0, loop = 0, timer = 0, room = false, speech = null;
+  let ctx = null, master, music, sfx, voice, noiseBuf = null, on = false, nextT = 0, step = 0, loop = 0, timer = 0, room = false;
   const midi = (n) => 440 * Math.pow(2, (n - 69) / 12);
   function init() {
     if (ctx) return;
@@ -139,7 +136,7 @@ const Snd = (() => {
     },
     disable() {
       if (!ctx) return;
-      this.hush(); on = false;
+      on = false;
       const t = ctx.currentTime;
       master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(master.gain.value, t); master.gain.linearRampToValueAtTime(0, t + 0.3);
       setTimeout(() => { if (!on && ctx) ctx.suspend(); }, 400);
@@ -187,17 +184,7 @@ const Snd = (() => {
       const k = (ch.charCodeAt(0) * 7) % 9 - 4;
       tone('square', 520 * Math.pow(2, k / 12), ctx.currentTime, 0.006, 0.09, 0.05, voice, 1900);
     },
-    ui() { if (live()) tone('sine', 1320, ctx.currentTime, 0.003, 0.05, 0.06, sfx); },
-    decode(buf) { init(); return ctx ? ctx.decodeAudioData(buf) : Promise.reject(new Error('no audio')); },
-    // a spoken line over the voice bus; returns its length in seconds, or 0 when nothing plays
-    speak(clip) {
-      this.hush();
-      if (!live() || !clip) return 0;
-      const s = ctx.createBufferSource(), g = ctx.createGain();
-      s.buffer = clip; g.gain.value = 1.6; s.connect(g); g.connect(voice); s.start(); speech = s;
-      return clip.duration;
-    },
-    hush() { if (speech) { try { speech.stop(); } catch (e) { /* already ended */ } speech = null; } }
+    ui() { if (live()) tone('sine', 1320, ctx.currentTime, 0.003, 0.05, 0.06, sfx); }
   };
 })();
 
@@ -289,52 +276,31 @@ const FOCUS = [
   (n) => [`その奥の${n.jp}まで。`, { ko: `그 뒤의 ${n.ko}까지.`, en: `On to the ${n.en} behind it.` }]
 ];
 const ej = q('.dialog .jp'), ek = q('.dialog .ko'), liveEl = q('[data-live]');
-/* the voice: assets/voice/index.json maps each Japanese line to its clip. The clips load once sound is on;
-   a line whose clip is missing, or slow to arrive, is typed with the blips instead */
-const Voice = (() => {
-  let map = null, loading = null;
-  const cache = new Map();
-  const load = () => loading || (loading = fetch('/assets/voice/index.json' + VQ).then((r) => (r.ok ? r.json() : null)).then((j) => { map = j; }).catch(() => {}));
-  function clip(jp) {
-    if (!map || !map[jp]) return Promise.resolve(null);
-    if (!cache.has(jp)) cache.set(jp, fetch('/assets/voice/' + map[jp] + VQ).then((r) => r.arrayBuffer()).then((b) => Snd.decode(b)).catch(() => null));
-    return cache.get(jp);
-  }
-  return { clip, prefetch() { load().then(() => { if (map) Object.keys(map).forEach(clip); }); } };
-})();
-let sayTimer = 0, sayId = 0;
+let sayTimer = 0;
 function sayLine(line, after) {
-  const jp = line[0], sub = line[1][lang], me = ++sayId;
+  const jp = line[0], sub = line[1][lang];
   liveEl.textContent = sub;
-  clearInterval(sayTimer); Snd.hush();
+  clearInterval(sayTimer);
   // the subtitle shows in full as the line starts, like a film subtitle, while the Japanese is typed out
   ek.textContent = sub;
-  if (reduce) { ej.textContent = jp; if (Snd.on) Voice.clip(jp).then((c) => { if (me === sayId) Snd.speak(c); }); if (after) after(); return; }
+  if (reduce) { ej.textContent = jp; if (after) after(); return; }
   ek.classList.remove('fade'); void ek.offsetWidth; ek.classList.add('fade');
-  ej.textContent = '';
-  const voiced = Snd.on ? Promise.race([Voice.clip(jp), new Promise((r) => setTimeout(r, 350))]) : Promise.resolve(null);
-  voiced.then((c) => { if (me === sayId) typeOut(jp, sub, c, after); });
-}
-function typeOut(jp, sub, clip, after) {
-  // with a clip, the Japanese is typed over its length; without, at 48 ms a character with a blip each.
-  // Afterwards it holds as long as typing the subtitle used to take, and never ends before the voice
-  const dur = Snd.speak(clip), tick = dur ? Math.min(140, Math.max(28, dur * 920 / jp.length)) : 48;
-  const endAt = performance.now() + dur * 1000;
-  let i = 0, hold = Math.ceil(sub.length / 2) * 48 / tick;
+  // after the Japanese ends, hold as long as typing the subtitle used to take, so the pacing stays the same
+  let i = 0, hold = Math.ceil(sub.length / 2); ej.textContent = '';
   const rest = Face.mode === 'talk' ? 'idle' : Face.mode;
   if (rest !== 'work') Face.set('talk');
   sayTimer = setInterval(() => {
     if (i < jp.length) {
       const ch = jp[i++]; ej.textContent = jp.slice(0, i);
-      if (!/[\s、。！？…]/.test(ch)) { if (!dur) Snd.blip(ch); Face.flap(); }
+      if (!/[\s、。！？…]/.test(ch)) { Snd.blip(ch); Face.flap(); }
       if (i === jp.length && Face.mode === 'talk') Face.set(rest);
-    } else if (hold > 0 || performance.now() < endAt) {
+    } else if (hold > 0) {
       hold--;
     } else {
       clearInterval(sayTimer);
       if (after) after();
     }
-  }, tick);
+  }, 48);
 }
 const say = (key, after) => sayLine(typeof L[key] === 'function' ? L[key]() : L[key], after);
 
@@ -1430,7 +1396,7 @@ function soundUI() {
 }
 function startSound() {
   if (!wantSound || Snd.on) return;
-  Snd.enable().then((ok) => { if (ok) { Snd.chime(); Voice.prefetch(); } soundUI(); });
+  Snd.enable().then((ok) => { if (ok) Snd.chime(); soundUI(); });
 }
 function beginStory() {
   if (!waiting) return;
