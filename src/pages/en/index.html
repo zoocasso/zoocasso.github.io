@@ -55,7 +55,6 @@
       <output for="lab-depth" data-depth-out>–</output>
     </div>
     <a class="lab-how" href="/en/research/rim/#lab">How it works<span aria-hidden="true">→</span></a>
-    <span class="sound-hint needs-gl" data-sound-hint>Click anywhere for sound</span>
     <button class="sound needs-gl" type="button" data-sound>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path class="x" d="M17 9l5 6M22 9l-5 6" style="display:none"></path><path class="w" d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"></path></svg>
       <span class="label">Sound off</span>
@@ -80,23 +79,6 @@
 <section class="section" aria-labelledby="h-work">
   <header><h2 id="h-work">Work</h2><a class="more" href="/en/work/">All work</a></header>
   <ol class="log work">
-    <li><a class="row" href="/en/work/kisti/">
-      <span class="when">{{f:kisti_period}}<br>Vision Inside, KISTI project</span>
-      <div><h3>Data collection and loading for a KISTI public R&amp;D platform</h3>
-        <p>I built crawlers for Amazon and Danawa and collectors for the procurement service API, and loaded everything into one remote database; I also proposed moving from crawling shopping sites to APIs, which was adopted. On top of that data I shipped scheduled model runs and a FastAPI admin interface.</p>
-        <span class="key"><b>{{f:kisti_rows}}</b>; collection, loading and serving were mine</span></div>
-      <span class="flow" aria-label="Pipeline"><span>Crawlers and APIs</span><i></i><span class="core">Remote DB (MySQL)</span><i></i><span>Scheduled model runs</span><i></i><span>FastAPI</span></span>
-    </a></li>
-    <li class="compact"><a class="row" href="/en/work/genomics/">
-      <span class="when">{{f:bio_period}}<br>Vision Inside, internal project</span>
-      <div><h3>Backend for genomic variant annotation and risk reports</h3>
-        <span class="key">Four-stage SQL annotation over public references, FastAPI JSON API, Docker; backend and pipeline developer</span></div>
-    </a><a class="code" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener">Code on GitHub</a></li>
-    <li class="compact"><a class="row" href="/en/work/wjmax/">
-      <span class="when">{{f:wjmax_period}}<br>Side project, team of two</span>
-      <div><h3>Server for WJMax, a community rhythm game</h3>
-        <span class="key">Up to <b>{{f:wjmax_peak}}</b> concurrent players during updates; FastAPI, EC2, RDS</span></div>
-    </a><a class="code" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">Code on GitHub (rewritten 2026)</a></li>
     <li><a class="row" href="/en/work/hitachi/">
       <span class="when">Apr 2025 – now<br>Kyutech lab, research assistant (part-time)</span>
       <div><h3>Image-data pipeline for commissioned research with Hitachi</h3>
@@ -104,6 +86,23 @@
         <span class="key">Design handed over to two junior researchers; deployed on site in the Netherlands, Sep–Oct 2026</span></div>
       <span class="flow" aria-label="Pipeline"><span>Camera control</span><i></i><span>Capture</span><i></i><span class="core">Preprocessing</span><i></i><span>Dataset</span></span>
     </a></li>
+    <li><a class="row" href="/en/work/kisti/">
+      <span class="when">{{f:kisti_period}}<br>Vision Inside, KISTI project</span>
+      <div><h3>Data collection and loading for a KISTI public R&amp;D platform</h3>
+        <p>I built crawlers for Amazon and Danawa and collectors for the procurement service API, and loaded everything into one remote database; I also proposed moving from crawling shopping sites to APIs, which was adopted. On top of that data I shipped scheduled model runs and a FastAPI admin interface.</p>
+        <span class="key"><b>{{f:kisti_rows}}</b>; collection, loading and serving were mine</span></div>
+      <span class="flow" aria-label="Pipeline"><span>Crawlers and APIs</span><i></i><span class="core">Remote DB (MySQL)</span><i></i><span>Scheduled model runs</span><i></i><span>FastAPI</span></span>
+    </a></li>
+    <li class="compact"><a class="row" href="/en/work/wjmax/">
+      <span class="when">{{f:wjmax_period}}<br>Side project, team of two</span>
+      <div><h3>Server for WJMax, a community rhythm game</h3>
+        <span class="key">Up to <b>{{f:wjmax_peak}}</b> concurrent players during updates; FastAPI, EC2, RDS</span></div>
+    </a><a class="code" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">Code on GitHub (rewritten 2026)</a></li>
+    <li class="compact"><a class="row" href="/en/work/genomics/">
+      <span class="when">{{f:bio_period}}<br>Vision Inside, internal project</span>
+      <div><h3>Backend for genomic variant annotation and risk reports</h3>
+        <span class="key">Four-stage SQL annotation over public references, FastAPI JSON API, Docker; backend and pipeline developer</span></div>
+    </a><a class="code" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener">Code on GitHub</a></li>
   </ol>
 </section>
 

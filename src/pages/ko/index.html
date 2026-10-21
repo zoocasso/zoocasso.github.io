@@ -55,7 +55,6 @@
       <output for="lab-depth" data-depth-out>–</output>
     </div>
     <a class="lab-how" href="/research/rim/#lab" aria-label="이 장면은 어떻게 만들었나요"><span class="long">이 장면은 어떻게 만들었나요</span><span class="short">장면 설명</span><span aria-hidden="true">→</span></a>
-    <span class="sound-hint needs-gl" data-sound-hint>화면을 한 번 누르면 소리가 납니다</span>
     <button class="sound needs-gl" type="button" data-sound>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path class="x" d="M17 9l5 6M22 9l-5 6" style="display:none"></path><path class="w" d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"></path></svg>
       <span class="label">소리 끄기</span>
@@ -80,23 +79,6 @@
 <section class="section" aria-labelledby="h-work">
   <header><h2 id="h-work">작업</h2><a class="more" href="/work/">모든 작업 보기</a></header>
   <ol class="log work">
-    <li><a class="row" href="/work/kisti/">
-      <span class="when">{{f:kisti_period}}<br>비전인사이드, KISTI 발주 과제</span>
-      <div><h3>KISTI 공공 R&amp;D 플랫폼의 데이터 수집·적재</h3>
-        <p>Amazon·다나와 크롤러와 조달청 API 수집기를 만들어 원격 DB 한 곳에 적재했고, 쇼핑몰 직접 크롤링을 API 수집으로 바꾸자고 제안해 반영했습니다. 그 데이터로 모델 일괄 실행(배치)과 FastAPI 관리 화면까지 냈습니다.</p>
-        <span class="key"><b>{{f:kisti_rows}}</b>, 수집·적재·서빙 전담</span></div>
-      <span class="flow" aria-label="처리 흐름"><span>크롤러·API 수집</span><i></i><span class="core">원격 DB(MySQL)</span><i></i><span>모델 일괄 실행</span><i></i><span>FastAPI</span></span>
-    </a></li>
-    <li class="compact"><a class="row" href="/work/genomics/">
-      <span class="when">{{f:bio_period}}<br>비전인사이드, 사내 과제</span>
-      <div><h3>유전체 변이 주석·위험도 리포트 백엔드</h3>
-        <span class="key">공개 레퍼런스 4단계 SQL 주석, FastAPI JSON API, Docker 배포. 백엔드·파이프라인 구현</span></div>
-    </a><a class="code" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener">GitHub 코드</a></li>
-    <li class="compact"><a class="row" href="/work/wjmax/">
-      <span class="when">{{f:wjmax_period}}<br>사이드 프로젝트, 2인 팀</span>
-      <div><h3>커뮤니티 리듬게임 WJMax 서버</h3>
-        <span class="key">업데이트 때 최대 <b>{{f:wjmax_peak}}</b> 동시 접속, FastAPI·EC2·RDS</span></div>
-    </a><a class="code" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">GitHub 코드 (2026년 재작성)</a></li>
     <li><a class="row" href="/work/hitachi/">
       <span class="when">2025.04 – 현재<br>규슈공대 연구실, 지원연구원(파트타임)</span>
       <div><h3>히타치 수탁연구 이미지 데이터 파이프라인</h3>
@@ -104,6 +86,23 @@
         <span class="key">후임 연구원 2명에게 설계 인계, 2026년 9~10월 네덜란드 현지 배포</span></div>
       <span class="flow" aria-label="처리 흐름"><span>카메라 제어</span><i></i><span>촬영</span><i></i><span class="core">전처리</span><i></i><span>데이터셋</span></span>
     </a></li>
+    <li><a class="row" href="/work/kisti/">
+      <span class="when">{{f:kisti_period}}<br>비전인사이드, KISTI 발주 과제</span>
+      <div><h3>KISTI 공공 R&amp;D 플랫폼의 데이터 수집·적재</h3>
+        <p>Amazon·다나와 크롤러와 조달청 API 수집기를 만들어 원격 DB 한 곳에 적재했고, 쇼핑몰 직접 크롤링을 API 수집으로 바꾸자고 제안해 반영했습니다. 그 데이터로 모델 일괄 실행(배치)과 FastAPI 관리 화면까지 냈습니다.</p>
+        <span class="key"><b>{{f:kisti_rows}}</b>, 수집·적재·서빙 전담</span></div>
+      <span class="flow" aria-label="처리 흐름"><span>크롤러·API 수집</span><i></i><span class="core">원격 DB(MySQL)</span><i></i><span>모델 일괄 실행</span><i></i><span>FastAPI</span></span>
+    </a></li>
+    <li class="compact"><a class="row" href="/work/wjmax/">
+      <span class="when">{{f:wjmax_period}}<br>사이드 프로젝트, 2인 팀</span>
+      <div><h3>커뮤니티 리듬게임 WJMax 서버</h3>
+        <span class="key">업데이트 때 최대 <b>{{f:wjmax_peak}}</b> 동시 접속, FastAPI·EC2·RDS</span></div>
+    </a><a class="code" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">GitHub 코드 (2026년 재작성)</a></li>
+    <li class="compact"><a class="row" href="/work/genomics/">
+      <span class="when">{{f:bio_period}}<br>비전인사이드, 사내 과제</span>
+      <div><h3>유전체 변이 주석·위험도 리포트 백엔드</h3>
+        <span class="key">공개 레퍼런스 4단계 SQL 주석, FastAPI JSON API, Docker 배포. 백엔드·파이프라인 구현</span></div>
+    </a><a class="code" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener">GitHub 코드</a></li>
   </ol>
 </section>
 

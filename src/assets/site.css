@@ -224,7 +224,6 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
   .lab-tools .sound{order:2;margin-left:auto;min-width:40px;justify-content:center;padding:0}
   .lab-tools .sound .label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .lab-tools .fs{order:3}
-  .lab-tools .sound-hint{order:4;flex-basis:100%}
   .lab-tools .steps{order:5}
   .lab-tools .step{padding:0 5px}
   .lab-how{order:6}
@@ -237,7 +236,6 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 .lab-how .long{display:none}
 .lab-tools .sound .label,.lab-tools .fs .label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .lab-tools .sound,.lab-tools .fs{min-width:40px;justify-content:center}
-.sound-hint{font-size:13px;color:var(--brass-hi)}
 .lab-how{font-size:13px;color:var(--mute);margin-left:auto;display:inline-flex;align-items:center;gap:4px;min-height:40px;text-decoration:none}
 .lab-how:hover{color:var(--paper);text-decoration:underline;text-underline-offset:3px}
 .sound svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}

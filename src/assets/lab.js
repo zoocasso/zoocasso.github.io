@@ -1576,7 +1576,7 @@ if (lytroBtn) lytroBtn.addEventListener('pointerenter', () => { lytroFiles().cat
    or the resume button, starts nothing). If the browser already allows
    sound, the story starts at once; otherwise it waits for that click, so lines changing on their own
    never pull the eye from the introduction beside it. A visitor who turns the sound off is remembered on this device. */
-const soundBtn = q('[data-sound]'), soundHint = q('[data-sound-hint]');
+const soundBtn = q('[data-sound]');
 const soundText = { ko: ['소리 켜기', '소리 끄기'], en: ['Sound on', 'Sound off'] }[lang];
 let wantSound = true;
 try { if (localStorage.getItem('lab-sound') === 'off') wantSound = false; } catch (e) { /* storage unavailable */ }
@@ -1584,7 +1584,6 @@ function soundUI() {
   soundBtn.querySelector('.label').textContent = soundBtn.title = wantSound ? soundText[1] : soundText[0];
   soundBtn.querySelector('.x').style.display = wantSound ? 'none' : '';
   soundBtn.querySelector('.w').style.display = wantSound ? '' : 'none';
-  soundHint.hidden = !(wantSound && !Snd.on);
 }
 function startSound() {
   if (!wantSound || Snd.on) return;
