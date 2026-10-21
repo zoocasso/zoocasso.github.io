@@ -1,4 +1,4 @@
-<!--meta {"title": "Origin point optimization", "description": "Reducing the quantization error of volumetric computational reconstruction (VCR) with origin point optimization, then computing that origin from camera parameters: 25.45 s to 0.31 s on CPU with identical SSIM (ITC-CSCC 2025, 2026). Code public.", "nav": "research"} -->
+<!--meta {"title": "Origin point optimization", "description": "Reducing the quantization error of volumetric computational reconstruction (VCR) with origin point optimization, then computing that origin from camera parameters, so a search over 81 reconstructions becomes one calculation (ITC-CSCC 2025, 2026). Code public.", "nav": "research"} -->
 <div class="doc-head">
   <p class="crumb"><a href="/en/research/">Research</a> / Origin point optimization</p>
   <div class="badges"><span>ITC-CSCC 2025 poster</span><span>ITC-CSCC 2026 oral</span></div>
@@ -34,7 +34,7 @@
     <section id="what" aria-labelledby="h-what">
       <h2 id="h-what">What it does</h2>
       <p>Volumetric computational reconstruction (VCR) builds slices of a 3D scene by shifting elemental images, taken from many viewpoints, by an amount that depends on depth and overlapping them. The images can only move by whole pixels, which causes quantization error and blurs the result.</p>
-      <p>The 2025 paper reduced that error by optimizing the origin point that the overlap is measured from, but finding the best origin meant reconstructing many times, which was slow. The 2026 paper computes the origin directly from the camera parameters, independent of the image. The SSIM of the result is identical to the iterative search; only the time drops.</p>
+      <p>The 2025 paper reduced that error by optimizing the origin point that the overlap is measured from, but finding the best origin meant reconstructing many times, which was slow. The 2026 paper computes the origin directly from the camera parameters, independent of the image. In the paper's experiments it gave the same origin and the same SSIM as the iterative search, and only the time dropped; that is not guaranteed in general.</p>
     </section>
 
     <section id="vcr" aria-labelledby="h-vcr">
@@ -56,7 +56,7 @@
         <div>
           <h3>Proposed: direct calculation</h3>
           <ol><li>Acquire elemental images</li><li>Enter the camera parameters and depth</li><li>Compute the origin with the smallest quantization error</li><li>Run VCR once</li></ol>
-          <p>Only the parameters are used, not the image, so there is no loop. Image quality (SSIM) matches the iterative search.</p>
+          <p>Only the parameters are used, not the image, so there is no loop. In the paper's experiments, image quality (SSIM) matched the iterative search.</p>
         </div>
       </div>
     </section>
@@ -68,13 +68,13 @@
           <caption>9 × 9 elemental images. ITC-CSCC 2026 Tables III and IV. The iterative time is one reconstruction multiplied by the 81 candidate origins</caption>
           <thead><tr><th scope="col">Method</th><th scope="col">Device</th><th scope="col" class="n">Time</th></tr></thead>
           <tbody>
-            <tr><td>Iterative search</td><td>CPU</td><td class="n">25.45 s</td></tr>
+            <tr><td>Iterative search</td><td>CPU</td><td class="n">25.45 s (estimated)</td></tr>
             <tr><td><b>Direct calculation (proposed)</b></td><td>CPU</td><td class="n"><b>0.31 s</b></td></tr>
             <tr><td>Direct calculation (proposed)</td><td>GPU, CuPy, RTX 3090</td><td class="n">{{f:origin_gpu}}</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="muted" style="margin-top:10px;font-size:15px">About 82 times faster on CPU, with the same SSIM as the iterative search.</p>
+      <p class="muted" style="margin-top:10px;font-size:15px">81 reconstructions become 1. The paper measured 0.31 s; the 25.45 s of the iterative search is an estimate, 81 × 0.3142 s for one reconstruction. The origin and SSIM were the same in the paper's experiments, which is not guaranteed in general.</p>
     </section>
 
     <section id="code" aria-labelledby="h-code">
@@ -82,7 +82,7 @@
       <p>A Python release of both papers' methods: <a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">github.com/zoocasso/origin-point-optimization-vcr</a></p>
       <ul>
         <li>Origin calculation (<code>origin.py</code>), VCR (<code>vcr.py</code>), quality metrics and a timing script</li>
-        <li>8 tests, and 10,020 random inputs checked against the original research scripts</li>
+        <li>21 tests, and 10,000 seeded cases checked against the re-implemented research formula</li>
         <li>NumPy and OpenCV; CuPy is optional for the GPU timing. MIT license</li>
       </ul>
     </section>
