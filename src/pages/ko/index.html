@@ -6,7 +6,7 @@
     <p class="lede">비전인사이드에서 {{f:career_len}}({{f:career_span}}, 대리) 동안 데이터 <span class="nw">수집·적재</span> 파이프라인과 백엔드를 만들었고, 지금은 규슈공업대학교 석사과정에서 렌즈 배열 영상의 3D 재구성을 연구합니다.</p>
     <ul class="stack" aria-label="주로 쓰는 기술"><li>Python</li><li>SQL</li><li>FastAPI</li><li>MySQL·MariaDB</li><li>Docker</li><li>AWS</li></ul>
     <p class="status">{{f:status}}</p>
-    <p class="cred">SQLD · 산업기능요원 만기 복무</p>
+    <p class="cred">한경국립대 학사 · SQLD · 산업기능요원 만기 복무</p>
     <div class="ctas">
       <a class="btn primary" href="/files/HyeongjuLee_Resume_KR.pdf">이력서 PDF</a>
       <a class="btn" href="/files/HyeongjuLee_Portfolio_KR.pdf">포트폴리오 PDF</a>
@@ -73,8 +73,8 @@
   <header><h2 id="h-facts">숫자로 보면</h2></header>
   <dl class="facts">
     <div><dt>{{f:kisti_rows}}</dt><dd>KISTI 발주 공공 R&amp;D 플랫폼에 <span class="nw">수집·적재</span>한 <span class="nw">상품·조달</span> 데이터<small>수집·적재·서빙 전담. 2023년 11월 기준, 다나와 리뷰 1,605만 건, 조달 속성 4,192만 건 포함</small></dd></div>
-    <div><dt>{{f:kisti_asin_short}}</dt><dd>Amazon 상품을 상품 ID(ASIN) 기준으로 중복 제거<small>여러 카테고리에 겹쳐 수집되던 같은 상품을 하나로 합쳤습니다 ({{f:kisti_asin}} → {{f:kisti_asin_dedup}})</small></dd></div>
-    <div><dt>{{f:kisti_api}}</dt><dd>쇼핑몰 직접 크롤링을 API 수집으로 바꾸자고 제안해 반영<small>발주처 KISTI와 협의. Amazon은 Rainforest API, 조달청은 공공데이터포털 API로 수집</small></dd></div>
+    <div><dt>2,481개</dt><dd>수집한 다나와 상품 카테고리<small>전체 2,517개 중. Amazon 상품은 ID(ASIN) 기준으로 겹친 것을 합쳐 {{f:kisti_asin}}를 {{f:kisti_asin_dedup}}로 정리</small></dd></div>
+    <div><dt>{{f:kisti_match}}</dt><dd>NTIS 과제와 기업을 키워드로 이은 매칭 (SQL)<small>플랫폼의 과제–기업 매칭 모델을 SQL로 구현해 일괄 실행</small></dd></div>
     <div><dt>{{f:wjmax_peak}}</dt><dd>WJMax 게임 서버가 업데이트 때 받은 최대 동시 접속<small>평균 {{f:wjmax_avg}}. Cloudflare·AWS EC2·RDS로 운영, 2인 팀에서 서버·DB·보안 담당</small></dd></div>
   </dl>
 </section>
@@ -89,22 +89,22 @@
         <span class="key"><b>{{f:kisti_rows}}</b>, 수집·적재·서빙 전담</span></div>
       <span class="flow" aria-label="처리 흐름"><span>크롤러·API 수집</span><i></i><span class="core">원격 DB(MySQL)</span><i></i><span>모델 일괄 실행</span><i></i><span>FastAPI</span></span>
     </a></li>
-    <li><a class="row" href="/work/hitachi/">
-      <span class="when">2025.04 – 현재<br>수탁연구, 파트타임</span>
-      <div><h3>히타치 수탁연구 이미지 데이터 파이프라인</h3>
-        <p>유지보수할 수 없던 기존 코드를 다시 써서, 산업용 머신비전 카메라 제어·촬영부터 학습용 데이터셋 전처리까지 Python 파이프라인으로 만들고 비개발자 연구원용 PyQt GUI를 제공했습니다.</p>
-        <span class="key">후임 2명 리드, 2026년 9~10월 네덜란드 출장·현지 배포</span></div>
-      <span class="flow" aria-label="처리 흐름"><span>카메라 제어</span><i></i><span>촬영</span><i></i><span class="core">전처리</span><i></i><span>데이터셋</span></span>
-    </a></li>
+    <li class="compact"><a class="row" href="/work/genomics/">
+      <span class="when">{{f:bio_period}}<br>비전인사이드, 사내 과제</span>
+      <div><h3>유전체 변이 주석·위험도 리포트 백엔드</h3>
+        <span class="key">공개 레퍼런스 4단계 SQL 주석, FastAPI JSON API, Docker 배포. 백엔드·파이프라인 구현</span></div>
+    </a><a class="code" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener">GitHub 코드</a></li>
     <li class="compact"><a class="row" href="/work/wjmax/">
       <span class="when">{{f:wjmax_period}}<br>사이드 프로젝트, 2인 팀</span>
       <div><h3>커뮤니티 리듬게임 WJMax 서버</h3>
         <span class="key">업데이트 때 최대 <b>{{f:wjmax_peak}}</b> 동시 접속, FastAPI·EC2·RDS</span></div>
-    </a></li>
-    <li class="compact"><a class="row" href="/work/genomics/">
-      <span class="when">{{f:bio_period}}<br>비전인사이드, 사내 과제</span>
-      <div><h3>유전체 변이 주석·위험도 리포트 백엔드</h3>
-        <span class="key"><b>{{f:bio_ref}}</b> 레퍼런스, 백엔드·파이프라인 구현</span></div>
+    </a><a class="code" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">GitHub 코드 (2026년 재작성)</a></li>
+    <li><a class="row" href="/work/hitachi/">
+      <span class="when">2025.04 – 현재<br>규슈공대 연구실, 지원연구원(파트타임)</span>
+      <div><h3>히타치 수탁연구 이미지 데이터 파이프라인</h3>
+        <p>유지보수할 수 없던 기존 코드를 다시 써서, 산업용 머신비전 카메라 제어·촬영부터 학습용 데이터셋 전처리까지 Python 파이프라인으로 만들고 비개발자 연구원용 PyQt GUI를 제공했습니다.</p>
+        <span class="key">후임 연구원 2명에게 설계 인계, 2026년 9~10월 네덜란드 현지 배포</span></div>
+      <span class="flow" aria-label="처리 흐름"><span>카메라 제어</span><i></i><span>촬영</span><i></i><span class="core">전처리</span><i></i><span>데이터셋</span></span>
     </a></li>
   </ol>
 </section>

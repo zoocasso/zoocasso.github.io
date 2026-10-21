@@ -6,7 +6,7 @@
     <p class="lede">{{f:career_len}} at Vision Inside ({{f:career_span}}, assistant manager) building data pipelines and backends. Now a master's student at Kyushu Institute of Technology, researching 3D reconstruction from lens array images.</p>
     <ul class="stack" aria-label="Main tools"><li>Python</li><li>SQL</li><li>FastAPI</li><li>MySQL·MariaDB</li><li>Docker</li><li>AWS</li></ul>
     <p class="status">{{f:status}}</p>
-    <p class="cred">SQLD · Korean military service completed</p>
+    <p class="cred">B.S., Hankyong National Univ. · SQLD · Korean military service completed</p>
     <div class="ctas">
       <a class="btn primary" href="/files/HyeongjuLee_CV_EN.pdf">CV (PDF)</a>
       <a class="btn" href="/files/HyeongjuLee_Portfolio_EN.pdf">Portfolio (PDF)</a>
@@ -73,8 +73,8 @@
   <header><h2 id="h-facts">In numbers</h2></header>
   <dl class="facts">
     <div><dt>{{f:kisti_rows}}</dt><dd>Product and procurement data I collected and loaded for a KISTI public R&amp;D platform<small>Collection, loading and serving were mine. As of November 2023, including 16M Danawa reviews and 42M procurement attribute rows</small></dd></div>
-    <div><dt>{{f:kisti_asin_short}}</dt><dd>Amazon products de-duplicated by product ID (ASIN)<small>The same product had been collected again under several categories ({{f:kisti_asin}} → {{f:kisti_asin_dedup}})</small></dd></div>
-    <div><dt>{{f:kisti_api}}</dt><dd>I proposed collecting through APIs instead of crawling shopping sites, and it was adopted<small>Agreed with the client, KISTI. Amazon through the Rainforest API, procurement data through the public data portal API</small></dd></div>
+    <div><dt>2,481</dt><dd>Danawa product categories collected<small>Out of 2,517. Amazon products listed under several categories were merged by product ID (ASIN), {{f:kisti_asin}} into {{f:kisti_asin_dedup}}</small></dd></div>
+    <div><dt>{{f:kisti_match}}</dt><dd>NTIS projects matched to companies by keyword (SQL)<small>The platform's project–company matching model, built in SQL and run as a batch</small></dd></div>
     <div><dt>{{f:wjmax_peak}}</dt><dd>Peak concurrent players on the WJMax game server during updates<small>{{f:wjmax_avg}} on average. Run on Cloudflare, AWS EC2 and RDS; I handled server, database and security in a team of two</small></dd></div>
   </dl>
 </section>
@@ -89,22 +89,22 @@
         <span class="key"><b>{{f:kisti_rows}}</b>; collection, loading and serving were mine</span></div>
       <span class="flow" aria-label="Pipeline"><span>Crawlers and APIs</span><i></i><span class="core">Remote DB (MySQL)</span><i></i><span>Scheduled model runs</span><i></i><span>FastAPI</span></span>
     </a></li>
-    <li><a class="row" href="/en/work/hitachi/">
-      <span class="when">Apr 2025 – now<br>Commissioned research, part-time</span>
-      <div><h3>Image-data pipeline for commissioned research with Hitachi</h3>
-        <p>I rewrote an unmaintainable inherited codebase into a Python pipeline that runs from machine-vision camera control and capture to model-ready datasets, with a PyQt GUI that non-developer researchers use themselves.</p>
-        <span class="key">Led two junior researchers; deployed on site in the Netherlands, Sep–Oct 2026</span></div>
-      <span class="flow" aria-label="Pipeline"><span>Camera control</span><i></i><span>Capture</span><i></i><span class="core">Preprocessing</span><i></i><span>Dataset</span></span>
-    </a></li>
+    <li class="compact"><a class="row" href="/en/work/genomics/">
+      <span class="when">{{f:bio_period}}<br>Vision Inside, internal project</span>
+      <div><h3>Backend for genomic variant annotation and risk reports</h3>
+        <span class="key">Four-stage SQL annotation over public references, FastAPI JSON API, Docker; backend and pipeline developer</span></div>
+    </a><a class="code" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener">Code on GitHub</a></li>
     <li class="compact"><a class="row" href="/en/work/wjmax/">
       <span class="when">{{f:wjmax_period}}<br>Side project, team of two</span>
       <div><h3>Server for WJMax, a community rhythm game</h3>
         <span class="key">Up to <b>{{f:wjmax_peak}}</b> concurrent players during updates; FastAPI, EC2, RDS</span></div>
-    </a></li>
-    <li class="compact"><a class="row" href="/en/work/genomics/">
-      <span class="when">{{f:bio_period}}<br>Vision Inside, internal project</span>
-      <div><h3>Backend for genomic variant annotation and risk reports</h3>
-        <span class="key"><b>{{f:bio_ref}}</b> of reference data, backend and pipeline developer</span></div>
+    </a><a class="code" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">Code on GitHub (rewritten 2026)</a></li>
+    <li><a class="row" href="/en/work/hitachi/">
+      <span class="when">Apr 2025 – now<br>Kyutech lab, research assistant (part-time)</span>
+      <div><h3>Image-data pipeline for commissioned research with Hitachi</h3>
+        <p>I rewrote an unmaintainable inherited codebase into a Python pipeline that runs from machine-vision camera control and capture to model-ready datasets, with a PyQt GUI that non-developer researchers use themselves.</p>
+        <span class="key">Design handed over to two junior researchers; deployed on site in the Netherlands, Sep–Oct 2026</span></div>
+      <span class="flow" aria-label="Pipeline"><span>Camera control</span><i></i><span>Capture</span><i></i><span class="core">Preprocessing</span><i></i><span>Dataset</span></span>
     </a></li>
   </ol>
 </section>
