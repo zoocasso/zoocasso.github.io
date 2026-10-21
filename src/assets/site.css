@@ -102,7 +102,6 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 .intro .stack{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:14px 0 0;padding:0}
 .intro .stack li{padding:3px 8px;border:1px solid var(--rule);border-radius:3px;background:var(--veil);font-size:13px;line-height:1.4;color:var(--paper)}
 .intro .status{margin:12px 0 0;font-size:15px;color:var(--brass-hi)}
-.intro .cred{margin:4px 0 0;font-size:14px;color:var(--mute)}
 .intro .ctas{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
 .intro .ctas .btn{background:var(--veil)}
 .intro .ctas .btn.primary{background:var(--brass)}
@@ -120,8 +119,6 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 .dialog .ko.fade{animation:subin .35s ease-out}
 @keyframes subin{from{opacity:0}to{opacity:1}}
 /* during the story: a way straight to the result, on the dialogue's top right corner (placed by lab.js) */
-.lab-skip{position:absolute;left:0;bottom:0;transform:translateX(-100%);z-index:3;display:inline-flex;white-space:nowrap;align-items:center;gap:6px;min-height:32px;padding:0 12px;border:1px solid var(--mute);border-radius:3px;background:var(--veil);color:var(--paper);font:inherit;font-size:13.5px;cursor:pointer;animation:subin .4s ease-out}
-.lab-skip:hover{border-color:var(--brass);color:var(--brass-hi)}
 /* once the reconstruction stands, the scene itself can be clicked to focus */
 .lab.pickable canvas.gl{cursor:crosshair}
 .lab:not(.played) [data-reverse]{display:none}
