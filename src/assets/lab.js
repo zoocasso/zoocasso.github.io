@@ -266,7 +266,7 @@ const L = {
   rev: ['逆再生もできます。一対一の並べ替えですから。', { ko: 'RIM은 일대일 재배열이라 픽셀 하나 잃지 않고 요소 영상으로 되돌아갑니다.', en: 'RIM is one-to-one, so the elemental images come back without losing a pixel.' }],
   wait: ['読み込んでいます。少し待ってくださいね。', { ko: '데이터를 불러오는 중이에요. 잠시만 기다려 주세요.', en: 'Loading the data. One moment, please.' }],
   netbad: ['あれ？ データを読み込めませんでした。', { ko: '데이터를 불러오지 못했어요. 버튼을 다시 눌러 주세요.', en: "I couldn't load the data. Please press the button again." }],
-  scene: ['ブレンダーの景色です。8×8の視点から描きました。', { ko: '블렌더로 8×8 시점을 렌더링한 장면이에요. 앞에 원숭이 머리, 뒤에 원환체가 있어요.', en: 'A scene rendered in Blender from 8×8 viewpoints: a monkey head in front, a torus behind.' }],
+  scene: ['3Dの物を二つ置きました。手前がサルの頭、奥がドーナツです。', { ko: '3D 물체 두 개를 놓았어요. 앞이 원숭이 머리, 뒤가 원환체예요.', en: 'Two 3D objects: a monkey head in front, a torus behind.' }],
   lytro: ['スタンフォードのLytroデータです。本物のカメラで撮った景色ですよ。', { ko: '실제 Lytro 카메라로 찍은 장면이에요. Stanford 공개 데이터에서 나뭇가지가 정지 표지판을 가리는 부분을 잘라 왔어요.', en: 'A real scene shot with a Lytro camera, cut from the Stanford archive where a branch hides part of a stop sign.' }],
 };
 const FOCUS = [
@@ -872,7 +872,8 @@ function lytroScene() {
   return { kind: 'lytro', real: true, nl: NL_REAL, targets: d.map((x, i) => ({ d: x, name: names[i] })),
     dMin: LYTRO.k0, dMax: LYTRO.k1, za: zNear - zb * d[0], zb, tol: span * 0.06, point: [0.5, 0.5] };
 }
-/* Blender sample: the ICCAS 2026 scene rendered from 8 x 8 cameras (the paper's script), with a depth
+/* Fallback when the mesh programs cannot be built: the pre-rendered Blender sample.
+   The ICCAS 2026 scene rendered from 8 x 8 cameras (the paper's script), with a depth
    pass for every view. A camera array shifts near objects most; each view was shifted to line the
    views up on a plane 0.28 m away, just in front of the monkey (as when refocusing there), and then
    each object's dk is positive and grows with distance, as for a lens array: z = -NP * ZS * dk holds
@@ -1648,7 +1649,7 @@ if (!mouse && !reduce && 'DeviceOrientationEvent' in window) {
   } else listen();
 }
 
-/* the Blender sample scene stands in front of the lens array */
+/* the 3D sample scene stands in front of the lens array */
 setDepthUI(false);
 start();
 if (reduce) loadScene('still');
