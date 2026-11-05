@@ -30,6 +30,9 @@ DOT_FONT = GFONTS + "family=DotGothic16&display=swap"
 # Japanese pages add a Japanese gothic for text and a mincho for headings; Latin letters and digits keep
 # the Korean pages' faces through the CSS fallback order
 JA_FONTS = GFONTS + "family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho:wght@700&display=swap"
+# visit counts (GoatCounter: no cookies, no stored IP addresses). count.js skips localhost on its own, and
+# opening any page with #toggle-goatcounter once stops counting that browser's own visits
+GOATCOUNTER = "https://zoocasso.goatcounter.com/count"
 LANGS = ("ko", "en", "ja")
 # how each language names itself in the switcher, and where its pages live
 LANG_NAME = {"ko": ("한국어", "한국어"), "en": ("EN", "English"), "ja": ("日本語", "日本語")}
@@ -161,6 +164,7 @@ def layout(lang, meta, body, path, alts_by_lang, v):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 {fonts}<link rel="stylesheet" href="/assets/site.css?v={v}">
 <script src="/assets/site.js?v={v}" defer></script>
+<script data-goatcounter="{GOATCOUNTER}" async src="https://gc.zgo.at/count.js"></script>
 {extra_head}{jsonld}</head>
 <body class="{body_class}">
 <a class="skip" href="#main">{t['skip']}</a>
