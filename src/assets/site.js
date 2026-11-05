@@ -97,3 +97,24 @@ if (toc) {
   b.addEventListener('click', () => { bar.remove(); try { localStorage.setItem('lang-hint-off', '1'); } catch (e) { /* storage unavailable */ } });
   document.body.insertBefore(bar, document.body.firstChild.nextSibling);
 })();
+
+/* Header: a hairline once the page has moved; the menu button opens the menu under the header (phones);
+   on the home page the header's CV button waits until the introduction's own CV button has scrolled away. */
+(() => {
+  const head = document.querySelector('.site-head');
+  if (!head) return;
+  const mark = () => head.classList.toggle('scrolled', scrollY > 4);
+  mark(); addEventListener('scroll', mark, { passive: true });
+  const btn = head.querySelector('.menu-btn'), menu = document.getElementById('site-menu');
+  if (btn && menu) {
+    const set = (open) => { btn.setAttribute('aria-expanded', String(open)); menu.hidden = !open; };
+    btn.addEventListener('click', () => set(menu.hidden));
+    addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { set(false); btn.focus(); } });
+    menu.addEventListener('click', (e) => { if (e.target.closest('a')) set(false); });
+  }
+  const own = document.querySelector('.intro .ctas'), cta = head.querySelector('.cta');
+  if (own && cta && 'IntersectionObserver' in window) {
+    cta.classList.add('wait');
+    new IntersectionObserver(([e]) => cta.classList.toggle('wait', e.isIntersecting), { rootMargin: '-56px 0px 0px 0px' }).observe(own);
+  }
+})();

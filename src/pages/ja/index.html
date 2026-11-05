@@ -3,8 +3,8 @@
   <div class="intro">
     <h1>{{f:name}}<span class="alt" lang="en">{{f:name_alt}}</span></h1>
     <p class="role">{{f:role}}</p>
-    <p class="proof"><b>{{f:kisti_rows}}</b>のデータを収集・蓄積 · ICMV 2026 <b>最優秀ポスター賞</b></p>
-    <p class="lede">韓国のVision Insideで{{f:career_len}}（{{f:career_span}}）、データパイプラインとバックエンドを開発しました。現在は九州工業大学大学院の修士課程で、レンズアレイ画像からの3次元再構成を研究しています。</p>
+    <p class="proof"><span class="nw"><b>ロータリー米山記念奨学生</b></span> · <span class="nw"><b>筆頭著者論文4本</b></span> · <span class="nw">公共R&amp;Dの<b>データ基盤</b>を担当</span></p>
+    <p class="lede">韓国のVision Insideで{{f:career_len}}、データパイプラインとバックエンドを開発しました。現在は九州工業大学大学院の修士課程で、レンズアレイ画像からの3次元再構成を研究しています。</p>
     <ul class="stack" aria-label="主な技術"><li>Python</li><li>SQL</li><li>FastAPI</li><li>MySQL·MariaDB</li><li>Docker</li><li>AWS</li></ul>
     <p class="status">{{f:status}} · 日本語ビジネス会話</p>
     <div class="ctas">
@@ -30,6 +30,7 @@
     <div class="dialog" aria-hidden="true"><div class="jp" lang="ja"></div><div class="ko"></div></div>
     <div class="vh" aria-live="polite" data-live></div>
     <p class="credit" data-credit hidden>Lytroデータ：Stanford Lytro Light Field Archive, occlusions_26（Raj et al., 2016）・非商用のデモのため一部を切り出して使用</p>
+    <p class="figcap needs-gl"><span class="k">図</span><span class="desc">レンズアレイ画像の3次元再構成 · </span>論文の手法 RIM<span class="long">、ICMV 2026</span><span class="mid"> <b>最優秀ポスター賞</b></span> · <a href="/en/research/rim/#lab" hreflang="en">仕組み（英語）→</a></p>
     <figure class="fallback" hidden>
       <img src="/img/ei-synth-800.webp" width="800" height="450" alt="iRIMで合成した6×6レンズアレイの要素画像">
       <figcaption><p>この端末では実験室のアニメーションを動かせないため、代わりに研究の画像を表示しています。</p></figcaption>
@@ -37,28 +38,26 @@
   </div>
 
   <div class="lab-tools">
-    <div class="group pick needs-gl" role="group" aria-label="サンプル">
+    <div class="group steps needs-gl" role="group" aria-label="手順">
+      <button class="step" type="button" data-step="1"><b>1</b><span class="t">撮影</span></button>
+      <button class="step" type="button" data-step="2"><b>2</b><span class="t">並べ替え</span></button>
+      <button class="step" type="button" data-step="3"><b>3</b><span class="t">再構成</span></button>
+    </div>
+    <div class="ctx needs-gl">
+      <p class="ctx-hint">3の再構成で、距離を自分で動かせます</p>
+      <div class="depth">
+        <label for="lab-depth">再構成距離</label>
+        <input type="range" id="lab-depth" min="0" max="100" step="1" value="0" disabled data-depth>
+        <output for="lab-depth" data-depth-out>–</output>
+      </div>
+      <button class="act" type="button" data-reverse><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4.5h4.5"></path></svg>RIMを逆再生</button>
+      <button class="tog" type="button" data-layers-btn aria-pressed="false" hidden><i aria-hidden="true"></i>推定奥行き層</button>
+    </div>
+    <div class="group pick seg needs-gl" role="group" aria-label="サンプル">
       <span class="cap" aria-hidden="true">サンプル</span>
       <button class="opt" type="button" data-sample-btn="scene" aria-pressed="true">3Dシーン</button>
-      <button class="opt" type="button" data-sample-btn="lytro" aria-pressed="false">Lytro（実写）</button>
+      <button class="opt" type="button" data-sample-btn="lytro" aria-pressed="false">実写（Lytro）</button>
     </div>
-    <div class="group steps needs-gl" role="group" aria-label="手順">
-      <button class="step" type="button" data-step="1"><b>1</b>撮影</button>
-      <button class="step" type="button" data-step="2"><b>2</b>並べ替え</button>
-      <button class="step" type="button" data-step="3"><b>3</b>再構成</button>
-    </div>
-    <button class="act needs-gl" type="button" data-reverse><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4.5h4.5"></path></svg>RIMを逆再生</button>
-    <button class="tog needs-gl" type="button" data-layers-btn aria-pressed="false" hidden><i aria-hidden="true"></i>推定奥行き層</button>
-    <div class="depth needs-gl">
-      <label for="lab-depth">再構成距離</label>
-      <input type="range" id="lab-depth" min="0" max="100" step="1" value="0" disabled data-depth>
-      <output for="lab-depth" data-depth-out>–</output>
-    </div>
-    <a class="lab-how" href="/en/research/rim/#lab" hreflang="en">論文の手法 RIM（英語）<span aria-hidden="true">→</span></a>
-    <button class="sound needs-gl" type="button" data-sound>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path class="x" d="M17 9l5 6M22 9l-5 6" style="display:none"></path><path class="w" d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"></path></svg>
-      <span class="label">音を消す</span>
-    </button>
     <button class="fs needs-gl" type="button" data-fullscreen>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path class="in" d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"></path><path class="out" d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5" style="display:none"></path></svg>
       <span class="label">全画面</span>

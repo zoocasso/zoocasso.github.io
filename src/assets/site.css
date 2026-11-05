@@ -24,7 +24,7 @@ html[lang=ja]{
 }
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
-html{background:var(--bench);-webkit-text-size-adjust:100%}
+html{background:var(--bench);-webkit-text-size-adjust:100%;scroll-padding-top:72px}
 body{margin:0;background:var(--bench);color:var(--paper);font-family:var(--body);font-size:16.5px;line-height:1.7;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
 /* Japanese has no spaces between words, so keep-all would never wrap it; break by phrase where the browser can */
 html[lang=ja] body{word-break:normal;word-break:auto-phrase;line-break:strict}
@@ -42,25 +42,62 @@ p{margin:0 0 1em}
 .nw{white-space:nowrap}
 
 /* header and footer */
-.site-head{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:60px;padding-inline:var(--gutter);border-bottom:1px solid var(--rule)}
-.brand{font-family:var(--display);font-weight:700;font-size:19px;color:var(--paper);text-decoration:none;white-space:nowrap}
-.site-head nav{display:flex;align-items:center;gap:4px}
-.site-head nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;color:var(--mute);text-decoration:none;font-size:15px}
-.site-head nav a:hover,.site-head nav a[aria-current=page]{color:var(--paper)}
-.site-head nav a[aria-current=page]{box-shadow:inset 0 -2px 0 var(--brass)}
-/* three roles, three looks: the site's own sections are plain words (the current one underlined);
-   GitHub, another site, comes after a divider with its mark; the language switch is a small boxed setting */
-.site-head nav .nav-sep{width:1px;height:18px;margin:0 6px;background:var(--rule)}
-.site-head nav a.ext{gap:7px}
-.site-head nav a.ext svg{width:16px;height:16px;fill:currentColor;flex:none}
-.site-head nav a.lang span{padding:3px 8px;border:1px solid var(--rule);border-radius:3px;font-size:12.5px;line-height:1.3;letter-spacing:.06em}
-.site-head nav a.lang:hover span{border-color:var(--brass)}
-@media (max-width:480px){.site-head nav .nav-sep{margin:0 2px}.site-head nav a.ext .t{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
-/* on a phone the menu goes under the name when both do not fit on one line (the English name is longer) */
-@media (max-width:480px){.site-head{flex-wrap:wrap;column-gap:8px;row-gap:0}.site-head nav{gap:0;margin-left:-9px}.site-head nav a{padding:0 9px;min-width:44px;justify-content:center}}
-/* the two language buttons sit side by side and their boxes already mark them, so they need less padding */
-@media (max-width:480px){.site-head nav a.lang{padding:0 4px;min-width:0}}
-@media (max-width:400px){.site-head nav a:not(.lang){padding:0 6px;min-width:40px}}
+.site-head{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:28px;height:56px;padding-inline:var(--gutter);
+  background:rgba(21,24,29,.72);-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);border-bottom:1px solid transparent;transition:border-color .2s,background .2s}
+/* the header follows the page; at the very top it has no line, once the page moves a hairline separates it */
+.site-head.scrolled{border-bottom-color:rgba(52,58,68,.85);background:rgba(21,24,29,.82)}
+.brand{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:16px;letter-spacing:-.01em;color:var(--paper);text-decoration:none;white-space:nowrap}
+/* the mark: a 3 x 3 lens array, the site's subject */
+.glyph{display:grid;grid-template-columns:repeat(3,4px);gap:3px;padding:3px;border:1px solid var(--brass);border-radius:3px}
+.glyph i{width:4px;height:4px;border-radius:50%;background:var(--brass-hi)}
+.glyph i:nth-child(even){background:rgba(227,196,127,.35)}
+.site-head .nav{display:flex;align-items:center;gap:2px}
+.site-head .nav a{display:inline-flex;align-items:center;height:36px;padding:0 12px;border-radius:4px;color:var(--mute);text-decoration:none;font-size:14.5px}
+.site-head .nav a:hover,.site-head .nav a[aria-current=page]{color:var(--paper);background:var(--plate)}
+.head-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
+/* one segmented control for the three languages (and, in the lab, for the two samples) */
+.seg{display:inline-flex;align-items:center;height:36px;padding:3px;border:1px solid var(--rule);border-radius:4px;background:rgba(13,15,19,.5)}
+.seg > *{display:inline-flex;align-items:center;justify-content:center;height:28px;padding:0 10px;border-radius:2px;color:var(--mute);text-decoration:none;font-size:13.5px;white-space:nowrap}
+.seg a:hover{color:var(--paper)}
+.seg.lang > *{min-width:34px;padding:0 8px;font-size:12px;letter-spacing:.08em;font-weight:500}
+.seg [aria-current],.seg [aria-pressed=true]{background:#252a33;color:var(--paper);box-shadow:inset 0 0 0 1px #3d4450}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:4px;color:var(--mute)}
+.iconbtn:hover{color:var(--paper);background:var(--plate)}
+.iconbtn svg{width:18px;height:18px;fill:currentColor}
+.cta{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 14px;border:1px solid var(--brass);border-radius:4px;background:var(--brass);color:var(--bench);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;transition:opacity .2s}
+.cta:hover{background:var(--brass-hi);color:var(--bench)}
+.cta svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* on the CV page the button is where you already are: outlined, not filled */
+.cta[aria-current]{background:none;color:var(--brass-hi)}
+/* on the home page the header button waits, folded away, until the introduction's own button has scrolled
+   past; then it unfolds in place */
+.site-head .cta{max-width:260px;overflow:hidden;transition:max-width .3s ease,padding .3s ease,opacity .25s,border-width .3s,margin .3s}
+.site-head .cta.wait{max-width:0;padding-inline:0;border-width:0;margin-left:-10px;opacity:0;pointer-events:none}
+/* the lab's sound toggle (home only, shown once the lab has started) */
+.snd{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 12px 0 10px;border:1px solid var(--rule);border-radius:18px;background:none;color:var(--paper);font:inherit;font-size:13.5px;white-space:nowrap;cursor:pointer}
+.snd:hover{border-color:var(--mute)}
+.snd svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.menu-btn{display:none;align-items:center;justify-content:center;width:40px;height:40px;border:0;border-radius:4px;background:none;color:var(--paper);cursor:pointer}
+.menu-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.menu-btn .c,.menu-btn[aria-expanded=true] .o{display:none}
+.menu-btn[aria-expanded=true] .c{display:inline}
+.site-menu{position:sticky;top:52px;z-index:39;padding:6px var(--gutter) 16px;background:var(--plate);border-bottom:1px solid var(--rule)}
+.site-menu a:not(.cta){display:flex;align-items:center;height:52px;border-bottom:1px solid var(--rule);color:var(--paper);text-decoration:none;font-size:16px}
+.site-menu a[aria-current=page]{color:var(--brass-hi)}
+.site-menu .cta{display:flex;justify-content:center;height:44px;margin-top:14px}
+/* phones and narrow windows: name, sound, languages and a menu button; the rest opens under the header */
+@media (max-width:820px){
+  .site-head{gap:8px;height:52px}
+  .site-head .nav,.site-head .gh,.site-head .cta{display:none}
+  .menu-btn{display:inline-flex}
+  .head-tools{gap:6px}
+  .snd{width:40px;padding:0;justify-content:center}
+  .snd .label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .seg.lang > *{min-width:30px;padding:0 6px;font-size:11.5px}
+}
+@media (min-width:821px){.site-menu{display:none!important}}
+/* the smallest phones: the mark gives its room to the name */
+@media (max-width:350px){.brand .glyph{display:none}.brand{font-size:15px}.seg.lang > *{min-width:28px;padding:0 5px}.lab-tools .step{font-size:12.5px;gap:3px;padding:0}.lab-tools .step b{width:22px;height:22px}.lab-tools .step+.step::before{min-width:4px;margin-right:3px}}
 .site-foot{max-width:var(--wide);margin:96px auto 0;padding:28px var(--gutter) 48px;border-top:1px solid var(--rule);color:var(--mute);font-size:14px}
 .foot-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 22px;margin-bottom:8px}
 /* Email: the address, which opens the mail app, and a copy button joined to it */
@@ -115,6 +152,8 @@ html[lang=ja] .intro h1 .alt{font-family:'Hahmlet',serif;font-size:.52em}
 .intro .role{font-size:23px;font-weight:500;line-height:1.35;margin:18px 0 0;color:var(--paper)}
 .intro .proof{font-size:15.5px;margin:8px 0 0;color:var(--paper)}
 .intro .proof b{color:var(--brass-hi);font-weight:700}
+/* each item stays whole on wide screens; on phones a long item may wrap */
+@media (max-width:520px){.intro .proof .nw{white-space:normal}}
 .intro .lede{font-size:16px;color:var(--mute);margin:12px 0 0;max-width:42ch}
 .intro .stack{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:14px 0 0;padding:0}
 .intro .stack li{padding:3px 8px;border:1px solid var(--rule);border-radius:3px;background:var(--veil);font-size:13px;line-height:1.4;color:var(--paper)}
@@ -143,10 +182,10 @@ html[lang=ja] .dialog .jp{font-size:16px;color:var(--paper);margin-top:0}
 .lab.pickable canvas.gl{cursor:crosshair}
 .lab:not(.played) [data-reverse]{display:none}
 /* beside the introduction, on the side where the light starts, so the names at the right corners of the lens array and sensor stay clear */
-.raybox{position:absolute;left:calc(var(--gutter) + min(470px,40%) + 32px);top:22px;width:min(340px,24%);margin:0;padding:8px 10px 4px;background:var(--veil);border:1px solid var(--rule);z-index:3}
+.raybox{position:absolute;left:calc(var(--gutter) + min(470px,40%) + 32px);top:52px;width:min(340px,24%);margin:0;padding:8px 10px 4px;background:var(--veil);border:1px solid var(--rule);z-index:3}
 .raybox svg{display:block;width:100%;height:auto}
 /* the real capture: zoom into the lenslet image (step 1), and the note on the estimated layers (step 3) */
-.lfzoom,.lab .laynote{position:absolute;left:calc(var(--gutter) + min(470px,40%) + 32px);top:22px;width:min(340px,24%);margin:0;padding:8px 10px;background:var(--veil);border:1px solid var(--rule);z-index:3}
+.lfzoom,.lab .laynote{position:absolute;left:calc(var(--gutter) + min(470px,40%) + 32px);top:52px;width:min(340px,24%);margin:0;padding:8px 10px;background:var(--veil);border:1px solid var(--rule);z-index:3}
 .lfzoom canvas{display:block;width:100%;height:auto}
 .lfzoom .badge,.lab .laynote b{display:inline-block;font-size:11px;font-weight:600;color:var(--brass-hi);border:1px solid var(--rule);padding:1px 6px;margin-bottom:6px}
 .lfzoom figcaption{font-size:11.5px;line-height:1.45;color:var(--mute);margin-top:6px}
@@ -198,70 +237,94 @@ html[lang=ja] .dialog .jp{font-size:16px;color:var(--paper);margin-top:0}
 .stage.waiting{cursor:pointer}
 .stage.waiting .dialog{animation:askclick 1.8s ease-in-out infinite}
 @keyframes askclick{50%{border-color:var(--brass);box-shadow:0 0 0 3px rgba(201,164,92,.18)}}
-.lab-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:12px var(--gutter) 14px;background:var(--bench);border-top:1px solid var(--rule)}
-.lab-tools .group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-/* each kind of control looks like what it does: the sample is a connected choice, the steps a numbered
-   sequence, reversing a one-off command, the depth layers an on/off switch, the slider a value, the
-   explanation a link, and sound a utility at the end */
+.lab-tools{position:relative;display:flex;align-items:center;gap:24px;min-height:60px;padding:8px var(--gutter);background:var(--bench);border-top:1px solid var(--rule)}
+.lab-tools .group{display:flex;align-items:center}
+/* three parts: the steps, a middle slot for what the current step offers, and the sample; full screen sits on the stage */
 .lab-tools button{font:inherit;font-size:14px;color:var(--mute);background:none;border:0;cursor:pointer}
 .lab-tools button:hover{color:var(--paper)}
 .lab-tools button:disabled{opacity:.45;cursor:progress}
 .lab-tools button:disabled:hover{color:var(--mute)}
-.lab-tools .pick{gap:0}
-.lab-tools .pick .cap{margin-right:8px;font-size:12px;letter-spacing:.08em;color:var(--mute)}
-.lab-tools .pick .opt{min-height:40px;padding:0 13px;border:1px solid var(--rule);background:var(--veil);margin-left:-1px}
-.lab-tools .pick .opt:first-of-type{border-radius:3px 0 0 3px;margin-left:0}
-.lab-tools .pick .opt:last-of-type{border-radius:0 3px 3px 0}
-.lab-tools .pick .opt[aria-pressed=true]{position:relative;background:rgba(201,164,92,.16);border-color:var(--brass);color:var(--brass-hi)}
-.lab-tools .steps{gap:0}
-.lab-tools .step{display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:0 7px}
-.lab-tools .step b{display:inline-grid;place-items:center;width:22px;height:22px;border:1px solid var(--rule);border-radius:50%;font-size:12px;font-weight:700;color:var(--mute)}
-.lab-tools .step+.step::before{content:'';width:12px;height:1px;margin-right:2px;background:var(--rule)}
-.lab-tools .step[aria-pressed=true]{color:var(--paper)}
+/* steps on a line: the ones behind are brass, the current one is filled */
+.lab-tools .steps{flex:none}
+.lab-tools .step{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 6px;font-size:14.5px;white-space:nowrap}
+.lab-tools .step b{display:inline-grid;place-items:center;flex:none;width:24px;height:24px;border:1px solid var(--rule);border-radius:50%;font-size:12px;font-weight:700}
+.lab-tools .step+.step::before{content:'';flex:none;width:36px;height:2px;margin-right:6px;border-radius:1px;background:var(--rule)}
+.lab-tools .step.done,.lab-tools .step[aria-pressed=true]{color:var(--paper)}
+.lab-tools .step.done b{border-color:var(--brass);color:var(--brass-hi)}
+.lab-tools .step.done+.step::before{background:var(--brass)}
+.lab-tools .step[aria-pressed=true]{font-weight:700}
 .lab-tools .step[aria-pressed=true] b{background:var(--brass);border-color:var(--brass);color:var(--bench)}
-.lab-tools .act{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 11px;border:1px dashed var(--rule);border-radius:3px}
-.lab-tools .act svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* the middle slot keeps its width in every step, so nothing moves when the slider arrives in step 3 */
+.lab-tools .ctx{flex:1 1 auto;display:flex;align-items:center;gap:14px;min-width:0;min-height:36px;padding-left:24px;border-left:1px solid var(--rule)}
+.lab-tools .ctx-hint{margin:0;font-size:13px;color:#7d786f}
+.lab:not([data-step="3"]) .lab-tools .ctx > :not(.ctx-hint){display:none}
+.lab[data-step="3"] .lab-tools .ctx-hint{display:none}
+.lab-tools .depth{display:flex;align-items:center;gap:12px;flex:1 1 auto;max-width:460px;min-width:0;font-size:13.5px;color:var(--mute)}
+.lab-tools .depth label{white-space:nowrap}
+.lab-tools .depth input{flex:1;min-width:120px;accent-color:var(--brass);height:36px}
+/* the focused object is named on the stage (the reconstruction plane's tag), so the bar does not repeat it */
+.lab-tools .depth output{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.lab-tools .act{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border:1px solid var(--rule);border-radius:4px;color:var(--paper);white-space:nowrap}
+.lab-tools .act svg{width:15px;height:15px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .lab-tools .act:hover{border-color:var(--mute)}
-.lab-tools .tog{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 6px}
+.lab-tools .tog{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 6px;white-space:nowrap}
 .lab-tools .tog[hidden]{display:none}
 .lab-tools .tog i{position:relative;flex:none;width:30px;height:16px;border-radius:8px;background:var(--rule);transition:background .2s}
 .lab-tools .tog i::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:var(--paper);transition:transform .2s}
 .lab-tools .tog[aria-pressed=true]{color:var(--paper)}
 .lab-tools .tog[aria-pressed=true] i{background:var(--brass)}
 .lab-tools .tog[aria-pressed=true] i::after{transform:translateX(14px)}
-.lab-tools .depth{display:flex;align-items:center;gap:8px;flex:1 1 220px;min-width:0;font-size:13.5px;color:var(--mute)}
-.lab-tools .depth label{white-space:nowrap}
-.lab-tools .depth input{flex:1;min-width:140px;accent-color:var(--brass);height:40px}
-.lab-tools .depth output{min-width:8em;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--paper)}
-.sound{display:inline-flex;align-items:center;gap:8px}
-.lab-tools .sound{min-height:40px;padding:0 4px 0 14px;border-left:1px solid var(--rule)}
-@media (max-width:640px){.lab-tools .sound{padding-left:4px;border-left:0}}
-/* phones: sample, sound and full screen share the first row, steps and the scene link the second, the slider the third */
-@media (max-width:640px){
-  .lab-tools{column-gap:6px}
-  .lab-tools .pick{order:1}
-  .lab-tools .pick .cap{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-  .lab-tools .sound{order:2;margin-left:auto;min-width:40px;justify-content:center;padding:0}
-  .lab-tools .sound .label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-  .lab-tools .fs{order:3}
-  .lab-tools .steps{order:5}
-  .lab-tools .step{padding:0 5px}
-  .lab-how{order:6}
-  .lab-how .long{display:none}
-  .lab-tools .act,.lab-tools .tog{order:7}
-  .lab-tools .depth{order:8;flex-basis:100%}
-}
-/* the bar keeps one row on desktop: the scene link is short, sound and full screen are icons (named for
-   screen readers and in a tooltip), and the slider wraps to a new row rather than shrinking */
-.lab-how .long{display:none}
-.lab-tools .sound .label,.lab-tools .fs .label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.lab-tools .sound,.lab-tools .fs{min-width:40px;justify-content:center}
-.lab-how{font-size:13px;color:var(--mute);margin-left:auto;display:inline-flex;align-items:center;gap:4px;min-height:40px;text-decoration:none}
-.lab-how:hover{color:var(--paper);text-decoration:underline;text-underline-offset:3px}
-.sound svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.lab-tools .fs{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 4px}
-@media (max-width:640px){.lab-tools .fs{min-width:40px;justify-content:center}.lab-tools .fs .label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
+/* the sample: the same segmented control as the header's languages */
+.lab-tools .pick{margin-left:auto;flex:none}
+.lab-tools .pick .cap{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.lab-tools .seg .opt{height:28px;padding:0 10px;border-radius:2px;font-size:13.5px}
+.lab-tools .fs{display:inline-flex;align-items:center;justify-content:center;flex:none;width:40px;height:40px;border:1px solid var(--rule);border-radius:4px;background:var(--veil);color:var(--paper)}
+.lab-tools .fs .label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .lab-tools .fs svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* on wide screens full screen moves onto the stage's bottom-right corner, clear of the dialogue */
+@media (min-width:1320px){.lab-tools .fs{position:absolute;right:var(--gutter);bottom:calc(100% + 20px);z-index:3}}
+/* the figure caption at the top of the scene names the method and links to how it works */
+.figcap{position:absolute;left:calc(var(--gutter) + min(470px,40%) + 32px);top:16px;z-index:3;display:flex;align-items:center;gap:8px;margin:0;font-size:13px;color:var(--mute);white-space:nowrap}
+html[lang=en] .figcap,html[lang=ja] .figcap{left:calc(var(--gutter) + min(530px,40%) + 32px)}
+.figcap .k{padding:2px 7px;border:1px solid var(--rule);border-radius:3px;font-size:11.5px;letter-spacing:.06em;color:var(--paper);background:var(--veil)}
+.figcap b{color:var(--brass-hi);font-weight:500}
+.figcap a{color:var(--paper)}
+/* English and Japanese run longer, so their caption leaves out the description and stays clear of the robot */
+html[lang=en] .figcap .desc,html[lang=ja] .figcap .desc{display:none}
+html[lang=ja] .intro .lede{max-width:none}
+@media (max-width:1399px){.figcap .desc,.figcap .long{display:none}}
+@media (max-width:1299px){html[lang=en] .figcap .mid{display:none}}
+.lab.is-fs .figcap{left:var(--gutter)}
+/* phones and narrow windows: two rows. The first holds the steps; in step 3 they shrink to their numbers and
+   the slider joins them on the same row, so the bar never grows. The second holds the sample and full screen. */
+@media (max-width:1179px){
+  .lab-tools{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"steps steps steps" "pick pick fs";gap:6px 10px;padding:6px var(--gutter) 10px}
+  .lab-tools .steps{grid-area:steps;display:flex;min-width:0}
+  .lab-tools .step{flex:1 1 auto;height:44px;padding:0 2px;gap:6px}
+  .lab-tools .step:first-child{flex:0 0 auto}
+  .lab-tools .step+.step::before{flex:1 1 auto;width:auto;min-width:10px}
+  .lab-tools .ctx{grid-area:ctx;display:none;gap:10px;padding-left:0;border-left:0;flex-wrap:wrap}
+  .lab-tools .pick{grid-area:pick;margin-left:0;justify-self:start}
+  .lab-tools .fs{grid-area:fs}
+  .lab[data-step="3"] .lab-tools{grid-template-areas:"steps ctx ctx" "pick pick fs"}
+  .lab[data-step="3"] .lab-tools .ctx{display:flex}
+  .lab[data-step="3"] .lab-tools .step{flex:0 0 auto;padding:0}
+  .lab[data-step="3"] .lab-tools .step .t{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .lab[data-step="3"] .lab-tools .step+.step::before{flex:0 0 8px;width:8px;min-width:8px;margin:0 3px}
+  .lab-tools .depth label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .lab-tools .act{width:40px;height:40px;padding:0;justify-content:center;font-size:0}
+  .lab-tools .act svg{width:17px;height:17px}
+  .figcap{left:12px;top:12px;font-size:12px;gap:6px}
+  .figcap .long,.figcap .desc{display:none}
+  .figcap .k{font-size:10.5px;padding:1px 5px}
+  .lab .credit:not([hidden]) ~ .figcap{display:none}
+}
+@media (max-width:520px){
+  .figcap{max-width:calc(100% - 150px);flex-wrap:wrap;white-space:normal;row-gap:2px}
+  .figcap .mid{display:none}
+  .lab-tools .step{font-size:13.5px;gap:5px}
+  .lab-tools .step+.step::before{min-width:6px}
+}
 /* full screen: the stage and its controls fill the screen and the introduction steps aside
    (real full screen, or the lab fixed over the page where the browser cannot do that) */
 .lab.is-fs{position:fixed;inset:0;z-index:50;width:100%;height:100vh;height:100dvh;border-bottom:0;padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left)}
@@ -283,7 +346,7 @@ html.lab-fs{overflow:hidden}
   .dialog{left:50%;bottom:12px;width:calc(100% - 24px)}
   .lab .credit{left:12px;right:110px;top:12px;bottom:auto;font-size:11px}
   .vmap{top:78px;right:12px;grid-template-columns:repeat(8,7px);gap:2px;padding:6px}
-  .raybox{right:auto;left:12px;top:12px;width:min(320px,calc(100% - 120px))}
+  .raybox{right:auto;left:12px;top:40px;width:min(320px,calc(100% - 120px))}
   .lfzoom,.lab .laynote{left:12px;top:80px;width:min(250px,calc(100% - 120px))}
   .vmap i{width:7px;height:7px}
   .robot{top:12px;right:12px;width:84px;height:54px;padding:4px}
@@ -403,7 +466,7 @@ figure{margin:0}
 .meta dt{font-size:13.5px;color:var(--mute)}
 .meta dd{margin:2px 0 0;font-size:15.5px}
 .doc{max-width:var(--wide);margin:0 auto;padding:48px var(--gutter) 0;display:grid;grid-template-columns:200px minmax(0,1fr);gap:56px;align-items:start}
-.toc{position:sticky;top:20px;font-size:14px}
+.toc{position:sticky;top:76px;font-size:14px}
 .toc p{color:var(--mute);margin:0 0 6px}
 .toc a{display:block;padding:7px 0 7px 12px;border-left:2px solid var(--rule);color:var(--mute);text-decoration:none}
 .toc a:hover{color:var(--paper);border-left-color:var(--mute)}
@@ -542,7 +605,7 @@ table.data tfoot td{color:var(--paper);font-weight:700;border-bottom:0}
   :root{--bench:#fff;--plate:#fff;--rule:#c8c8c8;--paper:#111;--mute:#444;--brass:#8a6420;--brass-hi:#6e4f17;--veil:#fff;color-scheme:light}
   @page{margin:16mm 14mm}
   html,body{background:#fff;color:#111;font-size:11pt;line-height:1.55}
-  .skip,.site-head nav,.lab .stage,.lab-tools,.toc,.pager,.ctas,.contact,.qr,.more,section:has(.downloads),button,input[type=range]{display:none!important}
+  .skip,.site-head .nav,.head-tools,.site-menu,.lab .stage,.lab-tools,.toc,.pager,.ctas,.contact,.qr,.more,section:has(.downloads),button,input[type=range]{display:none!important}
   .site-head{min-height:0;padding:0 0 6mm;border:0}
   .home .site-head{display:none}
   .lab{background:#fff;border:0}

@@ -37,24 +37,26 @@ LANGS = ("ko", "en", "ja")
 # how each language names itself in the switcher, and where its pages live
 LANG_NAME = {"ko": ("한국어", "한국어"), "en": ("EN", "English"), "ja": ("日本語", "日本語")}
 PREFIX = {"ko": "", "en": "/en", "ja": "/ja"}
+# the header's language control, in this order and with these labels (the owner's choice)
+SWITCH = (("ko", "KR"), ("ja", "JP"), ("en", "EN"))
 # a page not written yet in a language falls back to the first of these that has it
 FALLBACK = {"ko": ("ko",), "en": ("en", "ko"), "ja": ("ja", "en", "ko")}
 
 UI = {
     "ko": {"skip": "본문 바로가기", "work": "작업", "research": "연구", "cv": "이력서", "nav": "주 메뉴",
            "copy": "이메일 주소 복사", "copy_short": "복사", "copied": "복사됨", "selected": "선택됨",
-           "updated": "마지막 업데이트", "pdf": "이력서·포트폴리오",
-           "locale": "ko_KR", "site": "이형주",
+           "pdf": "이력서·포트폴리오",
+           "locale": "ko_KR", "site": "이형주", "langs": "언어", "menu": "메뉴", "sound": "소리 끄기",
            "next": "이력서와 포트폴리오 PDF는 이력서 페이지에 있습니다. 궁금한 점은 이메일로 연락 주세요.", "next_btn": "이력서·포트폴리오"},
     "en": {"skip": "Skip to content", "work": "Work", "research": "Research", "cv": "CV", "nav": "Main menu",
            "copy": "Copy email address", "copy_short": "Copy", "copied": "Copied", "selected": "Selected",
-           "updated": "Last updated", "pdf": "CV & portfolio",
-           "locale": "en_US", "site": "Hyeongju Lee",
+           "pdf": "CV & portfolio",
+           "locale": "en_US", "site": "Hyeongju Lee", "langs": "Language", "menu": "Menu", "sound": "Sound off",
            "next": "The CV and portfolio PDFs are on the CV page. For questions, please write by email.", "next_btn": "CV & portfolio"},
     "ja": {"skip": "本文へ移動", "work": "実績", "research": "研究", "cv": "経歴", "nav": "メインメニュー",
            "copy": "メールアドレスをコピー", "copy_short": "コピー", "copied": "コピーしました", "selected": "選択しました",
-           "updated": "最終更新", "pdf": "経歴・ポートフォリオ",
-           "locale": "ja_JP", "site": "イ・ヒョンジュ",
+           "pdf": "経歴・ポートフォリオ",
+           "locale": "ja_JP", "site": "イ・ヒョンジュ", "langs": "言語", "menu": "メニュー", "sound": "音を消す",
            "next": "CVとポートフォリオのPDFは経歴ページにあります。ご質問はメールでお気軽にどうぞ。", "next_btn": "経歴・ポートフォリオ"},
 }
 EXISTING = set()
@@ -113,12 +115,14 @@ def layout(lang, meta, body, path, alts_by_lang, v):
         href = next((h for k in FALLBACK[lang] if (h := f"{PREFIX[k]}/{sub}/") in EXISTING), f"/{sub}/")
         return f'<a href="{href}"{cur}>{t[key]}</a>'
 
-    def switch(k):
-        # the same page in that language when it exists, otherwise that language's home page
+    def switch(k, label):
+        # one segmented control, the same order on every page; the current language is filled and not a link.
+        # The others go to the same page in that language when it exists, otherwise to that language's home.
+        full = LANG_NAME[k][1]
+        if k == lang:
+            return f'<span aria-current="true" lang="{k}" title="{full}">{label}</span>'
         href = alts_by_lang.get(k, PREFIX[k] + "/")
-        short, full = LANG_NAME[k]
-        return (f'<a class="lang" href="{href}" hreflang="{k}" lang="{k}" aria-label="{full}">'
-                f'<span>{short}</span></a>')
+        return f'<a href="{href}" hreflang="{k}" lang="{k}" title="{full}" aria-label="{full}">{label}</a>'
     jsonld = ""
     if meta.get("home"):
         person = {"@context": "https://schema.org", "@type": "Person", "name": fact("name", lang),
@@ -141,6 +145,16 @@ def layout(lang, meta, body, path, alts_by_lang, v):
     # the home page's contact section offers the email right above the footer, so the footer leaves it out there
     foot_email = "" if meta.get("home") else f'''<div class="email plain" data-email-user="{FACTS['email_user']}" data-email-domain="{FACTS['email_domain']}" hidden><a class="addr"><svg class="i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5.5 7-5.5"/></svg><span class="v"></span></a><button class="copy" type="button" aria-label="{t['copy']}" data-done="{t['copied']}" data-manual="{t['selected']}"><svg class="i on-idle" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13H7"/></svg><svg class="i on-done" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10.5l4 4 8-9"/></svg><span class="t">{t['copy_short']}</span></button><span class="sr" aria-live="polite"></span></div>'''
     body_class = meta.get("body", "")
+    # the header's one button opens the CV page; on the CV page itself it is marked as the current page
+    cv_cur = ' aria-current="page"' if nav == "cv" else ""
+    cta = (f'<a class="cta" href="{home}cv/"{cv_cur}>{html.escape(t["next_btn"])}'
+           '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10h11M11 5.5l4.5 4.5-4.5 4.5"/></svg></a>')
+    # home only: the lab's sound toggle lives in the sticky header, so it can be switched off from anywhere on
+    # the page; lab.js shows it once the lab has started
+    sound_btn = "" if not meta.get("home") else (
+        f'<button class="snd" type="button" data-sound hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+        '<path d="M4 9h4l5-4v14l-5-4H4z"></path><path class="x" d="M17 9l5 6M22 9l-5 6" style="display:none"></path>'
+        f'<path class="w" d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"></path></svg><span class="label">{html.escape(t["sound"])}</span></button>')
 
     def next_step(b):
         # a work or research detail page ends with what a reader may want next: the CV page (the email is in the footer below)
@@ -182,16 +196,24 @@ def layout(lang, meta, body, path, alts_by_lang, v):
 <body class="{body_class}">
 <a class="skip" href="#main">{t['skip']}</a>
 <header class="site-head">
-  <a class="brand" href="{home}">{fact('name', lang)}</a>
-  <nav aria-label="{t['nav']}">
+  <a class="brand" href="{home}"><span class="glyph" aria-hidden="true">{"<i></i>" * 9}</span>{fact('name', lang)}</a>
+  <nav class="nav" aria-label="{t['nav']}">
     {item('work', 'work')}
     {item('research', 'research')}
-    {item('cv', 'cv')}
-    <span class="nav-sep" aria-hidden="true"></span>
-    <a class="ext" href="{FACTS['github']}" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg><span class="t">GitHub</span></a>
-    {"".join(switch(k) for k in LANGS if k != lang)}
   </nav>
+  <div class="head-tools">
+    {sound_btn}    <a class="iconbtn gh" href="{FACTS['github']}" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg></a>
+    {cta}
+    <span class="seg lang" role="group" aria-label="{t['langs']}">{"".join(switch(k, label) for k, label in SWITCH)}</span>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="{t['menu']}"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path class="o" d="M3 6h14M3 10h14M3 14h14"/><path class="c" d="M5 5l10 10M15 5L5 15"/></svg></button>
+  </div>
 </header>
+<div class="site-menu" id="site-menu" hidden>
+  {item('work', 'work')}
+  {item('research', 'research')}
+  <a href="{FACTS['github']}" target="_blank" rel="noopener">GitHub</a>
+  {cta}
+</div>
 <main id="main">
 {next_step(body)}
 </main>
@@ -202,7 +224,6 @@ def layout(lang, meta, body, path, alts_by_lang, v):
     <a href="{home}cv/">{html.escape(t['pdf'])}</a>
     <a href="{FACTS['github']}" target="_blank" rel="noopener">GitHub</a>
   </div>
-  <p>{t['updated']} {fact('updated', lang)}{'' if lang == 'ja' else '.'}</p>
 </footer>
 </body>
 </html>
