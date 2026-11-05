@@ -311,6 +311,8 @@ html.lab-fs{overflow:hidden}
 .facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--rule)}
 .facts > div{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 24px;align-items:baseline;padding:22px 24px 22px 0;border-bottom:1px solid var(--rule)}
 .facts > div:nth-child(even){padding-left:24px;border-left:1px solid var(--rule)}
+.facts dt a{color:inherit;text-decoration:none}
+.facts dt a:hover{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
 .facts dt{font-family:var(--display);font-weight:700;font-size:clamp(24px,2.4vw,32px);line-height:1.15;color:var(--brass-hi);font-variant-numeric:tabular-nums;white-space:nowrap}
 .facts dd{margin:0;color:var(--paper)}
 .facts dd small{display:block;color:var(--mute);font-size:14px;margin-top:2px}
@@ -453,6 +455,14 @@ table.data tfoot td{color:var(--paper);font-weight:700;border-bottom:0}
 .decisions dd{margin:0}
 .note{border:1px solid var(--rule);padding:16px 20px;color:var(--mute);font-size:15px}
 .note b{color:var(--paper)}
+/* the end of a detail page: where to go next */
+.next-step{max-width:var(--wide);margin:64px auto 0;padding:24px var(--gutter);border-top:1px solid var(--rule)}
+.next-step p{margin:0 0 14px;color:var(--mute)}
+.next-step .contact{margin-top:0}
+/* a quiet offer of the page in the browser's language; nothing moves on its own */
+.lang-hint{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:8px var(--gutter);background:var(--plate);border-bottom:1px solid var(--rule);font-size:14px;color:var(--mute)}
+.lang-hint a{color:var(--paper)}
+.lang-hint button{background:none;border:0;color:var(--mute);font:inherit;cursor:pointer;min-width:32px;min-height:32px}
 .pager{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;max-width:var(--wide);margin:8px auto 0;padding:24px var(--gutter) 0;border-top:1px solid var(--rule)}
 .archive{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
 .archive > li{display:grid;grid-template-columns:minmax(0,11rem) minmax(0,1fr);gap:8px 32px;padding:24px 0;border-bottom:1px solid var(--rule)}
