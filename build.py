@@ -43,15 +43,15 @@ FALLBACK = {"ko": ("ko",), "en": ("en", "ko"), "ja": ("ja", "en", "ko")}
 UI = {
     "ko": {"skip": "본문 바로가기", "work": "작업", "research": "연구", "cv": "이력서", "nav": "주 메뉴",
            "copy": "이메일 주소 복사", "copy_short": "복사", "copied": "복사됨", "selected": "선택됨",
-           "updated": "마지막 업데이트", "pdf": "이력서 PDF", "pdf_file": "HyeongjuLee_Resume_KR.pdf",
+           "updated": "마지막 업데이트", "pdf": "이력서·포트폴리오",
            "locale": "ko_KR", "site": "이형주"},
     "en": {"skip": "Skip to content", "work": "Work", "research": "Research", "cv": "CV", "nav": "Main menu",
            "copy": "Copy email address", "copy_short": "Copy", "copied": "Copied", "selected": "Selected",
-           "updated": "Last updated", "pdf": "CV (PDF)", "pdf_file": "HyeongjuLee_CV_EN.pdf",
+           "updated": "Last updated", "pdf": "CV & portfolio",
            "locale": "en_US", "site": "Hyeongju Lee"},
     "ja": {"skip": "本文へ移動", "work": "実績", "research": "研究", "cv": "経歴", "nav": "メインメニュー",
            "copy": "メールアドレスをコピー", "copy_short": "コピー", "copied": "コピーしました", "selected": "選択しました",
-           "updated": "最終更新", "pdf": "CV（英語・PDF）", "pdf_file": "HyeongjuLee_CV_EN.pdf",
+           "updated": "最終更新", "pdf": "経歴・ポートフォリオ",
            "locale": "ja_JP", "site": "イ・ヒョンジュ"},
 }
 EXISTING = set()
@@ -188,7 +188,7 @@ def layout(lang, meta, body, path, alts_by_lang, v):
   <div class="foot-row">
     <span class="foot-name">{fact('name', lang)}</span>
     {foot_email}
-    <a href="/files/{t['pdf_file']}">{t['pdf']}</a>
+    <a href="{home}cv/">{html.escape(t['pdf'])}</a>
     <a href="{FACTS['github']}" target="_blank" rel="noopener">GitHub</a>
   </div>
   <p>{t['updated']} {fact('updated', lang)}{'' if lang == 'ja' else '.'}</p>
