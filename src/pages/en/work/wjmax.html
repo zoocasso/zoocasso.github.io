@@ -15,7 +15,7 @@
 <div class="doc">
   <nav class="toc" aria-label="On this page">
     <p>On this page</p>
-    <a href="#result">Results</a><a href="#arch">Architecture</a><a href="#proof">Code</a>
+    <a href="#result">Results</a><a href="#arch">Architecture</a><a href="#rewrite">2026 rewrite</a>
   </nav>
   <div>
     <section id="result" aria-labelledby="h-result">
@@ -38,12 +38,23 @@
         <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
         <div class="box"><b>RDS MySQL</b><span>Managed database on AWS</span></div>
       </div>
-      <p style="margin-top:16px">A Cloudflare proxy and WAF sat in front of the server. The server was FastAPI packaged with Docker on EC2, and the database was RDS MySQL.</p>
+      <p style="margin-top:16px">The game client reports the play count of each of a song's eight charts, and the server stores them in the database. A Cloudflare proxy and WAF sat in front of the server. The server was FastAPI packaged with Docker on EC2, and the database was RDS MySQL.</p>
     </section>
 
-    <section id="proof" aria-labelledby="h-proof">
-      <h2 id="h-proof">Code</h2>
-      <p>The server code, rewritten in October 2026 with tests and CI: <a href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">github.com/zoocasso/wjmax-game-server</a></p>
+    <section id="rewrite" aria-labelledby="h-rewrite">
+      <h2 id="h-rewrite">2026 rewrite</h2>
+      <p>I cleaned up and rewrote the code from the live service in October 2026 (<a href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">GitHub</a>). The request the game client sends is unchanged; these are the problems the rewrite deals with.</p>
+      <ol class="decisions">
+        <li><h3>Connection pool starved under load</h3>
+          <dl><dt>Problem</dt><dd>An early version of the rewrite took the database connection in a FastAPI dependency. In a local load test with 60 clients sending at once, 281 of 600 requests failed with a pool timeout.</dd><dt>Fix</dt><dd>The connection is taken inside the worker thread that runs the request, after its input has been checked, and the pool is sized to the 40 worker threads. CI runs the same test and checks that every client is answered.</dd></dl></li>
+        <li><h3>Retried reports stored twice</h3>
+          <dl><dt>Problem</dt><dd>When a connection drops and the same report arrives again, its play counts can be added twice.</dd><dt>Fix</dt><dd>A report sent with an id is stored once per id. When two copies arrive at once, the key makes the second wait for the first, and the same id with different contents is refused with 409. The released client sends no id, though, so the server assigns one and its retries are stored as separate reports.</dd></dl></li>
+        <li><h3>Song titles merging</h3>
+          <dl><dt>Problem</dt><dd>MySQL's default collation ignores case and kana, so it treats "Glory" and "GLORY", or "ゆめ" and "ユメ", as the same song.</dd><dt>Fix</dt><dd>Titles and ids compare byte for byte (utf8mb4_0900_bin), and CI checks it.</dd></dl></li>
+        <li><h3>Input from a client without authentication</h3>
+          <dl><dt>Problem</dt><dd>The released game client sends no credentials, so anyone who knows the URL can post a report.</dd><dt>Fix</dt><dd>Input is checked before it is parsed: malformed input is a 422 and a body over 1 MB a 413, and Cloudflare in front bounds abuse. The README also states the limit: a report is not proof of who played.</dd></dl></li>
+      </ol>
+      <p style="margin-top:16px">GitHub Actions runs the tests on SQLite and on MySQL 8.0 and 8.4, and checks that <code>schema.sql</code> matches the code (types, collations, keys, indexes).</p>
     </section>
   </div>
 </div>
