@@ -17,10 +17,17 @@
   --text:68ch;
   color-scheme:dark;
 }
+/* Japanese pages: a Japanese gothic and mincho, with the Korean pages' faces behind them for anything they lack */
+html[lang=ja]{
+  --display:'Shippori Mincho','Hahmlet','Hiragino Mincho ProN','Yu Mincho',serif;
+  --body:'Noto Sans JP','Gothic A1','Hiragino Sans','Yu Gothic','Meiryo',sans-serif;
+}
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
 html{background:var(--bench);-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bench);color:var(--paper);font-family:var(--body);font-size:16.5px;line-height:1.7;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
+/* Japanese has no spaces between words, so keep-all would never wrap it; break by phrase where the browser can */
+html[lang=ja] body{word-break:normal;word-break:auto-phrase;line-break:strict}
 img{max-width:100%;height:auto;display:block}
 /* links are white with a quiet underline, so gold stays for numbers, primary actions and badges */
 a{color:var(--paper);text-decoration-color:rgba(236,232,223,.4);text-underline-offset:3px;text-decoration-thickness:1px}
@@ -51,6 +58,9 @@ p{margin:0 0 1em}
 @media (max-width:480px){.site-head nav .nav-sep{margin:0 2px}.site-head nav a.ext .t{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
 /* on a phone the menu goes under the name when both do not fit on one line (the English name is longer) */
 @media (max-width:480px){.site-head{flex-wrap:wrap;column-gap:8px;row-gap:0}.site-head nav{gap:0;margin-left:-9px}.site-head nav a{padding:0 9px;min-width:44px;justify-content:center}}
+/* the two language buttons sit side by side and their boxes already mark them, so they need less padding */
+@media (max-width:480px){.site-head nav a.lang{padding:0 4px;min-width:0}}
+@media (max-width:400px){.site-head nav a:not(.lang){padding:0 6px;min-width:40px}}
 .site-foot{max-width:var(--wide);margin:96px auto 0;padding:28px var(--gutter) 48px;border-top:1px solid var(--rule);color:var(--mute);font-size:14px}
 .foot-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 22px;margin-bottom:8px}
 /* Email: the address, which opens the mail app, and a copy button joined to it */
@@ -93,10 +103,14 @@ p{margin:0 0 1em}
 .intro{position:absolute;left:var(--gutter);top:clamp(28px,6vh,64px);width:min(470px,40%);z-index:2}
 .intro h1{font-size:clamp(46px,5.2vw,74px);letter-spacing:-.02em;line-height:1.02}
 .intro h1 .alt{display:block;font-weight:200;font-size:.42em;letter-spacing:0;color:var(--mute);margin-top:10px}
-/* English runs longer, so its introduction gets a little more width */
-html[lang=en] .intro{width:min(530px,40%)}
+/* English and Japanese run longer, so their introduction gets a little more width while it lies over the lab;
+   below 1180px it spans the page (see the narrow layout) */
+@media (min-width:1180px){html[lang=en] .intro,html[lang=ja] .intro{width:min(530px,40%)}}
 html[lang=en] .intro h1{font-size:clamp(40px,4vw,58px)}
 html[lang=en] .intro h1 .alt{font-size:.5em}
+/* the katakana name stays on one line; the Latin name under it keeps the light Latin face, which the mincho would replace */
+html[lang=ja] .intro h1{font-size:clamp(36px,3.9vw,56px);white-space:nowrap}
+html[lang=ja] .intro h1 .alt{font-family:'Hahmlet',serif;font-size:.52em}
 .intro .role{font-size:18px;margin:22px 0 0;color:var(--paper)}
 .intro .lede{font-size:16px;color:var(--mute);margin:12px 0 0;max-width:42ch}
 .intro .stack{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:14px 0 0;padding:0}
@@ -117,6 +131,9 @@ html[lang=en] .intro h1 .alt{font-size:.5em}
 .dialog .jp{font-family:var(--dot);font-size:14px;line-height:1.55;min-height:1.55em;color:var(--mute);margin-top:3px}
 .dialog .ko{order:-1;font-size:16px;line-height:1.55;color:var(--paper);min-height:1.55em}
 .dialog .ko.fade{animation:subin .35s ease-out}
+/* on Japanese pages the voice line is already in the page's language, so it reads alone, at subtitle size */
+html[lang=ja] .dialog .ko{display:none}
+html[lang=ja] .dialog .jp{font-size:16px;color:var(--paper);margin-top:0}
 @keyframes subin{from{opacity:0}to{opacity:1}}
 /* during the story: a way straight to the result, on the dialogue's top right corner (placed by lab.js) */
 /* once the reconstruction stands, the scene itself can be clicked to focus */
@@ -284,6 +301,8 @@ html.lab-fs{overflow:hidden}
 .section > header{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}
 .section h2{font-size:clamp(26px,3vw,34px)}
 .section .more{font-size:15px}
+/* Japanese pages link to detail pages that exist only in English, and say so once per section */
+.section .note-lang{margin:-16px 0 20px;font-size:14px;color:var(--mute)}
 .lead{color:var(--mute);max-width:var(--text);margin-top:8px}
 
 .facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--rule)}

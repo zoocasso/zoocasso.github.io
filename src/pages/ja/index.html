@@ -1,0 +1,145 @@
+<!--meta {"home": true, "title": "イ・ヒョンジュ｜データ・バックエンドエンジニア", "description": "データ収集・蓄積パイプラインとバックエンドを2年5か月開発し、現在はレンズアレイ画像からの3次元再構成を研究しています。2027年4月から入社可能。", "nav": "", "body": "home", "head": "<script src=\"/assets/lab.js?v={{v}}\" defer></script>\n"} -->
+<section class="lab" id="lab" aria-label="レンズアレイ実験室">
+  <div class="intro">
+    <h1>{{f:name}}<span class="alt" lang="en">{{f:name_alt}}</span></h1>
+    <p class="role">{{f:role}}</p>
+    <p class="lede">韓国のVision Insideで{{f:career_len}}（{{f:career_span}}）、データパイプラインとバックエンドを開発しました。現在は九州工業大学大学院の修士課程で、レンズアレイ画像からの3次元再構成を研究しています。</p>
+    <ul class="stack" aria-label="主な技術"><li>Python</li><li>SQL</li><li>FastAPI</li><li>MySQL·MariaDB</li><li>Docker</li><li>AWS</li></ul>
+    <p class="status">{{f:status}} · 兵役修了</p>
+    <div class="ctas">
+      <a class="btn primary" href="/files/HyeongjuLee_CV_EN.pdf" hreflang="en">CV（英語・PDF）</a>
+      <a class="btn" href="/files/HyeongjuLee_Portfolio_EN.pdf" hreflang="en">ポートフォリオ（英語・PDF）</a>
+      <a class="btn" href="https://github.com/zoocasso" target="_blank" rel="noopener">GitHub</a>
+      <div class="email" data-email-user="{{f:email_user}}" data-email-domain="{{f:email_domain}}" hidden><a class="addr"><svg class="i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5.5 7-5.5"/></svg><span class="v"></span></a><button class="copy" type="button" aria-label="メールアドレスをコピー" data-done="コピーしました" data-manual="選択しました"><svg class="i on-idle" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13H7"/></svg><svg class="i on-done" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10.5l4 4 8-9"/></svg><span class="t">コピー</span></button><span class="sr" aria-live="polite"></span></div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="poster"></div>
+    <canvas class="gl" aria-hidden="true"></canvas>
+    <div class="torch" aria-hidden="true"></div>
+    <div class="tag3d" data-tag="obj">物体</div>
+    <div class="tag3d" data-tag="lens">レンズアレイ</div>
+    <div class="tag3d" data-tag="sen">センサー</div>
+    <div class="tag3d" data-tag="rec">再構成面</div>
+    <div class="robot" aria-hidden="true"><canvas width="216" height="132"></canvas></div>
+    <figure class="raybox cams" aria-hidden="true" hidden><svg viewBox="0 0 360 214"><text x="180" y="14" text-anchor="middle">物体</text><rect class="far" x="163" y="22" width="34" height="34"/><circle class="near" cx="180" cy="60" r="11"/><line class="arr" x1="70" y1="114" x2="300" y2="114"/><text x="10" y="118">レンズアレイ</text><g class="c c1"><path class="sight" d="M100 104 L176 66"/><rect class="body" x="86" y="104" width="28" height="19" rx="3"/><circle class="lensc" cx="100" cy="104" r="5"/></g><g class="c c2"><path class="sight" d="M180 104 L180 71"/><rect class="body" x="166" y="104" width="28" height="19" rx="3"/><circle class="lensc" cx="180" cy="104" r="5"/></g><g class="c c3"><path class="sight" d="M260 104 L184 66"/><rect class="body" x="246" y="104" width="28" height="19" rx="3"/><circle class="lensc" cx="260" cy="104" r="5"/></g><text x="10" y="155">写った画像</text><g class="p p1"><rect class="photo" x="77" y="136" width="46" height="34"/><rect class="pfar" x="93" y="146" width="14" height="14"/><circle class="pnear" cx="107" cy="157" r="6"/></g><g class="p p2"><rect class="photo" x="157" y="136" width="46" height="34"/><rect class="pfar" x="173" y="146" width="14" height="14"/><circle class="pnear" cx="180" cy="157" r="6"/></g><g class="p p3"><rect class="photo" x="237" y="136" width="46" height="34"/><rect class="pfar" x="253" y="146" width="14" height="14"/><circle class="pnear" cx="253" cy="157" r="6"/></g><text x="10" y="192">レンズ一つひとつが、小さなカメラです。</text><text x="10" y="207">位置ごとに、手前の球が写る場所が変わります。</text></svg></figure>
+    <figure class="lfzoom" aria-hidden="true" hidden><span class="badge">実測・デコード済みのレンズレット画像</span><canvas width="640" height="480"></canvas><figcaption>Lytro Illumのレンズレット画像（Lytroのソフトウェアでデコード）。レンズ1個あたり14×14画素で、中央の8×8（黄色）が8×8枚の視点画像になります。</figcaption></figure>
+    <p class="laynote" data-laynote hidden><b>推定</b> · 64枚の視点画像が奥行き（面）ごとにどれだけ一致するかを層で表しています。実測の3Dではなく、奥行きの軸はメートルではなく視差（px/視点）です。薄く広がった部分は、視点が一つの奥行きに定まらない場所です。</p>
+    <div class="vmap" aria-hidden="true" hidden data-label="現在の視点"></div>
+    <div class="dialog" aria-hidden="true"><div class="jp" lang="ja"></div><div class="ko"></div></div>
+    <div class="vh" aria-live="polite" data-live></div>
+    <p class="credit" data-credit hidden>Lytroデータ：Stanford Lytro Light Field Archive, occlusions_26（Raj et al., 2016）・非商用のデモのため一部を切り出して使用</p>
+    <figure class="fallback" hidden>
+      <img src="/img/ei-synth-800.webp" width="800" height="450" alt="iRIMで合成した6×6レンズアレイの要素画像">
+      <figcaption><p>この端末では実験室のアニメーションを動かせないため、代わりに研究の画像を表示しています。</p></figcaption>
+    </figure>
+  </div>
+
+  <div class="lab-tools">
+    <div class="group pick needs-gl" role="group" aria-label="サンプル">
+      <span class="cap" aria-hidden="true">サンプル</span>
+      <button class="opt" type="button" data-sample-btn="scene" aria-pressed="true">3Dシーン</button>
+      <button class="opt" type="button" data-sample-btn="lytro" aria-pressed="false">Lytro（実写）</button>
+    </div>
+    <div class="group steps needs-gl" role="group" aria-label="手順">
+      <button class="step" type="button" data-step="1"><b>1</b>撮影</button>
+      <button class="step" type="button" data-step="2"><b>2</b>並べ替え</button>
+      <button class="step" type="button" data-step="3"><b>3</b>再構成</button>
+    </div>
+    <button class="act needs-gl" type="button" data-reverse><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4.5h4.5"></path></svg>RIMを逆再生</button>
+    <button class="tog needs-gl" type="button" data-layers-btn aria-pressed="false" hidden><i aria-hidden="true"></i>推定奥行き層</button>
+    <div class="depth needs-gl">
+      <label for="lab-depth">再構成距離</label>
+      <input type="range" id="lab-depth" min="0" max="100" step="1" value="0" disabled data-depth>
+      <output for="lab-depth" data-depth-out>–</output>
+    </div>
+    <a class="lab-how" href="/en/research/rim/#lab" hreflang="en">仕組み（英語）<span aria-hidden="true">→</span></a>
+    <button class="sound needs-gl" type="button" data-sound>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path class="x" d="M17 9l5 6M22 9l-5 6" style="display:none"></path><path class="w" d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"></path></svg>
+      <span class="label">音を消す</span>
+    </button>
+    <button class="fs needs-gl" type="button" data-fullscreen>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path class="in" d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"></path><path class="out" d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5" style="display:none"></path></svg>
+      <span class="label">全画面</span>
+    </button>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="h-facts">
+  <header><h2 id="h-facts">数字で見る</h2></header>
+  <dl class="facts">
+    <div><dt>{{f:kisti_rows}}</dt><dd>KISTI（韓国科学技術情報研究院）の公共R&amp;Dプラットフォームに収集・蓄積した商品・調達データ<small>収集・蓄積・提供を担当。2023年11月時点で、Danawa（韓国の価格比較サイト）のレビュー1,605万件、調達属性4,192万件を含む</small></dd></div>
+    <div><dt>2,481</dt><dd>収集したDanawaの商品カテゴリ<small>全2,517のうち。Amazonの商品は商品ID（ASIN）で重複をまとめ、{{f:kisti_asin}}を{{f:kisti_asin_dedup}}に整理</small></dd></div>
+    <div><dt>{{f:kisti_match}}</dt><dd>NTIS（韓国の国家研究開発情報）の研究課題と企業を、キーワードで結んだマッチング（SQL）<small>プラットフォームの課題–企業マッチングモデルをSQLで実装し、バッチで実行</small></dd></div>
+    <div><dt>{{f:wjmax_peak}}</dt><dd>ゲームサーバーWJMaxがアップデート時に受けた最大同時接続数<small>平均{{f:wjmax_avg}}。Cloudflare・AWS EC2・RDSで運用し、2人チームでサーバー・DB・セキュリティを担当</small></dd></div>
+  </dl>
+</section>
+
+<section class="section" aria-labelledby="h-work">
+  <header><h2 id="h-work">実績</h2><a class="more" href="/en/work/" hreflang="en">実績一覧（英語）</a></header>
+  <p class="note-lang">各プロジェクトの詳細ページは英語です。</p>
+  <ol class="log work">
+    <li><a class="row" href="/en/work/hitachi/" hreflang="en">
+      <span class="when">2025.04 – 現在<br>九工大研究室 研究補助員（パートタイム）</span>
+      <div><h3>日立との受託研究における画像データパイプライン</h3>
+        <p>保守できない状態だった既存コードを書き直し、産業用マシンビジョンカメラの制御・撮影から学習用データセットの前処理までをPythonのパイプラインにまとめました。開発者ではない研究員が自分で使えるPyQtのGUIも用意しました。</p>
+        <span class="key">設計を後任の研究員2名に引き継ぎ、2026年9〜10月にオランダで現地展開</span></div>
+      <span class="flow" aria-label="パイプライン"><span>カメラ制御</span><i></i><span>撮影</span><i></i><span class="core">前処理</span><i></i><span>データセット</span></span>
+    </a></li>
+    <li><a class="row" href="/en/work/kisti/" hreflang="en">
+      <span class="when">{{f:kisti_period}}<br>Vision Inside、KISTI発注案件</span>
+      <div><h3>KISTI公共R&amp;Dプラットフォームのデータ収集・蓄積</h3>
+        <p>AmazonとDanawaのクローラー、韓国調達庁APIの収集器を作り、すべてを1台のリモートDBに蓄積しました。ショッピングサイトの直接クローリングからAPI収集への切り替えも提案し、採用されました。そのデータを使ったモデルのバッチ実行と、FastAPIの管理画面まで提供しました。</p>
+        <span class="key"><b>{{f:kisti_rows}}</b>、収集・蓄積・提供を担当</span></div>
+      <span class="flow" aria-label="パイプライン"><span>クローラー・API収集</span><i></i><span class="core">リモートDB（MySQL）</span><i></i><span>モデルのバッチ実行</span><i></i><span>FastAPI</span></span>
+    </a></li>
+    <li class="compact"><a class="row" href="/en/work/wjmax/" hreflang="en">
+      <span class="when">{{f:wjmax_period}}<br>個人プロジェクト、2人チーム</span>
+      <div><h3>コミュニティのリズムゲームWJMaxのサーバー</h3>
+        <span class="key">アップデート時に最大<b>{{f:wjmax_peak}}</b>が同時接続、FastAPI・EC2・RDS</span></div>
+    </a><a class="code" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">GitHubのコード（2026年に書き直し）</a></li>
+    <li class="compact"><a class="row" href="/en/work/genomics/" hreflang="en">
+      <span class="when">{{f:bio_period}}<br>Vision Inside、社内プロジェクト</span>
+      <div><h3>ゲノム変異のアノテーション・リスクレポートのバックエンド</h3>
+        <span class="key">公開リファレンスに対する4段階のSQLアノテーション、FastAPIのJSON API、Docker。バックエンドとパイプラインを実装</span></div>
+    </a><a class="code" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener">GitHubのコード</a></li>
+  </ol>
+</section>
+
+<section class="section" aria-labelledby="h-research">
+  <header><h2 id="h-research">研究</h2><a class="more" href="/en/research/" hreflang="en">研究・論文一覧（英語）</a></header>
+  <p class="lead">九州工業大学大学院 修士課程（指導教員 Min-Chul Lee）。レンズアレイカメラで撮った画像を、学習を使わず幾何光学だけで並べ替え、3次元に再構成しています。国際会議で筆頭著者論文を4本発表し、ICMV 2026で最優秀ポスター賞を受賞しました。</p>
+  <ol class="log">
+    <li class="compact"><a class="row" href="/en/research/rim/" hreflang="en">
+      <span class="when">ICMV 2026 最優秀ポスター賞<br>ICCAS 2026 ポスター発表</span>
+      <div><h3>RIM・iRIM：レンズアレイ画像と視点画像を相互に変換する方法</h3>
+        <span class="key">上の実験室で動いているのがこの方法です。補間なしで画素を一対一に並べ替えます</span></div>
+    </a></li>
+    <li class="compact"><a class="row" href="/en/research/origin-point/" hreflang="en">
+      <span class="when">ITC-CSCC 2025, 2026<br>コード公開</span>
+      <div><h3>原点最適化：反復探索なしで、より鮮明な3次元再構成</h3>
+        <span class="key">候補の原点81個を一つずつ再構成して比べていた探索を、1回の計算に置き換え</span></div>
+    </a></li>
+  </ol>
+  <p class="pubs"><span>論文</span>ICMV 2026 <b>最優秀ポスター賞</b> · ICCAS 2026 ポスター発表 · ITC-CSCC 2026 口頭発表 · ITC-CSCC 2025 ポスター発表 · <a href="/en/research/#h-pubs" hreflang="en">一覧（英語）</a></p>
+</section>
+
+<section class="section" aria-labelledby="h-contact">
+  <header><h2 id="h-contact">連絡先</h2></header>
+  <div class="contact-wrap">
+    <div class="contact-main">
+      <p class="lead">{{f:status}}。データエンジニアリング、バックエンド開発、ビジョンデータパイプラインの職種を探しています。</p>
+      <div class="contact">
+        <div class="email strong" data-email-user="{{f:email_user}}" data-email-domain="{{f:email_domain}}" hidden><a class="addr"><svg class="i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5.5 7-5.5"/></svg><span class="v"></span></a><button class="copy" type="button" aria-label="メールアドレスをコピー" data-done="コピーしました" data-manual="選択しました"><svg class="i on-idle" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13H7"/></svg><svg class="i on-done" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10.5l4 4 8-9"/></svg><span class="t">コピー</span></button><span class="sr" aria-live="polite"></span></div>
+        <a class="btn" href="/files/HyeongjuLee_CV_EN.pdf" hreflang="en">CV（英語・PDF）</a>
+        <a class="btn" href="/ja/cv/">経歴の概要</a>
+        <a class="btn" href="https://github.com/zoocasso" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+    <figure class="qr">
+      <img src="/img/qr-ja.svg" width="148" height="148" alt="zoocasso.github.io/ja へのQRコード">
+      <figcaption>スマートフォンでこのサイトを開く</figcaption>
+    </figure>
+  </div>
+</section>

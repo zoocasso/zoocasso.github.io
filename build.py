@@ -27,16 +27,29 @@ FACTS = json.loads((ROOT / "data" / "facts.json").read_text(encoding="utf-8"))
 GFONTS = "https://fonts.googleapis.com/css2?"
 FONTS = GFONTS + "family=Gothic+A1:wght@400;500;700&family=Hahmlet:wght@700&display=swap"
 DOT_FONT = GFONTS + "family=DotGothic16&display=swap"
+# Japanese pages add a Japanese gothic for text and a mincho for headings; Latin letters and digits keep
+# the Korean pages' faces through the CSS fallback order
+JA_FONTS = GFONTS + "family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho:wght@700&display=swap"
+LANGS = ("ko", "en", "ja")
+# how each language names itself in the switcher, and where its pages live
+LANG_NAME = {"ko": ("한국어", "한국어"), "en": ("EN", "English"), "ja": ("日本語", "日本語")}
+PREFIX = {"ko": "", "en": "/en", "ja": "/ja"}
+# a page not written yet in a language falls back to the first of these that has it
+FALLBACK = {"ko": ("ko",), "en": ("en", "ko"), "ja": ("ja", "en", "ko")}
 
 UI = {
     "ko": {"skip": "본문 바로가기", "work": "작업", "research": "연구", "cv": "이력서", "nav": "주 메뉴",
-           "switch": "EN", "switch_label": "English", "copy": "이메일 주소 복사", "copy_short": "복사", "copied": "복사됨", "selected": "선택됨",
+           "copy": "이메일 주소 복사", "copy_short": "복사", "copied": "복사됨", "selected": "선택됨",
            "updated": "마지막 업데이트", "pdf": "이력서 PDF", "pdf_file": "HyeongjuLee_Resume_KR.pdf",
            "locale": "ko_KR", "site": "이형주"},
     "en": {"skip": "Skip to content", "work": "Work", "research": "Research", "cv": "CV", "nav": "Main menu",
-           "switch": "한국어", "switch_label": "Korean", "copy": "Copy email address", "copy_short": "Copy", "copied": "Copied", "selected": "Selected",
+           "copy": "Copy email address", "copy_short": "Copy", "copied": "Copied", "selected": "Selected",
            "updated": "Last updated", "pdf": "CV (PDF)", "pdf_file": "HyeongjuLee_CV_EN.pdf",
            "locale": "en_US", "site": "Hyeongju Lee"},
+    "ja": {"skip": "本文へ移動", "work": "実績", "research": "研究", "cv": "経歴", "nav": "メインメニュー",
+           "copy": "メールアドレスをコピー", "copy_short": "コピー", "copied": "コピーしました", "selected": "選択しました",
+           "updated": "最終更新", "pdf": "CV（英語・PDF）", "pdf_file": "HyeongjuLee_CV_EN.pdf",
+           "locale": "ja_JP", "site": "イ・ヒョンジュ"},
 }
 EXISTING = set()
 # any Korean or Japanese mobile number, in any common spelling, and international prefixes; the
@@ -48,13 +61,15 @@ def fact(key, lang):
     if key not in FACTS:
         raise KeyError(key)
     v = FACTS[key]
+    if isinstance(v, dict) and lang not in v:
+        raise KeyError(f"{key} ({lang})")
     return v[lang] if isinstance(v, dict) else v
 
 
 def url_for(lang, rel):
     """src/pages/<lang>/<rel>.html -> site path"""
     stem = rel[:-5]
-    prefix = "" if lang == "ko" else "/en"
+    prefix = PREFIX[lang]
     if stem == "index":
         return prefix + "/"
     if stem.endswith("/index"):
@@ -74,7 +89,7 @@ def asset_version():
     return h.hexdigest()[:8]
 
 
-def layout(lang, meta, body, path, alt_path, v):
+def layout(lang, meta, body, path, alts_by_lang, v):
     t = UI[lang]
     title = meta["title"]
     full_title = title if meta.get("home") else f"{title} | {t['site']}"
@@ -82,22 +97,22 @@ def layout(lang, meta, body, path, alt_path, v):
     nav = meta.get("nav", "")
     og = meta.get("image", f"/img/og-{lang}.jpg")
     alts = ""
-    if alt_path:
-        ko_path, en_path = (path, alt_path) if lang == "ko" else (alt_path, path)
-        alts = (f'<link rel="alternate" hreflang="ko" href="{BASE}{ko_path}">\n'
-                f'<link rel="alternate" hreflang="en" href="{BASE}{en_path}">\n'
-                f'<link rel="alternate" hreflang="x-default" href="{BASE}{ko_path}">\n')
-    home = "/" if lang == "ko" else "/en/"
-    pre = "" if lang == "ko" else "/en"
+    if len(alts_by_lang) > 1:
+        alts = "".join(f'<link rel="alternate" hreflang="{k}" href="{BASE}{u}">\n' for k, u in alts_by_lang.items())
+        alts += f'<link rel="alternate" hreflang="x-default" href="{BASE}{alts_by_lang.get("ko", path)}">\n'
+    home = PREFIX[lang] + "/"
 
-    def item(key, href):
+    def item(key, sub):
         cur = ' aria-current="page"' if nav == key else ""
-        if href not in EXISTING:  # an English page not written yet falls back to the Korean one
-            href = href[3:] if href.startswith("/en/") else href
+        href = next((h for k in FALLBACK[lang] if (h := f"{PREFIX[k]}/{sub}/") in EXISTING), f"/{sub}/")
         return f'<a href="{href}"{cur}>{t[key]}</a>'
 
-    switch_href = alt_path or ("/en/" if lang == "ko" else "/")
-    switch_lang = "en" if lang == "ko" else "ko"
+    def switch(k):
+        # the same page in that language when it exists, otherwise that language's home page
+        href = alts_by_lang.get(k, PREFIX[k] + "/")
+        short, full = LANG_NAME[k]
+        return (f'<a class="lang" href="{href}" hreflang="{k}" lang="{k}" aria-label="{full}">'
+                f'<span>{short}</span></a>')
     jsonld = ""
     if meta.get("home"):
         person = {"@context": "https://schema.org", "@type": "Person", "name": fact("name", lang),
@@ -108,6 +123,8 @@ def layout(lang, meta, body, path, alt_path, v):
         jsonld = f'<script type="application/ld+json">{json.dumps(person, ensure_ascii=False)}</script>\n'
     extra_head = meta.get("head", "").replace("{{v}}", v)
     fonts = f'<link rel="stylesheet" href="{FONTS}">\n'
+    if lang == "ja":
+        fonts += f'<link rel="stylesheet" href="{JA_FONTS}">\n'
     if meta.get("home"):
         # the light weight only sets the name line under the h1, so it is cut down to those letters
         alt = urllib.parse.quote(fact("name_alt", lang))
@@ -150,12 +167,12 @@ def layout(lang, meta, body, path, alt_path, v):
 <header class="site-head">
   <a class="brand" href="{home}">{fact('name', lang)}</a>
   <nav aria-label="{t['nav']}">
-    {item('work', pre + '/work/')}
-    {item('research', pre + '/research/')}
-    {item('cv', pre + '/cv/')}
+    {item('work', 'work')}
+    {item('research', 'research')}
+    {item('cv', 'cv')}
     <span class="nav-sep" aria-hidden="true"></span>
     <a class="ext" href="{FACTS['github']}" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg><span class="t">GitHub</span></a>
-    <a class="lang" href="{switch_href}" hreflang="{switch_lang}" lang="{switch_lang}" aria-label="{t['switch_label']}"><span>{t['switch']}</span></a>
+    {"".join(switch(k) for k in LANGS if k != lang)}
   </nav>
 </header>
 <main id="main">
@@ -168,7 +185,7 @@ def layout(lang, meta, body, path, alt_path, v):
     <a href="/files/{t['pdf_file']}">{t['pdf']}</a>
     <a href="{FACTS['github']}" target="_blank" rel="noopener">GitHub</a>
   </div>
-  <p>{t['updated']} {fact('updated', lang)}.</p>
+  <p>{t['updated']} {fact('updated', lang)}{'' if lang == 'ja' else '.'}</p>
 </footer>
 </body>
 </html>
@@ -193,7 +210,7 @@ def build():
     (DIST / ".nojekyll").write_text("")
 
     pages = {}
-    for lang in ("ko", "en"):
+    for lang in LANGS:
         base = SRC / "pages" / lang
         if not base.exists():
             continue
@@ -218,12 +235,11 @@ def build():
             continue
         body = body.replace("{{v}}", v)
         if rel == "404.html":
-            path, alt = "/404.html", None
+            path, alts = "/404.html", {}
         else:
             path = url_for(lang, rel)
-            other = "en" if lang == "ko" else "ko"
-            alt = url_for(other, rel) if (other, rel) in pages else None
-        page = layout(lang, meta, body, path, alt, v)
+            alts = {k: url_for(k, rel) for k in LANGS if (k, rel) in pages}
+        page = layout(lang, meta, body, path, alts, v)
         out = out_file(path)
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(page, encoding="utf-8")
