@@ -15,7 +15,7 @@
 <div class="doc">
   <nav class="toc" aria-label="이 페이지 목차">
     <p>목차</p>
-    <a href="#result">결과</a><a href="#arch">구조</a><a href="#proof">코드</a>
+    <a href="#result">결과</a><a href="#arch">구조</a><a href="#rewrite">2026년 재작성</a>
   </nav>
   <div>
     <section id="result" aria-labelledby="h-result">
@@ -38,12 +38,23 @@
         <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
         <div class="box"><b>RDS MySQL</b><span>AWS 관리형 DB</span></div>
       </div>
-      <p style="margin-top:16px">서버 앞에는 Cloudflare 프록시와 WAF를 두었습니다. 서버는 FastAPI를 Docker로 묶어 EC2에 올렸고, 데이터베이스는 RDS MySQL을 썼습니다.</p>
+      <p style="margin-top:16px">게임 클라이언트는 곡마다 차트 8개의 플레이 횟수를 보고로 보내고, 서버는 이를 받아 데이터베이스에 저장했습니다. 서버 앞에는 Cloudflare 프록시와 WAF를 두었습니다. 서버는 FastAPI를 Docker로 묶어 EC2에 올렸고, 데이터베이스는 RDS MySQL을 썼습니다.</p>
     </section>
 
-    <section id="proof" aria-labelledby="h-proof">
-      <h2 id="h-proof">코드</h2>
-      <p>2026년 10월에 다시 쓴 서버 코드(테스트·CI 포함): <a href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">github.com/zoocasso/wjmax-game-server</a></p>
+    <section id="rewrite" aria-labelledby="h-rewrite">
+      <h2 id="h-rewrite">2026년 재작성</h2>
+      <p>운영 당시 코드를 2026년 10월에 정리해 다시 썼습니다(<a href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">GitHub</a>). 게임 클라이언트가 보내는 요청은 그대로이고, 아래는 재작성에서 다룬 문제입니다.</p>
+      <ol class="decisions">
+        <li><h3>부하가 몰릴 때 커넥션 풀 고갈</h3>
+          <dl><dt>문제</dt><dd>재작성 초기 버전은 DB 연결을 FastAPI 의존성으로 잡아, 로컬 부하 테스트에서 클라이언트 60개가 동시에 보내자 요청 600개 중 281개가 풀 타임아웃으로 실패했습니다.</dd><dt>해결</dt><dd>입력 검사가 끝난 뒤 요청을 처리하는 작업 스레드 안에서 연결을 잡고, 풀 크기를 작업 스레드 수(40)와 맞췄습니다. 같은 테스트를 CI에서 돌려 모두 응답받는지 확인합니다.</dd></dl></li>
+        <li><h3>재전송된 보고의 중복 저장</h3>
+          <dl><dt>문제</dt><dd>연결이 끊겨 같은 보고가 다시 오면 플레이 횟수가 두 번 쌓일 수 있습니다.</dd><dt>해결</dt><dd>클라이언트가 보고 id를 보내면 같은 id는 한 번만 저장합니다. 두 번이 동시에 와도 키 제약으로 두 번째가 첫 번째를 기다리고, 같은 id에 다른 내용이 오면 409로 거절합니다. 다만 배포된 클라이언트는 id를 보내지 않아, 그 재전송은 서버가 id를 붙여 별개의 보고로 저장합니다.</dd></dl></li>
+        <li><h3>곡 제목이 서로 합쳐지는 문제</h3>
+          <dl><dt>문제</dt><dd>MySQL 기본 콜레이션은 대소문자·가나 차이를 무시해 "Glory"와 "GLORY", "ゆめ"와 "ユメ"를 같은 곡으로 봅니다.</dd><dt>해결</dt><dd>제목과 id를 바이트 그대로 비교하는 콜레이션(utf8mb4_0900_bin)을 쓰고, CI에서 이를 확인합니다.</dd></dl></li>
+        <li><h3>인증 없는 클라이언트의 입력</h3>
+          <dl><dt>문제</dt><dd>배포된 게임 클라이언트는 인증 정보를 보내지 않아, 주소를 알면 누구나 보고를 보낼 수 있습니다.</dd><dt>해결</dt><dd>입력을 파싱 전에 검사해 잘못된 입력은 422, 1MB가 넘는 본문은 413으로 거절하고, 앞단의 Cloudflare와 함께 남용을 막습니다. 보고가 실제 플레이를 증명하지는 않는다는 한계도 README에 적었습니다.</dd></dl></li>
+      </ol>
+      <p style="margin-top:16px">테스트는 GitHub Actions에서 SQLite와 MySQL 8.0·8.4로 돌리고, <code>schema.sql</code>이 코드와 맞는지(타입, 콜레이션, 키, 인덱스)도 확인합니다.</p>
     </section>
   </div>
 </div>
