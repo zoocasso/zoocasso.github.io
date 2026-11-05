@@ -1,11 +1,12 @@
-<!--meta {"home": true, "title": "イ・ヒョンジュ｜データ・バックエンドエンジニア", "description": "データ収集・蓄積パイプラインとバックエンドを2年5か月開発し、現在はレンズアレイ画像からの3次元再構成を研究しています。2027年4月から入社可能。", "nav": "", "body": "home", "head": "<script src=\"/assets/lab.js?v={{v}}\" defer></script>\n"} -->
+<!--meta {"home": true, "title": "イ・ヒョンジュ｜データ・バックエンドエンジニア", "description": "データ収集・蓄積パイプラインとバックエンドを2年5か月開発し、現在はレンズアレイ画像からの3次元再構成を研究しています。2027年3月 修士課程修了予定。", "nav": "", "body": "home", "head": "<script src=\"/assets/lab.js?v={{v}}\" defer></script>\n"} -->
 <section class="lab" id="lab" aria-label="レンズアレイ実験室">
   <div class="intro">
     <h1>{{f:name}}<span class="alt" lang="en">{{f:name_alt}}</span></h1>
     <p class="role">{{f:role}}</p>
+    <p class="proof"><b>{{f:kisti_rows}}</b>のデータを収集・蓄積 · ICMV 2026 <b>最優秀ポスター賞</b></p>
     <p class="lede">韓国のVision Insideで{{f:career_len}}（{{f:career_span}}）、データパイプラインとバックエンドを開発しました。現在は九州工業大学大学院の修士課程で、レンズアレイ画像からの3次元再構成を研究しています。</p>
     <ul class="stack" aria-label="主な技術"><li>Python</li><li>SQL</li><li>FastAPI</li><li>MySQL·MariaDB</li><li>Docker</li><li>AWS</li></ul>
-    <p class="status">{{f:status}} · 兵役修了</p>
+    <p class="status">{{f:status}} · 日本語ビジネス会話</p>
     <div class="ctas">
       <a class="btn primary" href="/files/HyeongjuLee_CV_EN.pdf" hreflang="en">CV（英語・PDF）</a>
       <a class="btn" href="/files/HyeongjuLee_Portfolio_EN.pdf" hreflang="en">ポートフォリオ（英語・PDF）</a>
@@ -54,7 +55,7 @@
       <input type="range" id="lab-depth" min="0" max="100" step="1" value="0" disabled data-depth>
       <output for="lab-depth" data-depth-out>–</output>
     </div>
-    <a class="lab-how" href="/en/research/rim/#lab" hreflang="en">仕組み（英語）<span aria-hidden="true">→</span></a>
+    <a class="lab-how" href="/en/research/rim/#lab" hreflang="en">論文の手法 RIM（英語）<span aria-hidden="true">→</span></a>
     <button class="sound needs-gl" type="button" data-sound>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path class="x" d="M17 9l5 6M22 9l-5 6" style="display:none"></path><path class="w" d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"></path></svg>
       <span class="label">音を消す</span>
@@ -70,7 +71,7 @@
   <header><h2 id="h-facts">数字で見る</h2></header>
   <dl class="facts">
     <div><dt>{{f:kisti_rows}}</dt><dd>KISTI（韓国科学技術情報研究院）の公共R&amp;Dプラットフォームに収集・蓄積した商品・調達データ<small>収集・蓄積・提供を担当。2023年11月時点で、Danawa（韓国の価格比較サイト）のレビュー1,605万件、調達属性4,192万件を含む</small></dd></div>
-    <div><dt>2,481</dt><dd>収集したDanawaの商品カテゴリ<small>全2,517のうち。Amazonの商品は商品ID（ASIN）で重複をまとめ、{{f:kisti_asin}}を{{f:kisti_asin_dedup}}に整理</small></dd></div>
+    <div><dt>{{f:bio_ref}}</dt><dd>ゲノム変異のアノテーション用に蓄積した公開リファレンス<small>dbSNP 237 GB、1000 Genomes 770 GBを染色体ごとに分割し、チャンク単位で蓄積。バックエンドとパイプラインを実装</small></dd></div>
     <div><dt>{{f:kisti_match}}</dt><dd>NTIS（韓国の国家研究開発情報）の研究課題と企業を、キーワードで結んだマッチング（SQL）<small>プラットフォームの課題–企業マッチングモデルをSQLで実装し、バッチで実行</small></dd></div>
     <div><dt>{{f:wjmax_peak}}</dt><dd>ゲームサーバーWJMaxがアップデート時に受けた最大同時接続数<small>平均{{f:wjmax_avg}}。Cloudflare・AWS EC2・RDSで運用し、2人チームでサーバー・DB・セキュリティを担当</small></dd></div>
   </dl>
@@ -81,10 +82,10 @@
   <p class="note-lang">各プロジェクトの詳細ページは英語です。</p>
   <ol class="log work">
     <li><a class="row" href="/en/work/hitachi/" hreflang="en">
-      <span class="when">2025.04 – 現在<br>九工大研究室 研究補助員（パートタイム）</span>
-      <div><h3>日立との受託研究における画像データパイプライン</h3>
-        <p>保守できない状態だった既存コードを書き直し、産業用マシンビジョンカメラの制御・撮影から学習用データセットの前処理までをPythonのパイプラインにまとめました。開発者ではない研究員が自分で使えるPyQtのGUIも用意しました。</p>
-        <span class="key">設計を後任の研究員2名に引き継ぎ、2026年9〜10月にオランダで現地展開</span></div>
+      <span class="when">2025.04 – 現在<br>九州工業大学の研究室 研究補助員（非常勤）</span>
+      <div><h3>日立グループとの受託研究における画像データパイプライン</h3>
+        <p>保守が難しくなっていた既存コードを全面的に作り直し、産業用マシンビジョンカメラの制御・撮影から学習用データセットの前処理までをPythonのパイプラインにまとめました。開発者ではない研究員が自分で使えるPyQtのGUIも用意しました。</p>
+        <span class="key">設計を研究室の後輩2名に引き継ぎ、2026年9〜10月にオランダで現地導入</span></div>
       <span class="flow" aria-label="パイプライン"><span>カメラ制御</span><i></i><span>撮影</span><i></i><span class="core">前処理</span><i></i><span>データセット</span></span>
     </a></li>
     <li><a class="row" href="/en/work/kisti/" hreflang="en">
@@ -95,7 +96,7 @@
       <span class="flow" aria-label="パイプライン"><span>クローラー・API収集</span><i></i><span class="core">リモートDB（MySQL）</span><i></i><span>モデルのバッチ実行</span><i></i><span>FastAPI</span></span>
     </a></li>
     <li class="compact"><a class="row" href="/en/work/wjmax/" hreflang="en">
-      <span class="when">{{f:wjmax_period}}<br>個人プロジェクト、2人チーム</span>
+      <span class="when">{{f:wjmax_period}}<br>有志2人のサイドプロジェクト</span>
       <div><h3>コミュニティのリズムゲームWJMaxのサーバー</h3>
         <span class="key">アップデート時に最大<b>{{f:wjmax_peak}}</b>が同時接続、FastAPI・EC2・RDS</span></div>
     </a><a class="code" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">GitHubのコード（2026年に書き直し）</a></li>
@@ -103,7 +104,7 @@
       <span class="when">{{f:bio_period}}<br>Vision Inside、社内プロジェクト</span>
       <div><h3>ゲノム変異のアノテーション・リスクレポートのバックエンド</h3>
         <span class="key">公開リファレンスに対する4段階のSQLアノテーション、FastAPIのJSON API、Docker。バックエンドとパイプラインを実装</span></div>
-    </a><a class="code" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener">GitHubのコード</a></li>
+    </a><a class="code" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener">GitHubのコード（2026年に書き直し）</a></li>
   </ol>
 </section>
 
@@ -129,7 +130,7 @@
   <header><h2 id="h-contact">連絡先</h2></header>
   <div class="contact-wrap">
     <div class="contact-main">
-      <p class="lead">{{f:status}}。データエンジニアリング、バックエンド開発、ビジョンデータパイプラインの職種を探しています。</p>
+      <p class="lead">{{f:status}}。データエンジニアリング、バックエンド開発、ビジョンデータパイプラインのソフトウェア開発職を志望しています。</p>
       <div class="contact">
         <div class="email strong" data-email-user="{{f:email_user}}" data-email-domain="{{f:email_domain}}" hidden><a class="addr"><svg class="i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5.5 7-5.5"/></svg><span class="v"></span></a><button class="copy" type="button" aria-label="メールアドレスをコピー" data-done="コピーしました" data-manual="選択しました"><svg class="i on-idle" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13H7"/></svg><svg class="i on-done" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10.5l4 4 8-9"/></svg><span class="t">コピー</span></button><span class="sr" aria-live="polite"></span></div>
         <a class="btn" href="/files/HyeongjuLee_CV_EN.pdf" hreflang="en">CV（英語・PDF）</a>

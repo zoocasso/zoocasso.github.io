@@ -241,7 +241,7 @@ const Face = (() => {
 /* ================= dialogue: Japanese voice line, subtitle in the page language ================= */
 const L = {
   tap: ['クリックすると、音といっしょに始まります。', { ko: '누르면 소리와 함께 시작해요.', en: 'Click to start, with sound.' }],
-  greet: ['いらっしゃいませ。奥行きのちがう物を、レンズで撮って、元に戻してみます。', { ko: '어서 오세요. 깊이가 다른 물체들을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "Welcome. Let's capture objects at different depths through a lens array, then bring them back." }],
+  greet: ['ようこそ。奥行きのちがう物を、レンズで撮って、元に戻してみます。', { ko: '어서 오세요. 깊이가 다른 물체들을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "Welcome. Let's capture objects at different depths through a lens array, then bring them back." }],
   between: ['いまの面は、物と物のあいだです。もう少し動かしてみてください。', { ko: '재구성 면이 물체들 사이에 있어요. 거리를 조금 더 움직여 보세요.', en: 'The plane is between the objects; move the distance a little more.' }],
   A: () => scene.kind === 'lytro'
     ? ['本物のLytroで撮った、レンズごとの画像です。拡大すると、小さな丸い像が並んでいます。', { ko: '실제 Lytro 카메라의 렌즈릿 영상이에요. 렌즈마다 작고 둥근 사진이 있고, 렌즈 하나가 작은 카메라예요.', en: 'A real Lytro capture, as its lenslet image: each lens holds a small round picture, so every lens is a tiny camera.' }]
@@ -1592,6 +1592,8 @@ function startSound() {
 }
 function beginStory() {
   if (!waiting) return;
+  // one visit-count event per page view, so the owner can see how many visitors start the lab
+  if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: 'lab-start', title: 'Lab started', event: true });
   endWait(); opening(++token);
 }
 const GESTURES = ['pointerdown', 'keydown', 'touchend'];

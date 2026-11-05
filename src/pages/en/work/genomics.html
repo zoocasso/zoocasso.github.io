@@ -22,9 +22,9 @@
       <h2 id="h-result">Results</h2>
       <dl class="results">
         <div><dt>{{f:bio_ref}}</dt><dd>Public reference data loaded (dbSNP, 1000 Genomes and more)</dd></div>
-        <div><dt>4 stages</dt><dd>SQL joins on (chrom, pos, ref, alt) to annotate variants</dd></div>
+        <div><dt>4 stages</dt><dd>SQL joins that attach the references one after another, by position key (chromosome, position, REF, ALT) and by rsID</dd></div>
         <div><dt>26 populations</dt><dd>Allele frequencies compared across 1000 Genomes populations</dd></div>
-        <div><dt>Built and deployed</dt><dd>From variant calling to the API and the production server (algorithm designed with the team lead)</dd></div>
+        <div><dt>Built and deployed</dt><dd>From variant calling to the API and a server on the company network (never a public service; algorithm designed with the team lead)</dd></div>
       </dl>
     </section>
 
@@ -69,7 +69,7 @@
 
     <section id="load" aria-labelledby="h-load">
       <h2 id="h-load">Loading</h2>
-      <p>The dbSNP source VCFs alone are 237 GB, and the 1000 Genomes sources are 770 GB. I split the files by chromosome (sed, split) and loaded them in pandas chunks through SQLAlchemy. Annotation joins the reference tables one after another on (chrom, pos, ref, alt), in four stages.</p>
+      <p>The dbSNP source VCFs alone are 237 GB, and the 1000 Genomes sources are 770 GB. I split the files by chromosome (sed, split) and loaded them in pandas chunks through SQLAlchemy. Annotation joins the reference tables one after another, in four stages: dbSNP and 1000 Genomes on a key of chromosome, position, REF and ALT, the GWAS Catalog on rsID and risk allele, and UniProt on variant ID and allele. Chip input finds its position key in dbSNP by rsID.</p>
     </section>
 
     <section id="ref" aria-labelledby="h-ref">

@@ -22,9 +22,9 @@
       <h2 id="h-result">결과</h2>
       <dl class="results">
         <div><dt>{{f:bio_ref}}</dt><dd>적재한 공개 레퍼런스 원본 (dbSNP, 1000 Genomes 등)</dd></div>
-        <div><dt>4단계</dt><dd>(chrom, pos, ref, alt) 기준 SQL 조인으로 변이 주석</dd></div>
+        <div><dt>4단계</dt><dd>위치 키(염색체·위치·REF·ALT)와 rsID로 레퍼런스를 차례로 붙이는 SQL 조인으로 변이 주석</dd></div>
         <div><dt>26개 집단</dt><dd>1000 Genomes 대립유전자 빈도 비교</dd></div>
-        <div><dt>구현·배포</dt><dd>변이 호출부터 API와 운영서버 배포까지 (알고리즘 설계는 팀장과 함께)</dd></div>
+        <div><dt>구현·배포</dt><dd>변이 호출부터 API와 사내망 서버 배포까지 (공개 서비스는 아님, 알고리즘 설계는 팀장과 함께)</dd></div>
       </dl>
     </section>
 
@@ -70,7 +70,7 @@
 
     <section id="load" aria-labelledby="h-load">
       <h2 id="h-load">적재 방법</h2>
-      <p>dbSNP 원본 VCF만 237 GB, 1000 Genomes 원본은 770 GB입니다. 그래서 염색체 단위로 파일을 나누고(sed, split), pandas 청크와 SQLAlchemy로 조금씩 나눠 적재했습니다. 주석은 (chrom, pos, ref, alt)를 기준으로 레퍼런스 테이블을 차례로 붙이는 4단계 SQL 조인입니다.</p>
+      <p>dbSNP 원본 VCF만 237 GB, 1000 Genomes 원본은 770 GB입니다. 그래서 염색체 단위로 파일을 나누고(sed, split), pandas 청크와 SQLAlchemy로 조금씩 나눠 적재했습니다. 주석은 레퍼런스 테이블을 차례로 붙이는 4단계 SQL 조인입니다. dbSNP와 1000 Genomes는 염색체·위치·REF·ALT를 이은 키로, GWAS Catalog는 rsID와 위험 대립유전자로, UniProt은 변이 ID와 대립유전자로 붙입니다. 칩 입력은 rsID로 dbSNP에서 위치 키를 찾습니다.</p>
     </section>
 
     <section id="ref" aria-labelledby="h-ref">

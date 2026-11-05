@@ -101,17 +101,20 @@ p{margin:0 0 1em}
 .lab .poster{position:absolute;inset:0;background:var(--plate)}
 .lab .torch{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:var(--ta,0);transition:opacity .5s;background:radial-gradient(460px circle at var(--tx,50%) var(--ty,50%),rgba(227,196,127,.16),rgba(227,196,127,.05) 45%,transparent 70%)}
 .intro{position:absolute;left:var(--gutter);top:clamp(28px,6vh,64px);width:min(470px,40%);z-index:2}
-.intro h1{font-size:clamp(46px,5.2vw,74px);letter-spacing:-.02em;line-height:1.02}
+.intro h1{font-size:clamp(40px,4.3vw,60px);letter-spacing:-.02em;line-height:1.02}
 .intro h1 .alt{display:block;font-weight:200;font-size:.42em;letter-spacing:0;color:var(--mute);margin-top:10px}
 /* English and Japanese run longer, so their introduction gets a little more width while it lies over the lab;
    below 1180px it spans the page (see the narrow layout) */
 @media (min-width:1180px){html[lang=en] .intro,html[lang=ja] .intro{width:min(530px,40%)}}
-html[lang=en] .intro h1{font-size:clamp(40px,4vw,58px)}
+html[lang=en] .intro h1{font-size:clamp(36px,3.5vw,50px)}
 html[lang=en] .intro h1 .alt{font-size:.5em}
 /* the katakana name stays on one line; the Latin name under it keeps the light Latin face, which the mincho would replace */
-html[lang=ja] .intro h1{font-size:clamp(36px,3.9vw,56px);white-space:nowrap}
+html[lang=ja] .intro h1{font-size:clamp(34px,3.4vw,48px);white-space:nowrap}
 html[lang=ja] .intro h1 .alt{font-family:'Hahmlet',serif;font-size:.52em}
-.intro .role{font-size:18px;margin:22px 0 0;color:var(--paper)}
+/* the role and one line of proof come first after the name: what he does, and the scale he has done it at */
+.intro .role{font-size:23px;font-weight:500;line-height:1.35;margin:18px 0 0;color:var(--paper)}
+.intro .proof{font-size:15.5px;margin:8px 0 0;color:var(--paper)}
+.intro .proof b{color:var(--brass-hi);font-weight:700}
 .intro .lede{font-size:16px;color:var(--mute);margin:12px 0 0;max-width:42ch}
 .intro .stack{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:14px 0 0;padding:0}
 .intro .stack li{padding:3px 8px;border:1px solid var(--rule);border-radius:3px;background:var(--veil);font-size:13px;line-height:1.4;color:var(--paper)}
