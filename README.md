@@ -4,6 +4,7 @@ Personal site of Hyeongju Lee (이형주), data and backend engineer and 3D visi
 
 - Korean: https://zoocasso.github.io/
 - English: https://zoocasso.github.io/en/
+- Japanese: https://zoocasso.github.io/ja/ (home and CV; the other pages link to the English ones)
 
 The home page opens on a lens array lab: a light field is captured through a pinhole array model,
 rearranged with RIM, and reconstructed at different depths, with synthesized music and sound.
@@ -38,7 +39,7 @@ parameters) at 8 × 8 views, 1920 × 1080 per view, 256 samples, plus a depth pa
 
 | Path | What it holds |
 |---|---|
-| `src/pages/ko/`, `src/pages/en/` | Page bodies. Each file starts with a `<!--meta {...} -->` comment (title, description, nav) |
+| `src/pages/ko/`, `src/pages/en/`, `src/pages/ja/` | Page bodies. Each file starts with a `<!--meta {...} -->` comment (title, description, nav) |
 | `data/facts.json` | Every number shown on the site, with the source it was taken from. Pages use `{{f:key}}` |
 | `src/assets/` | `site.css`, `site.js` (email copy, comparison slider, copy buttons), `lab.js` (WebGL2 lab and Web Audio) |
 | `src/img/`, `src/files/` | Images and the public CV and portfolio PDFs (without phone numbers) |

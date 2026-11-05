@@ -6,7 +6,7 @@ const root = document.getElementById('lab');
 if (!root) return;
 const q = (s) => root.querySelector(s);
 const stage = q('.stage'), canvas = q('canvas.gl'), dialogEl = q('.dialog');
-const lang = document.documentElement.lang === 'en' ? 'en' : 'ko';
+const lang = ['en', 'ja'].includes(document.documentElement.lang) ? document.documentElement.lang : 'ko';
 const NP = 8, W = 2.0, ZS = 0.3;
 const small = Math.min(window.innerWidth, screen.width || 9999) < 640;
 // the viewpoint follows a mouse; on phones and tablets it follows the device's tilt instead
@@ -15,7 +15,7 @@ const mouse = matchMedia('(hover: hover) and (pointer: fine)').matches;
 const NL_SIM = small ? 32 : 48, NL_REAL = small ? 64 : 128, VIEWS = NP * NP;
 let NL = NL_SIM, R = NL * NP, COUNT = R * R;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const fmt = (n) => n.toLocaleString(lang === 'ko' ? 'ko-KR' : 'en-US');
+const fmt = (n) => n.toLocaleString({ ko: 'ko-KR', en: 'en-US', ja: 'ja-JP' }[lang]);
 
 /* ================= sound: everything is synthesized here ================= */
 const Snd = (() => {
@@ -278,7 +278,8 @@ const FOCUS = [
 const ej = q('.dialog .jp'), ek = q('.dialog .ko'), liveEl = q('[data-live]');
 let sayTimer = 0;
 function sayLine(line, after) {
-  const jp = line[0], sub = line[1][lang];
+  // on Japanese pages the voice line is the page's language, so it stands alone without a subtitle
+  const jp = line[0], sub = lang === 'ja' ? jp : line[1][lang];
   liveEl.textContent = sub;
   clearInterval(sayTimer);
   // the subtitle shows in full as the line starts, like a film subtitle, while the Japanese is typed out
@@ -1120,14 +1121,14 @@ function tween(key, to, ms, my) {
   });
 }
 const depth = q('[data-depth]'), depthOut = q('[data-depth-out]');
-const focusLabel = lang === 'ko' ? (n) => `${n} 초점` : (n) => `Focus: ${n}`;
+const focusLabel = { ko: (n) => `${n} 초점`, en: (n) => `Focus: ${n}`, ja: (n) => `ピント：${n}` }[lang];
 function focusedLayer() {
   return scene.targets.findIndex((t) => Math.abs(st.D - t.d) < scene.tol);
 }
 function setDepthUI(enabled) {
   const pct = Math.round((st.D - scene.dMin) / (scene.dMax - scene.dMin) * 100), k = focusedLayer();
   depth.disabled = !enabled; depth.value = String(pct);
-  const name = k >= 0 ? scene.targets[k].name[lang] : '';
+  const name = k >= 0 ? scene.targets[k].name[lang === 'ja' ? 'jp' : lang] : '';
   depthOut.textContent = enabled ? (k >= 0 ? focusLabel(name) : pct + '%') : '–';
   depth.setAttribute('aria-valuetext', k >= 0 ? focusLabel(name) : `${pct}%`);
   tags.rec.textContent = k >= 0 ? `${recLabel} · ${name}` : recLabel;
@@ -1577,7 +1578,7 @@ if (lytroBtn) lytroBtn.addEventListener('pointerenter', () => { lytroFiles().cat
    sound, the story starts at once; otherwise it waits for that click, so lines changing on their own
    never pull the eye from the introduction beside it. A visitor who turns the sound off is remembered on this device. */
 const soundBtn = q('[data-sound]');
-const soundText = { ko: ['소리 켜기', '소리 끄기'], en: ['Sound on', 'Sound off'] }[lang];
+const soundText = { ko: ['소리 켜기', '소리 끄기'], en: ['Sound on', 'Sound off'], ja: ['音を出す', '音を消す'] }[lang];
 let wantSound = true;
 try { if (localStorage.getItem('lab-sound') === 'off') wantSound = false; } catch (e) { /* storage unavailable */ }
 function soundUI() {
@@ -1613,7 +1614,7 @@ soundUI();
    without the Fullscreen API for elements (Safari on iPhone) get the same layout by fixing the lab
    over the page instead; Esc or the same button leaves it. */
 const fsBtn = q('[data-fullscreen]');
-const fsText = { ko: ['전체화면', '전체화면 끝내기'], en: ['Full screen', 'Exit full screen'] }[lang];
+const fsText = { ko: ['전체화면', '전체화면 끝내기'], en: ['Full screen', 'Exit full screen'], ja: ['全画面', '全画面を終了'] }[lang];
 const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement || null;
 const fsReq = root.requestFullscreen || root.webkitRequestFullscreen;
 const fsExit = document.exitFullscreen || document.webkitExitFullscreen;
