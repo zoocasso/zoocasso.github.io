@@ -135,6 +135,8 @@ def layout(lang, meta, body, path, alts_by_lang, v):
         # the robot's lines appear only once the lab has started, so its font does not hold up the first paint
         fonts += (f'<link rel="preload" as="style" href="{DOT_FONT}" onload="this.onload=null;this.rel=\'stylesheet\'">\n'
                   f'<noscript><link rel="stylesheet" href="{DOT_FONT}"></noscript>\n')
+    # the home page's contact section offers the email right above the footer, so the footer leaves it out there
+    foot_email = "" if meta.get("home") else f'''<div class="email plain" data-email-user="{FACTS['email_user']}" data-email-domain="{FACTS['email_domain']}" hidden><a class="addr"><svg class="i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5.5 7-5.5"/></svg><span class="v"></span></a><button class="copy" type="button" aria-label="{t['copy']}" data-done="{t['copied']}" data-manual="{t['selected']}"><svg class="i on-idle" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13H7"/></svg><svg class="i on-done" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10.5l4 4 8-9"/></svg><span class="t">{t['copy_short']}</span></button><span class="sr" aria-live="polite"></span></div>'''
     body_class = meta.get("body", "")
     # the 404 page is served at any missing address, so it names no address of its own and is not indexed
     if path == "/404.html":
@@ -185,7 +187,7 @@ def layout(lang, meta, body, path, alts_by_lang, v):
 <footer class="site-foot">
   <div class="foot-row">
     <span class="foot-name">{fact('name', lang)}</span>
-    <div class="email plain" data-email-user="{FACTS['email_user']}" data-email-domain="{FACTS['email_domain']}" hidden><a class="addr"><svg class="i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5.5 7-5.5"/></svg><span class="v"></span></a><button class="copy" type="button" aria-label="{t['copy']}" data-done="{t['copied']}" data-manual="{t['selected']}"><svg class="i on-idle" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13H7"/></svg><svg class="i on-done" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10.5l4 4 8-9"/></svg><span class="t">{t['copy_short']}</span></button><span class="sr" aria-live="polite"></span></div>
+    {foot_email}
     <a href="/files/{t['pdf_file']}">{t['pdf']}</a>
     <a href="{FACTS['github']}" target="_blank" rel="noopener">GitHub</a>
   </div>
@@ -197,6 +199,13 @@ def layout(lang, meta, body, path, alts_by_lang, v):
 
 
 TOKEN = re.compile(r"\{\{\s*f:([a-z0-9_]+)\s*\}\}")
+PDF_LINK = re.compile(r'<a ((?:[^>]*? )?href="/files/([^"]+)\.pdf")')
+
+
+def click_events(page):
+    """GoatCounter counts clicks on elements that carry data-goatcounter-click: PDF links and email copy buttons."""
+    page = PDF_LINK.sub(lambda m: f'<a data-goatcounter-click="pdf-{m.group(2)}" {m.group(1)}', page)
+    return page.replace('<button class="copy" type="button"', '<button class="copy" type="button" data-goatcounter-click="email-copy"')
 META = re.compile(r"^\s*<!--meta\s*(\{.*?\})\s*-->\s*", re.S)
 
 
@@ -243,7 +252,7 @@ def build():
         else:
             path = url_for(lang, rel)
             alts = {k: url_for(k, rel) for k in LANGS if (k, rel) in pages}
-        page = layout(lang, meta, body, path, alts, v)
+        page = click_events(layout(lang, meta, body, path, alts, v))
         out = out_file(path)
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(page, encoding="utf-8")
