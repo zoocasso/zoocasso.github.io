@@ -44,15 +44,18 @@ UI = {
     "ko": {"skip": "본문 바로가기", "work": "작업", "research": "연구", "cv": "이력서", "nav": "주 메뉴",
            "copy": "이메일 주소 복사", "copy_short": "복사", "copied": "복사됨", "selected": "선택됨",
            "updated": "마지막 업데이트", "pdf": "이력서·포트폴리오",
-           "locale": "ko_KR", "site": "이형주"},
+           "locale": "ko_KR", "site": "이형주",
+           "next": "이력서와 포트폴리오 PDF는 이력서 페이지에 있습니다. 궁금한 점은 이메일로 연락 주세요.", "next_btn": "이력서·포트폴리오"},
     "en": {"skip": "Skip to content", "work": "Work", "research": "Research", "cv": "CV", "nav": "Main menu",
            "copy": "Copy email address", "copy_short": "Copy", "copied": "Copied", "selected": "Selected",
            "updated": "Last updated", "pdf": "CV & portfolio",
-           "locale": "en_US", "site": "Hyeongju Lee"},
+           "locale": "en_US", "site": "Hyeongju Lee",
+           "next": "The CV and portfolio PDFs are on the CV page. For questions, please write by email.", "next_btn": "CV & portfolio"},
     "ja": {"skip": "本文へ移動", "work": "実績", "research": "研究", "cv": "経歴", "nav": "メインメニュー",
            "copy": "メールアドレスをコピー", "copy_short": "コピー", "copied": "コピーしました", "selected": "選択しました",
            "updated": "最終更新", "pdf": "経歴・ポートフォリオ",
-           "locale": "ja_JP", "site": "イ・ヒョンジュ"},
+           "locale": "ja_JP", "site": "イ・ヒョンジュ",
+           "next": "CVとポートフォリオのPDFは経歴ページにあります。ご質問はメールでお気軽にどうぞ。", "next_btn": "経歴・ポートフォリオ"},
 }
 EXISTING = set()
 # any Korean or Japanese mobile number, in any common spelling, and international prefixes; the
@@ -138,6 +141,14 @@ def layout(lang, meta, body, path, alts_by_lang, v):
     # the home page's contact section offers the email right above the footer, so the footer leaves it out there
     foot_email = "" if meta.get("home") else f'''<div class="email plain" data-email-user="{FACTS['email_user']}" data-email-domain="{FACTS['email_domain']}" hidden><a class="addr"><svg class="i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5.5 7-5.5"/></svg><span class="v"></span></a><button class="copy" type="button" aria-label="{t['copy']}" data-done="{t['copied']}" data-manual="{t['selected']}"><svg class="i on-idle" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13H7"/></svg><svg class="i on-done" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10.5l4 4 8-9"/></svg><span class="t">{t['copy_short']}</span></button><span class="sr" aria-live="polite"></span></div>'''
     body_class = meta.get("body", "")
+
+    def next_step(b):
+        # a work or research detail page ends with what a reader may want next: the CV page (the email is in the footer below)
+        if nav not in ("work", "research") or path.rstrip("/").count("/") < (3 if lang != "ko" else 2):
+            return b
+        block = (f'<aside class="next-step"><p>{html.escape(t["next"])}</p><div class="contact">'
+                 f'<a class="btn primary" href="{home}cv/">{html.escape(t["next_btn"])}</a></div></aside>\n')
+        return b.replace('<nav class="pager"', block + '<nav class="pager"', 1) if '<nav class="pager"' in b else b + block
     # the 404 page is served at any missing address, so it names no address of its own and is not indexed
     if path == "/404.html":
         where = '<meta name="robots" content="noindex">\n'
@@ -182,7 +193,7 @@ def layout(lang, meta, body, path, alts_by_lang, v):
   </nav>
 </header>
 <main id="main">
-{body}
+{next_step(body)}
 </main>
 <footer class="site-foot">
   <div class="foot-row">
@@ -204,7 +215,8 @@ PDF_LINK = re.compile(r'<a ((?:[^>]*? )?href="/files/([^"]+)\.pdf")')
 
 def click_events(page):
     """GoatCounter counts clicks on elements that carry data-goatcounter-click: PDF links and email copy buttons."""
-    page = PDF_LINK.sub(lambda m: f'<a data-goatcounter-click="pdf-{m.group(2)}" {m.group(1)}', page)
+    # PDFs open in a new tab, so the site is still there when the reader closes the file
+    page = PDF_LINK.sub(lambda m: f'<a data-goatcounter-click="pdf-{m.group(2)}" target="_blank" rel="noopener" {m.group(1)}', page)
     return page.replace('<button class="copy" type="button"', '<button class="copy" type="button" data-goatcounter-click="email-copy"')
 META = re.compile(r"^\s*<!--meta\s*(\{.*?\})\s*-->\s*", re.S)
 

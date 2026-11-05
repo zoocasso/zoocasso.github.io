@@ -71,3 +71,29 @@ if (toc) {
   addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(mark); } }, { passive: true });
   mark();
 }
+
+/* Language hint: a visitor whose browser prefers another language this page exists in sees one quiet line
+   at the top offering it. Nothing redirects; closing it is remembered on this device. */
+(() => {
+  const here = document.documentElement.lang;
+  const alts = {};
+  document.querySelectorAll('link[rel=alternate][hreflang]').forEach((l) => { alts[l.hreflang] = l.href; });
+  const prefs = (navigator.languages || [navigator.language || '']).map((l) => l.slice(0, 2).toLowerCase())
+    .filter((l) => ['ko', 'en', 'ja'].includes(l));
+  if (!prefs.length || prefs[0] === here) return;
+  // a Japanese reader on a Korean page that has no Japanese version is offered the English one
+  const want = [...prefs, prefs[0] !== 'ko' ? 'en' : ''].find((l) => l && l !== here && alts[l]);
+  if (!want) return;
+  try { if (localStorage.getItem('lang-hint-off')) return; } catch (e) { /* storage unavailable */ }
+  const text = { ko: ['한국어 페이지가 있습니다', '한국어로 보기', '닫기'],
+                 en: ['This page is available in English', 'Read in English', 'Close'],
+                 ja: ['日本語のページがあります', '日本語で見る', '閉じる'] }[want];
+  const bar = document.createElement('div');
+  bar.className = 'lang-hint'; bar.lang = want;
+  bar.innerHTML = `<span></span><a></a><button type="button">×</button>`;
+  bar.querySelector('span').textContent = text[0];
+  const a = bar.querySelector('a'); a.textContent = text[1]; a.href = new URL(alts[want]).pathname; a.hreflang = want;
+  const b = bar.querySelector('button'); b.setAttribute('aria-label', text[2]);
+  b.addEventListener('click', () => { bar.remove(); try { localStorage.setItem('lang-hint-off', '1'); } catch (e) { /* storage unavailable */ } });
+  document.body.insertBefore(bar, document.body.firstChild.nextSibling);
+})();
