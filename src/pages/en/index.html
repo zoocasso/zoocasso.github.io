@@ -3,10 +3,10 @@
   <div class="intro">
     <h1>{{f:name}}<span class="alt" lang="ko">{{f:name_alt}}</span></h1>
     <p class="role">{{f:role}}</p>
-    <p class="proof"><b>{{f:kisti_rows}}</b> of data collected and loaded · ICMV 2026 <b>Best Poster Award</b></p>
-    <p class="lede">{{f:career_len}} at Vision Inside ({{f:career_span}}, assistant manager) building data pipelines and backends. Now a master's student at Kyushu Institute of Technology, researching 3D reconstruction from lens array images.</p>
+    <p class="proof"><span class="nw"><b>Owned the data layer</b> of a public R&amp;D platform</span> · <span class="nw">led to a <b>KRW 300M main-phase contract</b></span> · <span class="nw"><b>4 first-author papers</b></span></p>
+    <p class="lede">{{f:career_len}} at Vision Inside building data pipelines and backends. Now a master's student at Kyushu Institute of Technology, researching 3D reconstruction from lens array images.</p>
     <ul class="stack" aria-label="Main tools"><li>Python</li><li>SQL</li><li>FastAPI</li><li>MySQL·MariaDB</li><li>Docker</li><li>AWS</li></ul>
-    <p class="status">{{f:status}} · military service completed</p>
+    <p class="status">{{f:status}}</p>
     <div class="ctas">
       <a class="btn primary" href="/en/cv/">CV &amp; portfolio</a>
       <a class="btn" href="https://github.com/zoocasso" target="_blank" rel="noopener">GitHub</a>
@@ -30,6 +30,7 @@
     <div class="dialog" aria-hidden="true"><div class="jp" lang="ja"></div><div class="ko"></div></div>
     <div class="vh" aria-live="polite" data-live></div>
     <p class="credit" data-credit hidden>Lytro data: Stanford Lytro Light Field Archive, occlusions_26 (Raj et al., 2016) · cropped for non-commercial demonstration</p>
+    <p class="figcap needs-gl"><span class="k">Figure</span><span class="desc">3D reconstruction from a lens array image · </span>the paper's method, RIM<span class="long">, ICMV 2026</span><span class="mid"> <b>Best Poster Award</b></span> · <a href="/en/research/rim/#lab">How it works →</a></p>
     <figure class="fallback" hidden>
       <img src="/img/ei-synth-800.webp" width="800" height="450" alt="Elemental image of a 6 × 6 lens array synthesized with iRIM">
       <figcaption><p>This device cannot run the lab animation, so a research image is shown instead.</p></figcaption>
@@ -37,28 +38,26 @@
   </div>
 
   <div class="lab-tools">
-    <div class="group pick needs-gl" role="group" aria-label="Sample">
+    <div class="group steps needs-gl" role="group" aria-label="Steps">
+      <button class="step" type="button" data-step="1"><b>1</b><span class="t">Capture</span></button>
+      <button class="step" type="button" data-step="2"><b>2</b><span class="t">Rearrange</span></button>
+      <button class="step" type="button" data-step="3"><b>3</b><span class="t">Reconstruct</span></button>
+    </div>
+    <div class="ctx needs-gl">
+      <p class="ctx-hint">In step 3 you can move the reconstruction distance yourself</p>
+      <div class="depth">
+        <label for="lab-depth">Distance</label>
+        <input type="range" id="lab-depth" min="0" max="100" step="1" value="0" disabled data-depth>
+        <output for="lab-depth" data-depth-out>–</output>
+      </div>
+      <button class="act" type="button" data-reverse><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4.5h4.5"></path></svg>Reverse RIM</button>
+      <button class="tog" type="button" data-layers-btn aria-pressed="false" hidden><i aria-hidden="true"></i>Estimated depth layers</button>
+    </div>
+    <div class="group pick seg needs-gl" role="group" aria-label="Sample">
       <span class="cap" aria-hidden="true">Sample</span>
       <button class="opt" type="button" data-sample-btn="scene" aria-pressed="true">3D scene</button>
-      <button class="opt" type="button" data-sample-btn="lytro" aria-pressed="false">Lytro (real capture)</button>
+      <button class="opt" type="button" data-sample-btn="lytro" aria-pressed="false">Real capture (Lytro)</button>
     </div>
-    <div class="group steps needs-gl" role="group" aria-label="Steps">
-      <button class="step" type="button" data-step="1"><b>1</b>Capture</button>
-      <button class="step" type="button" data-step="2"><b>2</b>Rearrange</button>
-      <button class="step" type="button" data-step="3"><b>3</b>Reconstruct</button>
-    </div>
-    <button class="act needs-gl" type="button" data-reverse><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4.5h4.5"></path></svg>Reverse RIM</button>
-    <button class="tog needs-gl" type="button" data-layers-btn aria-pressed="false" hidden><i aria-hidden="true"></i>Estimated depth layers</button>
-    <div class="depth needs-gl">
-      <label for="lab-depth">Distance</label>
-      <input type="range" id="lab-depth" min="0" max="100" step="1" value="0" disabled data-depth>
-      <output for="lab-depth" data-depth-out>–</output>
-    </div>
-    <a class="lab-how" href="/en/research/rim/#lab">Method (RIM)<span aria-hidden="true">→</span></a>
-    <button class="sound needs-gl" type="button" data-sound>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"></path><path class="x" d="M17 9l5 6M22 9l-5 6" style="display:none"></path><path class="w" d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"></path></svg>
-      <span class="label">Sound off</span>
-    </button>
     <button class="fs needs-gl" type="button" data-fullscreen>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path class="in" d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"></path><path class="out" d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5" style="display:none"></path></svg>
       <span class="label">Full screen</span>

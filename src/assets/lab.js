@@ -1144,7 +1144,15 @@ function ending(my) {
 function finish() { root.classList.add('played'); }
 function unfinish() { root.classList.remove('played'); }
 const stepBtns = [...root.querySelectorAll('[data-step]')];
-function steps(n) { stepBtns.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.step) === n))); }
+function steps(n) {
+  stepBtns.forEach((b) => {
+    const k = Number(b.dataset.step);
+    b.setAttribute('aria-pressed', String(k === n));
+    b.classList.toggle('done', k < n);
+  });
+  // the bar shows the distance slider and its actions only in step 3 (see .lab[data-step] in site.css)
+  root.dataset.step = String(n);
+}
 /* the panel beside the introduction: three tiny cameras and the pictures they take */
 const raybox = q('.raybox');
 /* step 1 of the real capture: the whole photo (each lens's central 8 x 8 averaged), then the 128 x 128
@@ -1407,6 +1415,7 @@ function uploadAtlas(source) {
 let waiting = false;
 function endWait() { waiting = false; stage.classList.remove('waiting'); }
 function opening(my) {
+  soundBtn.hidden = false;
   say('greet', () => { if (my === token) setTimeout(() => { if (my === token) playAll(my); }, 400); });
 }
 function useLayers(info, mode) {
@@ -1577,7 +1586,8 @@ if (lytroBtn) lytroBtn.addEventListener('pointerenter', () => { lytroFiles().cat
    or the resume button, starts nothing). If the browser already allows
    sound, the story starts at once; otherwise it waits for that click, so lines changing on their own
    never pull the eye from the introduction beside it. A visitor who turns the sound off is remembered on this device. */
-const soundBtn = q('[data-sound]');
+// the toggle sits in the sticky header (outside the lab), so it can be reached from anywhere on the page
+const soundBtn = document.querySelector('[data-sound]');
 const soundText = { ko: ['소리 켜기', '소리 끄기'], en: ['Sound on', 'Sound off'], ja: ['音を出す', '音を消す'] }[lang];
 let wantSound = true;
 try { if (localStorage.getItem('lab-sound') === 'off') wantSound = false; } catch (e) { /* storage unavailable */ }
@@ -1700,7 +1710,7 @@ if (!mouse && !reduce && 'DeviceOrientationEvent' in window) {
 /* the 3D sample scene stands in front of the lens array */
 setDepthUI(false);
 start();
-if (reduce) loadScene('still');
+if (reduce) { loadScene('still'); soundBtn.hidden = false; }
 else if (wantSound && !Snd.autoplayOK()) {
   waiting = true; stage.classList.add('waiting');
   loadScene('wait');
