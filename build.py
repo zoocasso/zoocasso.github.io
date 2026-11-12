@@ -82,7 +82,7 @@ PHONE = re.compile(r"(?<!\d)01[016-9][-. ]?\d{3,4}[-. ]?\d{4}(?!\d)|(?<!\d)0[789
 # for the genome work, nothing about what the commissioned research measures, no "last updated" line
 FORBIDDEN = re.compile(
     r"수료|입사 ?가능|근무 ?가능|available from|available to start|入社可能|"
-    r"MariaDB|PostgreSQL|\bReact\b|\bSpring\b|kr-public-data-agent|"
+    r"MariaDB|PostgreSQL|\bReact\b|kr-public-data-agent|"
     r"단독 ?개발|sole developer|"
     r"卵|雌雄|\begg|계란|달걀|sexing|"
     r"last updated|최종 ?수정|최종 ?업데이트|最終更新", re.I)
@@ -371,6 +371,12 @@ def check():
             errors.append(f"{name}: plain email address (site.js puts it together from data-eu and data-ed)")
         if t.count("<h1") != 1:
             errors.append(f"{name}: expected exactly one <h1>, found {t.count('<h1')}")
+        # Spring appears only as the owner's part in the KISTI prototype web app, never in a stack or skills list
+        lists = re.findall(r'<ul class="chips"[^>]*>.*?</ul>|<ol class="ribbon-stages">.*?</ol>', t, re.S)
+        if name.endswith("cv/index.html"):
+            lists += re.findall(r"<table.*?</table>", t, re.S)
+        if any(re.search(r"\bSpring\b", x) for x in lists):
+            errors.append(f"{name}: content rule: Spring in a stack or skills list")
         for hit in FORBIDDEN.findall(text):
             errors.append(f"{name}: content rule: {hit!r}")
         # Japanese pages name the commissioned research's partner as 日立グループ, never the company alone

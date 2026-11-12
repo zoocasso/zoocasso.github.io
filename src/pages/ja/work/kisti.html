@@ -28,6 +28,7 @@
       </div>
       <div class="legend" aria-label="凡例">
         <span><i class="sw me" aria-hidden="true"></i>自分で構築</span>
+        <span><i class="sw shared" aria-hidden="true"></i>共同で実装</span>
         <span><i class="sw other" aria-hidden="true"></i>他の担当者</span>
         <span><i class="sw ext" aria-hidden="true"></i>外部ソース・利用者</span>
         <button class="toggle" type="button" data-mine-toggle aria-pressed="false"><span class="knob" aria-hidden="true"></span>自分の担当だけ強調</button>
@@ -127,7 +128,7 @@
           <li>モデル3・4・5のバッチ：課題–企業マッチングのSQL {{f:kisti_match}}、価格帯ごとのK-means（Dunn index）、KeyBERTによるレビューキーワードの日次バッチ。2024年はモデル3.1に対応した調達庁の統計SQL</li>
           <li><b>FastAPIのサービス</b>と、Jinja2・Tabulatorの管理画面（フィルター、順次実行、統合検索、Excelダウンロード）</li>
           <li>Amazonの収集をRainforest APIに移す作業の実装（2024年2〜5月）</li>
-          <li>協力会社のプロトタイプ（モデル1・2、Java/TomcatのWeb）の社内サーバーへの移設と、Docker実行環境の構成</li>
+          <li>KISTIのプロトタイプ（協力会社のモデル1・2と、社内JavaチームによるSpringのWeb）を社内サーバーに移設し、Docker実行環境を構成。プロトタイプのWeb開発にも参加し、DB・Java Spring・フロントエンドの連携を担当</li>
           <li>監理用の成果物（運用者マニュアル、初期データ構築完了報告書）の作成、技術会議での結果発表と、データ・コードの依頼への対応</li>
         </ul>
       </div>
@@ -136,7 +137,8 @@
         <ul>
           <li><b>KISTIの研究者</b> · プロジェクトの発注と設計</li>
           <li><b>大学の委託研究チーム</b>（成均館大学校、国民大学校） · プラットフォームのモデルの一部のアルゴリズム設計</li>
-          <li><b>協力会社</b> · モデル1・2のプロトタイプとJava/TomcatのWeb開発</li>
+          <li><b>協力会社</b> · モデル1・2</li>
+          <li><b>社内のJavaチーム</b> · プロトタイプのWeb（Java Spring）開発（本人も参加）</li>
           <li><b>社内の他の担当者</b> · 議事録の作成と報告</li>
         </ul>
       </div>
@@ -153,7 +155,7 @@
         <li><span class="when">2022.11</span><span class="rail" aria-hidden="true"></span><div class="what"><b>監理用の成果物を作成</b>運用者マニュアル、初期データ構築完了報告書。</div></li>
         <li><span class="when">2022.11 – 2023.01</span><span class="rail" aria-hidden="true"></span><div class="what"><b>分散クローラー群の運用</b>{{f:kisti_farm}}から1台のリモートDBに蓄積。</div></li>
         <li><span class="when">2023.02 – 03</span><span class="rail" aria-hidden="true"></span><div class="what"><b>カテゴリの収集状況</b>Amazonの細分類 10,985 / 11,046、Danawa 2,481 / 2,517。</div></li>
-        <li><span class="when">2023.03 – 05</span><span class="rail" aria-hidden="true"></span><div class="what"><b>協力会社のプロトタイプを社内に移設</b>モデル1・2とJava/TomcatのWebを社内サーバーに移し、Docker実行環境を構成。</div></li>
+        <li><span class="when">2023.03 – 05</span><span class="rail" aria-hidden="true"></span><div class="what"><b>KISTIのプロトタイプを社内に移設</b>協力会社のモデル1・2と社内JavaチームのSpring Webを社内サーバーに移し、Docker実行環境を構成。</div></li>
         <li><span class="when">2023.06 – 07</span><span class="rail" aria-hidden="true"></span><div class="what"><b>API収集への移行を決定</b>6月に発注元と協議して採用、7月にAmazon用のRainforest APIを選定。</div></li>
         <li><span class="when">2023.11</span><span class="rail" aria-hidden="true"></span><div class="what"><b>累計{{f:kisti_rows}}</b>コード定義書に基づく、主な7テーブルの合計81,957,000行。</div></li>
         <li><span class="when">2024.02 – 05</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Rainforest APIへの移行を実装</b>Amazonの収集経路を置き換え。</div></li>
