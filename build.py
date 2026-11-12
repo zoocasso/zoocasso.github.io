@@ -50,7 +50,7 @@ PDFS = {
 UI = {
     "ko": {"skip": "본문으로 건너뛰기", "sections": "섹션", "langs": "언어 선택", "home": "홈",
            "nav": (("systems", "시스템"), ("research", "연구"), ("work", "기타 작업"), ("history", "이력"), ("contact", "연락")),
-           "cv": "이력서", "cv_pdf": "이력서 PDF", "pf": "포트폴리오", "pf_pdf": "포트폴리오 PDF", "pdf_note": "",
+           "cv": "이력서", "cvp": ("이력서", "·포트폴리오"),
            "copy": "이메일 주소 복사", "copy_short": "이메일 복사", "mail": "메일 쓰기", "copied": "이메일 주소를 복사했습니다",
            "manual": "주소를 선택했습니다. 복사해 주세요",
            "ct_k": "연락", "ct_h": "채용·협업 문의는 이메일로 받습니다.",
@@ -58,7 +58,7 @@ UI = {
            "sound": ("소리 켜기", "소리 끄기"), "locale": "ko_KR", "site": "이형주", "aria_home": "이형주 홈"},
     "en": {"skip": "Skip to content", "sections": "Sections", "langs": "Language", "home": "Home",
            "nav": (("systems", "Systems"), ("research", "Research"), ("work", "Other work"), ("history", "History"), ("contact", "Contact")),
-           "cv": "CV", "cv_pdf": "CV PDF", "pf": "Portfolio", "pf_pdf": "Portfolio PDF", "pdf_note": "",
+           "cv": "CV", "cvp": ("CV", " & portfolio"),
            "copy": "Copy email address", "copy_short": "Copy email", "mail": "Write an email", "copied": "Email address copied",
            "manual": "Address selected; please copy it",
            "ct_k": "Contact", "ct_h": "For roles and collaboration, please write by email.",
@@ -66,7 +66,7 @@ UI = {
            "sound": ("Sound on", "Sound off"), "locale": "en_US", "site": "Hyeongju Lee", "aria_home": "Hyeongju Lee, home"},
     "ja": {"skip": "本文へ移動", "sections": "セクション", "langs": "言語", "home": "ホーム",
            "nav": (("systems", "システム"), ("research", "研究"), ("work", "その他"), ("history", "経歴"), ("contact", "連絡先")),
-           "cv": "英文CV", "cv_pdf": "英文CV（PDF）", "pf": "ポートフォリオ", "pf_pdf": "ポートフォリオ（英語・PDF）", "pdf_note": "英語・PDF",
+           "cv": "経歴", "cvp": ("経歴", "・ポートフォリオ"),
            "copy": "メールアドレスをコピー", "copy_short": "メールをコピー", "mail": "メールを書く", "copied": "メールアドレスをコピーしました",
            "manual": "アドレスを選択しました。コピーしてください",
            "ct_k": "連絡先", "ct_h": "採用・共同研究のご連絡は、メールでお願いします。",
@@ -177,8 +177,10 @@ def layout(lang, meta, body, path, alts_by_lang, v):
         # the robot's lines appear only once the lab has started, so their font does not hold up the first paint
         fonts += (f'<link rel="preload" as="style" href="{DOT}" onload="this.onload=null;this.rel=\'stylesheet\'">\n'
                   f'<noscript><link rel="stylesheet" href="{DOT}"></noscript>\n')
-    pdf = PDFS[lang]
-    pdf_title = f' title="{e(t["pdf_note"])}"' if t["pdf_note"] else ""
+    # the CV and portfolio button opens the CV page (its PDFs sit at the top there), as the owner asked on 11/05;
+    # on the CV page itself it is marked as the current page
+    cv_full = "".join(t["cvp"])
+    cv_cur = ' aria-current="page"' if nav == "cv" else ""
     # research page only: the lab's sound toggle lives in the sticky header, so it can be switched off from
     # anywhere on the page; lab.js shows it once the lab has started
     sound_btn = "" if not meta.get("lab") else (
@@ -225,8 +227,7 @@ def layout(lang, meta, body, path, alts_by_lang, v):
     </nav>
     <div class="top-actions">
       {sound_btn}<span class="lang" role="group" aria-label="{t['langs']}">{"".join(switch(k, label, full) for k, label, full in SWITCH)}</span>
-      <a class="btn btn-primary" href="{pdf['cv']}"{pdf_title} aria-label="{e(t['cv_pdf'])}">{SVG['cv']}<span class="lbl">{e(t['cv'])}</span><span class="lbl-long"> PDF</span></a>
-      <a class="btn btn-pf" href="{pdf['portfolio']}"{pdf_title} aria-label="{e(t['pf_pdf'])}">{SVG['pf']}<span class="lbl">{e(t['pf'])}</span></a>
+      <a class="btn btn-primary" href="{home}cv/"{cv_cur} aria-label="{e(cv_full)}">{SVG['cv']}<span class="lbl">{e(t['cvp'][0])}<span class="lbl-long">{e(t['cvp'][1])}</span></span></a>
       <button class="btn btn-icon" {copy_attrs} aria-label="{e(t['copy'])}" title="{e(t['copy'])}">{SVG['mail']}</button>
     </div>
   </div>
@@ -247,15 +248,14 @@ def layout(lang, meta, body, path, alts_by_lang, v):
       <div class="contact-actions">
         <button class="btn btn-primary btn-lg" {copy_attrs}>{SVG['copy']}{e(t['copy'])}</button>
         <a class="btn btn-lg" data-mailto>{SVG['mail']}{e(t['mail'])}</a>
-        <a class="btn btn-lg" href="{pdf['cv']}">{SVG['cv']}{e(t['cv_pdf'])}</a>
-        <a class="btn btn-lg" href="{pdf['portfolio']}">{SVG['pf']}{e(t['pf_pdf'])}</a>
+        <a class="btn btn-lg" href="{home}cv/"{cv_cur}>{SVG['cv']}{e(cv_full)}</a>
         <a class="btn btn-lg" href="{FACTS['github']}" target="_blank" rel="noopener">{SVG['code']}github.com/zoocasso</a>
       </div>
     </div>
   </div>
 </section>
 <footer class="foot">
-  <div class="wrap"><span>{fact('name', lang)} · {fact('name_alt', lang)}</span><span class="foot-links"><a href="{home}">{e(t['home'])}</a><a href="{home}cv/">{e(t['cv'] if lang != 'ja' else '経歴')}</a><a href="{FACTS['github']}" target="_blank" rel="noopener">GitHub</a></span></div>
+  <div class="wrap"><span>{fact('name', lang)} · {fact('name_alt', lang)}</span><span class="foot-links"><a href="{home}">{e(t['home'])}</a><a href="{home}cv/">{e(t['cv'])}</a><a href="{FACTS['github']}" target="_blank" rel="noopener">GitHub</a></span></div>
 </footer>
 </body>
 </html>
