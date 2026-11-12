@@ -182,7 +182,10 @@ a.kpi:hover { border-color: var(--me-line); box-shadow: var(--shadow-2); transfo
 /* ───────── Sections ───────── */
 .section { padding: 72px 0; }
 .section + .section { border-top: 1px solid var(--line); }
-.sec-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: end; margin-bottom: 28px; }
+/* a long legend (English, Japanese) moves under the heading instead of squeezing it */
+.sec-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px 24px; align-items: flex-end; margin-bottom: 28px; }
+.sec-head > :first-child { flex: 1 1 480px; min-width: 0; }
+.sec-head > .legend, .sec-head > .sec-more { flex: 0 1 auto; }
 .sec-kicker { font-family: var(--mono); font-size: 12px; color: var(--ink-3); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .sec-kicker b { color: var(--me); font-weight: 600; }
 .sec-kicker.rs b { color: var(--rs); }
@@ -492,7 +495,7 @@ html[lang=ja] .d-hero h1 { letter-spacing: -0.02em; line-height: 1.3; font-size:
 .chart-foot { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 10px 20px 14px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ink-3); }
 .chart-foot b { color: var(--ink); font-family: var(--mono); }
 details.tableview summary { cursor: pointer; font-size: 12.5px; color: var(--ink-2); font-weight: 600; }
-details.tableview table { margin-top: 10px; border-collapse: collapse; font-size: 12.5px; width: 100%; }
+details.tableview table { margin-top: 10px; border-collapse: collapse; font-size: 12.5px; width: 100%; max-width: 100%; }
 details.tableview td, details.tableview th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var(--line); font-weight: 400; }
 details.tableview td:last-child, details.tableview th:last-child { text-align: right; font-family: var(--mono); }
 
@@ -897,7 +900,8 @@ html.lab-fs { overflow: hidden; }
   .rstage-h::before { display: none; }
   .rstage ul { margin-top: 0; }
   .section { padding: 48px 0; }
-  .sec-head { grid-template-columns: minmax(0, 1fr); gap: 14px; margin-bottom: 20px; }
+  .sec-head { gap: 14px; margin-bottom: 20px; }
+  .sec-head > :first-child { flex-basis: 100%; }
   .sys-head { grid-template-columns: minmax(0, 1fr); padding: 18px 16px 14px; gap: 12px; }
   .sys-head h3 { font-size: 18.5px; }
   .sys-links { flex-direction: row; flex-wrap: wrap; }
@@ -946,6 +950,15 @@ html.lab-fs { overflow: hidden; }
   .figcap .mid { display: none; }
   .lab-tools .step { font-size: 13px; gap: 5px; }
   .lab-tools .pick .cap { display: none; }
+}
+/* phones on the research page: the sound toggle joins the header, so the portfolio button (also in the
+   contact card) steps aside there */
+@media (max-width: 440px) {
+  .top-actions:has(.snd:not([hidden])) .btn-pf { display: none; }
+  .top .brand { gap: 8px; }
+  /* the katakana name is the widest; its CV button keeps the icon (the link still names itself) */
+  html[lang=ja] .top .btn-primary .lbl { display: none; }
+  html[lang=ja] .top .btn-primary { width: 34px; padding: 0; justify-content: center; }
 }
 @media (max-width: 380px) {
   .brand-name { font-size: 15px; }

@@ -1,103 +1,114 @@
-<!--meta {"title": "RIM and iRIM", "description": "RIM (ICMV 2026) rearranges the pixels of a lens array image one to one, without interpolation, into views; its inverse iRIM (ICCAS 2026) synthesizes the elemental image of a virtual lens array from multi-view images.", "nav": "research", "head": "<script src=\"/assets/rimviz.js?v={{v}}\" defer></script>\n"} -->
-<div class="doc-head">
-  <p class="crumb"><a href="/en/research/">Research</a> / RIM and iRIM</p>
-  <div class="badges"><span>ICMV 2026 Best Poster Award, Budapest</span><span>ICCAS 2026 poster, Sapporo, Oct 30</span></div>
-  <h1>RIM and iRIM: turning the angular samples of a lens array image into spatial resolution</h1>
-  <p class="authors"><b>Hyeongju Lee</b>, Myungjin Cho, Min-Chul Lee</p>
-  <p class="lede">Step 2, "Rearrange", in the lab on the home page is RIM.</p>
-</div>
+<!--meta {"title": "RIM and iRIM", "description": "RIM (ICMV 2026 Best Poster Award) rearranges the pixels of a lens array image one to one, without interpolation, into views; its inverse iRIM (ICCAS 2026) synthesizes the elemental image of a virtual lens array from multi-view images.", "nav": "research", "head": "<script src=\"/assets/rimviz.js?v={{v}}\" defer></script>\n"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="You are here"><a href="/en/">Home</a><span aria-hidden="true">/</span><a href="/en/research/">Research</a><span aria-hidden="true">/</span><span aria-current="page">RIM and iRIM</span></nav>
+    <div class="badges"><span class="pill gold"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="6" r="4"/><path d="M5.5 9.2L4.5 15l3.5-2 3.5 2-1-5.8"/></svg>ICMV 2026 Best Poster Award · Budapest</span><span class="pill rs">ICCAS 2026 poster · Sapporo</span></div>
+    <h1 id="d-h">RIM and iRIM: turning angular samples<br>into spatial resolution</h1>
+    <p class="authors"><b>Hyeongju Lee</b>, Myungjin Cho, Min-Chul Lee · Kyushu Institute of Technology</p>
+    <p class="hero-lede">RIM rearranges the pixels of a lens array image one to one, without interpolation, into views; iRIM runs it backwards and synthesizes the elemental image of a virtual lens array from multi-view images. In the <a href="/en/research/#lab">lab on the research page</a>, step 2, “Rearrange”, is RIM.</p>
+    <div class="kpis row three" aria-label="Key figures">
+      <div class="kpi"><span class="kpi-src"><i class="rs" aria-hidden="true"></i>7 Lytro scenes · as reported</span><span class="kpi-val">+2.39<small>dB PSNR</small></span><span class="kpi-label">23.31 → 25.70 dB, against reconstruction from the elemental images as they are</span></div>
+      <div class="kpi"><span class="kpi-src"><i class="rs" aria-hidden="true"></i>Similarity · as reported</span><span class="kpi-val">+0.14<small>SSIM</small></span><span class="kpi-label">0.741 → 0.877</span></div>
+      <div class="kpi"><span class="kpi-src"><i class="rs" aria-hidden="true"></i>YOLO detection · as reported</span><span class="kpi-val">+0.11<small>mAP50</small></span><span class="kpi-label">0.665 → 0.776</span></div>
+    </div>
+  </div>
+</section>
 
-<div class="doc">
-  <nav class="toc" aria-label="On this page">
-    <p>On this page</p>
-    <a href="#glance">At a glance</a><a href="#problem">Problem</a><a href="#capture">Capture</a><a href="#rim">RIM</a><a href="#result">Results</a><a href="#irim">iRIM</a><a href="#lab">The home page lab</a><a href="#code">Code</a>
-  </nav>
-  <div>
-    <section id="glance" aria-labelledby="h-glance">
-      <h2 id="h-glance">At a glance</h2>
-      <div class="pair">
-        <figure class="fig dark viz" data-viz="views" data-dir="/img/iccas/">
-          <div class="vizbox"><img src="/img/iccas/v33.webp" width="1000" height="1000" alt="Views rendered in Blender. As the viewing direction changes, the monkey head in front moves more than the torus, cube, cone and sphere behind it, and hidden parts come into view"><canvas hidden></canvas><div class="vmap mini" aria-hidden="true"></div></div>
-          <label class="vizctl"><span>View</span><input type="range" min="0" max="100" value="0"></label>
-          <figcaption>1. Views. Move the mouse over the picture to change the viewing direction (drag on a phone). They are not copies but views from different positions, so the near monkey head moves more than the objects behind it and hidden parts come into view. The nearest of the 64 rendered views is shown, with a brief cross-fade when it changes. The dot at the top right is the current view.</figcaption>
-        </figure>
-        <figure class="fig dark viz" data-viz="refocus" data-dir="/img/iccas/">
-          <div class="vizbox"><img src="/img/iccas/f01.webp" width="1000" height="1000" alt="Reconstruction from the 64 overlapped views. Changing the overlap distance moves the focus from the monkey head to the torus, cube, cone and sphere"><canvas hidden></canvas><span class="vizlabel"></span></div>
-          <label class="vizctl"><span>Focus depth</span><input type="range" min="0" max="100" value="4"></label>
-          <figcaption>2. Reconstruction by depth. Move the slider below to change the distance at which the 64 views are overlapped; the focus travels from the monkey head in front (0.39 m) through the torus, cube and cone to the sphere at the back (1.41 m).</figcaption>
-        </figure>
+<div class="wrap">
+  <section class="d-section" id="glance" aria-labelledby="glance-h">
+    <h2 id="glance-h">At a glance</h2>
+    <p class="sec-desc">The ICCAS 2026 paper's Blender scene, rendered with the paper's script from 8 × 8 camera positions, changing only the number of views and the resolution.</p>
+    <div class="pair">
+      <figure class="card fig-card fig viz" data-viz="views" data-dir="/img/iccas/">
+        <div class="vizbox"><img src="/img/iccas/v33.webp" width="1000" height="1000" alt="Views rendered in Blender. As the viewing direction changes, the monkey head in front moves more than the torus, cube, cone and sphere behind it, and hidden parts come into view"><canvas hidden></canvas><div class="vmap mini" aria-hidden="true"></div></div>
+        <label class="vizctl"><span>View</span><input type="range" min="0" max="100" value="0"></label>
+        <figcaption><b>1. Views.</b> Move the mouse over the picture to change the viewing direction (drag on a phone). These are views from different positions, so the near monkey head moves more than the objects behind it, and hidden parts come into view. The dot at the top right is the current view.</figcaption>
+      </figure>
+      <figure class="card fig-card fig viz" data-viz="refocus" data-dir="/img/iccas/">
+        <div class="vizbox"><img src="/img/iccas/f01.webp" width="1000" height="1000" alt="Reconstruction from the 64 overlapped views. Changing the overlap distance moves the focus from the monkey head to the torus, cube, cone and sphere"><canvas hidden></canvas><span class="vizlabel"></span></div>
+        <label class="vizctl"><span>Focus depth</span><input type="range" min="0" max="100" value="4"></label>
+        <figcaption><b>2. Reconstruction by depth.</b> Move the slider to change the distance at which the 64 views are overlapped; the focus travels from the monkey head in front (0.39 m) through the torus, cube and cone to the sphere at the back (1.41 m).</figcaption>
+      </figure>
+    </div>
+    <p class="small-note">Each view is rendered at 1920 × 1080, and the 1000 × 1000 area around the objects is used without downscaling (500 × 500 on phones; the paper uses 6 × 6 views). Reconstruction shifts the 64 views by distance and averages them, precomputed in 31 steps from 0.36 to 1.55 m. Both figures move by themselves until you touch them, and stay where you leave them once you use the mouse or the slider.</p>
+  </section>
+
+  <div class="two">
+    <section class="d-section" id="problem" aria-labelledby="prob-h">
+      <h2 id="prob-h">Problem</h2>
+      <div class="prose" style="margin-top:12px">
+        <p>A lens array camera divides its sensor pixels between the number of lenses and the pixels under each lens. More lenses give richer depth information, but each lens then forms an elemental image only a few pixels wide. As it is, the image is too coarse both for people to look at and for a detector to work on.</p>
+        <p>In a lens array, each lens with the patch of sensor behind it works like a tiny camera. The light from one point passes several lenses and lands at a different spot (pixel) under each. <b>The lens index is where the light passed, and the pixel position under the lens is the direction it came from.</b> So one elemental image holds both position and direction.</p>
       </div>
-      <p class="muted" style="margin-top:6px;font-size:14px">The ICCAS 2026 Blender scene, rendered with the paper's script from 8 × 8 camera positions, changing only the number of views and the resolution (the paper uses 6 × 6). Each view is rendered at 1920 × 1080 and the 1000 × 1000 area around the objects is used without downscaling (500 × 500 on phones). Reconstruction shifts the 64 views by distance and averages them, precomputed in 31 steps from 0.36 to 1.55 m. Both move by themselves until you use the mouse or the slider, and then stay where you leave them.</p>
     </section>
-
-    <section id="problem" aria-labelledby="h-problem">
-      <h2 id="h-problem">Problem</h2>
-      <p>A lens array camera divides its sensor pixels between the number of lenses and the pixels under each lens. More lenses give richer depth information, but each lens then forms an elemental image only a few pixels wide. As it is, the image is too coarse both for people to look at and for a detector to work on.</p>
-    </section>
-
-    <section id="capture" aria-labelledby="h-capture">
-      <h2 id="h-capture">What a lens array records</h2>
-      <p>In a lens array camera, each lens with the patch of sensor behind it works like a tiny camera; the home page lab shows it with camera models. More precisely, the light from one point passes several lenses and lands at a different spot (pixel) under each. The lens index is where the light passed, and the pixel position under the lens is the direction it came from, so one elemental image holds both position and direction.</p>
-      <figure class="fig rayfig">
+    <section class="d-section" id="capture" aria-labelledby="cap-h">
+      <h2 id="cap-h">What a lens array records</h2>
+      <figure class="fig rayfig" style="margin-top:12px">
         <svg viewBox="0 0 360 214" role="img" aria-label="Diagram: the light from one point passes three lenses and lands at a different spot under each"><text x="74" y="24" text-anchor="middle">one point</text><text x="194" y="24" text-anchor="middle">lens array</text><text x="240" y="24" text-anchor="middle">sensor</text><ellipse class="lens" cx="194" cy="49" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="77" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="105" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="133" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="161" rx="3.2" ry="12"/><rect class="cell" x="234" y="35" width="12" height="28"/><rect class="cell" x="234" y="63" width="12" height="28"/><rect class="cell" x="234" y="91" width="12" height="28"/><rect class="cell" x="234" y="119" width="12" height="28"/><rect class="cell" x="234" y="147" width="12" height="28"/><path class="ray r1" d="M74 105 L194 77 L234 67.67"/><rect class="hit h1" x="234" y="65.92" width="12" height="3.5"/><path class="ray r2" d="M74 105 L194 105 L234 105.00"/><rect class="hit h2" x="234" y="103.25" width="12" height="3.5"/><path class="ray r3" d="M74 105 L194 133 L234 142.33"/><rect class="hit h3" x="234" y="140.58" width="12" height="3.5"/><circle class="pt" cx="74" cy="105" r="5"/><text class="spot" x="254" y="74">upper</text><text class="spot" x="254" y="109">middle</text><text class="spot" x="254" y="144">lower</text><text x="10" y="192">The same point lands at a different spot</text><text x="10" y="207">under each lens: the spot is the direction.</text></svg>
         <figcaption>The light from one point passes three lenses and lands at a different spot under each. In the diagram the object is three times as far from the lenses as the sensor is.</figcaption>
       </figure>
     </section>
+  </div>
 
-    <section id="rim" aria-labelledby="h-rim">
-      <h2 id="h-rim">RIM: ray-based inverse mapping</h2>
-      <p>Think of each pixel of the elemental image as re-emitted through a virtual lens array and captured again by a virtual camera. Under telecentric capture and orthographic recapture, this turns into a one-to-one swap of (lens index, position under the lens) into (position under the lens, lens index). There is no interpolation and therefore no quantization error, and it produces as many views as there are pixels under a lens, each with as many pixels as there are lenses. The paper uses the result as the first stage of computational integral imaging reconstruction (CIIR).</p>
-      <figure class="fig clear">
-        <img src="/img/rim-usaf-panels.webp" width="1600" height="521" alt="A USAF resolution chart in three panels: a single elemental image as coarse blocks, a RIM virtual image where the chart is readable, and the reference image" loading="lazy">
-        <figcaption>A synthetic USAF 1951 chart. From left: one raw elemental image, one RIM virtual image (ours), and the ground-truth image at the same viewpoint. ICMV 2026</figcaption>
-      </figure>
-    </section>
+  <section class="d-section" id="rim" aria-labelledby="rim-h">
+    <h2 id="rim-h">RIM: ray-based inverse mapping</h2>
+    <div class="prose" style="margin-top:12px">
+      <p>Think of each pixel of the elemental image as re-emitted through a virtual lens array and captured again by a virtual camera. Under telecentric capture and orthographic recapture, this turns into a one-to-one swap of (lens index, position under the lens) into (position under the lens, lens index). There is no interpolation, so the <b>quantization error is zero</b>, and it produces as many views as there are pixels under a lens, each with as many pixels as there are lenses. The paper uses the result as the first stage of computational integral imaging reconstruction (CIIR).</p>
+    </div>
+    <figure class="card fig-card fig clear" style="margin-top:16px">
+      <img src="/img/rim-usaf-panels.webp" width="1600" height="521" alt="A USAF resolution chart in three panels: a single elemental image as coarse blocks, a RIM virtual image where the chart is readable, and the reference image" loading="lazy">
+      <figcaption>A synthetic USAF 1951 resolution chart. From left: one elemental image, one RIM virtual image (ours), and the reference image at the same viewpoint. ICMV 2026</figcaption>
+    </figure>
+  </section>
 
-    <section id="result" aria-labelledby="h-result">
-      <h2 id="h-result">Results</h2>
-      <div class="tablewrap">
-        <table class="data">
-          <caption>Seven Stanford Lytro light field scenes, as reported in the paper</caption>
-          <thead><tr><th scope="col">Pipeline</th><th scope="col" class="n">PSNR (dB)</th><th scope="col" class="n">SSIM</th><th scope="col" class="n">mAP50</th></tr></thead>
-          <tbody>
-            <tr><td>Elemental image → CIIR</td><td class="n">23.31</td><td class="n">0.741</td><td class="n">0.665</td></tr>
-            <tr><td><b>RIM → CIIR (ours)</b></td><td class="n"><b>25.70</b></td><td class="n"><b>0.877</b></td><td class="n"><b>0.776</b></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="muted" style="margin-top:10px;font-size:15px">mAP50 comes from running a pretrained YOLO detector, unchanged, on the reconstructed images.</p>
-    </section>
+  <section class="d-section" id="result" aria-labelledby="res-h">
+    <h2 id="res-h">Results</h2>
+    <p class="sec-desc">Seven Stanford Lytro light field scenes, as reported in the paper.</p>
+    <div class="tablewrap">
+      <table class="data">
+        <caption>mAP50 comes from running a pretrained YOLO detector, unchanged, on the reconstructed images.</caption>
+        <thead><tr><th scope="col">Pipeline</th><th scope="col" class="n">PSNR (dB)</th><th scope="col" class="n">SSIM</th><th scope="col" class="n">mAP50</th></tr></thead>
+        <tbody>
+          <tr><td>Elemental image → CIIR</td><td class="n">23.31</td><td class="n">0.741</td><td class="n">0.665</td></tr>
+          <tr class="me"><td><b>RIM → CIIR (ours)</b></td><td class="n"><b>25.70</b></td><td class="n"><b>0.877</b></td><td class="n"><b>0.776</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-    <section id="irim" aria-labelledby="h-irim">
-      <h2 id="h-irim">iRIM: a virtual lens array from multi-view images</h2>
-      <p>Because RIM is one to one, it also runs backwards. iRIM takes multi-view images and synthesizes the elemental image of the virtual lens array you want. The paper covers a matched 6 × 6 configuration for a 24-inch FHD panel (1.6056 mm lenses, 320 × 180 of them).</p>
-      <figure class="fig dark">
-        <img src="/img/ei-synth-1600.webp" width="1600" height="900" alt="Elemental image of a 6 × 6 lens array synthesized with iRIM: a torus, a cone and a monkey head split into small lens images" loading="lazy">
-        <figcaption>Elemental image of a 6 × 6 lens array synthesized with iRIM. ICCAS 2026</figcaption>
-      </figure>
-      <div class="pair" style="margin-top:20px">
-        <figure class="fig dark"><img src="/img/sai-irim.webp" width="1200" height="675" alt="Grid of views synthesized with iRIM, evenly bright in every cell" loading="lazy"><figcaption>iRIM synthesis: 100% effective coverage in every view</figcaption></figure>
-        <figure class="fig dark"><img src="/img/sai-camera.webp" width="1200" height="675" alt="Grid of views from a simulated lens array camera, cut off and darker toward the edges" loading="lazy"><figcaption>Simulated lens array camera: corner views drop to 6.7% effective coverage</figcaption></figure>
-      </div>
-      <p class="muted" style="font-size:15px">View grids from the same Blender scene. ICCAS 2026</p>
-    </section>
+  <section class="d-section" id="irim" aria-labelledby="irim-h">
+    <h2 id="irim-h">iRIM: a virtual lens array from multi-view images</h2>
+    <div class="prose" style="margin-top:12px">
+      <p>Because RIM is one to one, it also runs backwards. iRIM takes multi-view images and synthesizes the elemental image of the virtual lens array you want. The paper covers a 6 × 6 configuration matched to a 24-inch FHD panel (1.6056 mm lenses, 320 × 180 of them).</p>
+    </div>
+    <figure class="card fig-card fig dark" style="margin-top:16px">
+      <img src="/img/ei-synth-1600.webp" width="1600" height="900" alt="Elemental image of a 6 × 6 lens array synthesized with iRIM: a torus, a cone and a monkey head split into small lens images" loading="lazy">
+      <figcaption>Elemental image of a 6 × 6 lens array synthesized with iRIM. ICCAS 2026</figcaption>
+    </figure>
+    <div class="pair" style="margin-top:16px">
+      <figure class="card fig-card fig dark"><img src="/img/sai-irim.webp" width="1200" height="675" alt="Grid of views synthesized with iRIM, evenly bright in every cell" loading="lazy"><figcaption><b>iRIM synthesis</b>: 100% effective coverage in every view</figcaption></figure>
+      <figure class="card fig-card fig dark"><img src="/img/sai-camera.webp" width="1200" height="675" alt="Grid of views from a simulated lens array camera, cut off and darker toward the edges" loading="lazy"><figcaption><b>Simulated lens array camera</b>: corner views drop to 6.7% effective coverage</figcaption></figure>
+    </div>
+    <p class="small-note">View grids made from the same Blender scene. ICCAS 2026</p>
+  </section>
 
-    <section id="lab" aria-labelledby="h-lab">
-      <h2 id="h-lab">How the home page lab is made</h2>
-      <p>The lab computes lens array capture, RIM and reconstruction in the browser and animates them. The samples are a 3D scene captured in the browser and a light field captured with a real camera (Lytro). At the end the reconstruction plane is shown head on, and clicking an object moves the focus to its depth.</p>
+  <section class="d-section" id="lab" aria-labelledby="lab-h">
+    <h2 id="lab-h">How the lab on the research page is built</h2>
+    <p class="sec-desc">The lab computes lens array capture, RIM rearrangement and reconstruction in the browser and shows them as they happen. At the end the reconstruction plane is shown large and head on, and clicking an object moves the focus to its depth. <a href="/en/research/#lab">Open the lab →</a></p>
+    <div class="card fig-card prose" style="max-width:none">
       <ul>
-        <li><b>3D scene</b>: the monkey head and the torus exported from the ICCAS 2026 paper's Blender scene stand as real 3D models, and the lens array capture is computed in the browser. In this lab's pinhole model, the pixel at the same spot under every lens looks in the same direction, so one view is an oblique parallel projection of the scene. The 8 × 8 views are drawn that way, with their depth, and rearrangement and reconstruction are computed from them. The monkey head stands so that it hides part of the torus. The spatial resolution is 64 × 64 lenses. The empty background is not set up as a wall in space; its light is shown from the lens array on. In the result, clicking an object moves the focus to the median depth of the four central views around the click.</li>
-        <li><b>Capture</b>: a pinhole array model. Each elemental-image pixel starts at the 3D position of the point it recorded (from the depth above) and travels through its lens to the sensor. The camera models in step 1 show that a lens with the sensor patch behind it is a tiny camera; they are drawn larger than a lens so they can be seen. How the light actually passes the lenses is shown above, in "What a lens array records".</li>
-        <li><b>Rearrangement and reconstruction</b>: RIM, which swaps (lens index, position under the lens), and reconstruction, which shifts the views by distance and averages them, follow the papers. When the distance matches an object's depth, its samples land back where they came from and it becomes sharp. On screen the reconstruction plane is drawn at the depth that distance stands for, so an object turns sharp as the plane passes where it stood.</li>
-        <li><b>Lytro sample</b>: the occlusions_26 scene from the Stanford Lytro Light Field Archive (A. S. Raj, M. Lowney, R. Shah, G. Wetzstein, 2016). The lenslet image the archive provides is not the raw sensor image: Lytro's software has demosaiced it, aligned and resampled it to a square grid and corrected distortion, giving 14 × 14 pixels under each of 541 × 376 lenses (the archive labels these files "RAW"). 128 × 128 lenses where a branch hides part of a stop sign are cut from it without resampling, and the central 8 × 8 pixels (= 8 × 8 views) are used, leaving out the empty or dark outer band (phones: 2 × 2 lenses averaged, 64 × 64). The 16-bit values are tone-mapped once for the whole picture to 8-bit for display. This photo has no 3D shape, so step 1 does not simulate a capture: it shows the recorded lenslet image on the sensor as it is and zooms into it. Rearrangement moves pixels without altering them, and reconstruction shifts and averages the 64 views (computed, not optical blur). Clicking the picture moves the focus to the plane where the views agree best around that spot; where there is no texture and the views match about equally at every depth, no focus is chosen. "Estimated depth layers" draws, from the same 64 views, how well they agree on each of 25 planes of a plane sweep (view variance turned into weights by a softmax). It is not measured 3D, and the depth axis is disparity (px/view), not metres. The archive states no licence, so the data is credited and only a crop is used, for a non-commercial demonstration.</li>
+        <li><b>3D scene</b>: the monkey head and the torus exported from the ICCAS 2026 paper's Blender scene stand as real 3D models, and the lens array capture is computed in the browser. In this lab's pinhole model, the pixel at the same spot under every lens looks in the same direction, so one view is an oblique parallel projection of the scene. The 8 × 8 views are drawn that way, with their depth, and rearrangement and reconstruction are computed from that data. The monkey head in front stands so that it hides part of the torus. The spatial resolution is 64 × 64 lenses. In the result, clicking an object moves the focus to the depth (median) of the four central views around the click.</li>
+        <li><b>Capture</b>: a pinhole array model. Each elemental-image pixel starts at the 3D position of the point it recorded and travels through its lens to the sensor. The camera models in step 1 picture the idea that a lens with the sensor patch behind it is a tiny camera; they are drawn larger than a real lens so they can be seen.</li>
+        <li><b>Rearrangement and reconstruction</b>: RIM, which swaps (lens index, position under the lens), and reconstruction, which shifts the views by distance and averages them, follow the papers. When the distance matches an object's depth, its samples land back where they came from and it becomes sharp.</li>
+        <li><b>Lytro sample</b>: the occlusions_26 scene from the Stanford Lytro Light Field Archive (A. S. Raj, M. Lowney, R. Shah, G. Wetzstein, 2016). The archive's lenslet image is not the raw sensor image: Lytro's software has demosaiced, aligned, resampled and distortion-corrected it, giving 14 × 14 pixels under each of 541 × 376 lenses. 128 × 128 lenses where a branch hides part of a stop sign are cut out without resampling, and the central 8 × 8 pixels (= 8 × 8 views) are used. Rearrangement moves pixels without altering their values, and reconstruction is computed by shifting and averaging the 64 views. “Estimated depth layers” shows how well a plane sweep over the same 64 views agrees at each depth; it is not measured 3D, and the depth axis is disparity (px/view), not metres. The archive states no licence, so the data is credited and only a crop is used, for a non-commercial demonstration.</li>
         <li><b>Sound</b>: the music, sound effects and robot voice are all synthesized by the browser.</li>
       </ul>
-    </section>
+    </div>
+    <p class="note">The code for both papers is kept in a private repository (13 tests).</p>
+  </section>
 
-    <section id="code" aria-labelledby="h-code">
-      <h2 id="h-code">Code</h2>
-      <p>The code for both papers is kept in a private repository (13 tests).</p>
-    </section>
-  </div>
+  <nav class="pager" aria-label="Other research">
+    <a href="/en/research/"><small>← Research</small><b>Research page and lab</b></a>
+    <a class="next" href="/en/research/origin-point/"><small>Next topic →</small><b>Origin point optimization</b></a>
+  </nav>
 </div>
-<nav class="pager" aria-label="Other research"><a href="/en/research/">All research</a><a href="/en/research/origin-point/">Next: origin point optimization</a></nav>

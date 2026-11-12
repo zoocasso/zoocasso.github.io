@@ -1,0 +1,73 @@
+<div class="flow" data-edges="k-amz>k-farm|crawl; k-dnw>k-farm; k-amz>k-api; k-pps>k-api|API; k-farm>k-db|load; k-api>k-db; k-db>k-models|daily; k-models>k-srv; k-univ>k-proto|design; k-srv>k-kisti; k-proto>k-kisti">
+  <ol class="stages" style="--cols:6">
+    <li class="stage"><div class="stage-h"><span class="n">01</span>Sources</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-amz" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">Amazon</span><span class="node-metric">10,985 subcategories</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Selenium crawlers collected <b>10,985</b> of 11,046 subcategories. The {{f:kisti_asin}} product IDs (ASINs) collected in September 2022 were de-duplicated to <b>{{f:kisti_asin_dedup}}</b>.</dd><dt>Later</dt><dd>Moved to the Rainforest API (selected in July 2023, built from February to May 2024).</dd><dt>Stack</dt><dd><ul class="chips"><li>Selenium</li><li>Rainforest API</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-dnw" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">Danawa</span><span class="node-metric">2,481 categories</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Selenium crawlers collected <b>2,481</b> of 2,517 categories. As of November 2023: 417,240 products and 16,049,734 reviews.</dd><dt>Stack</dt><dd><ul class="chips"><li>Selenium</li><li>BeautifulSoup</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-pps" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">Public procurement</span><span class="node-metric">Public data portal API</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Collected the Public Procurement Service API on the public data portal and crawled the national procurement site. As of November 2023: 4,779,512 API records and 41,917,377 item attribute rows.</dd><dt>Stack</dt><dd><ul class="chips"><li>REST API</li><li>Python</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">02</span>Collection</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-farm" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">Distributed crawling farm</span><span class="node-metric">{{f:kisti_farm}}</span><span class="node-tag">Built by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Built and ran a collection setup that split the crawlers across {{f:kisti_farm}} and loaded the results into one remote database (November 2022 to January 2023).</dd><dt>Why</dt><dd>The crawlers were spread out to avoid being blocked by the sites they collected from.</dd><dt>Stack</dt><dd><ul class="chips"><li>Python</li><li>Selenium</li><li>BeautifulSoup</li><li>MySQL</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-api" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">API collectors</span><span class="node-metric">Procurement · Rainforest</span><span class="node-tag">Built by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Built the collector for the Public Procurement Service API on the public data portal. Direct crawling was often blocked and carried legal risk, so I proposed collecting through official APIs; in June 2023 this was agreed with the client (KISTI) and adopted. Built the move of Amazon collection to the Rainforest API (February to May 2024).</dd><dt>Stack</dt><dd><ul class="chips"><li>Python</li><li>REST API</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">03</span>Storage</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-db" data-owner="me" data-default>
+          <button class="node-btn" type="button"><span class="node-title">Central MySQL</span><span class="node-metric">{{f:kisti_rows_short}} rows (Nov 2023)</span><span class="node-tag">Built by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Loaded the collected data into a central MySQL database. <b>{{f:kisti_rows}}</b> in total as of November 2023: procurement item attributes 41.92M · Danawa reviews 16.05M · Amazon product details 9.99M · review keywords 7.88M · procurement API records 4.78M · Amazon products 925K · Danawa products 417K.</dd><dt>Stack</dt><dd><ul class="chips"><li>MySQL</li><li>SQLAlchemy</li><li>pandas</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">04</span>Processing</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-models" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">Analysis models in production</span><span class="node-metric">{{f:kisti_match}} matches</span><span class="node-tag">Built by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Model 3: keyword matching of NTIS projects to NICE companies, <b>{{f:kisti_match}}</b> links (SQL). Model 4: price-band K-means clustering (number of clusters chosen by the Dunn index). Model 5: a daily batch that mines required-quality keywords from reviews (KeyBERT, Sentence-Transformers, Mecab). In 2024, SQL statistics on procurement prices, attributes and deliveries for model 3.1.</dd><dt>Stack</dt><dd><ul class="chips"><li>SQL</li><li>scikit-learn</li><li>KeyBERT</li><li>Sentence-Transformers</li><li>Mecab</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-univ" data-owner="other">
+          <button class="node-btn" type="button"><span class="node-title">Some model design</span><span class="node-metric">Parts of models 1–2</span><span class="node-tag">University research</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Others</dt><dd>Some of the platform's models were designed by university research teams (Sungkyunkwan University, Kookmin University). Vision Inside owned the data and serving layers those models use.</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">05</span>Serving</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-srv" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">FastAPI · admin screens</span><span class="node-metric">Jinja2 · Tabulator</span><span class="node-tag">Built by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Served the analysis models as FastAPI services and built the admin screens (filters, sequential batch runs, unified search, Excel export).</dd><dt>Stack</dt><dd><ul class="chips"><li>FastAPI</li><li>Jinja2</li><li>Tabulator</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-proto" data-owner="other">
+          <button class="node-btn" type="button"><span class="node-title">Prototype web app</span><span class="node-metric">Java/Tomcat</span><span class="node-tag">Partner company</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Others</dt><dd>The KISTI prototype built by a partner company (models 1–2, a Java/Tomcat web app).</dd><dt>What I did</dt><dd>Moved it to company servers and set up its Docker runtime (March to May 2023).</dd><dt>Stack</dt><dd><ul class="chips"><li>Docker</li><li>Linux</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">06</span>Users</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-kisti" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">KISTI researchers</span><span class="node-metric">Client · project design</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Others</dt><dd>KISTI commissioned the project, and KISTI researchers designed it.</dd><dt>What I did</dt><dd>Presented results in technical meetings (about 9 weekly meetings from August to October 2022, then as needed) and handled data and code requests directly. Wrote the audit deliverables (operator manual, initial data-build report).</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+  </ol>
+</div>
+<div class="inspector" aria-live="polite"><div class="insp-side"></div><div class="insp-main"></div></div>
