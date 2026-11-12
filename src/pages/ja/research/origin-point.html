@@ -1,0 +1,116 @@
+<!--meta {"title": "原点最適化", "description": "体積計算再構成（VCR）の量子化誤差を原点最適化で減らし、その原点を反復探索なしでカメラパラメータから計算して、81回の再構成が必要だった探索を1回の計算に置き換えた研究（ITC-CSCC 2025、2026）。コード公開。", "nav": "research"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="現在地"><a href="/ja/">ホーム</a><span aria-hidden="true">/</span><a href="/ja/research/">研究</a><span aria-hidden="true">/</span><span aria-current="page">原点最適化</span></nav>
+    <div class="badges"><span class="pill rs">ITC-CSCC 2026 口頭発表 · バンコク</span><span class="pill">ITC-CSCC 2025 ポスター · ソウル</span><span class="pill">コード公開 · MIT</span></div>
+    <h1 id="d-h">原点最適化で体積計算再構成を<br>より鮮明に、より速く</h1>
+    <p class="authors"><b>Hyeongju Lee</b>, Myungjin Cho, Min-Chul Lee（2025年の論文はGilsu Yeoを含む） · 九州工業大学、韓京国立大学校</p>
+    <div class="kpis row three" aria-label="主な数値">
+      <div class="kpi"><span class="kpi-src"><i class="rs" aria-hidden="true"></i>9×9の要素画像</span><span class="kpi-val">81 → 1<small>回</small></span><span class="kpi-label">原点を選ぶための再構成の回数</span></div>
+      <div class="kpi"><span class="kpi-src"><i class="rs" aria-hidden="true"></i>CPU · 論文の実測値</span><span class="kpi-val">0.31<small>s</small></span><span class="kpi-label">反復探索は推定25.45 s（0.3142 s × 81）</span></div>
+      <div class="kpi"><span class="kpi-src"><i class="rs" aria-hidden="true"></i>GPU · CuPy、RTX 3090</span><span class="kpi-val">0.0057<small>s</small></span><span class="kpi-label">同じ計算をGPUで実行</span></div>
+    </div>
+    <div class="d-actions">
+      <a class="btn btn-primary" href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード（GitHub）</a>
+      <a class="btn" href="#cite">BibTeX</a>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="d-section" id="see" aria-labelledby="see-h">
+    <h2 id="see-h">固定した原点と最適化した原点</h2>
+    <p class="sec-desc">9×9の要素画像で再構成した1951 USAF解像度チャート。ITC-CSCC 2026 Fig. 6の(a)と(d)です。バーの束の境界を比べてみてください。</p>
+    <div class="compare-wrap">
+      <div>
+        <div class="compare" data-compare="cmp-origin">
+          <img src="/img/vcr-fixed.webp" width="640" height="640" alt="固定した原点で再構成したUSAF解像度チャート">
+          <img class="after" src="/img/vcr-proposed.webp" width="640" height="640" alt="最適化した原点で再構成したUSAF解像度チャート">
+          <span class="line" aria-hidden="true"></span>
+          <span class="lab-l">固定した原点</span><span class="lab-r">最適化した原点</span>
+        </div>
+        <div class="compare-ctl"><label for="cmp-origin">比較線の位置</label><input type="range" id="cmp-origin" min="0" max="100" value="50"></div>
+      </div>
+      <div class="prose">
+        <p>体積計算再構成（VCR）は、複数の視点から撮った要素画像を奥行きに合わせてずらして重ね、3次元シーンの断面をつくります。このとき画像を<b>画素単位でしか</b>動かせないため量子化誤差が生じ、再構成画像がぼやけます。</p>
+        <p>2025年の論文では、重ね合わせの基準点（原点）を最適化して、この誤差を減らしました。ただし、最適な原点を見つけるには再構成を何度も繰り返す必要があり、時間がかかりました。</p>
+        <p>2026年の論文では、この原点を画像に関係なく<b>カメラパラメータだけから直接計算</b>します。論文の実験では反復探索と同じ原点・同じSSIMが得られ、時間だけが短くなりました。すべての場合に同じになることが保証されるわけではありません。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="d-section" id="vcr" aria-labelledby="vcr-h">
+    <h2 id="vcr-h">VCRとは</h2>
+    <figure class="card fig-card fig paper" style="margin-top:12px">
+      <img src="/img/vcr-principle.webp" width="1200" height="669" alt="3次元の物体をピンホールアレイで撮った要素画像を、仮想ピンホールアレイに逆投影して再構成面をつくる原理の図" loading="lazy">
+      <figcaption>要素画像を仮想ピンホールアレイに逆投影し、目的の奥行きの再構成面をつくります。ITC-CSCC 2026 Fig. 1</figcaption>
+    </figure>
+  </section>
+
+  <section class="d-section" id="method" aria-labelledby="m-h">
+    <h2 id="m-h">方法</h2>
+    <p class="sec-desc">候補の原点ごとに再構成していた反復を、パラメータによる1回の計算に置き換えました。</p>
+    <div class="method">
+      <div>
+        <h3>従来：反復探索</h3>
+        <ol><li>要素画像の取得</li><li>候補の原点を選ぶ</li><li>VCRで再構成</li><li>画質を評価し、2に戻って繰り返す</li></ol>
+        <p>候補ごとに再構成をやり直すため、計算量が大きくなります。</p>
+      </div>
+      <div class="me">
+        <h3>提案：直接計算</h3>
+        <ol><li>要素画像の取得</li><li>カメラパラメータと奥行きを入力</li><li>量子化誤差が最小になる原点を式で計算</li><li>VCRで1回だけ再構成</li></ol>
+        <p>画像に依存せずパラメータだけを使うため、反復がありません。論文の実験では、結果画像の画質（SSIM）が反復探索と同じでした。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="d-section" id="speed" aria-labelledby="sp-h">
+    <h2 id="sp-h">処理時間</h2>
+    <p class="sec-desc">9×9の要素画像の場合。ITC-CSCC 2026 Table III、IV。</p>
+    <div class="card">
+      <div class="chart" role="group" aria-label="処理時間の棒グラフ">
+        <div class="bars">
+          <div class="bar-row"><span class="bar-name">反復探索<small>CPU · 推定</small></span><span class="bar-track"><i class="bar other" style="width:calc((100% - 96px) * 1)"></i><span class="bar-val">25.45 s</span></span></div>
+          <div class="bar-row"><span class="bar-name">直接計算（提案）<small>CPU · 実測</small></span><span class="bar-track"><i class="bar rs" style="width:calc((100% - 96px) * .0122)"></i><span class="bar-val">0.31 s</span></span></div>
+          <div class="bar-row"><span class="bar-name">直接計算（提案）<small>GPU · CuPy、RTX 3090</small></span><span class="bar-track"><i class="bar rs" style="width:3px"></i><span class="bar-val">{{f:origin_gpu}}</span></span></div>
+        </div>
+      </div>
+      <div class="chart-foot"><span>再構成 <b>81回 → 1回</b></span><span>反復探索の25.45 sは、再構成1回の0.3142 sに81を掛けた推定値です。原点とSSIMは論文の実験では同じでしたが、一般に保証されるものではありません。</span></div>
+    </div>
+  </section>
+
+  <section class="d-section" id="code" aria-labelledby="code-h">
+    <h2 id="code-h">コード</h2>
+    <div class="prose" style="margin-top:12px">
+      <p>2本の論文の手法をPythonで整理して公開しました：<a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">github.com/zoocasso/origin-point-optimization-vcr</a></p>
+      <ul>
+        <li>原点の計算（<code>origin.py</code>）、VCRによる再構成（<code>vcr.py</code>）、画質指標、処理時間の計測スクリプト</li>
+        <li>テスト21個。改めて実装した研究の式と、固定シードの入力10,000件で照合して一致</li>
+        <li>NumPy、OpenCV。GPUでの計測はCuPy（任意）。MITライセンス</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="d-section" id="cite" aria-labelledby="cite-h">
+    <h2 id="cite-h">引用</h2>
+    <div class="bib"><pre id="bib-2026">@inproceedings{lee2026accelerated,
+  title     = {Accelerated Origin Point Optimization for
+               Volumetric Computational Reconstruction},
+  author    = {Lee, Hyeongju and Cho, Myungjin and Lee, Min-Chul},
+  booktitle = {Proc. ITC-CSCC},
+  year      = {2026}
+}</pre><button class="btn" type="button" data-copy="bib-2026" data-done="コピーしました" data-manual="選択しました">コピー</button></div>
+    <div class="bib"><pre id="bib-2025">@inproceedings{lee2025image,
+  title     = {Image Enhancement of Volumetric Computational
+               Reconstruction Using Origin Point Optimization},
+  author    = {Lee, Hyeongju and Yeo, Gilsu and Cho, Myungjin and Lee, Min-Chul},
+  booktitle = {Proc. ITC-CSCC},
+  year      = {2025}
+}</pre><button class="btn" type="button" data-copy="bib-2025" data-done="コピーしました" data-manual="選択しました">コピー</button></div>
+  </section>
+
+  <nav class="pager" aria-label="他の研究">
+    <a href="/ja/research/rim/"><small>← 前のテーマ</small><b>RIM・iRIM</b></a>
+    <a class="next" href="/ja/research/#lab"><small>体験 →</small><b>レンズアレイ実験室</b></a>
+  </nav>
+</div>

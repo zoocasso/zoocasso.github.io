@@ -1,0 +1,63 @@
+<!--meta {"title": "WJMaxゲームサーバー", "description": "コミュニティのリズムゲームWJMaxのサーバー・DB・セキュリティを担当し、FastAPI、EC2、RDSのMySQL、Cloudflareで運用して、アップデート時に最大約2,000人の同時接続を受けたサイドプロジェクト。2026年の書き直しで扱った問題も紹介します。", "nav": "systems"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="現在地"><a href="/ja/">ホーム</a><span aria-hidden="true">/</span><a href="/ja/#systems">システム</a><span aria-hidden="true">/</span><span aria-current="page">WJMaxゲームサーバー</span></nav>
+    <h1 id="d-h">コミュニティのリズムゲームのサーバー、<br>アップデート時に最大{{f:wjmax_peak}}が同時接続</h1>
+    <p class="hero-lede">2人で作ったコミュニティのリズムゲームWJMaxで、サーバー・DB・セキュリティを担当しました。ゲームクライアントはもう1人が開発しました。運用当時のコードを2026年10月に書き直す際に、負荷・再送・入力検証の問題をテストで扱いました。</p>
+    <dl class="meta-grid">
+      <div><dt>期間</dt><dd>{{f:wjmax_period}}<small>コミット履歴に基づく</small></dd></div>
+      <div><dt>形態</dt><dd>サイドプロジェクト<small>2人チーム</small></dd></div>
+      <div><dt>役割</dt><dd>サーバー・DB・セキュリティを担当<small>ゲームクライアントは別の1人</small></dd></div>
+      <div><dt>技術</dt><dd>FastAPI · Docker<small>AWS EC2 · RDS MySQL · Cloudflare</small></dd></div>
+    </dl>
+    <div class="kpis row" aria-label="主な数値">
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>アップデート時の最大</span><span class="kpi-val">~2,000<small>人</small></span><span class="kpi-label">同時接続</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>普段</span><span class="kpi-val">~300<small>人</small></span><span class="kpi-label">平均同時接続</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>書き直し版の負荷テスト</span><span class="kpi-val">281<small>/ 600 失敗 → 0</small></span><span class="kpi-label">クライアント60個が同時送信、コネクションプールの修正前後</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>CI</span><span class="kpi-val">3<small>種のDB</small></span><span class="kpi-label">SQLite · MySQL 8.0 · 8.4でテスト</span></div>
+    </div>
+    <div class="d-actions"><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード（GitHub、2026年10月に書き直し）</a></div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="d-section" id="arch" aria-labelledby="arch-h">
+    <div class="sec-head">
+      <div>
+        <h2 id="arch-h">アーキテクチャ</h2>
+        <p class="sec-desc">ゲームクライアントは曲ごとに8つの譜面のプレイ回数を報告として送り、サーバーはそれを受け取ってデータベースに保存していました。</p>
+      </div>
+      <div class="legend" aria-label="凡例">
+        <span><i class="sw me" aria-hidden="true"></i>自分で構築</span>
+        <span><i class="sw other" aria-hidden="true"></i>他の担当者</span>
+        <button class="toggle" type="button" data-mine-toggle aria-pressed="false"><span class="knob" aria-hidden="true"></span>自分の担当だけ強調</button>
+      </div>
+    </div>
+    <div class="sys">
+      {{inc:flow-wjmax}}
+      <div class="sys-outcome"><span class="k">結果</span><span>アップデート当日に最大<b>{{f:wjmax_peak}}</b>の同時接続を受けて運用</span><span>サーバーログなどの一次資料は残っていないため、運用終了後に初めてまとめた記録（2025年のポートフォリオ）の値を使っています</span></div>
+    </div>
+  </section>
+
+  <section class="d-section" id="rewrite" aria-labelledby="rw-h">
+    <h2 id="rw-h">2026年の書き直しで扱った問題</h2>
+    <p class="sec-desc">ゲームクライアントが送るリクエストはそのままにして、サーバー側の問題を一つずつテストで固定しました。</p>
+    <ol class="decisions">
+      <li><h3>負荷が集中したときのコネクションプールの枯渇</h3>
+        <dl class="dl"><dt>問題</dt><dd>書き直しの初期版はDB接続をFastAPIの依存関係（dependency）で取得していたため、ローカルの負荷テストでクライアント60個が同時に送ると、リクエスト600件のうち281件がプールのタイムアウトで失敗しました。</dd><dt>解決</dt><dd>入力検証が終わったあと、リクエストを処理するワーカースレッドの中で接続を取得するようにし、プールのサイズをワーカースレッド数（40）に合わせました。同じテストをCIで実行し、すべてに応答が返ることを確認しています。</dd></dl></li>
+      <li><h3>再送された報告の重複保存</h3>
+        <dl class="dl"><dt>問題</dt><dd>接続が切れて同じ報告が再送されると、プレイ回数が二重に加算されるおそれがあります。</dd><dt>解決</dt><dd>クライアントが報告IDを送れば、同じIDは一度だけ保存します。2件が同時に届いてもキー制約によって2件目は1件目を待ち、同じIDで内容が異なる場合は409で拒否します。ただし配布済みのクライアントはIDを送らないため、その再送はサーバーがIDを付けて別の報告として保存します。</dd></dl></li>
+      <li><h3>曲名どうしが統合されてしまう問題</h3>
+        <dl class="dl"><dt>問題</dt><dd>MySQLのデフォルトの照合順序は大文字・小文字やかなの違いを無視するため、「Glory」と「GLORY」、「ゆめ」と「ユメ」を同じ曲とみなします。</dd><dt>解決</dt><dd>曲名とIDをバイト単位でそのまま比較する照合順序（utf8mb4_0900_bin）を使い、CIでそれを確認しています。</dd></dl></li>
+      <li><h3>認証のないクライアントからの入力</h3>
+        <dl class="dl"><dt>問題</dt><dd>配布済みのゲームクライアントは認証情報を送らないため、アドレスを知っていれば誰でも報告を送れます。</dd><dt>解決</dt><dd>入力をパースする前に検証し、不正な入力は422、1MBを超える本文は413で拒否して、前段のCloudflareとあわせて濫用を防ぎます。報告が実際のプレイを証明するわけではないという限界も、READMEに記載しました。</dd></dl></li>
+    </ol>
+    <p class="note">テストはGitHub ActionsでSQLiteとMySQL 8.0・8.4に対して実行し、<code>schema.sql</code>がコードと一致しているか（型、照合順序、キー、インデックス）も確認しています。</p>
+    <ul class="chips" style="margin-top:16px" aria-label="使用技術"><li>Python</li><li>FastAPI</li><li>Docker</li><li>AWS EC2</li><li>AWS RDS</li><li>MySQL</li><li>Cloudflare</li><li>GitHub Actions</li></ul>
+  </section>
+
+  <nav class="pager" aria-label="他のシステム">
+    <a href="/ja/work/hitachi/"><small>← 前のシステム</small><b>日立グループとの受託研究の画像パイプライン</b></a>
+    <a class="next" href="/ja/research/"><small>次へ →</small><b>研究とレンズアレイ実験室</b></a>
+  </nav>
+</div>

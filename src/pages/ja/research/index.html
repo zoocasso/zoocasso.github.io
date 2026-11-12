@@ -1,0 +1,152 @@
+<!--meta {"title": "研究", "description": "学習を使わず幾何光学だけで、レンズアレイ画像を並べ替えて3次元に再構成する研究。ブラウザで試せるレンズアレイ実験室、国際会議の筆頭著者論文4本、ICMV 2026 最優秀ポスター賞。", "nav": "research", "lab": true, "head": "<script src=\"/assets/lab.js?v={{v}}\" defer></script>\n"} -->
+<section class="r-hero" aria-labelledby="r-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="現在地"><a href="/ja/">ホーム</a><span aria-hidden="true">/</span><span aria-current="page">研究</span></nav>
+    <div class="r-hero-row">
+      <div>
+        <div class="sec-kicker rs"><b>研究</b> 九州工業大学大学院 情報創成工学専攻 博士前期課程 · 指導教員 Min-Chul Lee</div>
+        <h1 id="r-h">学習を使わず、幾何光学でレンズアレイ画像を3次元に再構成します</h1>
+      </div>
+      <div class="badges"><span class="pill gold"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="6" r="4"/><path d="M5.5 9.2L4.5 15l3.5-2 3.5 2-1-5.8"/></svg>ICMV 2026 最優秀ポスター賞</span><span class="pill rs">国際会議 {{f:papers}}</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+<section class="lab" id="lab" aria-labelledby="lab-h">
+  <div class="lab-head">
+    <div><div class="sec-kicker rs"><b>01</b> 体験</div><h2 id="lab-h">レンズアレイで撮影し、並べ替え、再構成する</h2></div>
+    <p>ブラウザが3Dシーンをレンズアレイで撮影し、論文の手法（RIM）で計算します。画面を押すと、音とともに始まります。</p>
+  </div>
+  <div class="stage">
+    <div class="poster"></div>
+    <canvas class="gl" aria-hidden="true"></canvas>
+    <div class="torch" aria-hidden="true"></div>
+    <div class="tag3d" data-tag="obj">物体</div>
+    <div class="tag3d" data-tag="lens">レンズアレイ</div>
+    <div class="tag3d" data-tag="sen">センサー</div>
+    <div class="tag3d" data-tag="rec">再構成面</div>
+    <div class="robot" aria-hidden="true"><canvas width="216" height="132"></canvas></div>
+    <figure class="raybox cams" aria-hidden="true" hidden><svg viewBox="0 0 360 214"><text x="180" y="14" text-anchor="middle">物体</text><rect class="far" x="163" y="22" width="34" height="34"/><circle class="near" cx="180" cy="60" r="11"/><line class="arr" x1="70" y1="114" x2="300" y2="114"/><text x="10" y="118">レンズアレイ</text><g class="c c1"><path class="sight" d="M100 104 L176 66"/><rect class="body" x="86" y="104" width="28" height="19" rx="3"/><circle class="lensc" cx="100" cy="104" r="5"/></g><g class="c c2"><path class="sight" d="M180 104 L180 71"/><rect class="body" x="166" y="104" width="28" height="19" rx="3"/><circle class="lensc" cx="180" cy="104" r="5"/></g><g class="c c3"><path class="sight" d="M260 104 L184 66"/><rect class="body" x="246" y="104" width="28" height="19" rx="3"/><circle class="lensc" cx="260" cy="104" r="5"/></g><text x="10" y="155">写った画像</text><g class="p p1"><rect class="photo" x="77" y="136" width="46" height="34"/><rect class="pfar" x="93" y="146" width="14" height="14"/><circle class="pnear" cx="107" cy="157" r="6"/></g><g class="p p2"><rect class="photo" x="157" y="136" width="46" height="34"/><rect class="pfar" x="173" y="146" width="14" height="14"/><circle class="pnear" cx="180" cy="157" r="6"/></g><g class="p p3"><rect class="photo" x="237" y="136" width="46" height="34"/><rect class="pfar" x="253" y="146" width="14" height="14"/><circle class="pnear" cx="253" cy="157" r="6"/></g><text x="10" y="192">レンズ一つひとつが、小さなカメラです。</text><text x="10" y="207">位置ごとに、手前の球が写る場所が変わります。</text></svg></figure>
+    <figure class="lfzoom" aria-hidden="true" hidden><span class="badge">実測・デコード済みのレンズレット画像</span><canvas width="640" height="480"></canvas><figcaption>Lytro Illumのレンズレット画像（Lytroのソフトウェアでデコード）。レンズ1個あたり14×14画素で、中央の8×8（黄色）が8×8枚の視点画像になります。</figcaption></figure>
+    <p class="laynote" data-laynote hidden><b>推定</b> · 64枚の視点画像が奥行き（面）ごとにどれだけ一致するかを層で表しています。実測の3Dではなく、奥行きの軸はメートルではなく視差（px/視点）です。薄く広がった部分は、視点が一つの奥行きに定まらない場所です。</p>
+    <div class="vmap" aria-hidden="true" hidden data-label="現在の視点"></div>
+    <div class="dialog" aria-hidden="true"><div class="jp" lang="ja"></div><div class="ko"></div></div>
+    <div class="vh" aria-live="polite" data-live></div>
+    <p class="credit" data-credit hidden>Lytroデータ：Stanford Lytro Light Field Archive, occlusions_26（Raj et al., 2016）・非商用のデモのため一部を切り出して使用</p>
+    <p class="figcap needs-gl"><span class="k">図</span>論文の手法 RIM<span class="long">、ICMV 2026</span><span class="mid"> <b>最優秀ポスター賞</b></span> · <a href="/ja/research/rim/#lab">仕組み →</a></p>
+    <figure class="fallback" hidden>
+      <img src="/img/ei-synth-800.webp" width="800" height="450" alt="iRIMで合成した6×6レンズアレイの要素画像">
+      <figcaption><p>この端末では実験室のアニメーションを動かせないため、代わりに研究の画像を表示しています。</p></figcaption>
+    </figure>
+  </div>
+  <div class="lab-tools">
+    <div class="group steps needs-gl" role="group" aria-label="手順">
+      <button class="step" type="button" data-step="1"><b>1</b><span class="t">撮影</span></button>
+      <button class="step" type="button" data-step="2"><b>2</b><span class="t">並べ替え</span></button>
+      <button class="step" type="button" data-step="3"><b>3</b><span class="t">再構成</span></button>
+    </div>
+    <div class="ctx needs-gl">
+      <p class="ctx-hint">3の再構成で、距離を自分で動かせます</p>
+      <div class="depth">
+        <label for="lab-depth">再構成距離</label>
+        <input type="range" id="lab-depth" min="0" max="100" step="1" value="0" disabled data-depth>
+        <output for="lab-depth" data-depth-out>–</output>
+      </div>
+      <button class="act" type="button" data-reverse><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4.5h4.5"></path></svg>RIMを逆再生</button>
+      <button class="tog" type="button" data-layers-btn aria-pressed="false" hidden><i aria-hidden="true"></i>推定奥行き層</button>
+    </div>
+    <div class="group pick needs-gl" role="group" aria-label="サンプル">
+      <span class="cap" aria-hidden="true">サンプル</span>
+      <span class="seg"><button class="opt" type="button" data-sample-btn="scene" aria-pressed="true">3Dシーン</button><button class="opt" type="button" data-sample-btn="lytro" aria-pressed="false">実写（Lytro）</button></span>
+    </div>
+    <button class="fs needs-gl" type="button" data-fullscreen>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path class="in" d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"></path><path class="out" d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5" style="display:none"></path></svg>
+      <span class="label">全画面</span>
+    </button>
+  </div>
+</section>
+
+<section class="d-section" id="flow" aria-labelledby="flow-h">
+  <div class="sec-head">
+    <div>
+      <div class="sec-kicker rs"><b>02</b> 研究の流れ</div>
+      <h2 id="flow-h">入力から結果の指標まで</h2>
+      <p class="sec-desc">3つの系統の論文を、同じ段階で並べて描いています。ノードを押すと、その段階の方法と結果が表示されます。</p>
+    </div>
+    <div class="legend" aria-label="凡例"><span><i class="sw rs" aria-hidden="true"></i>自分の手法（筆頭著者）</span><span><i class="sw ext" aria-hidden="true"></i>入力データ</span></div>
+  </div>
+  <div class="sys">
+    {{inc:flow-research}}
+  </div>
+</section>
+
+<section class="d-section" id="topics" aria-labelledby="topics-h">
+  <div class="sec-head">
+    <div>
+      <div class="sec-kicker rs"><b>03</b> テーマ</div>
+      <h2 id="topics-h">2つのテーマ、4本の論文</h2>
+    </div>
+  </div>
+  <div class="topics">
+    <a class="card topic" href="/ja/research/rim/">
+      <div class="topic-img"><img src="/img/ei-synth-800.webp" width="800" height="450" alt="iRIMで合成した6×6レンズアレイの要素画像" loading="lazy"></div>
+      <div class="topic-body">
+        <span class="k">ICMV 2026 最優秀ポスター賞 · ICCAS 2026 ポスター発表</span>
+        <h3>RIM・iRIM：レンズアレイ画像の角度情報を空間解像度へ</h3>
+        <p>レンズアレイ画像の画素を補間なしで一対一に並べ替えて視点画像をつくり（RIM）、逆に多視点画像から仮想レンズアレイの要素画像を合成します（iRIM）。上の実験室の手順2がRIMです。</p>
+        <span class="key">Lytro 7シーンで PSNR +2.39 dB · SSIM +0.14（論文記載値）</span>
+      </div>
+    </a>
+    <a class="card topic" href="/ja/research/origin-point/">
+      <div class="topic-img"><img src="/img/vcr-fixed.webp" width="640" height="640" alt="固定した原点で再構成した解像度チャート" loading="lazy"><img src="/img/vcr-proposed.webp" width="640" height="640" alt="最適化した原点で再構成した解像度チャート" loading="lazy"></div>
+      <div class="topic-body">
+        <span class="k">ITC-CSCC 2025 ポスター · ITC-CSCC 2026 口頭発表 · コード公開</span>
+        <h3>原点最適化：体積計算再構成を、より鮮明に、より速く</h3>
+        <p>体積計算再構成（VCR）の量子化誤差を原点最適化で減らし、その原点を反復探索なしでカメラパラメータから計算します。</p>
+        <span class="key">再構成 81回 → 1回（論文 0.31 s、反復方式は推定 25.45 s）</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<section class="d-section" id="pubs" aria-labelledby="pubs-h">
+  <div class="sec-head">
+    <div>
+      <div class="sec-kicker rs"><b>04</b> 論文</div>
+      <h2 id="pubs-h">国際会議の筆頭著者論文4本と国内発表</h2>
+    </div>
+  </div>
+  <div class="card">
+    <ol class="pubs">
+      <li><div class="pub-venue">ICMV 2026<small>第19回 · ブダペスト</small></div><div><p class="pub-title" lang="en">Angular-to-Spatial Information Redistribution via Ray-based Inverse Mapping</p><div class="pub-meta">Hyeongju Lee, Myungjin Cho, Min-Chul Lee · 10月16日 ポスター発表 <span class="pill gold">最優秀ポスター賞</span> · <a href="/ja/research/rim/">RIM</a></div></div></li>
+      <li><div class="pub-venue">ICCAS 2026<small>札幌</small></div><div><p class="pub-title" lang="en">Virtual Lens Array Synthesis from Multi-View Images via iRIM</p><div class="pub-meta">Hyeongju Lee, Myungjin Cho, Min-Chul Lee · 10月30日 ポスター発表 · <a href="/ja/research/rim/#irim">iRIM</a></div></div></li>
+      <li><div class="pub-venue">ITC-CSCC 2026<small>バンコク</small></div><div><p class="pub-title" lang="en">Accelerated Origin Point Optimization for Volumetric Computational Reconstruction</p><div class="pub-meta">Hyeongju Lee, Myungjin Cho, Min-Chul Lee · 口頭発表 · <a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">コード</a></div></div></li>
+      <li><div class="pub-venue">ITC-CSCC 2025<small>ソウル</small></div><div><p class="pub-title" lang="en">Image Enhancement of Volumetric Computational Reconstruction Using Origin Point Optimization</p><div class="pub-meta">Hyeongju Lee, Gilsu Yeo, Myungjin Cho, Min-Chul Lee · ポスター発表 · <a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">コード</a></div></div></li>
+      <li><div class="pub-venue">韓国光学会 2024<small>国内 · Photonics Conference</small></div><div><p class="pub-title"><span lang="ko">원점 최적화를 이용한 체적 컴퓨터 재생의 이미지 향상</span>（原点最適化を用いた体積計算再構成の画像改善）</p><div class="pub-meta"><span lang="ko">이형주, 권상현, 김성일, 김유진, 유승진, 구정식, 박지용, 조명진</span> · 国内のポスター発表（ITC-CSCC 2025の先行研究）</div></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="d-section" id="path" aria-labelledby="path-h">
+  <div class="sec-head">
+    <div>
+      <div class="sec-kicker rs"><b>05</b> 研究歴</div>
+      <h2 id="path-h">授業の課題から修士研究まで</h2>
+    </div>
+  </div>
+  <div class="card">
+    <ol class="log">
+      <li><div class="log-when">2025.04 – 現在</div><div class="log-what"><b>九州工業大学大学院 博士前期課程</b><span>ライトフィールド・インテグラルイメージングによる3次元再構成。指導教員 Min-Chul Lee</span><span class="pill">{{f:status}}</span></div></li>
+      <li><div class="log-when">2026</div><div class="log-what"><b>ロータリー米山記念奨学生</b><span>国際ロータリー第2700地区の日本語面接で選考</span></div></li>
+      <li><div class="log-when">2024.08 – 2025.03</div><div class="log-what"><b>韓京国立大学校（Hankyong National University、韓国）3次元映像処理システム研究室 学部研究生</b><span>指導教員 Myungjin Cho。ITC-CSCC 2025論文の先行研究として、Photonics Conference 2024で筆頭著者としてポスター発表</span></div></li>
+      <li><div class="log-when">2022</div><div class="log-what"><b>相関フィルタとVCRによる奥行き推定</b><span>授業のプロジェクト。現在の研究の出発点 · <a href="https://github.com/zoocasso/depth-estimation-using-vcr-algorithm-matlab" target="_blank" rel="noopener">コード</a></span></div></li>
+    </ol>
+  </div>
+</section>
+
+<nav class="pager" aria-label="次へ">
+  <a href="/ja/research/rim/"><small>テーマ1</small><b>RIM・iRIMの詳細</b></a>
+  <a class="next" href="/ja/research/origin-point/"><small>テーマ2 →</small><b>原点最適化の詳細</b></a>
+</nav>
+</div>

@@ -1,143 +1,252 @@
-<!--meta {"home": true, "title": "イ・ヒョンジュ｜データ・バックエンドエンジニア", "description": "データ収集・蓄積パイプラインとバックエンドを2年5か月開発し、現在はレンズアレイ画像からの3次元再構成を研究しています。2027年3月 修士課程修了予定。", "nav": "", "body": "home", "head": "<script src=\"/assets/lab.js?v={{v}}\" defer></script>\n"} -->
-<section class="lab" id="lab" aria-label="レンズアレイ実験室">
-  <div class="intro">
-    <h1>{{f:name}}<span class="alt" lang="en">{{f:name_alt}}</span></h1>
-    <p class="role">{{f:role}}</p>
-    <p class="proof"><span class="nw"><b>ロータリー米山記念奨学生</b></span> · <span class="nw"><b>筆頭著者論文4本</b></span> · <span class="nw">公共R&amp;Dの<b>データ基盤</b>を担当</span></p>
-    <p class="lede">韓国のVision Insideで{{f:career_len}}、データパイプラインとバックエンドを開発しました。現在は九州工業大学大学院の修士課程で、レンズアレイ画像からの3次元再構成を研究しています。</p>
-    <ul class="stack" aria-label="主な技術"><li>Python</li><li>SQL</li><li>FastAPI</li><li>MySQL</li><li>Docker</li><li>AWS</li></ul>
-    <p class="status">{{f:status}} · 日本語ビジネス会話</p>
-    <div class="ctas">
-      <a class="btn primary" href="/ja/cv/">経歴・ポートフォリオ</a>
-      <a class="btn" href="https://github.com/zoocasso" target="_blank" rel="noopener">GitHub</a>
-      <div class="email" data-email-user="{{f:email_user}}" data-email-domain="{{f:email_domain}}" hidden><a class="addr"><svg class="i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5.5 7-5.5"/></svg><span class="v"></span></a><button class="copy" type="button" aria-label="メールアドレスをコピー" data-done="コピーしました" data-manual="選択しました"><svg class="i on-idle" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13H7"/></svg><svg class="i on-done" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10.5l4 4 8-9"/></svg><span class="t">コピー</span></button><span class="sr" aria-live="polite"></span></div>
-    </div>
-  </div>
-
-  <div class="stage">
-    <div class="poster"></div>
-    <canvas class="gl" aria-hidden="true"></canvas>
-    <div class="torch" aria-hidden="true"></div>
-    <div class="tag3d" data-tag="obj">物体</div>
-    <div class="tag3d" data-tag="lens">レンズアレイ</div>
-    <div class="tag3d" data-tag="sen">センサー</div>
-    <div class="tag3d" data-tag="rec">再構成面</div>
-    <div class="robot" aria-hidden="true"><canvas width="216" height="132"></canvas></div>
-    <figure class="raybox cams" aria-hidden="true" hidden><svg viewBox="0 0 360 214"><text x="180" y="14" text-anchor="middle">物体</text><rect class="far" x="163" y="22" width="34" height="34"/><circle class="near" cx="180" cy="60" r="11"/><line class="arr" x1="70" y1="114" x2="300" y2="114"/><text x="10" y="118">レンズアレイ</text><g class="c c1"><path class="sight" d="M100 104 L176 66"/><rect class="body" x="86" y="104" width="28" height="19" rx="3"/><circle class="lensc" cx="100" cy="104" r="5"/></g><g class="c c2"><path class="sight" d="M180 104 L180 71"/><rect class="body" x="166" y="104" width="28" height="19" rx="3"/><circle class="lensc" cx="180" cy="104" r="5"/></g><g class="c c3"><path class="sight" d="M260 104 L184 66"/><rect class="body" x="246" y="104" width="28" height="19" rx="3"/><circle class="lensc" cx="260" cy="104" r="5"/></g><text x="10" y="155">写った画像</text><g class="p p1"><rect class="photo" x="77" y="136" width="46" height="34"/><rect class="pfar" x="93" y="146" width="14" height="14"/><circle class="pnear" cx="107" cy="157" r="6"/></g><g class="p p2"><rect class="photo" x="157" y="136" width="46" height="34"/><rect class="pfar" x="173" y="146" width="14" height="14"/><circle class="pnear" cx="180" cy="157" r="6"/></g><g class="p p3"><rect class="photo" x="237" y="136" width="46" height="34"/><rect class="pfar" x="253" y="146" width="14" height="14"/><circle class="pnear" cx="253" cy="157" r="6"/></g><text x="10" y="192">レンズ一つひとつが、小さなカメラです。</text><text x="10" y="207">位置ごとに、手前の球が写る場所が変わります。</text></svg></figure>
-    <figure class="lfzoom" aria-hidden="true" hidden><span class="badge">実測・デコード済みのレンズレット画像</span><canvas width="640" height="480"></canvas><figcaption>Lytro Illumのレンズレット画像（Lytroのソフトウェアでデコード）。レンズ1個あたり14×14画素で、中央の8×8（黄色）が8×8枚の視点画像になります。</figcaption></figure>
-    <p class="laynote" data-laynote hidden><b>推定</b> · 64枚の視点画像が奥行き（面）ごとにどれだけ一致するかを層で表しています。実測の3Dではなく、奥行きの軸はメートルではなく視差（px/視点）です。薄く広がった部分は、視点が一つの奥行きに定まらない場所です。</p>
-    <div class="vmap" aria-hidden="true" hidden data-label="現在の視点"></div>
-    <div class="dialog" aria-hidden="true"><div class="jp" lang="ja"></div><div class="ko"></div></div>
-    <div class="vh" aria-live="polite" data-live></div>
-    <p class="credit" data-credit hidden>Lytroデータ：Stanford Lytro Light Field Archive, occlusions_26（Raj et al., 2016）・非商用のデモのため一部を切り出して使用</p>
-    <p class="figcap needs-gl"><span class="k">図</span><span class="desc">レンズアレイ画像の3次元再構成 · </span>論文の手法 RIM<span class="long">、ICMV 2026</span><span class="mid"> <b>最優秀ポスター賞</b></span> · <a href="/en/research/rim/#lab" hreflang="en">仕組み（英語）→</a></p>
-    <figure class="fallback" hidden>
-      <img src="/img/ei-synth-800.webp" width="800" height="450" alt="iRIMで合成した6×6レンズアレイの要素画像">
-      <figcaption><p>この端末では実験室のアニメーションを動かせないため、代わりに研究の画像を表示しています。</p></figcaption>
-    </figure>
-  </div>
-
-  <div class="lab-tools">
-    <div class="group steps needs-gl" role="group" aria-label="手順">
-      <button class="step" type="button" data-step="1"><b>1</b><span class="t">撮影</span></button>
-      <button class="step" type="button" data-step="2"><b>2</b><span class="t">並べ替え</span></button>
-      <button class="step" type="button" data-step="3"><b>3</b><span class="t">再構成</span></button>
-    </div>
-    <div class="ctx needs-gl">
-      <p class="ctx-hint">3の再構成で、距離を自分で動かせます</p>
-      <div class="depth">
-        <label for="lab-depth">再構成距離</label>
-        <input type="range" id="lab-depth" min="0" max="100" step="1" value="0" disabled data-depth>
-        <output for="lab-depth" data-depth-out>–</output>
+<!--meta {"home": true, "title": "イ・ヒョンジュ｜データ・バックエンドエンジニア", "description": "収集から提供まで、実際に運用されるデータシステムをつくるデータ・バックエンドエンジニア、イ・ヒョンジュ。KISTI（韓国科学技術情報研究院）発注案件のデータ収集・蓄積・提供（8,000万行以上）、ゲノムレポートのバックエンド、日立グループとの受託研究の画像パイプライン。2027年3月 修士課程修了予定。", "nav": "", "body": "home"} -->
+<section class="hero" aria-labelledby="hero-h">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow"><i class="dot" aria-hidden="true"></i>{{f:role}} · 実務経験 {{f:career_len}}</span>
+        <h1 id="hero-h">収集から提供まで、<br><span class="hl">実際に運用されるデータシステム</span>をつくります。</h1>
+        <p class="hero-lede">韓国のVision Insideで<strong>代理（主任相当）として{{f:career_len}}</strong>、KISTI（韓国科学技術情報研究院）発注案件のデータ収集・蓄積・提供と、ゲノムレポートシステムのバックエンドを実装し、デプロイしました。現在は九州工業大学大学院でレンズアレイ画像からの3次元再構成を研究しながら、日立グループとの受託研究で画像データパイプラインを作り直し、オランダの現地ラボに導入しました。</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary btn-lg" href="{{pdf:cv}}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 1.5h5l3.5 3.5v9.5h-8.5z"/><path d="M9 1.5V5h3.5M6 9h4.5M6 11.5h4.5"/></svg>英文CV（PDF）</a>
+          <a class="btn btn-lg" href="{{pdf:portfolio}}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><path d="M1.5 6h13M5 2.5V6"/></svg>ポートフォリオ（英語・PDF）</a>
+          <button class="btn btn-lg" type="button" data-email-copy data-goatcounter-click="email-copy" data-done="メールアドレスをコピーしました" data-manual="アドレスを選択しました。コピーしてください"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/></svg>メールをコピー</button>
+          <a class="more-link" href="#systems">システム構成を見る ↓</a>
+        </div>
       </div>
-      <button class="act" type="button" data-reverse><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4.5h4.5"></path></svg>RIMを逆再生</button>
-      <button class="tog" type="button" data-layers-btn aria-pressed="false" hidden><i aria-hidden="true"></i>推定奥行き層</button>
-    </div>
-    <div class="group pick seg needs-gl" role="group" aria-label="サンプル">
-      <span class="cap" aria-hidden="true">サンプル</span>
-      <button class="opt" type="button" data-sample-btn="scene" aria-pressed="true">3Dシーン</button>
-      <button class="opt" type="button" data-sample-btn="lytro" aria-pressed="false">実写（Lytro）</button>
-    </div>
-    <button class="fs needs-gl" type="button" data-fullscreen>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path class="in" d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"></path><path class="out" d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5" style="display:none"></path></svg>
-      <span class="label">全画面</span>
-    </button>
-  </div>
-</section>
 
-<section class="section" aria-labelledby="h-facts">
-  <header><h2 id="h-facts">数字で見る</h2></header>
-  <dl class="facts">
-    <div><dt><a href="/en/work/kisti/" hreflang="en">{{f:kisti_rows}}</a></dt><dd>KISTI（韓国科学技術情報研究院）の公共R&amp;Dプラットフォームに収集・蓄積した商品・調達データ<small>収集・蓄積・提供を担当。2023年11月時点で、Danawa（韓国の価格比較サイト）のレビュー1,605万件、調達属性4,192万件を含む</small></dd></div>
-    <div><dt><a href="/en/work/genomics/" hreflang="en">{{f:bio_ref}}</a></dt><dd>ゲノム変異のアノテーション用に蓄積した公開リファレンス<small>dbSNP 237 GB、1000 Genomes 770 GBを染色体ごとに分割し、チャンク単位で蓄積。バックエンドとパイプラインを実装</small></dd></div>
-    <div><dt><a href="/en/work/kisti/#serving" hreflang="en">{{f:kisti_match}}</a></dt><dd>NTIS（韓国の国家研究開発情報）の研究課題と企業を、キーワードで結んだマッチング（SQL）<small>プラットフォームの課題–企業マッチングモデルをSQLで実装し、バッチで実行</small></dd></div>
-    <div><dt><a href="/en/work/wjmax/" hreflang="en">{{f:wjmax_peak}}</a></dt><dd>ゲームサーバーWJMaxがアップデート時に受けた最大同時接続数<small>平均{{f:wjmax_avg}}。Cloudflare・AWS EC2・RDSで運用し、2人チームでサーバー・DB・セキュリティを担当</small></dd></div>
-  </dl>
-</section>
-
-<section class="section" aria-labelledby="h-work">
-  <header><h2 id="h-work">実績</h2><a class="more" href="/en/work/" hreflang="en">実績一覧（英語）</a></header>
-  <p class="note-lang">各プロジェクトの詳細ページは英語です。</p>
-  <ol class="log work">
-    <li><a class="row" href="/en/work/hitachi/" hreflang="en">
-      <span class="when">2025.04 – 現在<br>九州工業大学の研究室 研究補助員（非常勤）</span>
-      <div><h3>日立グループとの受託研究における画像データパイプライン</h3>
-        <p>保守が難しくなっていた既存コードを全面的に作り直し、産業用マシンビジョンカメラの制御・撮影から学習用データセットの前処理までをPythonのパイプラインにまとめました。開発者ではない研究員が自分で使えるPyQtのGUIも用意しました。</p>
-        <span class="key">設計を研究室の後輩2名に引き継ぎ、2026年9〜10月にオランダで現地導入</span></div>
-      <span class="flow" aria-label="パイプライン"><span>カメラ制御</span><i></i><span>撮影</span><i></i><span class="core">前処理</span><i></i><span>データセット</span></span>
-    </a></li>
-    <li><a class="row" href="/en/work/kisti/" hreflang="en">
-      <span class="when">{{f:kisti_period}}<br>Vision Inside、KISTI発注案件</span>
-      <div><h3>KISTI公共R&amp;Dプラットフォームのデータ収集・蓄積</h3>
-        <p>AmazonとDanawaのクローラー、韓国調達庁APIの収集器を作り、すべてを1台のリモートDBに蓄積しました。ショッピングサイトの直接クローリングからAPI収集への切り替えも提案し、採用されました。そのデータを使ったモデルのバッチ実行と、FastAPIの管理画面まで提供しました。</p>
-        <span class="key"><b>{{f:kisti_rows}}</b>、収集・蓄積・提供を担当</span></div>
-      <span class="flow" aria-label="パイプライン"><span>クローラー・API収集</span><i></i><span class="core">リモートDB（MySQL）</span><i></i><span>モデルのバッチ実行</span><i></i><span>FastAPI</span></span>
-    </a></li>
-    <li class="compact"><a class="row" href="/en/work/wjmax/" hreflang="en">
-      <span class="when">{{f:wjmax_period}}<br>有志2人のサイドプロジェクト</span>
-      <div><h3>コミュニティのリズムゲームWJMaxのサーバー</h3>
-        <span class="key">アップデート時に最大<b>{{f:wjmax_peak}}</b>が同時接続、FastAPI・EC2・RDS</span></div>
-    </a><a class="code" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">GitHubのコード（2026年に書き直し）</a></li>
-    <li class="compact"><a class="row" href="/en/work/genomics/" hreflang="en">
-      <span class="when">{{f:bio_period}}<br>Vision Inside、社内プロジェクト</span>
-      <div><h3>ゲノム変異のアノテーション・リスクレポートのバックエンド</h3>
-        <span class="key">公開リファレンスに対する4段階のSQLアノテーション、FastAPIのJSON API、Docker。バックエンドとパイプラインを実装</span></div>
-    </a><a class="code" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener">GitHubのコード（2026年に書き直し）</a></li>
-  </ol>
-</section>
-
-<section class="section" aria-labelledby="h-research">
-  <header><h2 id="h-research">研究</h2><a class="more" href="/en/research/" hreflang="en">研究・論文一覧（英語）</a></header>
-  <p class="lead">九州工業大学大学院 修士課程（指導教員 Min-Chul Lee）。レンズアレイカメラで撮った画像を、学習を使わず幾何光学だけで並べ替え、3次元に再構成しています。国際会議で筆頭著者論文を4本発表し、ICMV 2026で最優秀ポスター賞を受賞しました。</p>
-  <ol class="log">
-    <li class="compact"><a class="row" href="/en/research/rim/" hreflang="en">
-      <span class="when">ICMV 2026 最優秀ポスター賞<br>ICCAS 2026 ポスター発表</span>
-      <div><h3>RIM・iRIM：レンズアレイ画像と視点画像を相互に変換する方法</h3>
-        <span class="key">上の実験室で動いているのがこの方法です。補間なしで画素を一対一に並べ替えます</span></div>
-    </a></li>
-    <li class="compact"><a class="row" href="/en/research/origin-point/" hreflang="en">
-      <span class="when">ITC-CSCC 2025, 2026<br>コード公開</span>
-      <div><h3>原点最適化：反復探索なしで、より鮮明な3次元再構成</h3>
-        <span class="key">候補の原点81個を一つずつ再構成して比べていた探索を、1回の計算に置き換え</span></div>
-    </a></li>
-  </ol>
-  <p class="pubs"><span>論文</span>ICMV 2026 <b>最優秀ポスター賞</b> · ICCAS 2026 ポスター発表 · ITC-CSCC 2026 口頭発表 · ITC-CSCC 2025 ポスター発表 · <a href="/en/research/#h-pubs" hreflang="en">一覧（英語）</a></p>
-</section>
-
-<section class="section" aria-labelledby="h-contact">
-  <header><h2 id="h-contact">連絡先</h2></header>
-  <div class="contact-wrap">
-    <div class="contact-main">
-      <p class="lead">{{f:status}}。データエンジニアリング、バックエンド開発、ビジョンデータパイプラインのソフトウェア開発職を志望しています。</p>
-      <div class="contact">
-        <div class="email strong" data-email-user="{{f:email_user}}" data-email-domain="{{f:email_domain}}" hidden><a class="addr"><svg class="i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="15" height="11" rx="1.5"/><path d="M3 5.5l7 5.5 7-5.5"/></svg><span class="v"></span></a><button class="copy" type="button" aria-label="メールアドレスをコピー" data-done="コピーしました" data-manual="選択しました"><svg class="i on-idle" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13H7"/></svg><svg class="i on-done" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10.5l4 4 8-9"/></svg><span class="t">コピー</span></button><span class="sr" aria-live="polite"></span></div>
-        <a class="btn" href="/ja/cv/">経歴・ポートフォリオ</a>
-        <a class="btn" href="https://github.com/zoocasso" target="_blank" rel="noopener">GitHub</a>
+      <div class="kpis" aria-label="主な数値">
+        <a class="kpi" href="#sys-kisti">
+          <span class="kpi-src"><i aria-hidden="true"></i>KISTI発注案件 · 2023.11累計</span>
+          <span class="kpi-val">8,000万<small>+ 行</small></span>
+          <span class="kpi-label">商品・調達データの収集・蓄積（中央MySQL）</span>
+        </a>
+        <a class="kpi" href="#sys-genome">
+          <span class="kpi-src"><i aria-hidden="true"></i>ゲノムレポートシステム</span>
+          <span class="kpi-val">~1<small>TB</small></span>
+          <span class="kpi-label">公開ゲノムリファレンスの蓄積 · 4段階のSQLアノテーション</span>
+        </a>
+        <a class="kpi" href="#sys-wjmax">
+          <span class="kpi-src"><i aria-hidden="true"></i>WJMax · サーバー・DB担当</span>
+          <span class="kpi-val">~2,000<small>人</small></span>
+          <span class="kpi-label">アップデート時の最大同時接続（平均{{f:wjmax_avg}}）</span>
+        </a>
+        <a class="kpi" href="#research">
+          <span class="kpi-src"><i class="rs" aria-hidden="true"></i>3Dビジョン研究 · 筆頭著者</span>
+          <span class="kpi-val">4<small>本</small></span>
+          <span class="kpi-label">国際会議論文 · ICMV 2026 最優秀ポスター賞</span>
+        </a>
       </div>
     </div>
-    <figure class="qr">
-      <img src="/img/qr-ja.svg" width="148" height="148" alt="zoocasso.github.io/ja へのQRコード">
-      <figcaption>スマートフォンでこのサイトを開く</figcaption>
-    </figure>
+
+    <div class="ribbon" aria-labelledby="ribbon-h">
+      <div class="ribbon-head">
+        <h2 class="ribbon-title" id="ribbon-h">データが通る道と、段階ごとに使ってきたツール</h2>
+        <span class="ribbon-note">主な言語 Python · SQL</span>
+      </div>
+      <div class="ribbon-body">
+        <div class="ribbon-track" aria-hidden="true"><i class="pkt"></i><i class="pkt"></i><i class="pkt"></i></div>
+        <ol class="ribbon-stages">
+          <li class="rstage"><div class="rstage-h"><span>01</span><b>ソース</b></div><ul><li>ショッピングサイト</li><li>公共データAPI</li><li>VCF · FASTQ</li><li>マシンビジョンカメラ</li><li>ゲームクライアント</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>02</span><b>収集</b></div><ul><li>Selenium</li><li>BeautifulSoup</li><li>REST API</li><li>PySpin</li><li>分散クローリング</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>03</span><b>保存</b></div><ul><li>MySQL</li><li>AWS RDS</li><li>SQLAlchemy</li><li>分割・チャンク蓄積</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>04</span><b>処理</b></div><ul><li>SQL</li><li>pandas</li><li>scikit-learn</li><li>KeyBERT</li><li>GATK</li><li>OpenCV</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>05</span><b>提供</b></div><ul><li>FastAPI</li><li>Jinja2</li><li>Tabulator</li><li>PyQt</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>06</span><b>運用</b></div><ul><li>Docker</li><li>Harbor</li><li>AWS EC2</li><li>Cloudflare</li><li>Linux</li><li>HTTPS</li></ul></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="systems" aria-labelledby="sys-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker"><b>01</b> システム</div>
+        <h2 id="sys-h">自分で構築・デプロイした4つのシステム</h2>
+        <p class="sec-desc">データが流れる順に描いています。ノードを押すと、そのノードを通る経路が強調され、下に私が担当したことと、他の担当者が行ったことが表示されます。</p>
+      </div>
+      <div class="legend" aria-label="凡例">
+        <span><i class="sw me" aria-hidden="true"></i>自分で構築</span>
+        <span><i class="sw shared" aria-hidden="true"></i>共同で設計・実装</span>
+        <span><i class="sw other" aria-hidden="true"></i>他の担当者</span>
+        <span><i class="sw ext" aria-hidden="true"></i>外部ソース・利用者</span>
+        <button class="toggle" type="button" data-mine-toggle aria-pressed="false"><span class="knob" aria-hidden="true"></span>自分の担当だけ強調</button>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="システム一覧">
+      <button class="tab" role="tab" id="tab-kisti" aria-controls="sys-kisti" aria-selected="true">
+        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:kisti_period}}</span>
+        <span class="tab-name">KISTI発注案件・データ層</span>
+        <span class="tab-metric">{{f:kisti_rows_short}} 行</span>
+      </button>
+      <button class="tab" role="tab" id="tab-genome" aria-controls="sys-genome" aria-selected="false" tabindex="-1">
+        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:bio_period}}</span>
+        <span class="tab-name">ゲノム変異アノテーション・レポート</span>
+        <span class="tab-metric">リファレンス {{f:bio_ref}}</span>
+      </button>
+      <button class="tab" role="tab" id="tab-hitachi" aria-controls="sys-hitachi" aria-selected="false" tabindex="-1">
+        <span class="tab-top"><i class="dot" aria-hidden="true"></i>2025.04 – 現在</span>
+        <span class="tab-name">日立グループとの受託研究・画像パイプライン</span>
+        <span class="tab-metric">オランダで現地導入</span>
+      </button>
+      <button class="tab" role="tab" id="tab-wjmax" aria-controls="sys-wjmax" aria-selected="false" tabindex="-1">
+        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:wjmax_period}}</span>
+        <span class="tab-name">WJMaxゲームサーバー</span>
+        <span class="tab-metric">同時接続 最大~2,000</span>
+      </button>
+    </div>
+
+    <article class="sys" id="sys-kisti" role="tabpanel" aria-labelledby="tab-kisti">
+      <header class="sys-head">
+        <div>
+          <div class="sys-meta"><span>{{f:kisti_period}}</span><span>Vision Inside</span><span>受託開発</span></div>
+          <h3>KISTI発注案件・人工知能を用いた公共R&amp;D価値創出プラットフォーム（のちのSMART K2C）</h3>
+          <div class="sys-role"><span class="pill me">データエンジニア · 収集・蓄積・提供を専任で担当</span><span class="pill">設計：KISTIの研究者</span></div>
+          <p class="sys-scope"><b>プロジェクトの設計</b> KISTIの研究者 · <b>一部モデルの設計</b> 大学の委託研究 · <b>私の担当範囲</b> Vision Inside側のデータ層（収集・蓄積・提供）の構築・運用と、分析モデルをFastAPIのサービスと管理画面にして運用に乗せること</p>
+        </div>
+        <div class="sys-links"><a class="btn" href="/ja/work/kisti/">詳細を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+      </header>
+      {{inc:flow-kisti}}
+      <div class="sys-outcome"><span class="k">結果</span><span>このプロジェクトは、その後<b>3億ウォン規模の本事業</b>につながった</span><span>KISTIの技術会議で結果を発表 · 監理用の成果物を作成</span></div>
+    </article>
+
+    <article class="sys" id="sys-genome" role="tabpanel" aria-labelledby="tab-genome">
+      <header class="sys-head">
+        <div>
+          <div class="sys-meta"><span>{{f:bio_period}}</span><span>Vision Inside</span><span>社内プロジェクト · 国際共同</span></div>
+          <h3>ゲノム変異のアノテーション・リスクレポートシステム</h3>
+          <div class="sys-role"><span class="pill me">パイプライン・バックエンド・フロントエンドを実装</span><span class="pill">アルゴリズムはチームリーダーと共同で設計</span></div>
+          <p class="sys-scope">個人のゲノム変異（VCF、チップアレイ）を{{f:bio_ref}}の公開リファレンスと結び付け、疾患・形質のリスク、集団ごとの頻度、関連する医薬品・韓方生薬の情報を提供するシステムです。慶熙大学校 韓医科大学（韓国）とカナダのバイオ研究所が参加した国際共同プロジェクトでした。<b>私の担当範囲</b> パイプライン・バックエンド・フロントエンドの実装とDockerでのデプロイ</p>
+        </div>
+        <div class="sys-links"><a class="btn" href="/ja/work/genomics/">詳細を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード（2026年に書き直し）</a></div>
+      </header>
+      {{inc:flow-genome}}
+      <div class="sys-outcome"><span class="k">結果</span><span>本番サーバーにデプロイ後、<b>内部IP限定</b>で運用（公開サービスではない）</span><span>サービスのコードは2026年10月に書き直して公開</span></div>
+    </article>
+
+    <article class="sys" id="sys-hitachi" role="tabpanel" aria-labelledby="tab-hitachi">
+      <header class="sys-head">
+        <div>
+          <div class="sys-meta"><span>2025.04 – 現在</span><span>九州工業大学の研究室 · 研究補助員（非常勤）</span><span>日立グループとの受託研究</span></div>
+          <h3>画像データパイプライン · 日立グループとの受託研究</h3>
+          <div class="sys-role"><span class="pill me">ソフトウェア全体を一から書き直し</span><span class="pill">設計を研究室の後輩2名に引き継ぎ</span></div>
+          <p class="sys-scope">引き継いだ学習データ生成のコードは保守できない状態で、データセットを作るたびに開発者が付きっきりになる必要がありました。カメラ制御からデータセットの前処理までを一つのPythonパイプラインに作り直し、開発者ではない研究員が自分で使えるGUIを用意しました。</p>
+        </div>
+        <div class="sys-links"><a class="btn" href="/ja/work/hitachi/">詳細を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+      </header>
+      {{inc:flow-hitachi}}
+      <div class="sys-outcome"><span class="k">結果</span><span><b>2026年9〜10月、オランダの現地ラボに導入</b> · 日立グループの担当者が現場で直接使用</span><span>プロジェクトパートナーの研究者の前でデモ · 業務言語は日本語・英語</span></div>
+    </article>
+
+    <article class="sys" id="sys-wjmax" role="tabpanel" aria-labelledby="tab-wjmax">
+      <header class="sys-head">
+        <div>
+          <div class="sys-meta"><span>{{f:wjmax_period}}</span><span>サイドプロジェクト · 2人チーム</span></div>
+          <h3>WJMaxゲームサーバー · プレイログ収集API</h3>
+          <div class="sys-role"><span class="pill me">サーバー・DB・セキュリティを担当</span><span class="pill">ゲームクライアントは別の1人が開発</span></div>
+          <p class="sys-scope">コミュニティのリズムゲームのプレイ報告を受け取り、保存するサーバーです。平均同時接続は{{f:wjmax_avg}}、アップデート時には最大{{f:wjmax_peak}}が接続しました。</p>
+        </div>
+        <div class="sys-links"><a class="btn" href="/ja/work/wjmax/">詳細を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード（2026年に書き直し）</a></div>
+      </header>
+      {{inc:flow-wjmax}}
+      <div class="sys-outcome"><span class="k">結果</span><span>アップデート当日に最大<b>{{f:wjmax_peak}}</b>の同時接続を受けて運用</span><span>公開リポジトリは2026年10月の書き直し版（テスト付き）</span></div>
+    </article>
+  </div>
+</section>
+
+<section class="section" id="research" aria-labelledby="rs-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker rs"><b>02</b> 研究 · 九州工業大学大学院（指導教員 Min-Chul Lee）</div>
+        <h2 id="rs-h">学習を使わず、幾何光学で3次元を再構成します</h2>
+        <p class="sec-desc">レンズアレイ（インテグラルイメージング）カメラで撮った画像から、3次元のシーンを復元する研究です。研究も同じように、入力から結果の指標までの流れとして整理しました。</p>
+      </div>
+      <div class="legend"><span class="pill gold"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="6" r="4"/><path d="M5.5 9.2L4.5 15l3.5-2 3.5 2-1-5.8"/></svg>ICMV 2026 最優秀ポスター賞</span><a class="sec-more" href="/ja/research/">研究のページ<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+    </div>
+
+    <div class="sys">
+      {{inc:flow-research}}
+    </div>
+
+    <div class="rs-grid">
+      <a class="card lab-card" href="/ja/research/#lab">
+        <div class="lab-card-img"><img src="/img/ei-synth-800.webp" width="800" height="450" alt="iRIMで合成したレンズアレイの要素画像。トーラスとサルの頭のモデルが、小さなレンズ画像に分かれて写っている" loading="lazy"><div class="steps-mini" aria-hidden="true"><span><b>1</b>撮影</span><span><b>2</b>並べ替え</span><span><b>3</b>再構成</span></div></div>
+        <div class="lab-card-body">
+          <span class="k">体験 · レンズアレイ実験室</span>
+          <h3>ブラウザで、レンズアレイによる撮影・並べ替え・再構成を試せます</h3>
+          <p>3Dシーンをレンズアレイで撮影し、RIMで並べ替えたあと、奥行きごとにピントを合わせ直します。実際のLytroカメラのデータもあります。音が出ます。</p>
+          <span class="go">実験室を開く<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+        </div>
+      </a>
+      <div class="card">
+        <div class="card-h"><h3>国際会議論文4本</h3><span>すべて筆頭著者</span></div>
+        <ol class="pubs">
+          <li><div class="pub-venue">ICMV 2026<small>ブダペスト</small></div><div><p class="pub-title" lang="en">Angular-to-Spatial Information Redistribution via Ray-based Inverse Mapping</p><div class="pub-meta">Hyeongju Lee, Myungjin Cho, Min-Chul Lee · ポスター発表 <span class="pill gold">最優秀ポスター賞</span></div></div></li>
+          <li><div class="pub-venue">ICCAS 2026<small>札幌</small></div><div><p class="pub-title" lang="en">Virtual Lens Array Synthesis from Multi-View Images via iRIM</p><div class="pub-meta">Hyeongju Lee, Myungjin Cho, Min-Chul Lee · ポスター発表</div></div></li>
+          <li><div class="pub-venue">ITC-CSCC 2026<small>バンコク</small></div><div><p class="pub-title" lang="en">Accelerated Origin Point Optimization for Volumetric Computational Reconstruction</p><div class="pub-meta">Hyeongju Lee, Myungjin Cho, Min-Chul Lee · 口頭発表 · <a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">コード</a></div></div></li>
+          <li><div class="pub-venue">ITC-CSCC 2025<small>ソウル</small></div><div><p class="pub-title" lang="en">Image Enhancement of Volumetric Computational Reconstruction Using Origin Point Optimization</p><div class="pub-meta">Hyeongju Lee, Gilsu Yeo, Myungjin Cho, Min-Chul Lee · ポスター発表 · <a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">コード</a></div></div></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="work" aria-labelledby="work-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker"><b>03</b> その他</div>
+        <h2 id="work-h">そのほかに作ったもの</h2>
+      </div>
+      <a class="sec-more" href="/ja/work/">実績の一覧<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+    </div>
+    <table class="tbl">
+      <thead><tr><th scope="col">プロジェクト</th><th scope="col">担当内容</th><th scope="col">技術</th></tr></thead>
+      <tbody>
+        <tr><td>3DOS · XRヘッドセットの視界改善<small>2024.11 · XRデバイスコンテンツ・メイカソン本選</small></td><td>チーム3DOS（研究室の5名で登録）で、開発・発表・ステージでのデモを一人で担当。Myungjin Cho教授の研究のFourier Peplography（もや除去）とPhoton Counting（低照度での復元）をC++・OpenCVで実装し、Androidのネイティブプラグイン（arm64）としてビルドして、Metalens 2ヘッドセットのUnityアプリでデモ。コードは紛失したため、<a href="https://github.com/zoocasso/realtime-vision-xr-device" target="_blank" rel="noopener">発表資料</a>のみ公開。</td><td><ul class="chips"><li>C++</li><li>OpenCV</li><li>Unity</li><li>Android</li></ul></td></tr>
+        <tr><td>生命保険の公示データツール<small>2023.08 – 10 · Vision Inside · 3人チーム</small></td><td>生命保険の公示Excel（16の商品群）をMySQLに蓄積し、FastAPI・TabulatorのWebビューアで提供。xlwingsでVBAを実行するスタンドアロンのパッケージと、PyQtのデスクトップ版プロトタイプを開発。保険料算出モデルのPythonへの移植と照合は、他のチームメンバーが主導。</td><td><ul class="chips"><li>Python</li><li>openpyxl</li><li>xlwings</li><li>MySQL</li><li>FastAPI</li><li>PyQt</li></ul></td></tr>
+        <tr><td>Smart Mirror<small>2022 · 卒業制作 · 2人チーム</small></td><td>Raspberry Pi上で、OpenCVのLBPH顔認識とKakaoの音声認識APIを使い、ユーザーごとのダッシュボードをハーフミラーのディスプレイに表示。</td><td><ul class="chips"><li>Python</li><li>OpenCV</li><li>Raspberry Pi</li></ul></td></tr>
+        <tr><td>相関フィルタ・VCRによる奥行き推定<small>2022 · 授業のプロジェクト</small></td><td>授業の講義資料にあったVCR・相関フィルタのスクリプトをもとに、要素画像から奥行きを復元。現在の修士研究の出発点です。<a href="https://github.com/zoocasso/depth-estimation-using-vcr-algorithm-matlab" target="_blank" rel="noopener">コード（2026年10月に書き直し）</a></td><td><ul class="chips"><li>MATLAB</li></ul></td></tr>
+        <tr><td>MATLABで実装したCNN<small>2022.02 – 03 · 学習用プロジェクト</small></td><td>Phil Kimの『MATLAB Deep Learning』の例題に沿って、MNIST分類のCNN（畳み込み・ReLU・最大プーリング・ソフトマックス）と、モーメンタム付き勾配降下法による誤差逆伝播を自分で実装。</td><td><ul class="chips"><li>MATLAB</li></ul></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" id="history" aria-labelledby="hist-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker"><b>04</b> 経歴</div>
+        <h2 id="hist-h">職歴・学歴・受賞など</h2>
+      </div>
+      <a class="sec-more" href="/ja/cv/">経歴のページ<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="card-h"><h3>経歴</h3><span>新しい順</span></div>
+        <ol class="log">
+          <li><div class="log-when">2025.04 – 現在</div><div class="log-what"><b>九州工業大学大学院 情報工学府</b><span>情報創成工学専攻 博士前期課程 · 3Dビジョン研究（指導教員 Min-Chul Lee）</span><span class="pill">{{f:status}}</span></div></li>
+          <li><div class="log-when">2025.04 – 現在</div><div class="log-what"><b>九州工業大学の研究室 研究補助員（非常勤）</b><span>日立グループとの受託研究の画像データパイプライン · 2026年9〜10月にオランダで現地導入</span></div></li>
+          <li><div class="log-when">2024.08 – 2025.03</div><div class="log-what"><b>韓京国立大学校（韓国）3次元映像処理システム研究室 · 学部研究生</b><span>Photonics Conference 2024（韓国光学会）筆頭著者ポスター · 3DOSメイカソン</span></div></li>
+          <li><div class="log-when">{{f:career_span}}</div><div class="log-what"><b>Vision Inside（韓国）· 代理（主任相当）、データ・バックエンドエンジニア</b><span>KISTI発注案件のデータ層、ゲノムレポートシステム、生命保険の公示データツール</span><span>産業技能要員（兵役の代わりに指定企業で働く韓国の制度）として2022.07 – 2024.07に服務満了</span></div></li>
+          <li><div class="log-when">2018.03 – 2025.02</div><div class="log-what"><b>韓京国立大学校 電気電子制御工学科 学士</b></div></li>
+        </ol>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>受賞・資格・語学</h3></div>
+        <ul class="side-list">
+          <li><span class="ico gold" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="6" r="4"/><path d="M5.5 9.2L4.5 15l3.5-2 3.5 2-1-5.8"/></svg></span><div><b>ICMV 2026 最優秀ポスター賞</b><small>ブダペスト · 2026.10 · 筆頭著者</small></div></li>
+          <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 1.5h5l3.5 3.5v9.5h-8.5z"/><path d="M9 1.5V5h3.5"/></svg></span><div><b>国際会議の筆頭著者論文4本</b><small>ICMV 2026 · ICCAS 2026 · ITC-CSCC 2026 · ITC-CSCC 2025</small></div></li>
+          <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 1.5l1.9 3.9 4.3.6-3.1 3 .7 4.3L8 11.3l-3.8 2 .7-4.3-3.1-3 4.3-.6z"/></svg></span><div><b>ロータリー米山記念奨学生</b><small>2026 · 日本語の面接で選考</small></div></li>
+          <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 1.5l5.5 2v4c0 3.4-2.4 6-5.5 7-3.1-1-5.5-3.6-5.5-7v-4z"/><path d="M5.5 8l2 2 3-3.5"/></svg></span><div><b>兵役修了</b><small>産業技能要員として服務満了（2022.07 – 2024.07）</small></div></li>
+          <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="8" cy="4" rx="5.5" ry="2"/><path d="M2.5 4v8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2V4M2.5 8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2"/></svg></span><div><b>SQLD</b><small>2023.10 · 韓国データ産業振興院</small></div></li>
+          <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.5"/><path d="M1.5 8h13M8 1.5c2 2 2 11 0 13M8 1.5c-2 2-2 11 0 13"/></svg></span><div><b>語学</b><small>韓国語（母語）· 日本語（ビジネス会話）· 英語（業務レベル）</small></div></li>
+        </ul>
+      </div>
+    </div>
   </div>
 </section>
