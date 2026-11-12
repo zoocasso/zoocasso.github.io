@@ -1,103 +1,114 @@
-<!--meta {"title": "RIM·iRIM", "description": "렌즈 배열 영상의 픽셀을 보간 없이 일대일로 재배열해 시점 영상을 만드는 RIM(ICMV 2026)과, 그 역변환으로 가상 렌즈 배열 요소 영상을 합성하는 iRIM(ICCAS 2026).", "nav": "research", "head": "<script src=\"/assets/rimviz.js?v={{v}}\" defer></script>\n"} -->
-<div class="doc-head">
-  <p class="crumb"><a href="/research/">연구</a> / RIM·iRIM</p>
-  <div class="badges"><span>ICMV 2026 최우수 포스터상(Best Poster Award), 부다페스트</span><span>ICCAS 2026 포스터 발표, 삿포로, 10월 30일</span></div>
-  <h1>RIM·iRIM: 렌즈 배열 영상의 각도 정보를 공간 해상도로</h1>
-  <p class="authors"><b>Hyeongju Lee</b>, Myungjin Cho, Min-Chul Lee</p>
-  <p class="lede">이 사이트 첫 화면의 실험실에서 2단계 "재배열"이 RIM입니다.</p>
-</div>
+<!--meta {"title": "RIM·iRIM", "description": "렌즈 배열 영상의 픽셀을 보간 없이 일대일로 재배열해 시점 영상을 만드는 RIM(ICMV 2026 최우수 포스터상)과, 그 역변환으로 가상 렌즈 배열 요소 영상을 합성하는 iRIM(ICCAS 2026).", "nav": "research", "head": "<script src=\"/assets/rimviz.js?v={{v}}\" defer></script>\n"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="현재 위치"><a href="/">홈</a><span aria-hidden="true">/</span><a href="/research/">연구</a><span aria-hidden="true">/</span><span aria-current="page">RIM·iRIM</span></nav>
+    <div class="badges"><span class="pill gold"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="6" r="4"/><path d="M5.5 9.2L4.5 15l3.5-2 3.5 2-1-5.8"/></svg>ICMV 2026 최우수 포스터상 · 부다페스트</span><span class="pill rs">ICCAS 2026 포스터 발표 · 삿포로</span></div>
+    <h1 id="d-h">RIM·iRIM: 렌즈 배열 영상의<br>각도 정보를 공간 해상도로</h1>
+    <p class="authors"><b>Hyeongju Lee</b>, Myungjin Cho, Min-Chul Lee · 규슈공업대학교</p>
+    <p class="hero-lede">렌즈 배열 영상의 픽셀을 보간 없이 일대일로 재배열해 시점 영상을 만들고(RIM), 거꾸로 다시점 영상에서 가상 렌즈 배열 요소 영상을 합성합니다(iRIM). <a href="/research/#lab">연구 페이지의 실험실</a>에서 2단계 "재배열"이 RIM입니다.</p>
+    <div class="kpis row three" aria-label="핵심 수치">
+      <div class="kpi"><span class="kpi-src"><i class="rs" aria-hidden="true"></i>Lytro 7개 장면 · 논문 기재값</span><span class="kpi-val">+2.39<small>dB PSNR</small></span><span class="kpi-label">23.31 → 25.70 dB, 요소 영상을 그대로 쓴 재구성 대비</span></div>
+      <div class="kpi"><span class="kpi-src"><i class="rs" aria-hidden="true"></i>구조 유사도 · 논문 기재값</span><span class="kpi-val">+0.14<small>SSIM</small></span><span class="kpi-label">0.741 → 0.877</span></div>
+      <div class="kpi"><span class="kpi-src"><i class="rs" aria-hidden="true"></i>사전학습 YOLO 검출 · 논문 기재값</span><span class="kpi-val">+0.11<small>mAP50</small></span><span class="kpi-label">0.665 → 0.776</span></div>
+    </div>
+  </div>
+</section>
 
-<div class="doc">
-  <nav class="toc" aria-label="이 페이지 목차">
-    <p>목차</p>
-    <a href="#glance">한눈에</a><a href="#problem">문제</a><a href="#capture">촬영 원리</a><a href="#rim">RIM</a><a href="#result">결과</a><a href="#irim">iRIM</a><a href="#lab">첫 화면 실험실</a><a href="#code">코드</a>
-  </nav>
-  <div>
-    <section id="glance" aria-labelledby="h-glance">
-      <h2 id="h-glance">한눈에 보기</h2>
-      <div class="pair">
-        <figure class="fig dark viz" data-viz="views" data-dir="/img/iccas/">
-          <div class="vizbox"><img src="/img/iccas/v33.webp" width="1000" height="1000" alt="블렌더로 렌더링한 시점 영상. 보는 방향을 바꾸면 앞의 원숭이 머리가 뒤의 원환체, 정육면체, 원뿔, 구보다 크게 움직이고 가려졌던 부분이 드러난다"><canvas hidden></canvas><div class="vmap mini" aria-hidden="true"></div></div>
-          <label class="vizctl"><span>시점</span><input type="range" min="0" max="100" value="0"></label>
-          <figcaption>1. 시점 영상. 그림 위에서 마우스를 움직이면 보는 방향이 바뀝니다(휴대폰은 끌기). 같은 그림이 아니라 서로 다른 위치에서 본 영상이라, 가까운 원숭이 머리가 뒤의 물체보다 크게 움직이고 가려졌던 부분이 드러납니다. 화면에는 렌더링된 64장 중 가장 가까운 시점 한 장이 보이고, 바뀔 때만 잠깐 겹칩니다. 오른쪽 위 점은 지금 보는 시점입니다.</figcaption>
-        </figure>
-        <figure class="fig dark viz" data-viz="refocus" data-dir="/img/iccas/">
-          <div class="vizbox"><img src="/img/iccas/f01.webp" width="1000" height="1000" alt="64장의 시점 영상을 겹쳐 재구성한 영상. 겹치는 거리를 바꾸면 원숭이 머리, 원환체, 정육면체, 원뿔, 구 순서로 초점이 옮겨 간다"><canvas hidden></canvas><span class="vizlabel"></span></div>
-          <label class="vizctl"><span>초점 깊이</span><input type="range" min="0" max="100" value="4"></label>
-          <figcaption>2. 깊이별 재구성. 아래 막대를 움직이면 64장을 겹치는 거리가 바뀌어, 앞의 원숭이 머리(0.39 m)부터 원환체, 정육면체, 원뿔, 뒤의 구(1.41 m)까지 초점이 옮겨 갑니다.</figcaption>
-        </figure>
+<div class="wrap">
+  <section class="d-section" id="glance" aria-labelledby="glance-h">
+    <h2 id="glance-h">한눈에 보기</h2>
+    <p class="sec-desc">ICCAS 2026 논문의 블렌더 장면을 논문의 렌더링 스크립트로, 시점 수와 해상도만 바꿔 8×8 카메라 위치에서 렌더링했습니다.</p>
+    <div class="pair">
+      <figure class="card fig-card fig viz" data-viz="views" data-dir="/img/iccas/">
+        <div class="vizbox"><img src="/img/iccas/v33.webp" width="1000" height="1000" alt="블렌더로 렌더링한 시점 영상. 보는 방향을 바꾸면 앞의 원숭이 머리가 뒤의 원환체, 정육면체, 원뿔, 구보다 크게 움직이고 가려졌던 부분이 드러난다"><canvas hidden></canvas><div class="vmap mini" aria-hidden="true"></div></div>
+        <label class="vizctl"><span>시점</span><input type="range" min="0" max="100" value="0"></label>
+        <figcaption><b>1. 시점 영상.</b> 그림 위에서 마우스를 움직이면 보는 방향이 바뀝니다(휴대폰은 끌기). 서로 다른 위치에서 본 영상이라, 가까운 원숭이 머리가 뒤의 물체보다 크게 움직이고 가려졌던 부분이 드러납니다. 오른쪽 위 점은 지금 보는 시점입니다.</figcaption>
+      </figure>
+      <figure class="card fig-card fig viz" data-viz="refocus" data-dir="/img/iccas/">
+        <div class="vizbox"><img src="/img/iccas/f01.webp" width="1000" height="1000" alt="64장의 시점 영상을 겹쳐 재구성한 영상. 겹치는 거리를 바꾸면 원숭이 머리, 원환체, 정육면체, 원뿔, 구 순서로 초점이 옮겨 간다"><canvas hidden></canvas><span class="vizlabel"></span></div>
+        <label class="vizctl"><span>초점 깊이</span><input type="range" min="0" max="100" value="4"></label>
+        <figcaption><b>2. 깊이별 재구성.</b> 막대를 움직이면 64장을 겹치는 거리가 바뀌어, 앞의 원숭이 머리(0.39 m)부터 원환체, 정육면체, 원뿔, 뒤의 구(1.41 m)까지 초점이 옮겨 갑니다.</figcaption>
+      </figure>
+    </div>
+    <p class="small-note">시점마다 1920×1080으로 렌더링해 물체 둘레 1000×1000 영역을 축소 없이 씁니다(휴대폰은 500×500, 논문은 6×6). 재구성은 64장을 거리만큼 밀어 평균한 것으로, 0.36–1.55 m를 31단계로 미리 계산했습니다. 만지기 전까지는 저절로 움직이고, 마우스나 막대를 쓰면 그 자리에서 멈춥니다.</p>
+  </section>
+
+  <div class="two">
+    <section class="d-section" id="problem" aria-labelledby="prob-h">
+      <h2 id="prob-h">문제</h2>
+      <div class="prose" style="margin-top:12px">
+        <p>렌즈 배열 카메라는 센서 픽셀을 렌즈 수와 렌즈당 픽셀 수로 나눠 씁니다. 렌즈를 많이 두면 깊이 정보는 풍부해지지만, 렌즈 하나가 만드는 요소 영상은 몇 픽셀 크기로 작아집니다. 그대로는 사람이 보기에도, 검출 모델에 넣기에도 해상도가 부족합니다.</p>
+        <p>렌즈 배열에서 렌즈 하나와 그 뒤의 센서 칸은 아주 작은 카메라처럼 동작합니다. 한 점에서 나온 빛은 여러 렌즈를 지나 렌즈마다 아래의 다른 자리(픽셀)에 닿습니다. <b>렌즈 번호는 빛이 지난 위치, 렌즈 안 픽셀 자리는 빛이 들어온 방향</b>입니다. 그래서 요소 영상 한 장에는 위치와 방향이 함께 담깁니다.</p>
       </div>
-      <p class="muted" style="margin-top:6px;font-size:14px">ICCAS 2026 논문의 블렌더 장면을 논문의 렌더링 스크립트로, 시점 수와 해상도만 바꿔 8×8 카메라 위치에서 렌더링했습니다(논문은 6×6). 시점마다 1920×1080으로 렌더링해, 물체 둘레 1000×1000 영역을 축소 없이 씁니다(휴대폰은 500×500). 재구성은 64장을 거리만큼 밀어 평균한 것으로, 0.36–1.55 m를 31단계로 미리 계산했습니다. 만지기 전까지는 저절로 움직이고, 마우스나 막대를 쓰면 그 자리에서 멈춥니다.</p>
     </section>
-
-    <section id="problem" aria-labelledby="h-problem">
-      <h2 id="h-problem">문제</h2>
-      <p>렌즈 배열 카메라는 센서 픽셀을 렌즈 수와 렌즈당 픽셀 수로 나눠 씁니다. 렌즈를 많이 두면 깊이 정보는 풍부해지지만, 렌즈 하나가 만드는 요소 영상은 몇 픽셀 크기로 작아집니다. 그대로는 사람이 보기에도, 검출 모델에 넣기에도 해상도가 부족합니다.</p>
-    </section>
-
-    <section id="capture" aria-labelledby="h-capture">
-      <h2 id="h-capture">렌즈 배열은 무엇을 기록하나</h2>
-      <p>렌즈 배열 카메라에서 렌즈 하나와 그 뒤의 센서 칸은 아주 작은 카메라처럼 동작합니다. 첫 화면 실험실은 이것을 카메라 모형으로 보여 줍니다. 정확히 말하면, 한 점에서 나온 빛은 여러 렌즈를 지나 렌즈마다 아래의 다른 자리(픽셀)에 닿습니다. 렌즈 번호는 빛이 지난 위치이고, 렌즈 안 픽셀 자리는 빛이 들어온 방향입니다. 그래서 요소 영상 한 장에는 위치와 방향이 함께 담깁니다.</p>
-      <figure class="fig rayfig">
+    <section class="d-section" id="capture" aria-labelledby="cap-h">
+      <h2 id="cap-h">렌즈 배열은 무엇을 기록하나</h2>
+      <figure class="fig rayfig" style="margin-top:12px">
         <svg viewBox="0 0 360 214" role="img" aria-label="한 점에서 나온 빛이 렌즈 세 개를 지나 렌즈마다 아래의 다른 자리에 닿는 도식"><text x="74" y="24" text-anchor="middle">물체의 한 점</text><text x="194" y="24" text-anchor="middle">렌즈 배열</text><text x="240" y="24" text-anchor="middle">센서</text><ellipse class="lens" cx="194" cy="49" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="77" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="105" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="133" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="161" rx="3.2" ry="12"/><rect class="cell" x="234" y="35" width="12" height="28"/><rect class="cell" x="234" y="63" width="12" height="28"/><rect class="cell" x="234" y="91" width="12" height="28"/><rect class="cell" x="234" y="119" width="12" height="28"/><rect class="cell" x="234" y="147" width="12" height="28"/><path class="ray r1" d="M74 105 L194 77 L234 67.67"/><rect class="hit h1" x="234" y="65.92" width="12" height="3.5"/><path class="ray r2" d="M74 105 L194 105 L234 105.00"/><rect class="hit h2" x="234" y="103.25" width="12" height="3.5"/><path class="ray r3" d="M74 105 L194 133 L234 142.33"/><rect class="hit h3" x="234" y="140.58" width="12" height="3.5"/><circle class="pt" cx="74" cy="105" r="5"/><text class="spot" x="254" y="74">위쪽</text><text class="spot" x="254" y="109">가운데</text><text class="spot" x="254" y="144">아래쪽</text><text x="10" y="192">같은 점이라도 렌즈마다 닿는 자리가 달라요.</text><text x="10" y="207">그 자리가 곧 빛이 들어온 방향입니다.</text></svg>
         <figcaption>한 점에서 나온 빛이 렌즈 세 개를 지나 각각 아래의 다른 자리에 닿습니다. 도식에서는 물체까지의 거리를 렌즈–센서 간격의 3배로 그렸습니다.</figcaption>
       </figure>
     </section>
+  </div>
 
-    <section id="rim" aria-labelledby="h-rim">
-      <h2 id="h-rim">RIM: 광선 기반 역매핑</h2>
-      <p>요소 영상의 각 픽셀을 가상 렌즈 배열로 다시 내보내고 가상 카메라로 다시 찍는다고 보면, 텔레센트릭 촬영과 정사영 재촬영 조건에서 (렌즈 번호, 렌즈 안 픽셀 위치)가 (렌즈 안 픽셀 위치, 렌즈 번호)로 자리를 맞바꾸는 일대일 대응이 됩니다. 보간이 없어 양자화 오차가 0이고, 렌즈 수만큼의 해상도를 가진 시점 영상이 렌즈당 픽셀 수만큼 생깁니다. 논문에서는 이 결과를 컴퓨터 집적영상 재구성(CIIR)의 앞 단계로 씁니다.</p>
-      <figure class="fig clear">
-        <img src="/img/rim-usaf-panels.webp" width="1600" height="521" alt="USAF 해상도 차트를 세 가지로 보여 주는 그림. 왼쪽 요소 영상 한 장은 거친 블록, 가운데 RIM 가상 영상은 차트 형태가 보이고, 오른쪽은 기준 영상" loading="lazy">
-        <figcaption>합성 USAF 1951 해상도 차트. 왼쪽부터 요소 영상 한 장, RIM 가상 영상 한 장(제안), 같은 시점의 기준 영상. ICMV 2026</figcaption>
-      </figure>
-    </section>
+  <section class="d-section" id="rim" aria-labelledby="rim-h">
+    <h2 id="rim-h">RIM: 광선 기반 역매핑</h2>
+    <div class="prose" style="margin-top:12px">
+      <p>요소 영상의 각 픽셀을 가상 렌즈 배열로 다시 내보내고 가상 카메라로 다시 찍는다고 보면, 텔레센트릭 촬영과 정사영 재촬영 조건에서 (렌즈 번호, 렌즈 안 픽셀 위치)가 (렌즈 안 픽셀 위치, 렌즈 번호)로 자리를 맞바꾸는 일대일 대응이 됩니다. 보간이 없어 <b>양자화 오차가 0</b>이고, 렌즈 수만큼의 해상도를 가진 시점 영상이 렌즈당 픽셀 수만큼 생깁니다. 논문에서는 이 결과를 컴퓨터 집적영상 재구성(CIIR)의 앞 단계로 씁니다.</p>
+    </div>
+    <figure class="card fig-card fig clear" style="margin-top:16px">
+      <img src="/img/rim-usaf-panels.webp" width="1600" height="521" alt="USAF 해상도 차트를 세 가지로 보여 주는 그림. 왼쪽 요소 영상 한 장은 거친 블록, 가운데 RIM 가상 영상은 차트 형태가 보이고, 오른쪽은 기준 영상" loading="lazy">
+      <figcaption>합성 USAF 1951 해상도 차트. 왼쪽부터 요소 영상 한 장, RIM 가상 영상 한 장(제안), 같은 시점의 기준 영상. ICMV 2026</figcaption>
+    </figure>
+  </section>
 
-    <section id="result" aria-labelledby="h-result">
-      <h2 id="h-result">결과</h2>
-      <div class="tablewrap">
-        <table class="data">
-          <caption>Stanford Lytro 라이트필드 7개 장면. 논문 기재값</caption>
-          <thead><tr><th scope="col">처리</th><th scope="col" class="n">PSNR (dB)</th><th scope="col" class="n">SSIM</th><th scope="col" class="n">mAP50</th></tr></thead>
-          <tbody>
-            <tr><td>요소 영상 → CIIR</td><td class="n">23.31</td><td class="n">0.741</td><td class="n">0.665</td></tr>
-            <tr><td><b>RIM → CIIR (제안)</b></td><td class="n"><b>25.70</b></td><td class="n"><b>0.877</b></td><td class="n"><b>0.776</b></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="muted" style="margin-top:10px;font-size:15px">mAP50은 재구성 영상에 사전학습 YOLO 검출기를 그대로 적용한 결과입니다.</p>
-    </section>
+  <section class="d-section" id="result" aria-labelledby="res-h">
+    <h2 id="res-h">결과</h2>
+    <p class="sec-desc">Stanford Lytro 라이트필드 7개 장면. 논문 기재값입니다.</p>
+    <div class="tablewrap">
+      <table class="data">
+        <caption>mAP50은 재구성 영상에 사전학습 YOLO 검출기를 그대로 적용한 결과입니다.</caption>
+        <thead><tr><th scope="col">처리</th><th scope="col" class="n">PSNR (dB)</th><th scope="col" class="n">SSIM</th><th scope="col" class="n">mAP50</th></tr></thead>
+        <tbody>
+          <tr><td>요소 영상 → CIIR</td><td class="n">23.31</td><td class="n">0.741</td><td class="n">0.665</td></tr>
+          <tr class="me"><td><b>RIM → CIIR (제안)</b></td><td class="n"><b>25.70</b></td><td class="n"><b>0.877</b></td><td class="n"><b>0.776</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-    <section id="irim" aria-labelledby="h-irim">
-      <h2 id="h-irim">iRIM: 다시점 영상으로 가상 렌즈 배열 합성</h2>
+  <section class="d-section" id="irim" aria-labelledby="irim-h">
+    <h2 id="irim-h">iRIM: 다시점 영상으로 가상 렌즈 배열 합성</h2>
+    <div class="prose" style="margin-top:12px">
       <p>RIM이 일대일 대응이므로 거꾸로도 쓸 수 있습니다. iRIM은 다시점 영상을 받아 원하는 가상 렌즈 배열의 요소 영상을 합성합니다. 논문에서는 24인치 FHD 패널에 맞춘 6×6 구성(렌즈 1.6056 mm, 320×180개)을 다뤘습니다.</p>
-      <figure class="fig dark">
-        <img src="/img/ei-synth-1600.webp" width="1600" height="900" alt="iRIM으로 합성한 6×6 렌즈 배열 요소 영상. 원환체, 원뿔, 원숭이 머리 모형이 작은 렌즈 영상으로 나뉘어 보인다" loading="lazy">
-        <figcaption>iRIM으로 합성한 6×6 렌즈 배열 요소 영상. ICCAS 2026</figcaption>
-      </figure>
-      <div class="pair" style="margin-top:20px">
-        <figure class="fig dark"><img src="/img/sai-irim.webp" width="1200" height="675" alt="iRIM으로 합성한 시점 영상 격자. 모든 칸이 고르게 밝다" loading="lazy"><figcaption>iRIM 합성: 모든 시점 영상의 유효 영역 100%</figcaption></figure>
-        <figure class="fig dark"><img src="/img/sai-camera.webp" width="1200" height="675" alt="렌즈 배열 카메라를 시뮬레이션한 시점 영상 격자. 가장자리 칸으로 갈수록 어둡게 잘린다" loading="lazy"><figcaption>렌즈 배열 카메라 시뮬레이션: 모서리 시점은 유효 영역이 6.7%까지 줄어듦</figcaption></figure>
-      </div>
-      <p class="muted" style="font-size:15px">같은 블렌더 장면으로 만든 시점 영상 격자 비교. ICCAS 2026</p>
-    </section>
+    </div>
+    <figure class="card fig-card fig dark" style="margin-top:16px">
+      <img src="/img/ei-synth-1600.webp" width="1600" height="900" alt="iRIM으로 합성한 6×6 렌즈 배열 요소 영상. 원환체, 원뿔, 원숭이 머리 모형이 작은 렌즈 영상으로 나뉘어 보인다" loading="lazy">
+      <figcaption>iRIM으로 합성한 6×6 렌즈 배열 요소 영상. ICCAS 2026</figcaption>
+    </figure>
+    <div class="pair" style="margin-top:16px">
+      <figure class="card fig-card fig dark"><img src="/img/sai-irim.webp" width="1200" height="675" alt="iRIM으로 합성한 시점 영상 격자. 모든 칸이 고르게 밝다" loading="lazy"><figcaption><b>iRIM 합성</b>: 모든 시점 영상의 유효 영역 100%</figcaption></figure>
+      <figure class="card fig-card fig dark"><img src="/img/sai-camera.webp" width="1200" height="675" alt="렌즈 배열 카메라를 시뮬레이션한 시점 영상 격자. 가장자리 칸으로 갈수록 어둡게 잘린다" loading="lazy"><figcaption><b>렌즈 배열 카메라 시뮬레이션</b>: 모서리 시점은 유효 영역이 6.7%까지 줄어듦</figcaption></figure>
+    </div>
+    <p class="small-note">같은 블렌더 장면으로 만든 시점 영상 격자 비교. ICCAS 2026</p>
+  </section>
 
-    <section id="lab" aria-labelledby="h-lab">
-      <h2 id="h-lab">첫 화면 실험실은 어떻게 만들었나</h2>
-      <p>실험실은 렌즈 배열 촬영, RIM 재배열, 재구성을 브라우저에서 그대로 계산해 보여 줍니다. 예시는 브라우저에서 직접 촬영하는 3D 장면과 실제 카메라로 찍은 라이트필드(Lytro) 두 가지입니다. 끝나면 재구성 면을 정면에서 크게 보여 주고, 물체를 누르면 그 깊이로 초점을 옮깁니다.</p>
+  <section class="d-section" id="lab" aria-labelledby="lab-h">
+    <h2 id="lab-h">연구 페이지의 실험실은 어떻게 만들었나</h2>
+    <p class="sec-desc">실험실은 렌즈 배열 촬영, RIM 재배열, 재구성을 브라우저에서 그대로 계산해 보여 줍니다. 끝나면 재구성 면을 정면에서 크게 보여 주고, 물체를 누르면 그 깊이로 초점을 옮깁니다. <a href="/research/#lab">실험실 열기 →</a></p>
+    <div class="card fig-card prose" style="max-width:none">
       <ul>
-        <li><b>3D 장면</b>: ICCAS 2026 논문의 블렌더 장면에서 내보낸 원숭이 머리와 원환체를 실제 3D 모델로 놓고, 렌즈 배열 촬영을 브라우저에서 계산합니다. 이 실험실의 핀홀 모델에서는 모든 렌즈의 같은 자리 픽셀이 같은 방향을 보므로, 시점 하나는 장면을 비스듬히 평행 투영한 영상입니다. 8×8 시점을 이렇게 그려 시점 영상과 깊이를 만들고, 재배열과 재구성은 그 데이터로 계산합니다. 앞의 원숭이 머리가 원환체 일부를 가리도록 놓았습니다. 공간 해상도는 64×64 렌즈입니다. 물체가 없는 배경은 공간에 벽으로 세우지 않고, 렌즈 배열에 닿는 빛부터 보여 줍니다. 결과 화면에서 물체를 누르면, 누른 자리 둘레의 가운데 시점 4장의 깊이 값(중앙값)으로 초점을 옮깁니다.</li>
-        <li><b>촬영</b>: 핀홀 배열 모델입니다. 요소 영상 픽셀 하나하나를 그 픽셀이 기록한 점의 3D 위치(위의 깊이)에 놓았다가 렌즈를 지나 센서로 옮깁니다. 1단계의 카메라 모형은 렌즈 하나와 그 뒤의 센서 칸이 작은 카메라라는 것을 보여 주는 그림으로, 보이도록 실제 렌즈보다 크게 그렸습니다. 빛이 렌즈를 지나는 정확한 모습은 위의 "렌즈 배열은 무엇을 기록하나"에 있습니다.</li>
-        <li><b>재배열과 재구성</b>: (렌즈 번호, 렌즈 안 위치)를 맞바꾸는 RIM과, 시점 영상을 거리만큼 밀어 평균하는 재구성은 논문 방식 그대로입니다. 거리가 물체의 깊이와 맞으면 그 물체의 표본이 원래 자리로 돌아와 선명해집니다. 화면에서는 재구성 면을 그 거리에 해당하는 깊이에 그려서, 면이 물체가 있던 자리를 지날 때 그 물체가 선명해지는 모습으로 보여 줍니다.</li>
-        <li><b>Lytro 예시</b>: Stanford Lytro Light Field Archive(A. S. Raj, M. Lowney, R. Shah, G. Wetzstein, 2016)의 occlusions_26 장면입니다. 아카이브가 배포하는 렌즈릿 영상은 센서 원본(RAW)이 아니라 Lytro 소프트웨어가 디모자이크·정렬·사각 격자 재표본화·왜곡 보정을 마친 영상으로, 541×376개 렌즈마다 14×14 픽셀이 있습니다(아카이브는 이 파일을 "RAW"라고 부릅니다). 이 중 나뭇가지가 정지 표지판을 가리는 부분의 렌즈 128×128개를 재표본화 없이 잘랐고, 비거나 어두운 바깥 띠를 빼고 가운데 8×8 픽셀(= 8×8 시점)을 씁니다(휴대폰은 렌즈 2×2를 평균해 64×64). 16비트 값은 화면용 8비트로 바꾸며 밝기와 감마를 전체에 한 번 조정했습니다. 이 사진에는 3D 형상이 없으므로 1단계는 촬영을 흉내 내지 않고, 기록된 렌즈릿 영상을 센서에 그대로 보여 주며 확대합니다. 재배열은 값을 바꾸지 않고 위치만 옮기고, 재구성은 64개 시점을 평행이동해 평균한 계산 결과입니다(광학적 흐림이 아닙니다). 화면을 누르면 그 주변에서 시점들이 가장 잘 일치하는 면으로 초점을 옮기고, 무늬가 없어 어느 깊이에서나 비슷하게 맞는 곳에서는 초점을 고르지 않습니다. "추정 깊이 층"은 같은 64개 시점으로 계산한 평면 스윕의 일치도(평면 25장, 시점 분산을 softmax로 나눈 값)를 층으로 그린 것입니다. 측정한 3D가 아니며, 깊이 축은 미터가 아니라 시차(px/시점)입니다. 이 데이터에는 명시된 라이선스가 없어, 출처를 밝히고 일부만 잘라 비상업적 시연에 씁니다.</li>
+        <li><b>3D 장면</b>: ICCAS 2026 논문의 블렌더 장면에서 내보낸 원숭이 머리와 원환체를 실제 3D 모델로 놓고, 렌즈 배열 촬영을 브라우저에서 계산합니다. 이 실험실의 핀홀 모델에서는 모든 렌즈의 같은 자리 픽셀이 같은 방향을 보므로, 시점 하나는 장면을 비스듬히 평행 투영한 영상입니다. 8×8 시점을 이렇게 그려 시점 영상과 깊이를 만들고, 재배열과 재구성은 그 데이터로 계산합니다. 앞의 원숭이 머리가 원환체 일부를 가리도록 놓았습니다. 공간 해상도는 64×64 렌즈입니다. 결과 화면에서 물체를 누르면, 누른 자리 둘레의 가운데 시점 4장의 깊이 값(중앙값)으로 초점을 옮깁니다.</li>
+        <li><b>촬영</b>: 핀홀 배열 모델입니다. 요소 영상 픽셀 하나하나를 그 픽셀이 기록한 점의 3D 위치에 놓았다가 렌즈를 지나 센서로 옮깁니다. 1단계의 카메라 모형은 렌즈 하나와 그 뒤의 센서 칸이 작은 카메라라는 것을 보여 주는 그림으로, 보이도록 실제 렌즈보다 크게 그렸습니다.</li>
+        <li><b>재배열과 재구성</b>: (렌즈 번호, 렌즈 안 위치)를 맞바꾸는 RIM과, 시점 영상을 거리만큼 밀어 평균하는 재구성은 논문 방식 그대로입니다. 거리가 물체의 깊이와 맞으면 그 물체의 표본이 원래 자리로 돌아와 선명해집니다.</li>
+        <li><b>Lytro 예시</b>: Stanford Lytro Light Field Archive(A. S. Raj, M. Lowney, R. Shah, G. Wetzstein, 2016)의 occlusions_26 장면입니다. 아카이브의 렌즈릿 영상은 센서 원본이 아니라 Lytro 소프트웨어가 디모자이크·정렬·재표본화·왜곡 보정을 마친 영상으로, 541×376개 렌즈마다 14×14 픽셀이 있습니다. 나뭇가지가 정지 표지판을 가리는 부분의 렌즈 128×128개를 재표본화 없이 잘라 가운데 8×8 픽셀(= 8×8 시점)을 씁니다. 재배열은 값을 바꾸지 않고 위치만 옮기고, 재구성은 64개 시점을 평행이동해 평균한 계산 결과입니다. "추정 깊이 층"은 같은 64개 시점으로 계산한 평면 스윕의 일치도로, 측정한 3D가 아니며 깊이 축은 미터가 아니라 시차(px/시점)입니다. 이 데이터에는 명시된 라이선스가 없어, 출처를 밝히고 일부만 잘라 비상업적 시연에 씁니다.</li>
         <li><b>소리</b>: 음악, 효과음, 로봇 목소리는 모두 브라우저가 직접 합성합니다.</li>
       </ul>
-    </section>
+    </div>
+    <p class="note">두 논문의 코드는 비공개 저장소에 정리되어 있습니다(테스트 13개).</p>
+  </section>
 
-    <section id="code" aria-labelledby="h-code">
-      <h2 id="h-code">코드</h2>
-      <p>두 논문의 코드는 비공개 저장소에 정리되어 있습니다(테스트 13개).</p>
-    </section>
-  </div>
+  <nav class="pager" aria-label="다른 연구">
+    <a href="/research/"><small>← 연구</small><b>연구 페이지와 실험실</b></a>
+    <a class="next" href="/research/origin-point/"><small>다음 주제 →</small><b>원점 최적화</b></a>
+  </nav>
 </div>
-<nav class="pager" aria-label="다른 연구"><a href="/research/">연구 목록</a><a href="/research/origin-point/">다음: 원점 최적화</a></nav>

@@ -1,0 +1,57 @@
+<div class="flow" data-edges="h-hw>h-cam|설치; h-cam>h-cap|영상; h-gui>h-cap|실행; h-cap>h-meas|원본 이미지; h-smp>h-meas|기준 판정; h-meas>h-prep; h-prep>h-ds|정제">
+  <ol class="stages" style="--cols:5">
+    <li class="stage"><div class="stage-h"><span class="n">01</span>현장</div>
+      <ul class="nodes">
+        <li class="node" data-id="h-hw" data-owner="other">
+          <button class="node-btn" type="button"><span class="node-title">현지 하드웨어 구축</span><span class="node-metric">촬영 설비</span><span class="node-tag">후임 연구원</span></button>
+          <div class="node-detail"><dl class="dl"><dt>다른 주체</dt><dd>네덜란드 현지 실험실의 하드웨어 구축은 설계를 인계받은 후임이 맡았습니다.</dd></dl></div>
+        </li>
+        <li class="node" data-id="h-cam" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">산업용 머신비전 카메라</span><span class="node-metric">여러 대 · USB3</span></button>
+          <div class="node-detail"><dl class="dl"><dt>장비</dt><dd>산업용 머신비전 카메라 여러 대. Spinnaker SDK(PySpin)로 제어합니다.</dd></dl></div>
+        </li>
+        <li class="node" data-id="h-smp" data-owner="other">
+          <button class="node-btn" type="button"><span class="node-title">샘플 · 기준 판정</span><span class="node-metric">학습 데이터의 정답</span><span class="node-tag">과제 파트너 연구진</span></button>
+          <div class="node-detail"><dl class="dl"><dt>다른 주체</dt><dd>샘플 준비와 기준 판정(reference label)은 과제 파트너 연구진이 맡았습니다.</dd><dt>참고</dt><dd>대상과 측정 항목은 수탁연구 기밀이라 적지 않습니다.</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">02</span>제어·촬영</div>
+      <ul class="nodes spaced">
+        <li class="node" data-id="h-gui" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">PyQt GUI</span><span class="node-metric">비개발자 연구원용</span><span class="node-tag">직접 구축</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>비개발자 연구원이 개발 환경 없이 직접 촬영하고 데이터셋을 만드는 PyQt GUI를 만들어 PyInstaller 실행 파일로 배포. 모든 단계를 GUI 하나에서 실행합니다.</dd><dt>기술</dt><dd><ul class="chips"><li>PyQt</li><li>PyInstaller</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="h-cap" data-owner="me" data-default>
+          <button class="node-btn" type="button"><span class="node-title">카메라 제어 · 촬영</span><span class="node-metric">Spinnaker SDK · PySpin</span><span class="node-tag">직접 구축</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>머신비전 카메라 여러 대를 제어하고 촬영 조건을 맞춰 저장하는 모듈을 처음부터 작성.</dd><dt>기술</dt><dd><ul class="chips"><li>Python</li><li>PySpin</li><li>Spinnaker SDK</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">03</span>측정·해석</div>
+      <ul class="nodes">
+        <li class="node" data-id="h-meas" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">측정·해석 프로그램</span><span class="node-metric">촬영 결과에서 값 추출</span><span class="node-tag">직접 구축</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>촬영 결과에서 값을 뽑아 해석하는 프로그램. 현지에서는 이 프로그램으로 AI 학습 데이터를 만들었습니다.</dd><dt>기술</dt><dd><ul class="chips"><li>Python</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">04</span>전처리</div>
+      <ul class="nodes">
+        <li class="node" data-id="h-prep" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">데이터셋 전처리</span><span class="node-metric">Python 파이프라인</span><span class="node-tag">직접 구축</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>촬영 이미지를 정제해 학습에 맞는 형태로 정리. 기존 코드와 같은 입력에서 수치가 일치하는지 비교하며 단계별로 교체했습니다.</dd><dt>기술</dt><dd><ul class="chips"><li>Python</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">05</span>출력</div>
+      <ul class="nodes">
+        <li class="node" data-id="h-ds" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">학습용 데이터셋</span><span class="node-metric">샘플 이미지 · 기준 판정</span><span class="node-tag">파이프라인 출력</span></button>
+          <div class="node-detail"><dl class="dl"><dt>내용</dt><dd>샘플 이미지와 기준 판정(reference label)으로 이루어진 AI 학습용 데이터셋.</dd><dt>참고</dt><dd>연구 주제와 측정 대상은 수탁연구 기밀이라 공개하지 않습니다.</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+  </ol>
+</div>
+<div class="inspector" aria-live="polite"><div class="insp-side"></div><div class="insp-main"></div></div>

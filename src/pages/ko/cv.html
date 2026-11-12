@@ -1,60 +1,75 @@
 <!--meta {"title": "이력서", "description": "이형주의 국문 이력서·포트폴리오와 영문 CV·포트폴리오 PDF, 경력·학력·기술 요약.", "nav": "cv"} -->
-<div class="doc-head">
-  <h1>이력서</h1>
-  <p class="lede">{{f:status}}. {{f:based}}.</p>
-  <div class="paper-links"><a class="btn primary" href="/files/HyeongjuLee_Resume_KR.pdf">이력서 PDF</a><a class="btn" href="/files/HyeongjuLee_Portfolio_KR.pdf">포트폴리오 PDF</a></div>
-</div>
-
-<section class="section" style="padding-top:40px" aria-labelledby="h-dl">
-  <header><h2 id="h-dl">영문 PDF</h2></header>
-  <ul class="downloads">
-    <li><a href="/files/HyeongjuLee_CV_EN.pdf" hreflang="en">English CV</a><span>PDF, 2 pages</span></li>
-    <li><a href="/files/HyeongjuLee_Portfolio_EN.pdf" hreflang="en">English portfolio</a><span>PDF, 2 pages</span></li>
-  </ul>
-  <p class="muted" style="margin-top:12px;font-size:15px">공개용 PDF에는 전화번호를 넣지 않았습니다. 연락은 이메일로 부탁드립니다.</p>
-</section>
-
-<section class="section" aria-labelledby="h-career">
-  <header><h2 id="h-career">경력</h2></header>
-  <ul class="timeline">
-    <li><span class="when">2025.04 – 현재</span><div><b>규슈공대 연구실, 지원연구원(파트타임)</b><span class="sub">이미지 데이터 파이프라인. 머신비전 카메라 제어·촬영부터 데이터셋 전처리까지 Python 파이프라인과 PyQt GUI(히타치 수탁연구). 후임 연구원 2명에게 설계 인계, 2026년 9~10월 네덜란드 출장·현지 배포. <a href="/work/hitachi/">자세히</a></span></div></li>
-    <li><span class="when">2022.07 – 2024.11</span><div><b>비전인사이드, 대리, 데이터·백엔드 엔지니어 ({{f:career_len}})</b><span class="sub">산업기능요원 2022.07 – 2024.07 만기 복무. <a href="/work/kisti/">KISTI 데이터 플랫폼</a>(데이터 엔지니어로 수집·적재·서빙 전담, {{f:kisti_rows}}), <a href="/work/genomics/">유전체 변이 백엔드</a>(백엔드·파이프라인 구현, {{f:bio_ref}} 레퍼런스), 생명보험 공시 데이터 도구(3인 팀)</span></div></li>
-  </ul>
-</section>
-
-<section class="section" aria-labelledby="h-edu">
-  <header><h2 id="h-edu">학력</h2></header>
-  <ul class="timeline">
-    <li><span class="when">2025.04 – 2027.03</span><div><b>규슈공업대학교 대학원 정보창성공학전공 석사과정</b><span class="sub">졸업 예정. GPA 3.63 / 4.0. <a href="/research/">연구</a></span></div></li>
-    <li><span class="when">2018.03 – 2025.02</span><div><b>한경국립대학교 전기전자제어공학과 학사</b><span class="sub">GPA 4.00 / 4.50</span></div></li>
-  </ul>
-</section>
-
-<section class="section" aria-labelledby="h-skills">
-  <header><h2 id="h-skills">기술</h2></header>
-  <div class="tablewrap">
-    <table class="data">
-      <caption>실제로 써 본 근거가 있는 것만 적었습니다</caption>
-      <tbody>
-        <tr><th scope="row">언어</th><td>주력: Python, SQL · 기초~중급: C++(XR 메이커톤, 수업, 회사 과제 일부), Java, JavaScript, C#, MATLAB</td></tr>
-        <tr><th scope="row">데이터·백엔드</th><td>FastAPI, SQLAlchemy, pandas, MySQL, Selenium, Jinja2·Tabulator</td></tr>
-        <tr><th scope="row">ML·비전</th><td>PyTorch, scikit-learn, OpenCV, NumPy, CuPy, KeyBERT·Sentence-Transformers, Blender</td></tr>
-        <tr><th scope="row">바이오인포</th><td>BWA, samtools, Picard, GATK, PyVCF</td></tr>
-        <tr><th scope="row">인프라</th><td>Docker, Harbor, Linux(Ubuntu, WSL), DNS·HTTPS, AWS EC2·RDS, Cloudflare, Git</td></tr>
-        <tr><th scope="row">데스크톱·자동화</th><td>PyQt, PyInstaller, openpyxl, xlwings</td></tr>
-      </tbody>
-    </table>
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="현재 위치"><a href="/">홈</a><span aria-hidden="true">/</span><span aria-current="page">이력서</span></nav>
+    <h1 id="d-h">이력서</h1>
+    <p class="hero-lede">{{f:role}} · {{f:status}}. PDF는 새 탭에서 열립니다.</p>
+    <div class="downloads">
+      <a class="dl-card primary" href="/files/HyeongjuLee_Resume_KR.pdf"><span class="k">국문 · PDF</span><b><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 1.5h5l3.5 3.5v9.5h-8.5z"/><path d="M9 1.5V5h3.5M6 9h4.5M6 11.5h4.5"/></svg>이력서</b><span>경력·학력·기술 요약</span></a>
+      <a class="dl-card primary" href="/files/HyeongjuLee_Portfolio_KR.pdf"><span class="k">국문 · PDF</span><b><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><path d="M1.5 6h13M5 2.5V6"/></svg>포트폴리오</b><span>프로젝트별 구조와 수치</span></a>
+      <a class="dl-card" href="/files/HyeongjuLee_CV_EN.pdf" hreflang="en"><span class="k">English · PDF, 2 pages</span><b><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 1.5h5l3.5 3.5v9.5h-8.5z"/><path d="M9 1.5V5h3.5M6 9h4.5M6 11.5h4.5"/></svg>English CV</b><span>영문 CV</span></a>
+      <a class="dl-card" href="/files/HyeongjuLee_Portfolio_EN.pdf" hreflang="en"><span class="k">English · PDF, 2 pages</span><b><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><path d="M1.5 6h13M5 2.5V6"/></svg>English portfolio</b><span>영문 포트폴리오</span></a>
+    </div>
+    <p class="small-note">공개용 PDF에는 전화번호를 넣지 않았습니다. 연락은 이메일로 부탁드립니다.</p>
   </div>
 </section>
 
-<section class="section" aria-labelledby="h-etc">
-  <header><h2 id="h-etc">그 밖에</h2></header>
-  <ul class="timeline">
-    <li><span class="when">병역</span><div><b>산업기능요원 만기 복무</b><span class="sub">2022.07 – 2024.07, 23개월</span></div></li>
-    <li><span class="when">자격</span><div><b>SQLD (SQL 개발자)</b><span class="sub">한국데이터산업진흥원, 2023.10</span></div></li>
-    <li><span class="when">수상</span><div><b>ICMV 2026 최우수 포스터상 (Best Poster Award)</b><span class="sub">2026.10, 부다페스트. 「Angular-to-Spatial Information Redistribution via Ray-based Inverse Mapping」, 1저자. <a href="/research/rim/">RIM</a></span></div></li>
-    <li><span class="when">장학</span><div><b>로타리 요네야마 기념장학회 장학생</b><span class="sub">2026, 일본어 면접 전형</span></div></li>
-    <li><span class="when">출장·학회</span><div><b>네덜란드 출장 (2026.09 – 10)</b><span class="sub">수탁연구 시스템 현지 배포. 학회 발표는 방콕(ITC-CSCC 2026, 7월 구두), 부다페스트(ICMV 2026, 10월 16일 포스터, 최우수 포스터상), 삿포로(ICCAS 2026, 10월 30일 포스터)</span></div></li>
-    <li><span class="when">어학</span><div><b>한국어(모국어), 일본어(비즈니스 회화), 영어(업무 가능)</b></div></li>
-  </ul>
-</section>
+<div class="wrap">
+  <div class="two">
+    <section class="d-section" id="career" aria-labelledby="career-h" style="padding-top:8px">
+      <h2 id="career-h">경력</h2>
+      <div class="card" style="margin-top:14px">
+        <ol class="log">
+          <li><div class="log-when">2025.04 – 현재</div><div class="log-what"><b>규슈공대 연구실 · 지원연구원(파트타임)</b><span>히타치 수탁연구 이미지 데이터 파이프라인. 머신비전 카메라 제어·촬영부터 데이터셋 전처리까지 Python 파이프라인과 PyQt GUI. 후임 연구원 2명에게 설계 인계, 2026년 9~10월 네덜란드 출장·현지 배포. <a href="/work/hitachi/">자세히</a></span></div></li>
+          <li><div class="log-when">{{f:career_span}}</div><div class="log-what"><b>비전인사이드 · 대리, 데이터·백엔드 엔지니어 ({{f:career_len}})</b><span><a href="/work/kisti/">KISTI 발주 과제 데이터 계층</a>: 데이터 엔지니어로 수집·적재·서빙 전담, {{f:kisti_rows}}</span><span><a href="/work/genomics/">유전체 변이 주석·리포트</a>: 파이프라인·백엔드·프런트엔드 구현, 레퍼런스 {{f:bio_ref}}</span><span>생명보험 공시 데이터 도구 (3인 팀)</span><span>산업기능요원 2022.07 – 2024.07 만기 복무</span></div></li>
+        </ol>
+      </div>
+    </section>
+    <section class="d-section" id="edu" aria-labelledby="edu-h" style="padding-top:8px">
+      <h2 id="edu-h">학력</h2>
+      <div class="card" style="margin-top:14px">
+        <ol class="log">
+          <li><div class="log-when">2025.04 – 2027.03</div><div class="log-what"><b>규슈공업대학교 대학원 정보창성공학전공 석사과정</b><span>GPA 3.63 / 4.0 · <a href="/research/">연구</a></span><span class="pill">{{f:status}}</span></div></li>
+          <li><div class="log-when">2018.03 – 2025.02</div><div class="log-what"><b>한경국립대학교 전기전자제어공학과 학사</b><span>GPA 4.00 / 4.50</span></div></li>
+        </ol>
+      </div>
+    </section>
+  </div>
+
+  <section class="d-section" id="skills" aria-labelledby="skills-h">
+    <h2 id="skills-h">기술</h2>
+    <p class="sec-desc">실제로 써 본 근거가 있는 것만 적었습니다.</p>
+    <div class="tablewrap">
+      <table class="data">
+        <tbody>
+          <tr><th scope="row">언어</th><td>주력: Python, SQL · 기초~중급: C++(XR 메이커톤, 수업, 회사 과제 일부), Java, JavaScript, C#, MATLAB</td></tr>
+          <tr><th scope="row">데이터·백엔드</th><td>FastAPI, SQLAlchemy, pandas, MySQL, Selenium, BeautifulSoup, Jinja2·Tabulator</td></tr>
+          <tr><th scope="row">ML·비전</th><td>PyTorch, scikit-learn, OpenCV, NumPy, CuPy, KeyBERT·Sentence-Transformers, Blender</td></tr>
+          <tr><th scope="row">바이오인포</th><td>BWA, samtools, Picard, GATK, PyVCF</td></tr>
+          <tr><th scope="row">인프라</th><td>Docker, Harbor, Linux(Ubuntu, WSL), DNS·HTTPS, AWS EC2·RDS, Cloudflare, Git</td></tr>
+          <tr><th scope="row">데스크톱·자동화</th><td>PyQt, PyInstaller, openpyxl, xlwings</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="d-section" id="etc" aria-labelledby="etc-h">
+    <h2 id="etc-h">그 밖에</h2>
+    <div class="card" style="margin-top:14px">
+      <ul class="side-list">
+        <li><span class="ico gold" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="6" r="4"/><path d="M5.5 9.2L4.5 15l3.5-2 3.5 2-1-5.8"/></svg></span><div><b>ICMV 2026 최우수 포스터상 (Best Poster Award)</b><small>2026.10, 부다페스트. 「Angular-to-Spatial Information Redistribution via Ray-based Inverse Mapping」, 1저자 · <a href="/research/rim/">RIM</a></small></div></li>
+        <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 1.5h5l3.5 3.5v9.5h-8.5z"/><path d="M9 1.5V5h3.5"/></svg></span><div><b>학회 발표</b><small>방콕(ITC-CSCC 2026, 7월 구두), 부다페스트(ICMV 2026, 10월 16일 포스터), 삿포로(ICCAS 2026, 10월 30일 포스터), 서울(ITC-CSCC 2025, 포스터) · <a href="/research/#pubs">논문 목록</a></small></div></li>
+        <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 1.5l1.9 3.9 4.3.6-3.1 3 .7 4.3L8 11.3l-3.8 2 .7-4.3-3.1-3 4.3-.6z"/></svg></span><div><b>로타리 요네야마 기념장학회 장학생</b><small>2026, 일본어 면접 전형</small></div></li>
+        <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12.5l4-4 3 3 5-6"/><path d="M10.5 5.5H14V9"/></svg></span><div><b>네덜란드 출장 (2026.09 – 10)</b><small>수탁연구 시스템 현지 배포</small></div></li>
+        <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 1.5l5.5 2v4c0 3.4-2.4 6-5.5 7-3.1-1-5.5-3.6-5.5-7v-4z"/><path d="M5.5 8l2 2 3-3.5"/></svg></span><div><b>병역: 산업기능요원 만기 복무</b><small>2022.07 – 2024.07, 23개월</small></div></li>
+        <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="8" cy="4" rx="5.5" ry="2"/><path d="M2.5 4v8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2V4M2.5 8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2"/></svg></span><div><b>SQLD (SQL 개발자)</b><small>한국데이터산업진흥원, 2023.10</small></div></li>
+        <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.5"/><path d="M1.5 8h13M8 1.5c2 2 2 11 0 13M8 1.5c-2 2-2 11 0 13"/></svg></span><div><b>어학</b><small>한국어(모국어), 일본어(비즈니스 회화), 영어(업무 가능)</small></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="다음으로">
+    <a href="/#systems"><small>← 홈</small><b>시스템 4개 흐름도</b></a>
+    <a class="next" href="/research/"><small>연구 →</small><b>연구와 렌즈 배열 실험실</b></a>
+  </nav>
+</div>

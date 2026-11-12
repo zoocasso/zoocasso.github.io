@@ -1,0 +1,65 @@
+<div class="flow" data-edges="g-fastq>g-call|FASTQ; g-vcf>g-norm|업로드; g-call>g-db|VCF; g-norm>g-db|입력 테이블; g-ref>g-db|청크 적재; g-db>g-join|4단계 조인; g-join>g-api|JSON; g-ui>g-api|디자인; g-api>g-ops|이미지">
+  <ol class="stages" style="--cols:5">
+    <li class="stage"><div class="stage-h"><span class="n">01</span>입력</div>
+      <ul class="nodes">
+        <li class="node" data-id="g-fastq" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">시퀀싱 원본</span><span class="node-metric">FASTQ</span></button>
+          <div class="node-detail"><dl class="dl"><dt>입력</dt><dd>시퀀싱 원본 데이터(FASTQ). 변이 호출 파이프라인의 입력입니다.</dd></dl></div>
+        </li>
+        <li class="node" data-id="g-vcf" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">고객 VCF · 칩 파일</span><span class="node-metric">유전형 업로드</span></button>
+          <div class="node-detail"><dl class="dl"><dt>입력</dt><dd>고객이 올리는 VCF 파일 또는 유전자 칩(array) 결과 파일.</dd></dl></div>
+        </li>
+        <li class="node" data-id="g-ref" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">공개 레퍼런스</span><span class="node-metric">dbSNP · 1000 Genomes 외</span></button>
+          <div class="node-detail"><dl class="dl"><dt>데이터</dt><dd>dbSNP(GRCh37, GRCh38) 237 GB, 1000 Genomes 770 GB, GWAS Catalog, UniProt. 크기는 원본 기준입니다.</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">02</span>처리</div>
+      <ul class="nodes spaced">
+        <li class="node" data-id="g-call" data-owner="shared">
+          <button class="node-btn" type="button"><span class="node-title">변이 호출 파이프라인</span><span class="node-metric">BWA → samtools → Picard → GATK</span><span class="node-tag">팀장과 함께 설계 · 구현</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>FASTQ → BWA → samtools → Picard → GATK → VCF 파이프라인 구현.</dd><dt>다른 주체</dt><dd>파이프라인 알고리즘은 회사에서 팀장과 함께 설계했습니다.</dd><dt>기술</dt><dd><ul class="chips"><li>BWA</li><li>samtools</li><li>Picard</li><li>GATK</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="g-norm" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">입력 처리</span><span class="node-metric">PyVCF · 칩 파일</span><span class="node-tag">직접 구현</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>고객 VCF·칩(array) 입력을 PyVCF로 읽어 주석에 쓰는 입력 테이블로 정리. 칩 입력은 rsID로 dbSNP에서 위치 키를 찾습니다.</dd><dt>기술</dt><dd><ul class="chips"><li>PyVCF</li><li>Python</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">03</span>저장</div>
+      <ul class="nodes">
+        <li class="node" data-id="g-db" data-owner="me" data-default>
+          <button class="node-btn" type="button"><span class="node-title">MySQL 레퍼런스 DB</span><span class="node-metric">{{f:bio_ref}}</span><span class="node-tag">직접 구축</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>dbSNP(<b>237 GB</b>), 1000 Genomes(<b>770 GB</b>), GWAS Catalog, UniProt를 MySQL로 구축. 염색체 단위로 파일을 나누고(sed, split) pandas 청크와 SQLAlchemy로 나눠 적재.</dd><dt>기술</dt><dd><ul class="chips"><li>MySQL</li><li>pandas</li><li>SQLAlchemy</li><li>sed · split</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">04</span>주석</div>
+      <ul class="nodes">
+        <li class="node" data-id="g-join" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">SQL 주석 · 리포트 계산</span><span class="node-metric">위치·염기 또는 rsID</span><span class="node-tag">직접 구현</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>dbSNP·1000 Genomes는 염색체·위치·REF·ALT 키로, GWAS Catalog는 rsID와 위험 대립유전자로, UniProt은 변이 ID와 대립유전자로 붙이는 4단계 SQL 조인. GWAS 오즈비·베타값 기반 <b>규칙형 위험점수</b>, 1000 Genomes 26개 집단 대립유전자 빈도 비교, 질환별 의약품·한약재 정보(MedlinePlus, MeSH, ATC, PharmDB-K, OASIS) 연결.</dd><dt>참고</dt><dd>질환과 한약을 잇는 LDA·1D-CNN 모델은 프로토타입 실험에 그쳤습니다.</dd><dt>기술</dt><dd><ul class="chips"><li>SQL</li><li>MySQL</li><li>Python</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">05</span>서빙</div>
+      <ul class="nodes">
+        <li class="node" data-id="g-ui" data-owner="other">
+          <button class="node-btn" type="button"><span class="node-title">UI 디자인</span><span class="node-metric">요구사항 조율</span><span class="node-tag">캐나다 연구소 디자이너</span></button>
+          <div class="node-detail"><dl class="dl"><dt>다른 주체</dt><dd>화면 디자인은 캐나다 바이오 연구소의 디자이너가 맡았습니다.</dd><dt>한 일</dt><dd>디자이너와 요구사항을 조율하고, 한국과 캐나다 팀 사이의 기술 소통을 맡았습니다.</dd></dl></div>
+        </li>
+        <li class="node" data-id="g-api" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">FastAPI JSON API · 화면</span><span class="node-metric">리포트 API + 프런트엔드</span><span class="node-tag">직접 구현</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>리포트를 FastAPI JSON API로 제공하고 사용자 화면(프런트엔드)도 개발. 2023년 9월 웹 화면을 떼어 내 프런트엔드가 쓰는 JSON API로 정리.</dd><dt>기술</dt><dd><ul class="chips"><li>FastAPI</li><li>JSON API</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="g-ops" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">Docker · Harbor 배포</span><span class="node-metric">Korea IDC · 내부 IP 전용</span><span class="node-tag">직접 구축</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>Korea IDC의 Ubuntu 운영서버에 Harbor 사설 레지스트리를 직접 구축(인증서, 도메인, Let's Encrypt)하고 Docker 이미지로 배포. 운영서버는 내부 IP로만 접근하게 두었습니다.</dd><dt>기술</dt><dd><ul class="chips"><li>Docker</li><li>Harbor</li><li>Ubuntu</li><li>Let's Encrypt</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+  </ol>
+</div>
+<div class="inspector" aria-live="polite"><div class="insp-side"></div><div class="insp-main"></div></div>

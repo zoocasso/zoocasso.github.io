@@ -1,62 +1,78 @@
-<!--meta {"title": "작업", "description": "데이터 엔지니어링, 백엔드, 비전 데이터 파이프라인, XR 메이커톤과 학습 프로젝트까지 이형주의 모든 작업 목록.", "nav": "work"} -->
-<div class="doc-head">
-  <h1>작업</h1>
-  <p class="lede">회사, 수탁연구, 사이드 프로젝트, 학교에서 한 일을 최근 순으로 모았습니다. 히타치, KISTI, 유전체, WJMax는 따로 자세히 정리했습니다.</p>
-</div>
-<div class="section" style="padding-top:36px">
-  <ol class="archive">
-    <li id="hitachi">
-      <span class="when">2025.04 – 현재<br>규슈공대 연구실, 파트타임</span>
-      <div><h2><a href="/work/hitachi/">히타치 수탁연구 이미지 데이터 파이프라인</a></h2>
-        <p>규슈공업대학교 연구실의 수탁연구에서 지원연구원으로 일합니다. 유지보수할 수 없던 기존 코드를 다시 써서, 산업용 머신비전 카메라 여러 대의 제어·촬영부터 학습용 데이터셋 전처리까지 Python 파이프라인으로 만들었습니다. 비개발자 연구원이 직접 쓰도록 PyQt GUI를 만들어 PyInstaller로 배포했습니다. 후임 연구원 2명에게 설계를 인계했고, 2026년 9~10월에는 네덜란드에 출장해 현지에 시스템을 배포했습니다. 업무는 일본어와 영어로 합니다.</p>
-        <p>연구 주제는 수탁연구 기밀이라 적지 않습니다.</p>
-        <div class="chips"><span>Python</span><span>Spinnaker SDK(PySpin)</span><span>PyQt</span><span>PyInstaller</span></div>
-        <div class="links"><a href="/work/hitachi/">자세히</a></div></div>
-    </li>
-    <li>
-      <span class="when">2024.11<br>XR 메이커톤, 개발·시연 전담</span>
-      <div><h2>3DOS: XR 헤드셋 시야 개선</h2>
-        <p>2024 XR 디바이스 콘텐츠 메이커톤 본선(판교 메타버스 허브)에 학부 연구실 5명으로 팀 3DOS를 등록해 참가했고, 개발과 발표, 무대 시연을 혼자 맡았습니다. 조명진 교수님 연구에서 발표된 Fourier Peplography(연무 제거)와 Photon Counting(저조도 복원)을 C++·OpenCV로 새로 구현해 Android 네이티브 플러그인(arm64)으로 빌드하고, Metalens 2 헤드셋의 Unity 앱에서 기기 카메라 영상에 바로 적용해 관객 앞에서 시연했습니다. 코드는 분실해 발표자료만 공개합니다.</p>
-        <div class="links"><a href="https://github.com/zoocasso/realtime-vision-xr-device" target="_blank" rel="noopener">발표자료</a></div></div>
-    </li>
-    <li>
-      <span class="when">2022.08 – 2024.06<br>비전인사이드</span>
-      <div><h2><a href="/work/kisti/">KISTI 공공 R&amp;D 플랫폼의 데이터 수집·적재</a></h2>
-        <p>데이터 엔지니어로 상품·조달 데이터 {{f:kisti_rows}}의 수집·적재를 전담하고, 모델 배치와 FastAPI 관리 화면까지 만들었습니다.</p>
-        <div class="links"><a href="/work/kisti/">자세히</a></div></div>
-    </li>
-    <li>
-      <span class="when">2023.08 – 2024.02<br>사이드 프로젝트, 2인 팀</span>
-      <div><h2><a href="/work/wjmax/">커뮤니티 리듬게임 WJMax 서버</a></h2>
-        <p>서버·DB·보안을 맡아 FastAPI(Docker, EC2), RDS MySQL, Cloudflare 프록시·WAF로 운영했습니다. 업데이트 때 최대 {{f:wjmax_peak}} 동시 접속을 받았습니다.</p>
-        <div class="links"><a href="/work/wjmax/">자세히</a><a href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">코드</a></div></div>
-    </li>
-    <li>
-      <span class="when">2023.08 – 2023.10<br>비전인사이드, 3인 팀</span>
-      <div><h2>생명보험 공시 데이터 도구</h2>
-        <p>생명보험 공시 엑셀(16개 상품군)을 openpyxl, pandas, SQLAlchemy로 MySQL에 적재하고 FastAPI·Tabulator 웹 뷰어로 보여 줬습니다. xlwings로 VBA를 실행하는 독립 실행 패키지와 PyQt 데스크톱 프로토타입을 만들었고, VBA 보험료 산출 모델의 이름 정의 영역을 DB로 옮겼습니다. 이 모델을 Python으로 옮겨 엑셀 결과와 대조하는 일은 다른 팀원이 주도했습니다.</p></div>
-    </li>
-    <li>
-      <span class="when">2022.08 – 2023.09<br>비전인사이드</span>
-      <div><h2><a href="/work/genomics/">유전체 변이 주석·위험도 리포트 백엔드</a></h2>
-        <p>팀장과 함께 설계한 알고리즘으로 {{f:bio_ref}} 공개 레퍼런스 기반의 변이 호출, 주석, 위험점수 API를 구현하고 Docker와 Harbor로 배포했습니다.</p>
-        <div class="links"><a href="/work/genomics/">자세히</a><a href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener">코드</a></div></div>
-    </li>
-    <li>
-      <span class="when">2022<br>졸업작품, 2인 팀</span>
-      <div><h2>Smart Mirror</h2>
-        <p>Raspberry Pi에서 OpenCV LBPH 얼굴인식과 Kakao 음성인식 API로 사용자별 대시보드를 하프미러 디스플레이에 띄웠습니다.</p></div>
-    </li>
-    <li>
-      <span class="when">2022<br>수업 프로젝트</span>
-      <div><h2>상관 필터와 VCR을 이용한 깊이 추정</h2>
-        <p>수업 강의자료의 VCR·상관 필터 스크립트를 바탕으로 요소 영상에서 깊이를 찾은 과제입니다(MATLAB). 2022년에 바꾼 부분은 작고, 코드는 2026년 10월에 다시 써서 공개했습니다. 지금 석사 연구의 출발점입니다.</p>
-        <div class="links"><a href="https://github.com/zoocasso/depth-estimation-using-vcr-algorithm-matlab" target="_blank" rel="noopener">코드</a></div></div>
-    </li>
-    <li>
-      <span class="when">2022.02 – 03<br>학습 프로젝트</span>
-      <div><h2>MATLAB으로 구현한 CNN</h2>
-        <p>Phil Kim의 『MATLAB Deep Learning』 예제를 따라 MNIST 숫자 분류 CNN(합성곱, ReLU, 맥스풀링, 소프트맥스)과 모멘텀 경사하강 역전파를 직접 구현했습니다.</p></div>
-    </li>
-  </ol>
+<!--meta {"title": "작업", "description": "데이터 엔지니어링, 백엔드, 비전 데이터 파이프라인, XR 메이커톤과 학습 프로젝트까지 이형주의 작업 목록.", "nav": "systems"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="현재 위치"><a href="/">홈</a><span aria-hidden="true">/</span><span aria-current="page">작업</span></nav>
+    <h1 id="d-h">작업 전체</h1>
+    <p class="hero-lede">회사, 수탁연구, 사이드 프로젝트, 학교에서 한 일을 모았습니다. 시스템 4개는 흐름도와 함께 따로 자세히 정리했습니다.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="d-section" aria-labelledby="sys-h" style="padding-top:8px">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker"><b>01</b> 시스템</div>
+        <h2 id="sys-h">직접 구축하고 배포한 시스템 4개</h2>
+      </div>
+      <a class="sec-more" href="/#systems">홈에서 흐름도로 보기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+    </div>
+    <div class="topics">
+      <a class="card topic" href="/work/kisti/">
+        <div class="topic-body">
+          <span class="k">{{f:kisti_period}} · 비전인사이드 · 외주 용역</span>
+          <h3>KISTI 발주 과제 데이터 계층</h3>
+          <p>KISTI 연구진이 설계한 공공 R&amp;D 플랫폼에서 데이터 엔지니어로 수집·적재·서빙을 전담하고, 모델 배치와 FastAPI 관리 화면까지 만들었습니다.</p>
+          <span class="key" style="color:var(--me-2)">{{f:kisti_rows}} · 이후 3억 원 규모 본사업으로 이어짐</span>
+        </div>
+      </a>
+      <a class="card topic" href="/work/genomics/">
+        <div class="topic-body">
+          <span class="k">{{f:bio_period}} · 비전인사이드 · 사내 과제</span>
+          <h3>유전체 변이 주석·위험도 리포트 시스템</h3>
+          <p>팀장과 함께 설계한 알고리즘으로 변이 호출 파이프라인, 공개 레퍼런스 기반 SQL 주석, FastAPI JSON API와 프런트엔드를 구현하고 Docker·Harbor로 배포했습니다.</p>
+          <span class="key" style="color:var(--me-2)">레퍼런스 {{f:bio_ref}} · 4단계 SQL 주석</span>
+        </div>
+      </a>
+      <a class="card topic" href="/work/hitachi/">
+        <div class="topic-body">
+          <span class="k">2025.04 – 현재 · 규슈공대 연구실 · 지원연구원(파트타임)</span>
+          <h3>히타치 수탁연구 이미지 데이터 파이프라인</h3>
+          <p>머신비전 카메라 제어·촬영부터 학습용 데이터셋 전처리까지 Python 파이프라인과 PyQt GUI로 다시 쓰고, 후임 2명에게 설계를 인계했습니다.</p>
+          <span class="key" style="color:var(--me-2)">2026년 9~10월 네덜란드 현지 배포</span>
+        </div>
+      </a>
+      <a class="card topic" href="/work/wjmax/">
+        <div class="topic-body">
+          <span class="k">{{f:wjmax_period}} · 사이드 프로젝트 · 2인 팀</span>
+          <h3>WJMax 게임 서버</h3>
+          <p>서버·DB·보안을 맡아 FastAPI(Docker, EC2), RDS MySQL, Cloudflare 프록시·WAF로 운영했습니다. 2026년에 테스트와 함께 다시 썼습니다.</p>
+          <span class="key" style="color:var(--me-2)">업데이트 때 최대 {{f:wjmax_peak}} 동시 접속</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="d-section" aria-labelledby="other-h">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker"><b>02</b> 기타 작업</div>
+        <h2 id="other-h">그 밖에 만든 것</h2>
+      </div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th scope="col">프로젝트</th><th scope="col">한 일</th><th scope="col">기술</th></tr></thead>
+      <tbody>
+        <tr><td>3DOS · XR 헤드셋 시야 개선<small>2024.11 · XR 디바이스 콘텐츠 메이커톤 본선</small></td><td>2024 XR 디바이스 콘텐츠 메이커톤 본선(판교 메타버스 허브)에 학부 연구실 5명으로 팀 3DOS를 등록해 참가했고, 개발과 발표, 무대 시연을 혼자 맡았습니다. 조명진 교수님 연구에서 발표된 Fourier Peplography(연무 제거)와 Photon Counting(저조도 복원)을 C++·OpenCV로 새로 구현해 Android 네이티브 플러그인(arm64)으로 빌드하고, Metalens 2 헤드셋의 Unity 앱에서 기기 카메라 영상에 적용해 관객 앞에서 시연했습니다. 코드는 분실해 <a href="https://github.com/zoocasso/realtime-vision-xr-device" target="_blank" rel="noopener">발표자료</a>만 공개합니다.</td><td><ul class="chips"><li>C++</li><li>OpenCV</li><li>Unity</li><li>Android</li></ul></td></tr>
+        <tr><td>생명보험 공시 데이터 도구<small>2023.08 – 10 · 비전인사이드 · 3인 팀</small></td><td>생명보험 공시 엑셀(16개 상품군)을 openpyxl, pandas, SQLAlchemy로 MySQL에 적재하고 FastAPI·Tabulator 웹 뷰어로 보여 줬습니다. xlwings로 VBA를 실행하는 독립 실행 패키지와 PyQt 데스크톱 프로토타입을 만들었고, VBA 보험료 산출 모델의 이름 정의 영역을 DB로 옮겼습니다. 이 모델을 Python으로 옮겨 엑셀 결과와 대조하는 일은 다른 팀원이 주도했습니다.</td><td><ul class="chips"><li>Python</li><li>openpyxl</li><li>pandas</li><li>xlwings</li><li>MySQL</li><li>FastAPI</li><li>PyQt</li></ul></td></tr>
+        <tr><td>Smart Mirror<small>2022 · 졸업작품 · 2인 팀</small></td><td>Raspberry Pi에서 OpenCV LBPH 얼굴인식과 Kakao 음성인식 API로 사용자별 대시보드를 하프미러 디스플레이에 띄웠습니다.</td><td><ul class="chips"><li>Python</li><li>OpenCV</li><li>Raspberry Pi</li></ul></td></tr>
+        <tr><td>상관 필터와 VCR을 이용한 깊이 추정<small>2022 · 수업 프로젝트</small></td><td>수업 강의자료의 VCR·상관 필터 스크립트를 바탕으로 요소 영상에서 깊이를 찾은 과제입니다(MATLAB). 2022년에 바꾼 부분은 작고, 코드는 2026년 10월에 다시 써서 <a href="https://github.com/zoocasso/depth-estimation-using-vcr-algorithm-matlab" target="_blank" rel="noopener">공개</a>했습니다. 지금 석사 연구의 출발점입니다.</td><td><ul class="chips"><li>MATLAB</li></ul></td></tr>
+        <tr><td>MATLAB으로 구현한 CNN<small>2022.02 – 03 · 학습 프로젝트</small></td><td>Phil Kim의 『MATLAB Deep Learning』 예제를 따라 MNIST 숫자 분류 CNN(합성곱, ReLU, 맥스풀링, 소프트맥스)과 모멘텀 경사하강 역전파를 직접 구현했습니다.</td><td><ul class="chips"><li>MATLAB</li></ul></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <nav class="pager" aria-label="다음으로">
+    <a href="/"><small>← 홈</small><b>처음 화면</b></a>
+    <a class="next" href="/work/kisti/"><small>첫 번째 시스템 →</small><b>KISTI 발주 과제 데이터 계층</b></a>
+  </nav>
 </div>

@@ -217,8 +217,8 @@ const Face = (() => {
     for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
       const lit = rows[y][x] === '#';
       g.beginPath(); g.arc((x + 0.5) * cw, (y + 0.5) * chh, r, 0, Math.PI * 2);
-      g.fillStyle = lit ? '#e3c47f' : 'rgba(236,232,223,0.07)';
-      g.shadowColor = lit ? 'rgba(227,196,127,0.8)' : 'transparent';
+      g.fillStyle = lit ? '#C9B8FF' : 'rgba(233,235,242,0.07)';
+      g.shadowColor = lit ? 'rgba(185,164,255,0.85)' : 'transparent';
       g.shadowBlur = lit ? r * 1.6 : 0;
       g.fill();
     }
@@ -251,7 +251,7 @@ const L = {
   views: ['ほら、視点ごとに手前と奥のずれ方がちがいます。', { ko: '보세요. 시점마다 앞 물체와 뒤 물체가 다르게 움직여요. 서로 다른 방향에서 본 영상이에요.', en: 'Look: near and far objects move differently from view to view. Each one is seen from another direction.' }],
   C: ['最後に再構成。重ねる面を奥へ動かすと、その奥行きの物体がくっきり戻ります。', { ko: `마지막은 재구성. 시점 영상 ${VIEWS}장을 한 면에 겹치고, 그 면을 옮기면 그 깊이의 물체가 선명해져요.`, en: `Reconstruct: the ${VIEWS} views overlap on one plane, and whatever stands at the plane's depth turns sharp.` }],
   // the last line hands the visitor from the research demo to the work below
-  outro: ['これは修士研究です。会社で作ったデータパイプラインは、下の「作業」にあります。', { ko: '여기까지가 석사 연구예요. 회사에서 만든 데이터 파이프라인은 아래 "작업"에 있어요.', en: "That was the master's research. The data pipelines built at work are below, under Work." }],
+  outro: ['これは修士研究です。会社で作ったデータパイプラインは、ホームの「システム」にあります。', { ko: '여기까지가 석사 연구예요. 회사에서 만든 데이터 파이프라인은 홈의 "시스템"에 있어요.', en: "That was the master's research. The data pipelines built at work are on the home page, under Systems." }],
   done: () => ['ピクセルはひとつも失われていません。奥行きごとにピントを合わせ直せます。', { ko: `${fmt(COUNT)}개 픽셀을 하나도 버리지 않고, 깊이마다 초점을 다시 맞출 수 있어요.`, en: `Not one of the ${fmt(COUNT)} pixels was lost, and focus can be set at any depth.` }],
   idle: () => scene.kind === 'lytro'
     ? ['画面を押すと、その場所にピントを合わせます。', { ko: '화면을 누르면 그 자리에 초점이 맞아요. "추정 깊이 층"을 켜면 시점들이 어느 깊이에서 잘 맞는지 볼 수 있어요.', en: 'Click the picture to focus there. Turn on "Estimated depth layers" to see at which depths the views agree.' }]
@@ -491,7 +491,7 @@ in float vK; in float vA; in float vG; out vec4 o;
 void main(){
   vec2 d2 = gl_PointCoord - .5; float d = length(d2);
   if (d > .5) discard;
-  vec3 col = vK > .5 ? vec3(.89, .77, .5) : mix(vec3(.62, .64, .68), vec3(.95, .82, .55), vG);
+  vec3 col = vK > .5 ? vec3(.79, .72, 1.) : mix(vec3(.6, .63, .7), vec3(.82, .76, 1.), vG);
   o = vec4(col, vA * (vK > .5 ? smoothstep(.5, 0., d) : smoothstep(.5, .3, d)));
 }`;
 let P, Q, LN, E, Y;
@@ -607,7 +607,8 @@ const tilt = { on: false, x: 0, y: 0, x0: null, y0: null };
 let VP = null, P11 = 1, hasImage = false;
 const T0 = performance.now();
 // in full screen the introduction is hidden, so the scene is centred again
-const wideLayout = () => window.innerWidth >= 1180 && !root.classList.contains('is-fs');
+// (the research page has no introduction over the stage, so there the scene stays centred)
+const wideLayout = () => !!q('.intro') && window.innerWidth >= 1180 && !root.classList.contains('is-fs');
 function camera(asp, now) {
   // on wide screens the introduction sits on the left, so the scene is drawn off-axis to the right
   const shift = wideLayout() ? 0.36 : 0;
@@ -650,7 +651,7 @@ function project(p, w, hh) {
   const x = VP[0] * p[0] + VP[4] * p[1] + VP[8] * p[2] + VP[12], y = VP[1] * p[0] + VP[5] * p[1] + VP[9] * p[2] + VP[13], ww = VP[3] * p[0] + VP[7] * p[1] + VP[11] * p[2] + VP[15];
   return [(x / ww * .5 + .5) * w, (1 - (y / ww * .5 + .5)) * hh];
 }
-const BG = [0x1c / 255, 0x20 / 255, 0x27 / 255];
+const BG = [0x12 / 255, 0x15 / 255, 0x1c / 255];
 // spots for a plane's name, as (x, y) on the plane from -1 to 1: along the top edge from the right
 // corner, then along the bottom edge; a name at or right of the middle ends at its spot, others start there
 const SPOT_X = [1, 0.5, 0, -0.5, -1], SPOTS = [...SPOT_X.map((x) => [x, 1]), ...SPOT_X.map((x) => [x, -1])], robotEl = q('.robot');
@@ -726,16 +727,16 @@ function draw(now) {
   gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   gl.bindVertexArray(lineVAO);
   // the lens grid steps back while the reconstruction plane is shown through it
-  if (fade > 0.01) { gl.uniform4f(LN.u.uCol, 0.79, 0.64, 0.36, 0.42 * fade * (1 - 0.75 * rc)); gl.drawArrays(gl.LINES, 0, gridCount); }
-  if (res < 0.99) { gl.uniform4f(LN.u.uCol, 0.79, 0.64, 0.36, (0.28 + 0.3 * fade) * (1 - res)); gl.drawArrays(gl.LINES, gridCount, 8); }
+  if (fade > 0.01) { gl.uniform4f(LN.u.uCol, 0.61, 0.53, 0.94, 0.42 * fade * (1 - 0.75 * rc)); gl.drawArrays(gl.LINES, 0, gridCount); }
+  if (res < 0.99) { gl.uniform4f(LN.u.uCol, 0.61, 0.53, 0.94, (0.28 + 0.3 * fade) * (1 - res)); gl.drawArrays(gl.LINES, gridCount, 8); }
   if (rc > 0.01) {
     // the same square outline, moved to the reconstruction plane
-    gl.uniform1f(LN.u.uZ, zRec - ZS); gl.uniform4f(LN.u.uCol, 0.89, 0.77, 0.5, 0.8 * rc);
+    gl.uniform1f(LN.u.uZ, zRec - ZS); gl.uniform4f(LN.u.uCol, 0.79, 0.72, 1.0, 0.8 * rc);
     gl.drawArrays(gl.LINES, gridCount, 8);
   }
   if (st.icons > 0.01 && hasImage) {
     gl.bindVertexArray(iconVAO); gl.uniform1f(LN.u.uZ, 0);
-    gl.uniform4f(LN.u.uCol, 0.99, 0.9, 0.62, 0.85 * st.icons); gl.drawArrays(gl.LINES, 0, iconCount);
+    gl.uniform4f(LN.u.uCol, 0.88, 0.84, 1.0, 0.85 * st.icons); gl.drawArrays(gl.LINES, 0, iconCount);
   }
   gl.disable(gl.BLEND); gl.bindVertexArray(null);
   const sw = stage.clientWidth, shh = stage.clientHeight;
@@ -1172,7 +1173,7 @@ function lfDraw(t) {
   const e = (a, b, k) => a.map((v, i) => v + (b[i] - v) * easeIO(Math.min(1, Math.max(0, k))));
   const R = t < .45 ? e(R0, R1, (t - .1) / .3) : e(R1, R2, (t - .5) / .3);
   const [x, y, w] = R, h = w / asp, s = Wc / w;
-  g.fillStyle = '#0e1013'; g.fillRect(0, 0, Wc, Hc);
+  g.fillStyle = '#0B0D13'; g.fillRect(0, 0, Wc, Hc);
   g.imageSmoothingEnabled = true; g.drawImage(lfImgs.photo, x, y, w, h, 0, 0, Wc, Hc);
   // the decoded lenslet image takes over once single lenses are a few pixels wide
   const k = Math.min(1, Math.max(0, (70 - w) / 30));

@@ -1,46 +1,152 @@
-<!--meta {"title": "연구", "description": "학습 없이 기하광학만으로 렌즈 배열 영상을 재배열하고 재구성하는 라이트필드·집적영상 연구. 국제학회 1저자 논문 4편.", "nav": "research"} -->
-<div class="doc-head">
-  <h1>연구</h1>
-  <p class="lede">학습 없이 기하광학만으로 렌즈 배열 영상을 다시 배열하고 재구성합니다. 규슈공업대학교 대학원 정보창성공학전공 석사과정, 지도교수 이민철(Min-Chul Lee). {{f:papers}}.</p>
+<!--meta {"title": "연구", "description": "학습 없이 기하광학만으로 렌즈 배열 영상을 재배열하고 3D로 재구성하는 연구. 브라우저에서 직접 해 보는 렌즈 배열 실험실, 국제학회 1저자 논문 4편, ICMV 2026 최우수 포스터상.", "nav": "research", "lab": true, "head": "<script src=\"/assets/lab.js?v={{v}}\" defer></script>\n"} -->
+<section class="r-hero" aria-labelledby="r-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="현재 위치"><a href="/">홈</a><span aria-hidden="true">/</span><span aria-current="page">연구</span></nav>
+    <div class="r-hero-row">
+      <div>
+        <div class="sec-kicker rs"><b>연구</b> 규슈공업대학교 대학원 정보창성공학전공 석사과정 · 지도교수 이민철(Min-Chul Lee)</div>
+        <h1 id="r-h">학습 없이, 기하광학으로 렌즈 배열 영상을 3D로 재구성합니다</h1>
+      </div>
+      <div class="badges"><span class="pill gold"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="6" r="4"/><path d="M5.5 9.2L4.5 15l3.5-2 3.5 2-1-5.8"/></svg>ICMV 2026 최우수 포스터상</span><span class="pill rs">국제학회 {{f:papers}}</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+<section class="lab" id="lab" aria-labelledby="lab-h">
+  <div class="lab-head">
+    <div><div class="sec-kicker rs"><b>01</b> 직접 해보기</div><h2 id="lab-h">렌즈 배열로 찍고, 재배열하고, 재구성하기</h2></div>
+    <p>브라우저가 3D 장면을 렌즈 배열로 촬영하고 논문 방법(RIM)으로 계산합니다. 화면을 누르면 소리와 함께 시작합니다.</p>
+  </div>
+  <div class="stage">
+    <div class="poster"></div>
+    <canvas class="gl" aria-hidden="true"></canvas>
+    <div class="torch" aria-hidden="true"></div>
+    <div class="tag3d" data-tag="obj">물체</div>
+    <div class="tag3d" data-tag="lens">렌즈 배열</div>
+    <div class="tag3d" data-tag="sen">센서</div>
+    <div class="tag3d" data-tag="rec">재구성 면</div>
+    <div class="robot" aria-hidden="true"><canvas width="216" height="132"></canvas></div>
+    <figure class="raybox cams" aria-hidden="true" hidden><svg viewBox="0 0 360 214"><text x="180" y="14" text-anchor="middle">물체</text><rect class="far" x="163" y="22" width="34" height="34"/><circle class="near" cx="180" cy="60" r="11"/><line class="arr" x1="70" y1="114" x2="300" y2="114"/><text x="10" y="118">렌즈 배열</text><g class="c c1"><path class="sight" d="M100 104 L176 66"/><rect class="body" x="86" y="104" width="28" height="19" rx="3"/><circle class="lensc" cx="100" cy="104" r="5"/></g><g class="c c2"><path class="sight" d="M180 104 L180 71"/><rect class="body" x="166" y="104" width="28" height="19" rx="3"/><circle class="lensc" cx="180" cy="104" r="5"/></g><g class="c c3"><path class="sight" d="M260 104 L184 66"/><rect class="body" x="246" y="104" width="28" height="19" rx="3"/><circle class="lensc" cx="260" cy="104" r="5"/></g><text x="10" y="155">찍힌 사진</text><g class="p p1"><rect class="photo" x="77" y="136" width="46" height="34"/><rect class="pfar" x="93" y="146" width="14" height="14"/><circle class="pnear" cx="107" cy="157" r="6"/></g><g class="p p2"><rect class="photo" x="157" y="136" width="46" height="34"/><rect class="pfar" x="173" y="146" width="14" height="14"/><circle class="pnear" cx="180" cy="157" r="6"/></g><g class="p p3"><rect class="photo" x="237" y="136" width="46" height="34"/><rect class="pfar" x="253" y="146" width="14" height="14"/><circle class="pnear" cx="253" cy="157" r="6"/></g><text x="10" y="192">렌즈 하나하나가 아주 작은 카메라예요.</text><text x="10" y="207">자리마다 가까운 공이 다른 곳에 찍힙니다.</text></svg></figure>
+    <figure class="lfzoom" aria-hidden="true" hidden><span class="badge">실측 · 디코딩된 렌즈릿 영상</span><canvas width="640" height="480"></canvas><figcaption>Lytro Illum의 렌즈릿 영상(Lytro 소프트웨어가 디코딩). 렌즈마다 14×14 픽셀이고, 가운데 8×8(노란 칸)이 8×8개 시점이 됩니다.</figcaption></figure>
+    <p class="laynote" data-laynote hidden><b>추정</b> · 64개 시점이 깊이(평면)마다 얼마나 일치하는지 그린 층입니다. 측정한 3D가 아니며, 깊이 축은 미터가 아니라 시차(px/시점)입니다. 흐리게 퍼진 곳은 시점들이 한 깊이로 모이지 않은 곳입니다.</p>
+    <div class="vmap" aria-hidden="true" hidden data-label="보고 있는 시점"></div>
+    <div class="dialog" aria-hidden="true"><div class="jp" lang="ja"></div><div class="ko"></div></div>
+    <div class="vh" aria-live="polite" data-live></div>
+    <p class="credit" data-credit hidden>Lytro 데이터: Stanford Lytro Light Field Archive, occlusions_26 (Raj 외, 2016) · 일부를 잘라 비상업적 시연에 사용</p>
+    <p class="figcap needs-gl"><span class="k">그림</span>논문 방법 RIM<span class="long">, ICMV 2026</span><span class="mid"> <b>최우수 포스터상</b></span> · <a href="/research/rim/#lab">어떻게 만들었나 →</a></p>
+    <figure class="fallback" hidden>
+      <img src="/img/ei-synth-800.webp" width="800" height="450" alt="iRIM으로 합성한 6×6 렌즈 배열 요소 영상">
+      <figcaption><p>이 기기에서는 실험실 애니메이션을 띄울 수 없어 연구 결과 이미지로 대신합니다.</p></figcaption>
+    </figure>
+  </div>
+  <div class="lab-tools">
+    <div class="group steps needs-gl" role="group" aria-label="단계">
+      <button class="step" type="button" data-step="1"><b>1</b><span class="t">찍기</span></button>
+      <button class="step" type="button" data-step="2"><b>2</b><span class="t">재배열</span></button>
+      <button class="step" type="button" data-step="3"><b>3</b><span class="t">재구성</span></button>
+    </div>
+    <div class="ctx needs-gl">
+      <p class="ctx-hint">3단계에서 재구성 거리를 직접 움직일 수 있어요</p>
+      <div class="depth">
+        <label for="lab-depth">재구성 거리</label>
+        <input type="range" id="lab-depth" min="0" max="100" step="1" value="0" disabled data-depth>
+        <output for="lab-depth" data-depth-out>–</output>
+      </div>
+      <button class="act" type="button" data-reverse><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4.5h4.5"></path></svg>RIM 되돌리기</button>
+      <button class="tog" type="button" data-layers-btn aria-pressed="false" hidden><i aria-hidden="true"></i>추정 깊이 층</button>
+    </div>
+    <div class="group pick needs-gl" role="group" aria-label="예시">
+      <span class="cap" aria-hidden="true">예시</span>
+      <span class="seg"><button class="opt" type="button" data-sample-btn="scene" aria-pressed="true">3D 장면</button><button class="opt" type="button" data-sample-btn="lytro" aria-pressed="false">실제 촬영(Lytro)</button></span>
+    </div>
+    <button class="fs needs-gl" type="button" data-fullscreen>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path class="in" d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"></path><path class="out" d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5" style="display:none"></path></svg>
+      <span class="label">전체화면</span>
+    </button>
+  </div>
+</section>
+
+<section class="d-section" id="flow" aria-labelledby="flow-h">
+  <div class="sec-head">
+    <div>
+      <div class="sec-kicker rs"><b>02</b> 연구 흐름</div>
+      <h2 id="flow-h">입력에서 결과 지표까지</h2>
+      <p class="sec-desc">논문 세 갈래를 같은 단계로 나란히 그렸습니다. 노드를 누르면 그 단계의 방법과 결과가 나옵니다.</p>
+    </div>
+    <div class="legend" aria-label="범례"><span><i class="sw rs" aria-hidden="true"></i>제 방법 (1저자)</span><span><i class="sw ext" aria-hidden="true"></i>입력 데이터</span></div>
+  </div>
+  <div class="sys">
+    {{inc:flow-research}}
+  </div>
+</section>
+
+<section class="d-section" id="topics" aria-labelledby="topics-h">
+  <div class="sec-head">
+    <div>
+      <div class="sec-kicker rs"><b>03</b> 주제</div>
+      <h2 id="topics-h">두 가지 주제, 논문 네 편</h2>
+    </div>
+  </div>
+  <div class="topics">
+    <a class="card topic" href="/research/rim/">
+      <div class="topic-img"><img src="/img/ei-synth-800.webp" width="800" height="450" alt="iRIM으로 합성한 6×6 렌즈 배열 요소 영상" loading="lazy"></div>
+      <div class="topic-body">
+        <span class="k">ICMV 2026 최우수 포스터상 · ICCAS 2026 포스터 발표</span>
+        <h3>RIM·iRIM: 렌즈 배열 영상의 각도 정보를 공간 해상도로</h3>
+        <p>렌즈 배열 영상의 픽셀을 보간 없이 일대일로 재배열해 시점 영상을 만들고(RIM), 거꾸로 다시점 영상에서 가상 렌즈 배열 요소 영상을 합성합니다(iRIM). 위 실험실의 2단계가 RIM입니다.</p>
+        <span class="key">Lytro 7개 장면 PSNR +2.39 dB · SSIM +0.14 (논문 기재값)</span>
+      </div>
+    </a>
+    <a class="card topic" href="/research/origin-point/">
+      <div class="topic-img"><img src="/img/vcr-fixed.webp" width="640" height="640" alt="고정 원점으로 재생한 해상도 차트" loading="lazy"><img src="/img/vcr-proposed.webp" width="640" height="640" alt="최적화한 원점으로 재생한 해상도 차트" loading="lazy"></div>
+      <div class="topic-body">
+        <span class="k">ITC-CSCC 2025 포스터 · ITC-CSCC 2026 구두 발표 · 코드 공개</span>
+        <h3>원점 최적화: 체적 컴퓨터 재생을 선명하게, 그리고 빠르게</h3>
+        <p>체적 컴퓨터 재생(VCR)의 양자화 오차를 원점 최적화로 줄이고, 그 원점을 반복 탐색 없이 카메라 파라미터로 계산합니다.</p>
+        <span class="key">재구성 81번 → 1번 (논문 0.31 s, 반복 방식은 추정 25.45 s)</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<section class="d-section" id="pubs" aria-labelledby="pubs-h">
+  <div class="sec-head">
+    <div>
+      <div class="sec-kicker rs"><b>04</b> 논문</div>
+      <h2 id="pubs-h">국제학회 1저자 논문 4편과 국내 발표</h2>
+    </div>
+  </div>
+  <div class="card">
+    <ol class="pubs">
+      <li><div class="pub-venue">ICMV 2026<small>19th · 부다페스트</small></div><div><p class="pub-title" lang="en">Angular-to-Spatial Information Redistribution via Ray-based Inverse Mapping</p><div class="pub-meta">Hyeongju Lee, Myungjin Cho, Min-Chul Lee · 10월 16일 포스터 발표 <span class="pill gold">최우수 포스터상</span> · <a href="/research/rim/">RIM</a></div></div></li>
+      <li><div class="pub-venue">ICCAS 2026<small>삿포로</small></div><div><p class="pub-title" lang="en">Virtual Lens Array Synthesis from Multi-View Images via iRIM</p><div class="pub-meta">Hyeongju Lee, Myungjin Cho, Min-Chul Lee · 10월 30일 포스터 발표 · <a href="/research/rim/#irim">iRIM</a></div></div></li>
+      <li><div class="pub-venue">ITC-CSCC 2026<small>방콕</small></div><div><p class="pub-title" lang="en">Accelerated Origin Point Optimization for Volumetric Computational Reconstruction</p><div class="pub-meta">Hyeongju Lee, Myungjin Cho, Min-Chul Lee · 구두 발표 · <a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">코드</a></div></div></li>
+      <li><div class="pub-venue">ITC-CSCC 2025<small>서울</small></div><div><p class="pub-title" lang="en">Image Enhancement of Volumetric Computational Reconstruction Using Origin Point Optimization</p><div class="pub-meta">Hyeongju Lee, Gilsu Yeo, Myungjin Cho, Min-Chul Lee · 포스터 발표 · <a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">코드</a></div></div></li>
+      <li><div class="pub-venue">한국광학회 2024<small>국내 · Photonics Conference</small></div><div><p class="pub-title">원점 최적화를 이용한 체적 컴퓨터 재생의 이미지 향상</p><div class="pub-meta">이형주, 권상현, 김성일, 김유진, 유승진, 구정식, 박지용, 조명진 · 국내 포스터 발표 (ITC-CSCC 2025의 선행 연구)</div></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="d-section" id="path" aria-labelledby="path-h">
+  <div class="sec-head">
+    <div>
+      <div class="sec-kicker rs"><b>05</b> 연구 이력</div>
+      <h2 id="path-h">수업 과제에서 석사 연구까지</h2>
+    </div>
+  </div>
+  <div class="card">
+    <ol class="log">
+      <li><div class="log-when">2025.04 – 현재</div><div class="log-what"><b>규슈공업대학교 대학원 석사과정</b><span>라이트필드·집적영상 3D 재구성. 지도교수 이민철(Min-Chul Lee)</span><span class="pill">{{f:status}}</span></div></li>
+      <li><div class="log-when">2026</div><div class="log-what"><b>로타리 요네야마 기념장학회 장학생</b><span>국제로타리 제2700지구 일본어 면접 전형으로 선발</span></div></li>
+      <li><div class="log-when">2024.08 – 2025.03</div><div class="log-what"><b>한경국립대학교 3차원영상처리시스템 연구실 학부연구생</b><span>지도교수 조명진. ITC-CSCC 2025 논문의 선행 연구로 Photonics Conference 2024 1저자 포스터</span></div></li>
+      <li><div class="log-when">2022</div><div class="log-what"><b>상관 필터와 VCR을 이용한 깊이 추정</b><span>수업 프로젝트. 지금 연구의 출발점 · <a href="https://github.com/zoocasso/depth-estimation-using-vcr-algorithm-matlab" target="_blank" rel="noopener">코드</a></span></div></li>
+    </ol>
+  </div>
+</section>
+
+<nav class="pager" aria-label="다음으로">
+  <a href="/research/rim/"><small>주제 1</small><b>RIM·iRIM 자세히</b></a>
+  <a class="next" href="/research/origin-point/"><small>주제 2 →</small><b>원점 최적화 자세히</b></a>
+</nav>
 </div>
-
-<section class="section" style="padding-top:40px" aria-labelledby="h-topics">
-  <header><h2 id="h-topics">주제</h2></header>
-  <ol class="log">
-    <li><a class="row" href="/research/rim/">
-      <span class="when">ICMV 2026 최우수 포스터상<br>ICCAS 2026 포스터 발표</span>
-      <div><h3>RIM·iRIM: 렌즈 배열 영상의 각도 정보를 공간 해상도로</h3>
-        <p>렌즈 배열 영상의 픽셀을 보간 없이 일대일로 재배열해 시점 영상을 만들고(RIM), 거꾸로 다시점 영상에서 가상 렌즈 배열 요소 영상을 합성합니다(iRIM).</p>
-        <span class="key">Stanford Lytro 7개 장면에서 <b>PSNR +2.39 dB</b>, SSIM +0.14 (논문 기재값)</span></div>
-      <figure class="wide-thumb"><img src="/img/ei-synth-800.webp" width="800" height="450" alt="iRIM으로 합성한 6×6 렌즈 배열 요소 영상" loading="lazy"></figure>
-    </a></li>
-    <li><a class="row" href="/research/origin-point/">
-      <span class="when">ITC-CSCC 2025, 2026<br>코드 공개</span>
-      <div><h3>원점 최적화: 체적 컴퓨터 재생을 선명하게, 그리고 빠르게</h3>
-        <p>체적 컴퓨터 재생의 양자화 오차를 원점 최적화로 줄이고, 그 원점을 반복 없이 카메라 파라미터로 계산합니다.</p>
-        <span class="key">재구성 81번 → 1번 (논문 0.31 s, 반복 방식은 추정 25.45 s)</span></div>
-      <figure class="thumbs"><img src="/img/vcr-fixed.webp" width="640" height="640" alt="고정 원점으로 재생한 해상도 차트" loading="lazy"><img src="/img/vcr-proposed.webp" width="640" height="640" alt="최적화한 원점으로 재생한 해상도 차트" loading="lazy"></figure>
-    </a></li>
-  </ol>
-</section>
-
-<section class="section" aria-labelledby="h-pubs">
-  <header><h2 id="h-pubs">논문</h2></header>
-  <ul class="papers">
-    <li><span class="venue">ICMV 2026</span><span class="title" lang="en">Angular-to-Spatial Information Redistribution via Ray-based Inverse Mapping<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee. 19th ICMV, Budapest</span></span><span class="state award">10월 16일 포스터 발표, 최우수 포스터상</span></li>
-    <li><span class="venue">ICCAS 2026</span><span class="title" lang="en">Virtual Lens Array Synthesis from Multi-View Images via iRIM<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee. Sapporo</span></span><span class="state">10월 30일 포스터 발표</span></li>
-    <li><span class="venue">ITC-CSCC 2026</span><span class="title" lang="en">Accelerated Origin Point Optimization for Volumetric Computational Reconstruction<span class="authors">Hyeongju Lee, Myungjin Cho, Min-Chul Lee. Bangkok</span></span><span class="state">구두 발표, <a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">코드</a></span></li>
-    <li><span class="venue">ITC-CSCC 2025</span><span class="title" lang="en">Image Enhancement of Volumetric Computational Reconstruction Using Origin Point Optimization<span class="authors">Hyeongju Lee, Gilsu Yeo, Myungjin Cho, Min-Chul Lee. Seoul</span></span><span class="state">포스터 발표, <a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">코드</a></span></li>
-    <li><span class="venue">한국광학회 2024</span><span class="title">원점 최적화를 이용한 체적 컴퓨터 재생의 이미지 향상<span class="authors">이형주, 권상현, 김성일, 김유진, 유승진, 구정식, 박지용, 조명진. Photonics Conference 2024</span></span><span class="state">국내 포스터 발표</span></li>
-  </ul>
-</section>
-
-<section class="section" aria-labelledby="h-path">
-  <header><h2 id="h-path">연구 이력</h2></header>
-  <ul class="timeline">
-    <li><span class="when">2025.04 – 현재</span><div><b>규슈공업대학교 대학원 석사과정</b><span class="sub">라이트필드·집적영상 3D 재구성. 지도교수 이민철(Min-Chul Lee)</span></div></li>
-    <li><span class="when">2026</span><div><b>로타리 요네야마 기념장학회 장학생</b><span class="sub">국제로타리 제2700지구 일본어 면접 전형으로 선발</span></div></li>
-    <li><span class="when">2024.08 – 2025.03</span><div><b>한경국립대학교 3차원영상처리시스템 연구실 학부연구생</b><span class="sub">지도교수 조명진. ITC-CSCC 2025 논문의 선행 연구로 Photonics Conference 2024 1저자 포스터</span></div></li>
-    <li><span class="when">2022</span><div><b>상관 필터와 VCR을 이용한 깊이 추정</b><span class="sub">수업 프로젝트. 지금 연구의 출발점</span></div></li>
-  </ul>
-</section>
