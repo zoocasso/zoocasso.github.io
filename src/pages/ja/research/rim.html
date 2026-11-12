@@ -1,0 +1,114 @@
+<!--meta {"title": "RIM・iRIM", "description": "レンズアレイ画像の画素を補間なしで一対一に並べ替えて視点画像をつくるRIM（ICMV 2026 最優秀ポスター賞）と、その逆変換で仮想レンズアレイの要素画像を合成するiRIM（ICCAS 2026）。", "nav": "research", "head": "<script src=\"/assets/rimviz.js?v={{v}}\" defer></script>\n"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="現在地"><a href="/ja/">ホーム</a><span aria-hidden="true">/</span><a href="/ja/research/">研究</a><span aria-hidden="true">/</span><span aria-current="page">RIM・iRIM</span></nav>
+    <div class="badges"><span class="pill gold"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="6" r="4"/><path d="M5.5 9.2L4.5 15l3.5-2 3.5 2-1-5.8"/></svg>ICMV 2026 最優秀ポスター賞 · ブダペスト</span><span class="pill rs">ICCAS 2026 ポスター発表 · 札幌</span></div>
+    <h1 id="d-h">RIM・iRIM：レンズアレイ画像の<br>角度情報を空間解像度へ</h1>
+    <p class="authors"><b>Hyeongju Lee</b>, Myungjin Cho, Min-Chul Lee · 九州工業大学</p>
+    <p class="hero-lede">レンズアレイ画像の画素を補間なしで一対一に並べ替えて視点画像をつくり（RIM）、逆に多視点画像から仮想レンズアレイの要素画像を合成します（iRIM）。<a href="/ja/research/#lab">研究ページの実験室</a>では、手順2の「並べ替え」がRIMです。</p>
+    <div class="kpis row three" aria-label="主な数値">
+      <div class="kpi"><span class="kpi-src"><i class="rs" aria-hidden="true"></i>Lytro 7シーン · 論文記載値</span><span class="kpi-val">+2.39<small>dB PSNR</small></span><span class="kpi-label">23.31 → 25.70 dB、要素画像をそのまま使った再構成との比較</span></div>
+      <div class="kpi"><span class="kpi-src"><i class="rs" aria-hidden="true"></i>構造的類似度 · 論文記載値</span><span class="kpi-val">+0.14<small>SSIM</small></span><span class="kpi-label">0.741 → 0.877</span></div>
+      <div class="kpi"><span class="kpi-src"><i class="rs" aria-hidden="true"></i>事前学習済みYOLOによる検出 · 論文記載値</span><span class="kpi-val">+0.11<small>mAP50</small></span><span class="kpi-label">0.665 → 0.776</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="d-section" id="glance" aria-labelledby="glance-h">
+    <h2 id="glance-h">ひと目で見る</h2>
+    <p class="sec-desc">ICCAS 2026論文のBlenderシーンを、論文のレンダリングスクリプトで、視点数と解像度だけを変えて8×8のカメラ位置からレンダリングしました。</p>
+    <div class="pair">
+      <figure class="card fig-card fig viz" data-viz="views" data-dir="/img/iccas/">
+        <div class="vizbox"><img src="/img/iccas/v33.webp" width="1000" height="1000" alt="Blenderでレンダリングした視点画像。見る方向を変えると、手前のサルの頭が奥のトーラス、立方体、円錐、球より大きく動き、隠れていた部分が見えてくる"><canvas hidden></canvas><div class="vmap mini" aria-hidden="true"></div></div>
+        <label class="vizctl"><span>視点</span><input type="range" min="0" max="100" value="0"></label>
+        <figcaption><b>1. 視点画像。</b>図の上でマウスを動かすと、見る方向が変わります（スマートフォンではドラッグ）。異なる位置から見た画像なので、手前のサルの頭が奥の物体より大きく動き、隠れていた部分が見えてきます。右上の点は、いま見ている視点です。</figcaption>
+      </figure>
+      <figure class="card fig-card fig viz" data-viz="refocus" data-dir="/img/iccas/">
+        <div class="vizbox"><img src="/img/iccas/f01.webp" width="1000" height="1000" alt="64枚の視点画像を重ねて再構成した画像。重ねる距離を変えると、サルの頭、トーラス、立方体、円錐、球の順にピントが移っていく"><canvas hidden></canvas><span class="vizlabel"></span></div>
+        <label class="vizctl"><span>ピントの奥行き</span><input type="range" min="0" max="100" value="4"></label>
+        <figcaption><b>2. 奥行きごとの再構成。</b>バーを動かすと64枚を重ねる距離が変わり、手前のサルの頭（0.39 m）からトーラス、立方体、円錐、奥の球（1.41 m）までピントが移っていきます。</figcaption>
+      </figure>
+    </div>
+    <p class="small-note">視点ごとに1920×1080でレンダリングし、物体の周囲1000×1000の領域を縮小せずに使っています（スマートフォンでは500×500、論文は6×6）。再構成は64枚を距離の分だけずらして平均したもので、0.36–1.55 mを31段階で事前に計算しました。触れるまでは自動で動き、マウスやバーを操作するとその位置で止まります。</p>
+  </section>
+
+  <div class="two">
+    <section class="d-section" id="problem" aria-labelledby="prob-h">
+      <h2 id="prob-h">問題</h2>
+      <div class="prose" style="margin-top:12px">
+        <p>レンズアレイカメラは、センサーの画素をレンズの数とレンズあたりの画素数に分けて使います。レンズを多く並べると奥行きの情報は豊かになりますが、レンズ1個がつくる要素画像は数ピクセルの大きさにまで小さくなります。そのままでは、人が見るにも、検出モデルに入力するにも解像度が足りません。</p>
+        <p>レンズアレイでは、レンズ1個とその後ろのセンサーの区画が、とても小さなカメラのように働きます。1点から出た光は複数のレンズを通り、レンズごとに下の異なる位置（画素）に届きます。<b>レンズの番号は光が通った位置、レンズ内の画素の位置は光が入ってきた方向</b>を表します。そのため、1枚の要素画像には位置と方向が一緒に記録されます。</p>
+      </div>
+    </section>
+    <section class="d-section" id="capture" aria-labelledby="cap-h">
+      <h2 id="cap-h">レンズアレイは何を記録するのか</h2>
+      <figure class="fig rayfig" style="margin-top:12px">
+        <svg viewBox="0 0 360 214" role="img" aria-label="1点から出た光が3つのレンズを通り、レンズごとに下の異なる位置に届く模式図"><text x="74" y="24" text-anchor="middle">物体の1点</text><text x="194" y="24" text-anchor="middle">レンズ</text><text x="240" y="24" text-anchor="middle">センサー</text><ellipse class="lens" cx="194" cy="49" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="77" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="105" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="133" rx="3.2" ry="12"/><ellipse class="lens" cx="194" cy="161" rx="3.2" ry="12"/><rect class="cell" x="234" y="35" width="12" height="28"/><rect class="cell" x="234" y="63" width="12" height="28"/><rect class="cell" x="234" y="91" width="12" height="28"/><rect class="cell" x="234" y="119" width="12" height="28"/><rect class="cell" x="234" y="147" width="12" height="28"/><path class="ray r1" d="M74 105 L194 77 L234 67.67"/><rect class="hit h1" x="234" y="65.92" width="12" height="3.5"/><path class="ray r2" d="M74 105 L194 105 L234 105.00"/><rect class="hit h2" x="234" y="103.25" width="12" height="3.5"/><path class="ray r3" d="M74 105 L194 133 L234 142.33"/><rect class="hit h3" x="234" y="140.58" width="12" height="3.5"/><circle class="pt" cx="74" cy="105" r="5"/><text class="spot" x="254" y="74">上</text><text class="spot" x="254" y="109">中央</text><text class="spot" x="254" y="144">下</text><text x="10" y="192">同じ点でも、レンズごとに届く位置が違います。</text><text x="10" y="207">その位置が、光が入ってきた方向です。</text></svg>
+        <figcaption>1点から出た光が3つのレンズを通り、それぞれ下の異なる位置に届きます。模式図では、物体までの距離をレンズ–センサー間隔の3倍として描いています。</figcaption>
+      </figure>
+    </section>
+  </div>
+
+  <section class="d-section" id="rim" aria-labelledby="rim-h">
+    <h2 id="rim-h">RIM：光線ベースの逆写像</h2>
+    <div class="prose" style="margin-top:12px">
+      <p>要素画像の各画素を仮想レンズアレイから再び出射し、仮想カメラで撮り直すと考えると、テレセントリック撮影と正射影での再撮影の条件では、（レンズ番号、レンズ内の画素位置）が（レンズ内の画素位置、レンズ番号）と入れ替わる一対一の対応になります。補間がないため<b>量子化誤差は0</b>で、レンズの数と同じ解像度をもつ視点画像が、レンズあたりの画素数だけ得られます。論文では、この結果を計算機インテグラルイメージング再構成（CIIR）の前段に使います。</p>
+    </div>
+    <figure class="card fig-card fig clear" style="margin-top:16px">
+      <img src="/img/rim-usaf-panels.webp" width="1600" height="521" alt="USAF解像度チャートを3通りに示した図。左の要素画像1枚は粗いブロック、中央のRIM仮想画像はチャートの形が見え、右は基準画像" loading="lazy">
+      <figcaption>合成したUSAF 1951解像度チャート。左から要素画像1枚、RIM仮想画像1枚（提案手法）、同じ視点の基準画像。ICMV 2026</figcaption>
+    </figure>
+  </section>
+
+  <section class="d-section" id="result" aria-labelledby="res-h">
+    <h2 id="res-h">結果</h2>
+    <p class="sec-desc">Stanford Lytroのライトフィールド7シーン。論文記載値です。</p>
+    <div class="tablewrap">
+      <table class="data">
+        <caption>mAP50は、再構成画像に事前学習済みのYOLO検出器をそのまま適用した結果です。</caption>
+        <thead><tr><th scope="col">処理</th><th scope="col" class="n">PSNR (dB)</th><th scope="col" class="n">SSIM</th><th scope="col" class="n">mAP50</th></tr></thead>
+        <tbody>
+          <tr><td>要素画像 → CIIR</td><td class="n">23.31</td><td class="n">0.741</td><td class="n">0.665</td></tr>
+          <tr class="me"><td><b>RIM → CIIR（提案手法）</b></td><td class="n"><b>25.70</b></td><td class="n"><b>0.877</b></td><td class="n"><b>0.776</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="d-section" id="irim" aria-labelledby="irim-h">
+    <h2 id="irim-h">iRIM：多視点画像から仮想レンズアレイを合成</h2>
+    <div class="prose" style="margin-top:12px">
+      <p>RIMは一対一の対応なので、逆向きにも使えます。iRIMは多視点画像を入力として、目的の仮想レンズアレイの要素画像を合成します。論文では、24インチFHDパネルに合わせた6×6構成（レンズ1.6056 mm、320×180個）を扱いました。</p>
+    </div>
+    <figure class="card fig-card fig dark" style="margin-top:16px">
+      <img src="/img/ei-synth-1600.webp" width="1600" height="900" alt="iRIMで合成した6×6レンズアレイの要素画像。トーラス、円錐、サルの頭のモデルが、小さなレンズ画像に分かれて写っている" loading="lazy">
+      <figcaption>iRIMで合成した6×6レンズアレイの要素画像。ICCAS 2026</figcaption>
+    </figure>
+    <div class="pair" style="margin-top:16px">
+      <figure class="card fig-card fig dark"><img src="/img/sai-irim.webp" width="1200" height="675" alt="iRIMで合成した視点画像の格子。すべてのマスが均一に明るい" loading="lazy"><figcaption><b>iRIMによる合成</b>：すべての視点画像で有効領域100%</figcaption></figure>
+      <figure class="card fig-card fig dark"><img src="/img/sai-camera.webp" width="1200" height="675" alt="レンズアレイカメラをシミュレーションした視点画像の格子。端のマスほど暗く欠けている" loading="lazy"><figcaption><b>レンズアレイカメラのシミュレーション</b>：隅の視点では有効領域が6.7%まで減少</figcaption></figure>
+    </div>
+    <p class="small-note">同じBlenderシーンから作った視点画像の格子の比較。ICCAS 2026</p>
+  </section>
+
+  <section class="d-section" id="lab" aria-labelledby="lab-h">
+    <h2 id="lab-h">研究ページの実験室の仕組み</h2>
+    <p class="sec-desc">実験室は、レンズアレイによる撮影、RIMによる並べ替え、再構成をブラウザでそのまま計算して表示します。最後に再構成面を正面から大きく表示し、物体を押すとその奥行きにピントを移します。<a href="/ja/research/#lab">実験室を開く →</a></p>
+    <div class="card fig-card prose" style="max-width:none">
+      <ul>
+        <li><b>3Dシーン</b>：ICCAS 2026論文のBlenderシーンから書き出したサルの頭とトーラスを実際の3Dモデルとして置き、レンズアレイによる撮影をブラウザで計算します。この実験室のピンホールモデルでは、すべてのレンズの同じ位置の画素が同じ方向を向くため、1つの視点はシーンを斜めに平行投影した画像になります。8×8の視点をこのように描いて視点画像と奥行きを作り、並べ替えと再構成はそのデータで計算します。手前のサルの頭がトーラスの一部を隠すように配置しました。空間解像度は64×64レンズです。結果の画面で物体を押すと、押した位置の周囲にある中央の視点4枚の奥行きの値（中央値）にピントを移します。</li>
+        <li><b>撮影</b>：ピンホールアレイのモデルです。要素画像の各画素を、その画素が記録した点の3D位置に置いてから、レンズを通してセンサーへ移します。手順1のカメラの模型は、レンズ1個とその後ろのセンサーの区画が小さなカメラであることを示す図で、見やすいように実際のレンズより大きく描いています。</li>
+        <li><b>並べ替えと再構成</b>：（レンズ番号、レンズ内の位置）を入れ替えるRIMと、視点画像を距離の分だけずらして平均する再構成は、論文の方法そのままです。距離が物体の奥行きと合うと、その物体のサンプルが元の位置に戻って鮮明になります。</li>
+        <li><b>Lytroのサンプル</b>：Stanford Lytro Light Field Archive（A. S. Raj, M. Lowney, R. Shah, G. Wetzstein, 2016）のocclusions_26シーンです。アーカイブのレンズレット画像はセンサーの生データではなく、Lytroのソフトウェアがデモザイク・位置合わせ・リサンプリング・歪み補正を済ませた画像で、541×376個のレンズそれぞれに14×14画素があります。木の枝が一時停止の標識を隠している部分のレンズ128×128個をリサンプリングせずに切り出し、中央の8×8画素（＝8×8視点）を使います。並べ替えは値を変えずに位置だけを移し、再構成は64視点を平行移動して平均した計算結果です。「推定奥行き層」は同じ64視点で計算したプレーンスイープの一致度で、実測の3Dではなく、奥行きの軸はメートルではなく視差（px/視点）です。このデータには明示されたライセンスがないため、出典を明記し、一部だけを切り出して非商用のデモに使っています。</li>
+        <li><b>音</b>：音楽、効果音、ロボットの声は、すべてブラウザがその場で合成しています。</li>
+      </ul>
+    </div>
+    <p class="note">2本の論文のコードは、非公開のリポジトリにまとめています（テスト13個）。</p>
+  </section>
+
+  <nav class="pager" aria-label="他の研究">
+    <a href="/ja/research/"><small>← 研究</small><b>研究ページと実験室</b></a>
+    <a class="next" href="/ja/research/origin-point/"><small>次のテーマ →</small><b>原点最適化</b></a>
+  </nav>
+</div>

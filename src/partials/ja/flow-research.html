@@ -1,0 +1,66 @@
+<div class="flow rs">
+  <div class="lane-heads" style="--cols:4" aria-hidden="true"><span></span><span><i class="n">01</i>入力</span><span><i class="n">02</i>変換</span><span><i class="n">03</i>再構成</span><span><i class="n">04</i>結果</span></div>
+  <div class="lanes">
+    <div class="lane" style="--cols:4">
+      <div class="lane-name"><b>ICMV 2026</b><a href="/ja/research/rim/">RIM・角度情報を空間解像度へ</a></div>
+      <ol>
+        <li class="node" data-id="r-lytro" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-stage">入力</span><span class="node-title">レンズアレイ画像</span><span class="node-metric">Stanford Lytro 7シーン</span></button>
+          <div class="node-detail"><dl class="dl"><dt>データ</dt><dd>Stanford Lytroのライトフィールド7シーンで評価しました。レンズ1個がつくる要素画像は、数ピクセルの大きさしかありません。</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-rim" data-owner="me" data-default>
+          <button class="node-btn" type="button"><span class="node-stage">変換</span><span class="node-title">RIMによる並べ替え</span><span class="node-metric">量子化誤差 0</span><span class="node-tag">筆頭著者</span></button>
+          <div class="node-detail"><dl class="dl"><dt>方法</dt><dd>（レンズ番号、レンズ内の画素位置）を入れ替える一対一の並べ替え（Ray-based Inverse Mapping）。テレセントリック撮影と正射影での再撮影の条件では補間がなく、量子化誤差は0です。</dd><dt>発表</dt><dd>ICMV 2026、ブダペスト · <b>最優秀ポスター賞</b></dd><dt>詳細</dt><dd><a href="/ja/research/rim/">RIM・iRIMのページ</a></dd></dl></div>
+        </li>
+        <li class="node" data-id="r-ciir" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-stage">再構成</span><span class="node-title">インテグラルイメージング再構成</span><span class="node-metric">CIIR</span><span class="node-tag">筆頭著者</span></button>
+          <div class="node-detail"><dl class="dl"><dt>方法</dt><dd>並べ替えた視点画像を計算機インテグラルイメージング再構成（CIIR）の前段に使い、要素画像をそのまま使った場合と比較しました。</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-eval" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-stage">結果</span><span class="node-title">画質・検出の指標</span><span class="node-metric">PSNR +2.39 dB · mAP50 +0.11</span><span class="node-tag">論文記載値</span></button>
+          <div class="node-detail"><dl class="dl"><dt>結果</dt><dd>Lytroの7シーンで{{f:rim_psnr}}、{{f:rim_ssim}}、事前学習済みYOLOによる検出で{{f:rim_map}}。</dd></dl></div>
+        </li>
+      </ol>
+    </div>
+    <div class="lane" style="--cols:4">
+      <div class="lane-name"><b>ITC-CSCC 2025 · 2026</b><a href="/ja/research/origin-point/">原点最適化VCR</a></div>
+      <ol>
+        <li class="node" data-id="r-ei" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-stage">入力</span><span class="node-title">要素画像</span><span class="node-metric">9×9・カメラパラメータ</span></button>
+          <div class="node-detail"><dl class="dl"><dt>データ</dt><dd>9×9の要素画像とカメラパラメータ、再構成する奥行き。</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-org" data-owner="me" data-in="パラメータ">
+          <button class="node-btn" type="button"><span class="node-stage">変換</span><span class="node-title">原点の計算</span><span class="node-metric">反復探索 → 1回の計算</span><span class="node-tag">筆頭著者</span></button>
+          <div class="node-detail"><dl class="dl"><dt>方法</dt><dd>量子化誤差を減らす原点を見つけるために再構成を繰り返していた探索を、カメラパラメータだけで行う計算に置き換えました。論文の実験では、反復探索と同じ原点・SSIMが得られました。</dd><dt>発表</dt><dd>ITC-CSCC 2025（ソウル、ポスター）· ITC-CSCC 2026（バンコク、口頭）</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-vcr" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-stage">再構成</span><span class="node-title">VCRによる再構成</span><span class="node-metric">再構成 81回 → 1回</span><span class="node-tag">筆頭著者</span></button>
+          <div class="node-detail"><dl class="dl"><dt>結果</dt><dd>9×9の要素画像では、原点を選ぶための再構成が<b>81回から1回</b>に減りました。</dd><dt>技術</dt><dd><ul class="chips"><li>Python</li><li>NumPy</li><li>CuPy</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="r-gpu" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-stage">結果</span><span class="node-title">処理時間</span><span class="node-metric">0.31 s · GPU {{f:origin_gpu}}</span><span class="node-tag">論文の実測値</span></button>
+          <div class="node-detail"><dl class="dl"><dt>結果</dt><dd>CPU <b>0.31秒</b>（論文での実測）、GPU（CuPy、RTX 3090）<b>{{f:origin_gpu}}</b>。反復探索の25.45秒は、1回0.3142秒 × 81で求めた推定値です。</dd><dt>コード</dt><dd><a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">origin-point-optimization-vcr</a></dd></dl></div>
+        </li>
+      </ol>
+    </div>
+    <div class="lane" style="--cols:4">
+      <div class="lane-name"><b>ICCAS 2026</b><a href="/ja/research/rim/#irim">iRIM・仮想レンズアレイ</a></div>
+      <ol>
+        <li class="node" data-id="r-mv" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-stage">入力</span><span class="node-title">多視点画像</span><span class="node-metric">Blenderシーンのレンダリング</span></button>
+          <div class="node-detail"><dl class="dl"><dt>データ</dt><dd>複数の位置からレンダリングした視点画像。</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-irim" data-owner="me" data-in="逆変換">
+          <button class="node-btn" type="button"><span class="node-stage">変換</span><span class="node-title">iRIM</span><span class="node-metric">RIMの逆変換</span><span class="node-tag">筆頭著者</span></button>
+          <div class="node-detail"><dl class="dl"><dt>方法</dt><dd>RIMは一対一の対応なので、逆向きにも使えます。多視点画像から、目的の仮想レンズアレイの要素画像を合成します。</dd><dt>発表</dt><dd>ICCAS 2026、札幌 · ポスター発表</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-vla" data-owner="me" data-in="合成">
+          <button class="node-btn" type="button"><span class="node-stage">結果</span><span class="node-title">仮想レンズアレイ画像</span><span class="node-metric">有効領域 100%</span><span class="node-tag">筆頭著者</span></button>
+          <div class="node-detail"><dl class="dl"><dt>結果</dt><dd>24インチFHDパネルに合わせた6×6構成（レンズ320×180個）。すべての視点画像で有効領域が100%で、レンズアレイカメラのシミュレーションの隅の視点（6.7%）と対照的です。</dd></dl></div>
+        </li>
+        <li class="node empty" aria-hidden="true"></li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="inspector" aria-live="polite"><div class="insp-side"></div><div class="insp-main"></div></div>

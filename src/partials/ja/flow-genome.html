@@ -1,0 +1,65 @@
+<div class="flow" data-edges="g-fastq>g-call|FASTQ; g-vcf>g-norm|アップロード; g-call>g-db|VCF; g-norm>g-db|入力テーブル; g-ref>g-db|チャンク蓄積; g-db>g-join|4段階の結合; g-join>g-api|JSON; g-ui>g-api|デザイン; g-api>g-ops|イメージ">
+  <ol class="stages" style="--cols:5">
+    <li class="stage"><div class="stage-h"><span class="n">01</span>入力</div>
+      <ul class="nodes">
+        <li class="node" data-id="g-fastq" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">シーケンス生データ</span><span class="node-metric">FASTQ</span></button>
+          <div class="node-detail"><dl class="dl"><dt>入力</dt><dd>シーケンシングの生データ（FASTQ）。変異検出パイプラインの入力です。</dd></dl></div>
+        </li>
+        <li class="node" data-id="g-vcf" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">顧客のVCF・チップファイル</span><span class="node-metric">遺伝子型のアップロード</span></button>
+          <div class="node-detail"><dl class="dl"><dt>入力</dt><dd>顧客がアップロードするVCFファイル、または遺伝子チップ（アレイ）の結果ファイル。</dd></dl></div>
+        </li>
+        <li class="node" data-id="g-ref" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">公開リファレンス</span><span class="node-metric">dbSNP・1000 Genomesなど</span></button>
+          <div class="node-detail"><dl class="dl"><dt>データ</dt><dd>dbSNP（GRCh37、GRCh38）237 GB、1000 Genomes 770 GB、GWAS Catalog、UniProt。サイズは元データの値です。</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">02</span>処理</div>
+      <ul class="nodes spaced">
+        <li class="node" data-id="g-call" data-owner="shared">
+          <button class="node-btn" type="button"><span class="node-title">変異検出パイプライン</span><span class="node-metric">BWA → samtools → Picard → GATK</span><span class="node-tag">チームリーダーと共同で設計・実装</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>FASTQ → BWA → samtools → Picard → GATK → VCFのパイプラインを実装。</dd><dt>他の担当</dt><dd>パイプラインのアルゴリズムは、社内でチームリーダーと共同で設計しました。</dd><dt>技術</dt><dd><ul class="chips"><li>BWA</li><li>samtools</li><li>Picard</li><li>GATK</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="g-norm" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">入力処理</span><span class="node-metric">PyVCF・チップファイル</span><span class="node-tag">自分で実装</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>顧客のVCF・チップ（アレイ）の入力をPyVCFで読み込み、アノテーションに使う入力テーブルに整理。チップの入力は、rsIDを使ってdbSNPから位置キーを引きます。</dd><dt>技術</dt><dd><ul class="chips"><li>PyVCF</li><li>Python</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">03</span>保存</div>
+      <ul class="nodes">
+        <li class="node" data-id="g-db" data-owner="me" data-default>
+          <button class="node-btn" type="button"><span class="node-title">MySQLリファレンスDB</span><span class="node-metric">{{f:bio_ref}}</span><span class="node-tag">自分で構築</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>dbSNP（<b>237 GB</b>）、1000 Genomes（<b>770 GB</b>）、GWAS Catalog、UniProtをMySQLに構築。染色体単位でファイルを分割し（sed、split）、pandasのチャンクとSQLAlchemyで少しずつ蓄積。</dd><dt>技術</dt><dd><ul class="chips"><li>MySQL</li><li>pandas</li><li>SQLAlchemy</li><li>sed · split</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">04</span>アノテーション</div>
+      <ul class="nodes">
+        <li class="node" data-id="g-join" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">SQLアノテーション・レポート計算</span><span class="node-metric">位置・塩基、またはrsID</span><span class="node-tag">自分で実装</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>dbSNP・1000 Genomesは染色体・位置・REF・ALTのキーで、GWAS CatalogはrsIDとリスクアレルで、UniProtは変異IDとアレルで結合する4段階のSQL結合。GWASのオッズ比・β値に基づく<b>ルールベースのリスクスコア</b>、1000 Genomesの26集団のアレル頻度の比較、疾患ごとの医薬品・韓方生薬の情報（MedlinePlus、MeSH、ATC、PharmDB-K、OASIS）とのひも付け。</dd><dt>補足</dt><dd>疾患と韓方薬を結ぶLDA・1D-CNNのモデルは、プロトタイプの実験にとどまりました。</dd><dt>技術</dt><dd><ul class="chips"><li>SQL</li><li>MySQL</li><li>Python</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">05</span>提供</div>
+      <ul class="nodes">
+        <li class="node" data-id="g-ui" data-owner="other">
+          <button class="node-btn" type="button"><span class="node-title">UIデザイン</span><span class="node-metric">要件の調整</span><span class="node-tag">カナダの研究所のデザイナー</span></button>
+          <div class="node-detail"><dl class="dl"><dt>他の担当</dt><dd>画面デザインは、カナダのバイオ研究所のデザイナーが担当しました。</dd><dt>担当内容</dt><dd>デザイナーと要件を調整し、韓国とカナダのチーム間の技術的なやり取りを担当しました。</dd></dl></div>
+        </li>
+        <li class="node" data-id="g-api" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">FastAPI JSON API・画面</span><span class="node-metric">レポートAPI + フロントエンド</span><span class="node-tag">自分で実装</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>レポートをFastAPIのJSON APIで提供し、利用者向けの画面（フロントエンド）も開発。2023年9月にWeb画面を切り離し、フロントエンドが使うJSON APIとして整理。</dd><dt>技術</dt><dd><ul class="chips"><li>FastAPI</li><li>JSON API</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="g-ops" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">Docker・Harborでデプロイ</span><span class="node-metric">Korea IDC・内部IP限定</span><span class="node-tag">自分で構築</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>Korea IDCのUbuntu本番サーバーにHarborのプライベートレジストリを自分で構築し（証明書、ドメイン、Let's Encrypt）、Dockerイメージでデプロイ。本番サーバーには内部IPからのみアクセスできるようにしました。</dd><dt>技術</dt><dd><ul class="chips"><li>Docker</li><li>Harbor</li><li>Ubuntu</li><li>Let's Encrypt</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+  </ol>
+</div>
+<div class="inspector" aria-live="polite"><div class="insp-side"></div><div class="insp-main"></div></div>

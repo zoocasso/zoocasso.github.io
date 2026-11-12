@@ -1,60 +1,75 @@
-<!--meta {"title": "経歴", "description": "イ・ヒョンジュの職歴・学歴・スキルの概要と、英語・韓国語のCV、ポートフォリオのPDF。", "nav": "cv"} -->
-<div class="doc-head">
-  <h1>経歴</h1>
-  <p class="lede">{{f:status}}。{{f:based}}。</p>
-  <div class="paper-links"><a class="btn primary" href="/files/HyeongjuLee_CV_EN.pdf" hreflang="en">CV（英語・PDF）</a><a class="btn" href="/files/HyeongjuLee_Portfolio_EN.pdf" hreflang="en">ポートフォリオ（英語・PDF）</a></div>
-</div>
-
-<section class="section" style="padding-top:40px" aria-labelledby="h-dl">
-  <header><h2 id="h-dl">韓国語のPDF</h2></header>
-  <ul class="downloads">
-    <li><a href="/files/HyeongjuLee_Resume_KR.pdf" hreflang="ko">履歴書（韓国語）</a><span>PDF、2ページ</span></li>
-    <li><a href="/files/HyeongjuLee_Portfolio_KR.pdf" hreflang="ko">ポートフォリオ（韓国語）</a><span>PDF、2ページ</span></li>
-  </ul>
-  <p class="muted" style="margin-top:12px;font-size:15px">公開しているPDFには電話番号を載せていません。ご連絡はメールでお願いします。</p>
-</section>
-
-<section class="section" aria-labelledby="h-career">
-  <header><h2 id="h-career">職歴</h2></header>
-  <ul class="timeline">
-    <li><span class="when">2025.04 – 現在</span><div><b>九州工業大学の研究室 研究補助員（非常勤）</b><span class="sub">マシンビジョンカメラの制御・撮影からデータセットの前処理までを行う画像データパイプラインと、PyQtのGUI（日立グループとの受託研究）。設計を研究室の後輩2名に引き継ぎ、2026年9〜10月にオランダで現地導入。<a href="/en/work/hitachi/" hreflang="en">詳細（英語）</a></span></div></li>
-    <li><span class="when">2022.07 – 2024.11</span><div><b>Vision Inside（韓国）代理（主任相当）、データ・バックエンドエンジニア（{{f:career_len}}）</b><span class="sub">2022年7月〜2024年7月、産業技能要員（兵役の代わりに指定企業で働く韓国の制度）として兵役を修了。<a href="/en/work/kisti/" hreflang="en">KISTIデータプラットフォーム</a>（収集・蓄積・提供を担当、{{f:kisti_rows}}）、<a href="/en/work/genomics/" hreflang="en">ゲノム変異のバックエンド</a>（バックエンドとパイプラインを実装、公開リファレンス{{f:bio_ref}}）、生命保険のデータツール（3人チーム）</span></div></li>
-  </ul>
-</section>
-
-<section class="section" aria-labelledby="h-edu">
-  <header><h2 id="h-edu">学歴</h2></header>
-  <ul class="timeline">
-    <li><span class="when">2025.04 – 2027.03</span><div><b>九州工業大学大学院 情報工学府 情報創成工学専攻 博士前期課程</b><span class="sub">2027年3月修了予定。GPA 3.63 / 4.0。<a href="/en/research/" hreflang="en">研究（英語）</a></span></div></li>
-    <li><span class="when">2018.03 – 2025.02</span><div><b>韓京国立大学校（Hankyong National University、韓国）電気電子制御工学科 学士</b><span class="sub">GPA 4.00 / 4.50</span></div></li>
-  </ul>
-</section>
-
-<section class="section" aria-labelledby="h-skills">
-  <header><h2 id="h-skills">スキル</h2></header>
-  <div class="tablewrap">
-    <table class="data">
-      <caption>実務やプロジェクトで実際に使ったものだけを挙げています</caption>
-      <tbody>
-        <tr><th scope="row">言語</th><td>主：Python、SQL ・ 基礎〜中級：C++（XRメイカソン、授業、会社プロジェクトの一部）、Java、JavaScript、C#、MATLAB</td></tr>
-        <tr><th scope="row">データ・バックエンド</th><td>FastAPI、SQLAlchemy、pandas、MySQL、Selenium、Jinja2・Tabulator</td></tr>
-        <tr><th scope="row">機械学習・ビジョン</th><td>PyTorch、scikit-learn、OpenCV、NumPy、CuPy、KeyBERT・Sentence-Transformers、Blender</td></tr>
-        <tr><th scope="row">バイオインフォマティクス</th><td>BWA、samtools、Picard、GATK、PyVCF</td></tr>
-        <tr><th scope="row">インフラ</th><td>Docker、Harbor、Linux（Ubuntu、WSL）、DNS・HTTPS、AWS EC2・RDS、Cloudflare、Git</td></tr>
-        <tr><th scope="row">デスクトップ・自動化</th><td>PyQt、PyInstaller、openpyxl、xlwings</td></tr>
-      </tbody>
-    </table>
+<!--meta {"title": "経歴", "description": "イ・ヒョンジュの英文CV・ポートフォリオと韓国語の履歴書・ポートフォリオのPDF、職歴・学歴・スキルの概要。", "nav": "cv"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="現在地"><a href="/ja/">ホーム</a><span aria-hidden="true">/</span><span aria-current="page">経歴</span></nav>
+    <h1 id="d-h">経歴</h1>
+    <p class="hero-lede">{{f:role}} · {{f:status}}。PDFは新しいタブで開きます。</p>
+    <div class="downloads">
+      <a class="dl-card primary" href="/files/HyeongjuLee_CV_EN.pdf" hreflang="en"><span class="k">英語 · PDF、2ページ</span><b><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 1.5h5l3.5 3.5v9.5h-8.5z"/><path d="M9 1.5V5h3.5M6 9h4.5M6 11.5h4.5"/></svg>英文CV</b><span>職歴・学歴・スキルの概要</span></a>
+      <a class="dl-card primary" href="/files/HyeongjuLee_Portfolio_EN.pdf" hreflang="en"><span class="k">英語 · PDF、2ページ</span><b><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><path d="M1.5 6h13M5 2.5V6"/></svg>ポートフォリオ（英語）</b><span>プロジェクトごとの構成と数値</span></a>
+      <a class="dl-card" href="/files/HyeongjuLee_Resume_KR.pdf" hreflang="ko"><span class="k">韓国語 · PDF、2ページ</span><b><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 1.5h5l3.5 3.5v9.5h-8.5z"/><path d="M9 1.5V5h3.5M6 9h4.5M6 11.5h4.5"/></svg>履歴書（韓国語）</b><span>韓国語版の履歴書</span></a>
+      <a class="dl-card" href="/files/HyeongjuLee_Portfolio_KR.pdf" hreflang="ko"><span class="k">韓国語 · PDF、2ページ</span><b><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><path d="M1.5 6h13M5 2.5V6"/></svg>ポートフォリオ（韓国語）</b><span>韓国語版のポートフォリオ</span></a>
+    </div>
+    <p class="small-note">公開しているPDFには電話番号を載せていません。ご連絡はメールでお願いします。</p>
   </div>
 </section>
 
-<section class="section" aria-labelledby="h-etc">
-  <header><h2 id="h-etc">その他</h2></header>
-  <ul class="timeline">
-    <li><span class="when">兵役</span><div><b>産業技能要員（兵役代替）として修了</b><span class="sub">2022.07 – 2024.07、23か月</span></div></li>
-    <li><span class="when">資格</span><div><b>SQL開発者（SQLD）</b><span class="sub">韓国データ産業振興院、2023年10月</span></div></li>
-    <li><span class="when">受賞</span><div><b>ICMV 2026 最優秀ポスター賞（Best Poster Award）</b><span class="sub">2026年10月、ブダペスト。「Angular-to-Spatial Information Redistribution via Ray-based Inverse Mapping」、筆頭著者。<a href="/en/research/rim/" hreflang="en">RIM（英語）</a></span></div></li>
-    <li><span class="when">奨学金</span><div><b>ロータリー米山記念奨学生</b><span class="sub">2026年、日本語の面接で選考</span></div></li>
-    <li><span class="when">出張・発表</span><div><b>オランダ出張（2026年9〜10月）</b><span class="sub">受託研究のシステムを現地導入。学会発表はバンコク（ITC-CSCC 2026、7月、口頭）、ブダペスト（ICMV 2026、10月16日、ポスター、最優秀ポスター賞）、札幌（ICCAS 2026、10月30日、ポスター）</span></div></li>
-    <li><span class="when">語学</span><div><b>韓国語（母語）、日本語（ビジネス会話）、英語（業務レベル）</b></div></li>
-  </ul>
-</section>
+<div class="wrap">
+  <div class="two">
+    <section class="d-section" id="career" aria-labelledby="career-h" style="padding-top:8px">
+      <h2 id="career-h">職歴</h2>
+      <div class="card" style="margin-top:14px">
+        <ol class="log">
+          <li><div class="log-when">2025.04 – 現在</div><div class="log-what"><b>九州工業大学の研究室 研究補助員（非常勤）</b><span>日立グループとの受託研究の画像データパイプライン。マシンビジョンカメラの制御・撮影からデータセットの前処理までを行うPythonのパイプラインと、PyQtのGUI。設計を研究室の後輩2名に引き継ぎ、2026年9〜10月にオランダへ出張して現地導入。<a href="/ja/work/hitachi/">詳細</a></span></div></li>
+          <li><div class="log-when">{{f:career_span}}</div><div class="log-what"><b>Vision Inside（韓国）· 代理（主任相当）、データ・バックエンドエンジニア（{{f:career_len}}）</b><span><a href="/ja/work/kisti/">KISTI（韓国科学技術情報研究院）発注案件のデータ層</a>：データエンジニアとして収集・蓄積・提供を専任で担当、{{f:kisti_rows}}</span><span><a href="/ja/work/genomics/">ゲノム変異のアノテーション・レポート</a>：パイプライン・バックエンド・フロントエンドを実装、リファレンス{{f:bio_ref}}</span><span>生命保険の公示データツール（3人チーム）</span><span>産業技能要員（兵役の代わりに指定企業で働く韓国の制度）として2022.07 – 2024.07に服務満了</span></div></li>
+        </ol>
+      </div>
+    </section>
+    <section class="d-section" id="edu" aria-labelledby="edu-h" style="padding-top:8px">
+      <h2 id="edu-h">学歴</h2>
+      <div class="card" style="margin-top:14px">
+        <ol class="log">
+          <li><div class="log-when">2025.04 – 2027.03</div><div class="log-what"><b>九州工業大学大学院 情報工学府 情報創成工学専攻 博士前期課程</b><span>GPA 3.63 / 4.0 · <a href="/ja/research/">研究</a></span><span class="pill">{{f:status}}</span></div></li>
+          <li><div class="log-when">2018.03 – 2025.02</div><div class="log-what"><b>韓京国立大学校（Hankyong National University、韓国）電気電子制御工学科 学士</b><span>GPA 4.00 / 4.50</span></div></li>
+        </ol>
+      </div>
+    </section>
+  </div>
+
+  <section class="d-section" id="skills" aria-labelledby="skills-h">
+    <h2 id="skills-h">スキル</h2>
+    <p class="sec-desc">実務やプロジェクトで実際に使ったものだけを挙げています。</p>
+    <div class="tablewrap">
+      <table class="data">
+        <tbody>
+          <tr><th scope="row">言語</th><td>主：Python、SQL ・ 基礎〜中級：C++（XRメイカソン、授業、会社プロジェクトの一部）、Java、JavaScript、C#、MATLAB</td></tr>
+          <tr><th scope="row">データ・バックエンド</th><td>FastAPI、SQLAlchemy、pandas、MySQL、Selenium、BeautifulSoup、Jinja2・Tabulator</td></tr>
+          <tr><th scope="row">機械学習・ビジョン</th><td>PyTorch、scikit-learn、OpenCV、NumPy、CuPy、KeyBERT・Sentence-Transformers、Blender</td></tr>
+          <tr><th scope="row">バイオインフォマティクス</th><td>BWA、samtools、Picard、GATK、PyVCF</td></tr>
+          <tr><th scope="row">インフラ</th><td>Docker、Harbor、Linux（Ubuntu、WSL）、DNS・HTTPS、AWS EC2・RDS、Cloudflare、Git</td></tr>
+          <tr><th scope="row">デスクトップ・自動化</th><td>PyQt、PyInstaller、openpyxl、xlwings</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="d-section" id="etc" aria-labelledby="etc-h">
+    <h2 id="etc-h">その他</h2>
+    <div class="card" style="margin-top:14px">
+      <ul class="side-list">
+        <li><span class="ico gold" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="6" r="4"/><path d="M5.5 9.2L4.5 15l3.5-2 3.5 2-1-5.8"/></svg></span><div><b>ICMV 2026 最優秀ポスター賞（Best Poster Award）</b><small>2026.10、ブダペスト。「Angular-to-Spatial Information Redistribution via Ray-based Inverse Mapping」、筆頭著者 · <a href="/ja/research/rim/">RIM</a></small></div></li>
+        <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 1.5h5l3.5 3.5v9.5h-8.5z"/><path d="M9 1.5V5h3.5"/></svg></span><div><b>学会発表</b><small>バンコク（ITC-CSCC 2026、7月、口頭）、ブダペスト（ICMV 2026、10月16日、ポスター）、札幌（ICCAS 2026、10月30日、ポスター）、ソウル（ITC-CSCC 2025、ポスター） · <a href="/ja/research/#pubs">論文一覧</a></small></div></li>
+        <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 1.5l1.9 3.9 4.3.6-3.1 3 .7 4.3L8 11.3l-3.8 2 .7-4.3-3.1-3 4.3-.6z"/></svg></span><div><b>ロータリー米山記念奨学生</b><small>2026年、日本語の面接で選考</small></div></li>
+        <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12.5l4-4 3 3 5-6"/><path d="M10.5 5.5H14V9"/></svg></span><div><b>オランダ出張（2026.09 – 10）</b><small>受託研究のシステムを現地導入</small></div></li>
+        <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 1.5l5.5 2v4c0 3.4-2.4 6-5.5 7-3.1-1-5.5-3.6-5.5-7v-4z"/><path d="M5.5 8l2 2 3-3.5"/></svg></span><div><b>兵役：産業技能要員として服務満了</b><small>2022.07 – 2024.07、23か月</small></div></li>
+        <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="8" cy="4" rx="5.5" ry="2"/><path d="M2.5 4v8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2V4M2.5 8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2"/></svg></span><div><b>SQLD（SQL開発者）</b><small>韓国データ産業振興院、2023.10</small></div></li>
+        <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.5"/><path d="M1.5 8h13M8 1.5c2 2 2 11 0 13M8 1.5c-2 2-2 11 0 13"/></svg></span><div><b>語学</b><small>韓国語（母語）、日本語（ビジネス会話）、英語（業務レベル）</small></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="次へ">
+    <a href="/ja/#systems"><small>← ホーム</small><b>4つのシステムのフロー図</b></a>
+    <a class="next" href="/ja/research/"><small>研究 →</small><b>研究とレンズアレイ実験室</b></a>
+  </nav>
+</div>

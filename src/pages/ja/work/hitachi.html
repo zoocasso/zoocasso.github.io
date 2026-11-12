@@ -1,0 +1,109 @@
+<!--meta {"title": "日立グループとの受託研究 画像データパイプライン", "description": "日立グループとの受託研究で、保守できなくなっていた撮影コードを、マシンビジョンカメラの制御から学習用データセットまで一つのPythonパイプラインとPyQtのGUIに書き直し、2026年9〜10月にオランダの現地ラボに導入した記録。", "nav": "systems"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="現在地"><a href="/ja/">ホーム</a><span aria-hidden="true">/</span><a href="/ja/#systems">システム</a><span aria-hidden="true">/</span><span aria-current="page">日立グループとの受託研究</span></nav>
+    <h1 id="d-h">開発者1人に依存していたデータセット作成を、<br>研究員が自分で回せるパイプラインに</h1>
+    <p class="hero-lede">九州工業大学の研究室で、日立グループとの受託研究に研究補助員として携わっています。マシンビジョンカメラでAI学習用のデータを作るコードを一から書き直し、2026年9〜10月にオランダの現地ラボに導入しました。</p>
+    <dl class="meta-grid">
+      <div><dt>期間</dt><dd>2025.04 – 現在<small>九州工業大学の研究室 · 研究補助員（非常勤）</small></dd></div>
+      <div><dt>役割</dt><dd>パイプラインの設計・開発<small>設計を研究室の後輩2名に引き継ぎ</small></dd></div>
+      <div><dt>プロジェクト</dt><dd>日立グループとの受託研究<small>プロジェクトパートナーと行う現地での実験</small></dd></div>
+      <div><dt>結果</dt><dd>2026.09–10 オランダで現地導入<small>業務言語は日本語・英語</small></dd></div>
+    </dl>
+    <div class="kpis row" aria-label="主な結果">
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>現地導入</span><span class="kpi-val">2026<small>.09–10</small></span><span class="kpi-label">オランダの現地ラボで、実際のデータ作成に使用</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>直接使用</span><span class="kpi-val">GUI<small>1つ</small></span><span class="kpi-label">現場の日立グループの担当者が自分で実行</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>デモ</span><span class="kpi-val">現場<small>デモ</small></span><span class="kpi-label">プロジェクトパートナーの研究者の前で直接デモ</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>引き継ぎ</span><span class="kpi-val">2<small>名</small></span><span class="kpi-label">研究室の後輩に、設計の意図から引き継ぎ</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="d-section" id="arch" aria-labelledby="arch-h">
+    <div class="sec-head">
+      <div>
+        <h2 id="arch-h">アーキテクチャ</h2>
+        <p class="sec-desc">カメラから学習用データセットまでの段階です。プロジェクトのコードとデータは公開できないため、段階だけを描いています。</p>
+      </div>
+      <div class="legend" aria-label="凡例">
+        <span><i class="sw me" aria-hidden="true"></i>自分で構築</span>
+        <span><i class="sw other" aria-hidden="true"></i>他の担当者</span>
+        <span><i class="sw ext" aria-hidden="true"></i>機材</span>
+        <button class="toggle" type="button" data-mine-toggle aria-pressed="false"><span class="knob" aria-hidden="true"></span>自分の担当だけ強調</button>
+      </div>
+    </div>
+    <div class="sys">
+      {{inc:flow-hitachi}}
+      <div class="sys-outcome"><span class="k">結果</span><span><b>2026年9〜10月、オランダの現地ラボに導入</b></span><span>日立グループの担当者が現場で直接使用 · プロジェクトパートナーの研究者の前でデモ</span></div>
+    </div>
+  </section>
+
+  <section class="d-section" id="context" aria-labelledby="ctx-h">
+    <h2 id="ctx-h">背景</h2>
+    <div class="prose">
+      <p>このプロジェクトでは、産業用マシンビジョンカメラで撮影した映像からAI学習用のデータを作ります。2025年4月に私が引き継いだ既存のコードは、保守できない状態でした。最初は問題が起きた箇所だけを直して使っていましたが、撮影条件が変わるたびに別の箇所が壊れ、データセットを作るたびに開発者が付きっきりになる必要がありました。</p>
+      <p>問題は症状ではなく構造にあると判断しました。核心は、<b>データセットの作成が開発者1人に依存している</b>ことでした。</p>
+    </div>
+  </section>
+
+  <section class="d-section" id="decisions" aria-labelledby="dec-h">
+    <h2 id="dec-h">主な判断</h2>
+    <p class="sec-desc">書き直すと決めた理由と、結果が変わらないようにした方法です。</p>
+    <ol class="decisions">
+      <li><h3>部分的な修正をやめ、全体を書き直す</h3>
+        <dl class="dl"><dt>理由</dt><dd>直すたびに別の箇所が壊れ、パッチを重ねるほど、データセットの作成が開発者に依存していきました。</dd><dt>方法</dt><dd>カメラ制御・撮影から学習用データセットの前処理までを、一つのPythonパイプラインとして作り直しました。</dd></dl></li>
+      <li><h3>既存の結果を基準値にして、段階的に置き換える</h3>
+        <dl class="dl"><dt>理由</dt><dd>全体を書き直すと、気づかないうちに結果が変わってしまうおそれがありました。</dd><dt>方法</dt><dd>同じ入力で新旧のコードの数値が一致するかを比べながら、段階ごとに置き換えました。</dd></dl></li>
+      <li><h3>開発者でなくても自分で動かせるGUI</h3>
+        <dl class="dl"><dt>理由</dt><dd>データセットを作るのは研究員なのに、実行できるのは開発者だけでした。</dd><dt>方法</dt><dd>PyQtのGUIを作り、PyInstallerの実行ファイルとして配布しました。研究員が開発環境なしで、自分でデータセットを作れます。</dd></dl></li>
+      <li><h3>コードより先に、設計の意図を引き継ぐ</h3>
+        <dl class="dl"><dt>理由</dt><dd>私が抜けても、プロジェクトが止まらないようにする必要がありました。</dd><dt>方法</dt><dd>研究室の後輩2名に、各段階をなぜそう分けたのかから共有し、現地のハードウェア構築は後輩が担当しました。</dd></dl></li>
+    </ol>
+  </section>
+
+  <section class="d-section" id="scope" aria-labelledby="scope-h">
+    <h2 id="scope-h">担当範囲</h2>
+    <p class="sec-desc">私が担当したエンジニアリングの範囲と、現場で他の人が担当した部分です。</p>
+    <div class="card scope-tbl">
+      <div class="scope-col">
+        <h3><i class="sw me" aria-hidden="true"></i>私が作ったもの</h3>
+        <ul>
+          <li>カメラ制御・撮影から学習用データセットの前処理までをつなぐ<b>Pythonパイプライン</b>の書き直し</li>
+          <li>マシンビジョンカメラ複数台の制御と、撮影条件の標準化（Spinnaker SDK、PySpin）</li>
+          <li><b>計測・解析プログラム</b></li>
+          <li>開発者ではない研究員向けの<b>PyQt GUI</b>と、PyInstallerの実行ファイルでの配布</li>
+          <li>研究室の後輩2名への設計の引き継ぎ、現地導入とデモ</li>
+        </ul>
+      </div>
+      <div class="scope-col other">
+        <h3><i class="sw other" aria-hidden="true"></i>他の人が行ったこと</h3>
+        <ul>
+          <li><b>研究室の後輩</b> · 現地ラボのハードウェア構築</li>
+          <li><b>プロジェクトパートナーの研究者</b> · サンプルの準備と基準判定</li>
+          <li><b>日立グループの担当者</b> · 現場でプログラムを直接使用</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="d-section" id="onsite" aria-labelledby="site-h">
+    <h2 id="site-h">オランダでの現地導入（2026年9〜10月）</h2>
+    <div class="card">
+      <ol class="changelog">
+        <li><span class="when">2025.04</span><span class="rail" aria-hidden="true"></span><div class="what"><b>既存コードの引き継ぎ</b>保守できない状態。部分的な修正でしのいだのち、全体の書き直しを決定。</div></li>
+        <li><span class="when">2025.04以降</span><span class="rail" aria-hidden="true"></span><div class="what"><b>パイプラインとGUIの書き直し</b>既存の結果と数値を照合しながら、段階ごとに置き換え。研究室の後輩2名に設計を引き継ぎ。</div></li>
+        <li><span class="when">2026.09 – 10</span><span class="rail" aria-hidden="true"></span><div class="what"><b>現地ラボの準備</b>当研究室と日立グループの社員が現地のラボを割り当てられ、ともに作業。後輩がハードウェアを構築。</div></li>
+        <li><span class="when">2026.09 – 10</span><span class="rail" aria-hidden="true"></span><div class="what"><b>実際のデータ作成</b>プロジェクトパートナーの研究者がサンプルと基準判定を準備し、計測・解析プログラムでAI学習用のデータを作成。日立グループの担当者が直接使用。</div></li>
+        <li class="out"><span class="when">2026.09 – 10</span><span class="rail" aria-hidden="true"></span><div class="what"><b>プロジェクトパートナーの前でデモ</b>実務を担う側とプロジェクトパートナーの双方から良い評価を得ました。現地での業務は日本語と英語で行いました。</div></li>
+      </ol>
+    </div>
+    <p class="note">受託研究の機密のため、研究テーマ、計測対象、コードとデータは記載していません。このページでは、私が担当したエンジニアリングの範囲だけを説明しています。</p>
+    <ul class="chips" style="margin-top:16px" aria-label="使用技術"><li>Python</li><li>Spinnaker SDK</li><li>PySpin</li><li>PyQt</li><li>PyInstaller</li></ul>
+  </section>
+
+  <nav class="pager" aria-label="他のシステム">
+    <a href="/ja/work/genomics/"><small>← 前のシステム</small><b>ゲノム変異のアノテーション・レポート</b></a>
+    <a class="next" href="/ja/work/wjmax/"><small>次のシステム →</small><b>WJMaxゲームサーバー</b></a>
+  </nav>
+</div>

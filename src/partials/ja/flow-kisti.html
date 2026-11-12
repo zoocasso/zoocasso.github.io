@@ -1,0 +1,73 @@
+<div class="flow" data-edges="k-amz>k-farm|クローリング; k-dnw>k-farm; k-amz>k-api; k-pps>k-api|API; k-farm>k-db|蓄積; k-api>k-db; k-db>k-models|日次バッチ; k-models>k-srv; k-univ>k-proto|設計; k-srv>k-kisti; k-proto>k-kisti">
+  <ol class="stages" style="--cols:6">
+    <li class="stage"><div class="stage-h"><span class="n">01</span>ソース</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-amz" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">Amazon</span><span class="node-metric">細分類 10,985個</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>Seleniumのクローラーで、細分類11,046個のうち<b>10,985個</b>を収集。2022年9月に収集した商品ID（ASIN）{{f:kisti_asin}}を重複除去し、<b>{{f:kisti_asin_dedup}}</b>に整理。</dd><dt>その後</dt><dd>Rainforest APIに移行（2023年7月に選定、2024年2〜5月に実装）。</dd><dt>技術</dt><dd><ul class="chips"><li>Selenium</li><li>Rainforest API</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-dnw" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">Danawa</span><span class="node-metric">カテゴリ 2,481個</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>Seleniumのクローラーで、Danawa（韓国の価格比較サイト）のカテゴリ2,517個のうち<b>2,481個</b>を収集。2023年11月時点で商品417,240件、レビュー16,049,734件。</dd><dt>技術</dt><dd><ul class="chips"><li>Selenium</li><li>BeautifulSoup</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-pps" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">調達庁・ナラジャント</span><span class="node-metric">公共データポータルAPI</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>調達庁（韓国）の公共データポータルAPIからの収集と、ナラジャント（韓国の電子調達システム）のクローリング。2023年11月時点でAPI収集分4,779,512件、個別属性41,917,377件。</dd><dt>技術</dt><dd><ul class="chips"><li>REST API</li><li>Python</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">02</span>収集</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-farm" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">分散クローラー群</span><span class="node-metric">{{f:kisti_farm}}</span><span class="node-tag">自分で構築</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>{{f:kisti_farm}}でクローラーを分散して動かし、結果を1台のリモートDBに蓄積する収集環境を構築・運用（2022年11月〜2023年1月）。</dd><dt>理由</dt><dd>収集先サイトのブロックを避けるため、分散して動かしました。</dd><dt>技術</dt><dd><ul class="chips"><li>Python</li><li>Selenium</li><li>BeautifulSoup</li><li>MySQL</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-api" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">API収集器</span><span class="node-metric">調達庁・Rainforest</span><span class="node-tag">自分で構築</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>調達庁の公共データポータルAPIの収集器を開発。直接のクローリングは頻繁にブロックされ、法的なリスクもあったため、公式APIでの収集を提案し、2023年6月に発注元（KISTI）と協議して採用されました。Amazonの収集をRainforest APIに移す作業を実装（2024年2〜5月）。</dd><dt>技術</dt><dd><ul class="chips"><li>Python</li><li>REST API</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">03</span>保存</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-db" data-owner="me" data-default>
+          <button class="node-btn" type="button"><span class="node-title">中央MySQL</span><span class="node-metric">{{f:kisti_rows_short}} 行（2023.11）</span><span class="node-tag">自分で構築</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>収集結果を中央MySQLに蓄積。2023年11月時点の累計は<b>{{f:kisti_rows}}</b>：調達の個別属性4,192万・Danawaのレビュー1,605万・Amazonの商品詳細999万・レビューキーワード788万・調達API 478万・Amazonの商品93万・Danawaの商品42万。</dd><dt>技術</dt><dd><ul class="chips"><li>MySQL</li><li>SQLAlchemy</li><li>pandas</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">04</span>処理</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-models" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">分析モデルの運用</span><span class="node-metric">マッチング {{f:kisti_match}}</span><span class="node-tag">自分で構築</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>モデル3：NTIS（韓国の国家研究開発情報）の研究課題とNICE（韓国の企業情報データベース）の企業を、キーワードで結ぶマッチング<b>{{f:kisti_match}}</b>（SQL）。モデル4：価格帯ごとのK-meansクラスタリング（クラスタ数はDunn indexで選択）。モデル5：レビューから要求品質のキーワードを抽出する日次バッチ（KeyBERT・Sentence-Transformers・Mecab）。2024年はモデル3.1に対応して、調達庁の価格・属性・納品の統計をSQLで作成。</dd><dt>技術</dt><dd><ul class="chips"><li>SQL</li><li>scikit-learn</li><li>KeyBERT</li><li>Sentence-Transformers</li><li>Mecab</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-univ" data-owner="other">
+          <button class="node-btn" type="button"><span class="node-title">一部モデルの設計</span><span class="node-metric">モデル1・2の一部</span><span class="node-tag">大学の委託研究</span></button>
+          <div class="node-detail"><dl class="dl"><dt>他の担当</dt><dd>プラットフォームのモデルの一部は、大学の委託研究チーム（成均館大学校、国民大学校）が設計しました。Vision Insideは、それらのモデルが使うデータと提供の層を担当しました。</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">05</span>提供</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-srv" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">FastAPI・管理画面</span><span class="node-metric">Jinja2 · Tabulator</span><span class="node-tag">自分で構築</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>分析モデルをFastAPIのサービスとして提供し、管理画面（フィルター、バッチの順次実行、統合検索、Excelダウンロード）を開発。</dd><dt>技術</dt><dd><ul class="chips"><li>FastAPI</li><li>Jinja2</li><li>Tabulator</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-proto" data-owner="other">
+          <button class="node-btn" type="button"><span class="node-title">プロトタイプのWeb</span><span class="node-metric">Java/Tomcat</span><span class="node-tag">協力会社が開発</span></button>
+          <div class="node-detail"><dl class="dl"><dt>他の担当</dt><dd>協力会社が開発したKISTIのプロトタイプ（モデル1・2、Java/TomcatのWeb）。</dd><dt>担当内容</dt><dd>社内サーバーに移設し、Dockerの実行環境を構成（2023年3〜5月）。</dd><dt>技術</dt><dd><ul class="chips"><li>Docker</li><li>Linux</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">06</span>利用者</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-kisti" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">KISTIの研究者</span><span class="node-metric">発注・プロジェクト設計</span></button>
+          <div class="node-detail"><dl class="dl"><dt>他の担当</dt><dd>プロジェクトはKISTIが発注し、KISTIの研究者が設計しました。</dd><dt>担当内容</dt><dd>技術会議（2022年8〜10月に毎週、約9回。その後は不定期）で結果を発表し、データやコードの依頼に直接対応。監理（公共ITプロジェクトの第三者検査）用の成果物（運用者マニュアル、初期データ構築完了報告書）を作成。</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+  </ol>
+</div>
+<div class="inspector" aria-live="polite"><div class="insp-side"></div><div class="insp-main"></div></div>
