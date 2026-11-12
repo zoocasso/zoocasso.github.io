@@ -635,7 +635,7 @@ function camera(asp, now) {
   if (kr > 0) {
     // the result: the reconstruction plane head on, as large as the room between the stage top and the
     // dialogue allows, and kept there while the slider moves it in depth
-    const zRec = scene.za + scene.zb * st.D, top = 18;
+    const zRec = scene.za + scene.zb * st.D, top = 44; // clear of the figure caption above
     const room = 16;
     const avail = Math.max(0.3, (dialogEl.offsetTop - room - top) / sh2);
     // views shifted by D spread the reconstruction past the square by D * (NP - 1) / 2 lenses a side
