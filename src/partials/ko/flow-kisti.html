@@ -1,0 +1,73 @@
+<div class="flow" data-edges="k-amz>k-farm|크롤링; k-dnw>k-farm; k-amz>k-api; k-pps>k-api|API; k-farm>k-db|적재; k-api>k-db; k-db>k-models|일 배치; k-models>k-srv; k-univ>k-proto|설계; k-srv>k-kisti; k-proto>k-kisti">
+  <ol class="stages" style="--cols:6">
+    <li class="stage"><div class="stage-h"><span class="n">01</span>소스</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-amz" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">Amazon</span><span class="node-metric">세분류 10,985개</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>Selenium 크롤러로 세분류 11,046개 중 <b>10,985개</b>를 수집. 2022년 9월 수집한 상품 ID(ASIN) {{f:kisti_asin}}를 중복 제거해 <b>{{f:kisti_asin_dedup}}</b>로 정리.</dd><dt>이후</dt><dd>Rainforest API로 전환 (2023년 7월 선정, 2024년 2~5월 구현).</dd><dt>기술</dt><dd><ul class="chips"><li>Selenium</li><li>Rainforest API</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-dnw" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">다나와</span><span class="node-metric">카테고리 2,481개</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>Selenium 크롤러로 카테고리 2,517개 중 <b>2,481개</b> 수집. 2023년 11월 기준 상품 417,240건, 리뷰 16,049,734건.</dd><dt>기술</dt><dd><ul class="chips"><li>Selenium</li><li>BeautifulSoup</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-pps" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">조달청 · 나라장터</span><span class="node-metric">공공데이터포털 API</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>조달청 공공데이터포털 API 수집과 나라장터 크롤링. 2023년 11월 기준 API 수집분 4,779,512건, 개별 속성 41,917,377건.</dd><dt>기술</dt><dd><ul class="chips"><li>REST API</li><li>Python</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">02</span>수집</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-farm" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">분산 크롤링 팜</span><span class="node-metric">{{f:kisti_farm}}</span><span class="node-tag">직접 구축</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>{{f:kisti_farm}}에서 크롤러를 나눠 돌리고 결과를 원격 DB 1대에 적재하는 수집 환경을 구축·운영 (2022년 11월 ~ 2023년 1월).</dd><dt>이유</dt><dd>수집 대상 사이트의 차단을 피하려고 나눠 돌렸습니다.</dd><dt>기술</dt><dd><ul class="chips"><li>Python</li><li>Selenium</li><li>BeautifulSoup</li><li>MySQL</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-api" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">API 수집기</span><span class="node-metric">조달청 · Rainforest</span><span class="node-tag">직접 구축</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>조달청 공공데이터포털 API 수집기 개발. 직접 크롤링이 자주 막히고 법적 위험도 있어 공식 API로 수집하자고 제안했고, 2023년 6월 발주처(KISTI)와 협의해 반영. Amazon 수집을 Rainforest API로 옮기는 작업을 구현 (2024년 2~5월).</dd><dt>기술</dt><dd><ul class="chips"><li>Python</li><li>REST API</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">03</span>저장</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-db" data-owner="me" data-default>
+          <button class="node-btn" type="button"><span class="node-title">중앙 MySQL</span><span class="node-metric">{{f:kisti_rows_short}} 행 (2023.11)</span><span class="node-tag">직접 구축</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>수집 결과를 중앙 MySQL에 적재. 2023년 11월 기준 누적 <b>{{f:kisti_rows}}</b>: 조달 개별 속성 4,192만 · 다나와 리뷰 1,605만 · Amazon 상품 상세 999만 · 리뷰 키워드 788만 · 조달 API 478만 · Amazon 상품 93만 · 다나와 상품 42만.</dd><dt>기술</dt><dd><ul class="chips"><li>MySQL</li><li>SQLAlchemy</li><li>pandas</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">04</span>처리</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-models" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">분석 모델 운영화</span><span class="node-metric">매칭 {{f:kisti_match}}</span><span class="node-tag">직접 구축</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>모델 3: NTIS 과제–NICE 기업 키워드 매칭 <b>{{f:kisti_match}}</b>(SQL). 모델 4: 가격대별 K-means 클러스터링(군집 수는 Dunn index로 선택). 모델 5: 리뷰 요구 품질 키워드 추출 일 배치(KeyBERT·Sentence-Transformers·Mecab). 2024년 모델 3.1 대응으로 조달청 가격·속성·납품 통계 SQL.</dd><dt>기술</dt><dd><ul class="chips"><li>SQL</li><li>scikit-learn</li><li>KeyBERT</li><li>Sentence-Transformers</li><li>Mecab</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-univ" data-owner="other">
+          <button class="node-btn" type="button"><span class="node-title">일부 모델 설계</span><span class="node-metric">모델 1·2 일부</span><span class="node-tag">대학 위탁연구</span></button>
+          <div class="node-detail"><dl class="dl"><dt>다른 주체</dt><dd>플랫폼 모델 일부는 대학 위탁연구팀(성균관대, 국민대)이 설계했습니다. 비전인사이드는 그 모델들이 쓰는 데이터와 서빙 계층을 맡았습니다.</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">05</span>서빙</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-srv" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">FastAPI · 관리 화면</span><span class="node-metric">Jinja2 · Tabulator</span><span class="node-tag">직접 구축</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>분석 모델을 FastAPI 서비스로 제공하고, 관리 화면(필터, 순차 배치 실행, 통합 검색, 엑셀 다운로드)을 개발.</dd><dt>기술</dt><dd><ul class="chips"><li>FastAPI</li><li>Jinja2</li><li>Tabulator</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-proto" data-owner="other">
+          <button class="node-btn" type="button"><span class="node-title">프로토타입 웹</span><span class="node-metric">Java/Tomcat</span><span class="node-tag">협력사 개발</span></button>
+          <div class="node-detail"><dl class="dl"><dt>다른 주체</dt><dd>협력사가 개발한 KISTI 프로토타입(모델 1·2, Java/Tomcat 웹).</dd><dt>한 일</dt><dd>사내 서버로 이전하고 Docker 실행 환경을 구성 (2023년 3~5월).</dd><dt>기술</dt><dd><ul class="chips"><li>Docker</li><li>Linux</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">06</span>사용자</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-kisti" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">KISTI 연구진</span><span class="node-metric">발주 · 과제 설계</span></button>
+          <div class="node-detail"><dl class="dl"><dt>다른 주체</dt><dd>과제는 KISTI가 발주하고 KISTI 연구진이 설계했습니다.</dd><dt>한 일</dt><dd>기술 회의(2022년 8~10월 주 단위 약 9회, 이후 비정기)에서 결과를 발표하고 데이터·코드 요청에 직접 대응. 감리 산출물(운영자 매뉴얼, 초기데이터구축완료보고서) 작성.</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+  </ol>
+</div>
+<div class="inspector" aria-live="polite"><div class="insp-side"></div><div class="insp-main"></div></div>

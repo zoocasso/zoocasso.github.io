@@ -7,17 +7,17 @@
 'use strict';
 const NP = 8, C = (NP - 1) / 2, NF = 31, Z0 = 0.36, Z1 = 1.55;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const lang = document.documentElement.lang === 'en' ? 'en' : 'ko';
+const lang = ['en', 'ja'].includes(document.documentElement.lang) ? document.documentElement.lang : 'ko';
 // phones get the 500 px set so 64 decoded views stay within their memory
 const base = (fig) => fig.dataset.dir + (Math.min(window.innerWidth, screen.width || 9999) < 700 ? 's/' : '');
 const load = (src) => new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
 // depth of each object (median over its pixels in the centre render, metres)
 const OBJ = [
-  { z: 0.3854, ko: '앞쪽 원숭이 머리', en: 'monkey head in front' },
-  { z: 0.624, ko: '원환체', en: 'torus' },
-  { z: 0.877, ko: '정육면체', en: 'cube' },
-  { z: 1.1463, ko: '원뿔', en: 'cone' },
-  { z: 1.4066, ko: '뒤쪽 구', en: 'sphere at the back' }
+  { z: 0.3854, ko: '앞쪽 원숭이 머리', en: 'monkey head in front', ja: '手前のサルの頭' },
+  { z: 0.624, ko: '원환체', en: 'torus', ja: 'トーラス' },
+  { z: 0.877, ko: '정육면체', en: 'cube', ja: '立方体' },
+  { z: 1.1463, ko: '원뿔', en: 'cone', ja: '円錐' },
+  { z: 1.4066, ko: '뒤쪽 구', en: 'sphere at the back', ja: '奥の球' }
 ];
 
 function viewer(fig, h) {
@@ -95,7 +95,8 @@ async function refocus(fig) {
       g.globalAlpha = 1; g.drawImage(frames[i], 0, 0);
       if (a > 0.002) { g.globalAlpha = a; g.drawImage(frames[i + 1], 0, 0); g.globalAlpha = 1; }
       const z = Z0 + (Z1 - Z0) * v, o = OBJ.find((ob) => Math.abs(z - ob.z) < 0.06);
-      label.textContent = o ? (lang === 'ko' ? `초점: ${o.ko} (${o.z.toFixed(2)} m)` : `Focus: ${o.en} (${o.z.toFixed(2)} m)`) : (lang === 'ko' ? `초점 깊이 ${z.toFixed(2)} m` : `Focus depth ${z.toFixed(2)} m`);
+      const T = { ko: ['초점: ', '초점 깊이 '], en: ['Focus: ', 'Focus depth '], ja: ['ピント：', 'ピントの奥行き '] }[lang];
+      label.textContent = o ? `${T[0]}${o[lang]} (${o.z.toFixed(2)} m)` : `${T[1]}${z.toFixed(2)} m`;
     }
   });
 }

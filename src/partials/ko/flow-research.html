@@ -1,0 +1,66 @@
+<div class="flow rs">
+  <div class="lane-heads" style="--cols:4" aria-hidden="true"><span></span><span><i class="n">01</i>입력</span><span><i class="n">02</i>변환</span><span><i class="n">03</i>재구성</span><span><i class="n">04</i>결과</span></div>
+  <div class="lanes">
+    <div class="lane" style="--cols:4">
+      <div class="lane-name"><b>ICMV 2026</b><a href="/research/rim/">RIM · 각도 정보를 공간 해상도로</a></div>
+      <ol>
+        <li class="node" data-id="r-lytro" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-stage">입력</span><span class="node-title">렌즈 배열 영상</span><span class="node-metric">Stanford Lytro 7개 장면</span></button>
+          <div class="node-detail"><dl class="dl"><dt>데이터</dt><dd>Stanford Lytro 라이트필드 7개 장면으로 평가했습니다. 렌즈 하나가 만드는 요소 영상은 몇 픽셀 크기로 작습니다.</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-rim" data-owner="me" data-default>
+          <button class="node-btn" type="button"><span class="node-stage">변환</span><span class="node-title">RIM 재배열</span><span class="node-metric">양자화 오차 0</span><span class="node-tag">1저자</span></button>
+          <div class="node-detail"><dl class="dl"><dt>방법</dt><dd>(렌즈 번호, 렌즈 안 픽셀 위치)를 맞바꾸는 일대일 재배열(Ray-based Inverse Mapping). 텔레센트릭 촬영과 정사영 재촬영 조건에서 보간이 없어 양자화 오차가 0입니다.</dd><dt>발표</dt><dd>ICMV 2026, 부다페스트 · <b>최우수 포스터상</b></dd><dt>자세히</dt><dd><a href="/research/rim/">RIM·iRIM 페이지</a></dd></dl></div>
+        </li>
+        <li class="node" data-id="r-ciir" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-stage">재구성</span><span class="node-title">집적영상 재구성</span><span class="node-metric">CIIR</span><span class="node-tag">1저자</span></button>
+          <div class="node-detail"><dl class="dl"><dt>방법</dt><dd>재배열한 시점 영상을 컴퓨터 집적영상 재구성(CIIR)의 앞 단계로 쓰고, 요소 영상을 그대로 쓴 경우와 비교했습니다.</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-eval" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-stage">결과</span><span class="node-title">화질 · 검출 지표</span><span class="node-metric">PSNR +2.39 dB · mAP50 +0.11</span><span class="node-tag">논문 기재값</span></button>
+          <div class="node-detail"><dl class="dl"><dt>결과</dt><dd>Lytro 7개 장면에서 {{f:rim_psnr}}, {{f:rim_ssim}}, 사전학습 YOLO 검출 {{f:rim_map}}.</dd></dl></div>
+        </li>
+      </ol>
+    </div>
+    <div class="lane" style="--cols:4">
+      <div class="lane-name"><b>ITC-CSCC 2025 · 2026</b><a href="/research/origin-point/">원점 최적화 VCR</a></div>
+      <ol>
+        <li class="node" data-id="r-ei" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-stage">입력</span><span class="node-title">요소 영상</span><span class="node-metric">9×9 · 카메라 파라미터</span></button>
+          <div class="node-detail"><dl class="dl"><dt>데이터</dt><dd>9×9 요소 영상과 카메라 파라미터, 재생할 깊이.</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-org" data-owner="me" data-in="파라미터">
+          <button class="node-btn" type="button"><span class="node-stage">변환</span><span class="node-title">원점 계산</span><span class="node-metric">반복 탐색 → 계산 한 번</span><span class="node-tag">1저자</span></button>
+          <div class="node-detail"><dl class="dl"><dt>방법</dt><dd>양자화 오차를 줄이는 원점을 찾으려고 재생을 반복하던 탐색을, 카메라 파라미터만으로 하는 계산으로 바꿨습니다. 논문 실험에서 반복 탐색과 같은 원점·SSIM을 얻었습니다.</dd><dt>발표</dt><dd>ITC-CSCC 2025(서울, 포스터) · ITC-CSCC 2026(방콕, 구두)</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-vcr" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-stage">재구성</span><span class="node-title">VCR 재생</span><span class="node-metric">재구성 81번 → 1번</span><span class="node-tag">1저자</span></button>
+          <div class="node-detail"><dl class="dl"><dt>결과</dt><dd>9×9 요소 영상 기준, 원점을 고르기 위한 재구성이 <b>81번에서 1번</b>으로 줄었습니다.</dd><dt>기술</dt><dd><ul class="chips"><li>Python</li><li>NumPy</li><li>CuPy</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="r-gpu" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-stage">결과</span><span class="node-title">처리 시간</span><span class="node-metric">0.31 s · GPU {{f:origin_gpu}}</span><span class="node-tag">논문 측정값</span></button>
+          <div class="node-detail"><dl class="dl"><dt>결과</dt><dd>CPU <b>0.31초</b>(논문 측정), GPU(CuPy, RTX 3090) <b>{{f:origin_gpu}}</b>. 반복 탐색의 25.45초는 1회 0.3142초 × 81로 낸 추정치입니다.</dd><dt>코드</dt><dd><a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">origin-point-optimization-vcr</a></dd></dl></div>
+        </li>
+      </ol>
+    </div>
+    <div class="lane" style="--cols:4">
+      <div class="lane-name"><b>ICCAS 2026</b><a href="/research/rim/#irim">iRIM · 가상 렌즈 배열</a></div>
+      <ol>
+        <li class="node" data-id="r-mv" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-stage">입력</span><span class="node-title">다시점 영상</span><span class="node-metric">블렌더 장면 렌더링</span></button>
+          <div class="node-detail"><dl class="dl"><dt>데이터</dt><dd>여러 위치에서 렌더링한 시점 영상.</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-irim" data-owner="me" data-in="역변환">
+          <button class="node-btn" type="button"><span class="node-stage">변환</span><span class="node-title">iRIM</span><span class="node-metric">RIM의 역변환</span><span class="node-tag">1저자</span></button>
+          <div class="node-detail"><dl class="dl"><dt>방법</dt><dd>RIM이 일대일 대응이라 거꾸로도 쓸 수 있습니다. 다시점 영상에서 원하는 가상 렌즈 배열의 요소 영상을 합성합니다.</dd><dt>발표</dt><dd>ICCAS 2026, 삿포로 · 포스터 발표</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-vla" data-owner="me" data-in="합성">
+          <button class="node-btn" type="button"><span class="node-stage">결과</span><span class="node-title">가상 렌즈 배열 영상</span><span class="node-metric">유효 영역 100%</span><span class="node-tag">1저자</span></button>
+          <div class="node-detail"><dl class="dl"><dt>결과</dt><dd>24인치 FHD 패널에 맞춘 6×6 구성(렌즈 320×180개). 모든 시점 영상의 유효 영역이 100%로, 렌즈 배열 카메라 시뮬레이션의 모서리 시점(6.7%)과 비교됩니다.</dd></dl></div>
+        </li>
+        <li class="node empty" aria-hidden="true"></li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="inspector" aria-live="polite"><div class="insp-side"></div><div class="insp-main"></div></div>

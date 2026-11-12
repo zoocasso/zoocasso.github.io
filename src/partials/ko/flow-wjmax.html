@@ -1,0 +1,37 @@
+<div class="flow" data-edges="w-client>w-cf|플레이 보고; w-cf>w-api|프록시; w-api>w-rds|저장">
+  <ol class="stages" style="--cols:4">
+    <li class="stage"><div class="stage-h"><span class="n">01</span>클라이언트</div>
+      <ul class="nodes">
+        <li class="node" data-id="w-client" data-owner="other">
+          <button class="node-btn" type="button"><span class="node-title">게임 클라이언트</span><span class="node-metric">동접 평균 ~300 · 최대 ~2,000</span><span class="node-tag">다른 1명 개발</span></button>
+          <div class="node-detail"><dl class="dl"><dt>다른 주체</dt><dd>게임 클라이언트는 팀의 다른 1명이 만들었습니다.</dd><dt>규모</dt><dd>평균 동시 접속 {{f:wjmax_avg}}, 업데이트 때 최대 {{f:wjmax_peak}}.</dd><dt>보고</dt><dd>곡마다 차트 8개의 플레이 횟수를 서버로 보냅니다.</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">02</span>엣지</div>
+      <ul class="nodes">
+        <li class="node" data-id="w-cf" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">Cloudflare</span><span class="node-metric">프록시 · WAF</span><span class="node-tag">직접 구성</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>서버 앞단에 Cloudflare 프록시와 WAF를 구성. 인증 없이 들어오는 보고의 남용을 앞에서 막습니다.</dd><dt>기술</dt><dd><ul class="chips"><li>Cloudflare</li><li>WAF</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">03</span>API 서버</div>
+      <ul class="nodes">
+        <li class="node" data-id="w-api" data-owner="me" data-default>
+          <button class="node-btn" type="button"><span class="node-title">FastAPI (Docker)</span><span class="node-metric">AWS EC2</span><span class="node-tag">직접 구축</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>EC2의 Docker 컨테이너에서 FastAPI 플레이 로그 수집 API를 운영. 2026년 10월 재작성본은 커넥션 풀 고갈, 재전송 중복 저장, 입력 검사를 다룹니다.</dd><dt>기술</dt><dd><ul class="chips"><li>FastAPI</li><li>Docker</li><li>AWS EC2</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">04</span>저장</div>
+      <ul class="nodes">
+        <li class="node" data-id="w-rds" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">MySQL</span><span class="node-metric">AWS RDS</span><span class="node-tag">직접 구축</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>플레이 보고를 RDS MySQL에 저장. 재작성본은 곡 제목을 바이트 그대로 비교하는 콜레이션(utf8mb4_0900_bin)을 씁니다.</dd><dt>기술</dt><dd><ul class="chips"><li>MySQL</li><li>AWS RDS</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+  </ol>
+</div>
+<div class="inspector" aria-live="polite"><div class="insp-side"></div><div class="insp-main"></div></div>
