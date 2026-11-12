@@ -225,8 +225,8 @@ def layout(lang, meta, body, path, alts_by_lang, v):
     </nav>
     <div class="top-actions">
       {sound_btn}<span class="lang" role="group" aria-label="{t['langs']}">{"".join(switch(k, label, full) for k, label, full in SWITCH)}</span>
-      <a class="btn btn-primary" href="{pdf['cv']}"{pdf_title}>{SVG['cv']}<span class="lbl">{e(t['cv'])}</span><span class="lbl-long"> PDF</span></a>
-      <a class="btn btn-pf" href="{pdf['portfolio']}"{pdf_title}>{SVG['pf']}<span class="lbl">{e(t['pf'])}</span></a>
+      <a class="btn btn-primary" href="{pdf['cv']}"{pdf_title} aria-label="{e(t['cv_pdf'])}">{SVG['cv']}<span class="lbl">{e(t['cv'])}</span><span class="lbl-long"> PDF</span></a>
+      <a class="btn btn-pf" href="{pdf['portfolio']}"{pdf_title} aria-label="{e(t['pf_pdf'])}">{SVG['pf']}<span class="lbl">{e(t['pf'])}</span></a>
       <button class="btn btn-icon" {copy_attrs} aria-label="{e(t['copy'])}" title="{e(t['copy'])}">{SVG['mail']}</button>
     </div>
   </div>

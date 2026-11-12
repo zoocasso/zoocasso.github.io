@@ -1,100 +1,109 @@
-<!--meta {"title": "Image-data pipeline for Hitachi", "description": "On commissioned research with Hitachi, I rewrote unmaintainable capture code into one Python pipeline with a PyQt GUI, from machine-vision camera control to model-ready datasets, and deployed it in a lab in the Netherlands in September and October 2026.", "nav": "work"} -->
-<div class="doc-head">
-  <p class="crumb"><a href="/en/work/">Work</a> / Hitachi image-data pipeline</p>
-  <h1>Dataset creation that only one developer could run, turned into a pipeline researchers run themselves</h1>
-  <p class="lede">I work as a research assistant on my Kyushu Institute of Technology lab's commissioned research with Hitachi. I rewrote the code that turns machine-vision camera captures into AI training data, and deployed it in a lab in the Netherlands.</p>
-  <dl class="meta">
-    <div><dt>Period</dt><dd>Apr 2025 – now</dd></div>
-    <div><dt>Organization and type</dt><dd>Kyushu Institute of Technology lab, commissioned research with Hitachi</dd></div>
-    <div><dt>Role</dt><dd>Research assistant (part-time)<br>Pipeline design and development; design handed over to two junior researchers</dd></div>
-    <div><dt>Stack</dt><dd>Python, Spinnaker SDK (PySpin), PyQt, PyInstaller</dd></div>
-  </dl>
-</div>
-
-<div class="doc">
-  <nav class="toc" aria-label="On this page">
-    <p>On this page</p>
-    <a href="#result">Results</a><a href="#context">Context</a><a href="#scope">My part</a><a href="#arch">Architecture</a><a href="#decisions">Decisions</a><a href="#onsite">On site in the Netherlands</a><a href="#proof">Evidence</a>
-  </nav>
-  <div>
-    <section id="result" aria-labelledby="h-result">
-      <h2 id="h-result">Results</h2>
-      <dl class="results">
-        <div><dt>Deployed</dt><dd>Used to produce real data in a research institute's lab in the Netherlands, Sep–Oct 2026</dd></div>
-        <div><dt>Hands-on</dt><dd>Hitachi staff on site ran it themselves through the GUI</dd></div>
-        <div><dt>Demo</dt><dd>I demonstrated it to the Dutch researchers, the project partner</dd></div>
-        <div><dt>Two juniors</dt><dd>Handed over from the design intent up, so it can be maintained without me</dd></div>
-      </dl>
-    </section>
-
-    <section id="context" aria-labelledby="h-context">
-      <h2 id="h-context">Context</h2>
-      <p>The project produces AI training data from images taken with industrial machine-vision cameras. The code I inherited in April 2025 could not be maintained. At first I fixed only what broke, but every change in capture conditions broke something else, and every dataset needed a developer sitting next to it.</p>
-      <p>I concluded the problem was the structure, not the symptoms: creating a dataset was tied to one developer.</p>
-    </section>
-
-    <section id="scope" aria-labelledby="h-scope">
-      <h2 id="h-scope">My part</h2>
-      <div class="scope">
-        <div>
-          <h3>What I did</h3>
-          <ul>
-            <li>Rewrote the pipeline in Python, from camera control and capture to preprocessing model-ready datasets</li>
-            <li>The measurement and analysis program</li>
-            <li>A PyQt GUI for non-developer researchers, shipped as a PyInstaller executable</li>
-            <li>Handover to two juniors, on-site deployment and the demo</li>
-          </ul>
-        </div>
-        <div>
-          <h3>What others did</h3>
-          <ul class="muted">
-            <li>Building the hardware in the lab on site: a junior researcher</li>
-            <li>Preparing samples and reference labels: the Dutch researchers</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section id="arch" class="full" aria-labelledby="h-arch">
-      <h2 id="h-arch">Architecture</h2>
-      <div class="diagram" role="img" aria-label="Flow from camera control to capture, measurement and analysis, preprocessing and a training dataset, all run from one PyQt GUI">
-        <div class="box"><b>Camera control</b><span>Several machine-vision cameras, Spinnaker SDK (PySpin)</span></div>
-        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
-        <div class="box"><b>Capture</b><span>Capture settings and storage</span></div>
-        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
-        <div class="box core"><b>Measurement and analysis</b><span>Values extracted from the captures and analysed</span></div>
-        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
-        <div class="box"><b>Preprocessing</b><span>Shaped for training</span></div>
-        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
-        <div class="box"><b>Training dataset</b><span>All run from one PyQt GUI</span></div>
-      </div>
-      <p class="muted" style="margin-top:10px;font-size:15px">The project's code and data cannot be published, so only the stages are drawn.</p>
-    </section>
-
-    <section id="decisions" aria-labelledby="h-decisions">
-      <h2 id="h-decisions">Decisions</h2>
-      <ol class="decisions">
-        <li><h3>Stop patching and rewrite the whole thing</h3>
-          <dl><dt>Why</dt><dd>Each fix broke something else, and every patch tied dataset creation more tightly to a developer.</dd><dt>How</dt><dd>I rewrote everything from camera control and capture to dataset preprocessing as one Python pipeline.</dd></dl></li>
-        <li><h3>Replace it step by step against the old results</h3>
-          <dl><dt>Why</dt><dd>A full rewrite risked changing the results without anyone noticing.</dd><dt>How</dt><dd>On the same inputs, I checked that the new code's numbers matched the old code's before replacing each stage.</dd></dl></li>
-        <li><h3>A GUI that non-developers run themselves</h3>
-          <dl><dt>Why</dt><dd>Researchers are the ones who need datasets, but only a developer could run the code.</dd><dt>How</dt><dd>I built a PyQt GUI and shipped it as a PyInstaller executable, so researchers create datasets without a development environment.</dd></dl></li>
-        <li><h3>Hand over the design intent before the code</h3>
-          <dl><dt>Why</dt><dd>The project had to keep going without me.</dd><dt>How</dt><dd>I walked two juniors through why each stage is split the way it is; one of them built the hardware on site.</dd></dl></li>
-      </ol>
-    </section>
-
-    <section id="onsite" aria-labelledby="h-onsite">
-      <h2 id="h-onsite">On site in the Netherlands (Sep–Oct 2026)</h2>
-      <p>Our lab and Hitachi staff were given a lab at a research institute in the Netherlands. A junior researcher built the hardware, the Dutch researchers prepared the samples and the reference labels, and my measurement and analysis program turned the captures into AI training data.</p>
-      <p>Hitachi staff used the program themselves on site, and I later demonstrated it to the Dutch researchers. Both the people doing the work and the project partner rated it well. The work on site was in Japanese and English.</p>
-    </section>
-
-    <section id="proof" aria-labelledby="h-proof">
-      <h2 id="h-proof">Evidence</h2>
-      <p class="note">The research is confidential, so the topic, what is measured, the code and the data are not described. This page covers only the engineering I was responsible for.</p>
-    </section>
+<!--meta {"title": "Image-data pipeline for commissioned research with Hitachi", "description": "On commissioned research with Hitachi, I rewrote unmaintainable capture code into one Python pipeline with a PyQt GUI, from machine-vision camera control to model-ready datasets, and deployed it in a lab in the Netherlands in September and October 2026.", "nav": "systems"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="You are here"><a href="/en/">Home</a><span aria-hidden="true">/</span><a href="/en/#systems">Systems</a><span aria-hidden="true">/</span><span aria-current="page">Commissioned research with Hitachi</span></nav>
+    <h1 id="d-h">Dataset creation tied to one developer,<br>now a pipeline that researchers run</h1>
+    <p class="hero-lede">I work as a research assistant on my Kyushu Institute of Technology lab's commissioned research with Hitachi. I rewrote from scratch the code that turns machine-vision camera captures into AI training data, and deployed it in a lab in the Netherlands in September and October 2026.</p>
+    <dl class="meta-grid">
+      <div><dt>Period</dt><dd>Apr 2025 – now<small>Kyutech lab · research assistant (part-time)</small></dd></div>
+      <div><dt>Role</dt><dd>Pipeline design and development<small>Design handed over to two junior researchers</small></dd></div>
+      <div><dt>Project</dt><dd>Commissioned research with Hitachi<small>Experiments on site with the project partner</small></dd></div>
+      <div><dt>Outcome</dt><dd>Deployed in the Netherlands, Sep–Oct 2026<small>Working languages Japanese and English</small></dd></div>
+    </dl>
+    <div class="kpis row" aria-label="Key results">
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>On-site deployment</span><span class="kpi-val">2026<small>Sep–Oct</small></span><span class="kpi-label">Used to produce real data in a lab in the Netherlands</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Hands-on</span><span class="kpi-val">One<small>GUI</small></span><span class="kpi-label">Hitachi staff on site ran it themselves</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Demo</span><span class="kpi-val">On site<small>demo</small></span><span class="kpi-label">Demonstrated in person to the project partner's researchers</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Handover</span><span class="kpi-val">2<small>juniors</small></span><span class="kpi-label">Handed over to junior researchers, from the design intent up</span></div>
+    </div>
   </div>
+</section>
+
+<div class="wrap">
+  <section class="d-section" id="arch" aria-labelledby="arch-h">
+    <div class="sec-head">
+      <div>
+        <h2 id="arch-h">Architecture</h2>
+        <p class="sec-desc">The stages from the cameras to the training dataset. The project's code and data cannot be published, so only the stages are drawn.</p>
+      </div>
+      <div class="legend" aria-label="Legend">
+        <span><i class="sw me" aria-hidden="true"></i>Built by me</span>
+        <span><i class="sw other" aria-hidden="true"></i>Others</span>
+        <span><i class="sw ext" aria-hidden="true"></i>Equipment</span>
+        <button class="toggle" type="button" data-mine-toggle aria-pressed="false"><span class="knob" aria-hidden="true"></span>Highlight my work only</button>
+      </div>
+    </div>
+    <div class="sys">
+      {{inc:flow-hitachi}}
+      <div class="sys-outcome"><span class="k">Result</span><span><b>Deployed in a lab in the Netherlands, Sep–Oct 2026</b></span><span>Used on site by Hitachi staff · demonstrated to the project partner's researchers</span></div>
+    </div>
+  </section>
+
+  <section class="d-section" id="context" aria-labelledby="ctx-h">
+    <h2 id="ctx-h">Context</h2>
+    <div class="prose">
+      <p>The project produces AI training data from images taken with industrial machine-vision cameras. The code I inherited in April 2025 could not be maintained. At first I fixed only what broke, but every change in capture conditions broke something else, and every dataset needed a developer sitting next to it.</p>
+      <p>I concluded the problem was the structure, not the symptoms. The core of it: <b>creating a dataset was tied to one developer</b>.</p>
+    </div>
+  </section>
+
+  <section class="d-section" id="decisions" aria-labelledby="dec-h">
+    <h2 id="dec-h">Key decisions</h2>
+    <p class="sec-desc">Why I chose to rewrite, and how I kept the results from changing.</p>
+    <ol class="decisions">
+      <li><h3>Stop patching and rewrite the whole thing</h3>
+        <dl class="dl"><dt>Why</dt><dd>Each fix broke something else, and every patch tied dataset creation more tightly to a developer.</dd><dt>How</dt><dd>I rewrote everything from camera control and capture to dataset preprocessing as one Python pipeline.</dd></dl></li>
+      <li><h3>Replace it step by step against the old results</h3>
+        <dl class="dl"><dt>Why</dt><dd>A full rewrite risked changing the results without anyone noticing.</dd><dt>How</dt><dd>On the same inputs, I checked that the new code's numbers matched the old code's, and replaced it stage by stage.</dd></dl></li>
+      <li><h3>A GUI that non-developers run themselves</h3>
+        <dl class="dl"><dt>Why</dt><dd>Researchers are the ones who make datasets, but only a developer could run the code.</dd><dt>How</dt><dd>I built a PyQt GUI and shipped it as a PyInstaller executable, so researchers create datasets themselves without a development environment.</dd></dl></li>
+      <li><h3>Hand over the design intent before the code</h3>
+        <dl class="dl"><dt>Why</dt><dd>The project had to keep going without me.</dd><dt>How</dt><dd>I walked two juniors through why each stage is split the way it is, and a junior built the hardware on site.</dd></dl></li>
+    </ol>
+  </section>
+
+  <section class="d-section" id="scope" aria-labelledby="scope-h">
+    <h2 id="scope-h">Scope</h2>
+    <p class="sec-desc">The engineering that was mine, and the parts others handled on site.</p>
+    <div class="card scope-tbl">
+      <div class="scope-col">
+        <h3><i class="sw me" aria-hidden="true"></i>What I built</h3>
+        <ul>
+          <li>Rewrote the <b>Python pipeline</b> that runs from camera control and capture to preprocessing the training dataset</li>
+          <li>Control of several machine-vision cameras and standardized capture settings (Spinnaker SDK, PySpin)</li>
+          <li>The <b>measurement and analysis program</b></li>
+          <li>A <b>PyQt GUI</b> for non-developer researchers, shipped as a PyInstaller executable</li>
+          <li>Design handover to two juniors, on-site deployment and the demo</li>
+        </ul>
+      </div>
+      <div class="scope-col other">
+        <h3><i class="sw other" aria-hidden="true"></i>What others did</h3>
+        <ul>
+          <li><b>A junior researcher</b> · building the hardware in the lab on site</li>
+          <li><b>The project partner's researchers</b> · preparing samples and reference labels</li>
+          <li><b>Hitachi staff</b> · using the program themselves on site</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="d-section" id="onsite" aria-labelledby="site-h">
+    <h2 id="site-h">On-site deployment in the Netherlands (Sep–Oct 2026)</h2>
+    <div class="card">
+      <ol class="changelog">
+        <li><span class="when">Apr 2025</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Inherited the existing code</b>It could not be maintained. After getting by with partial fixes, I decided on a full rewrite.</div></li>
+        <li><span class="when">From Apr 2025</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Pipeline and GUI rewritten</b>Replaced stage by stage, checking the numbers against the old results. Design handed over to two juniors.</div></li>
+        <li><span class="when">Sep – Oct 2026</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Preparing the lab on site</b>Our lab and Hitachi staff were given a lab on site and worked there together. A junior built the hardware.</div></li>
+        <li><span class="when">Sep – Oct 2026</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Producing real data</b>The project partner's researchers prepared the samples and reference labels, and the measurement and analysis program turned the captures into AI training data. Hitachi staff used it themselves.</div></li>
+        <li class="out"><span class="when">Sep – Oct 2026</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Demo to the project partner</b>Rated well both by the people doing the work and by the project partner. The work on site was in Japanese and English.</div></li>
+      </ol>
+    </div>
+    <p class="note">The research is confidential, so the topic, what is measured, the code and the data are not described. This page covers only the engineering I was responsible for.</p>
+    <ul class="chips" style="margin-top:16px" aria-label="Stack"><li>Python</li><li>Spinnaker SDK</li><li>PySpin</li><li>PyQt</li><li>PyInstaller</li></ul>
+  </section>
+
+  <nav class="pager" aria-label="Other systems">
+    <a href="/en/work/genomics/"><small>← Previous system</small><b>Genomic variant annotation and reports</b></a>
+    <a class="next" href="/en/work/wjmax/"><small>Next system →</small><b>WJMax game server</b></a>
+  </nav>
 </div>
-<nav class="pager" aria-label="Other work"><a href="/en/work/">All work</a><a href="/en/work/kisti/">Next: KISTI data platform</a></nav>

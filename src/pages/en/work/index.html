@@ -1,62 +1,78 @@
-<!--meta {"title": "Work", "description": "All of Hyeongju Lee's work: data engineering, backend, vision data pipelines, an XR makerthon and study projects.", "nav": "work"} -->
-<div class="doc-head">
-  <h1>Work</h1>
-  <p class="lede">Work from companies, commissioned research, side projects and school, newest first. The Hitachi, KISTI, genomics and WJMax projects have their own pages.</p>
-</div>
-<div class="section" style="padding-top:36px">
-  <ol class="archive">
-    <li id="hitachi">
-      <span class="when">Apr 2025 – now<br>Kyutech lab, part-time</span>
-      <div><h2><a href="/en/work/hitachi/">Image-data pipeline for commissioned research with Hitachi</a></h2>
-        <p>I work as a research assistant on my university lab's commissioned research. I rewrote an unmaintainable inherited codebase into a Python pipeline that runs from controlling and capturing with several machine-vision cameras to preprocessing model-ready datasets, and built a PyQt GUI, packaged with PyInstaller, that non-developer researchers run themselves. I handed the design over to two junior researchers and, from September to October 2026, travelled to the Netherlands to deploy the system on site. The work is in Japanese and English.</p>
-        <p>The research topic is confidential and is not described here.</p>
-        <div class="chips"><span>Python</span><span>Spinnaker SDK (PySpin)</span><span>PyQt</span><span>PyInstaller</span></div>
-        <div class="links"><a href="/en/work/hitachi/">Details</a></div></div>
-    </li>
-    <li>
-      <span class="when">Nov 2024<br>XR makerthon, sole developer and demo</span>
-      <div><h2>3DOS: vision enhancement on an XR headset</h2>
-        <p>At the finals of the 2024 XR Device Content Makerthon (Pangyo Metaverse Hub), team 3DOS was registered with five members of my undergraduate lab; I did the development, the presentation and the live demo on stage alone. I implemented Fourier peplography (fog and smoke removal) and photon counting (low-light recovery), methods published in Prof. Myungjin Cho's research, from scratch in C++ and OpenCV, built them as an Android native plugin (arm64), and ran them from a Unity app on the Metalens 2 headset on its own camera feed in front of the audience. The code was lost, so only the slides are public.</p>
-        <div class="links"><a href="https://github.com/zoocasso/realtime-vision-xr-device" target="_blank" rel="noopener">Slides</a></div></div>
-    </li>
-    <li>
-      <span class="when">Aug 2022 – Jun 2024<br>Vision Inside</span>
-      <div><h2><a href="/en/work/kisti/">Data collection and loading for a KISTI public R&amp;D platform</a></h2>
-        <p>As the sole data engineer on Vision Inside's side, I collected and loaded {{f:kisti_rows}} of product and procurement data, then shipped model batches and a FastAPI admin interface.</p>
-        <div class="links"><a href="/en/work/kisti/">Details</a></div></div>
-    </li>
-    <li>
-      <span class="when">Aug 2023 – Feb 2024<br>Side project, team of two</span>
-      <div><h2><a href="/en/work/wjmax/">Server for WJMax, a community rhythm game</a></h2>
-        <p>Server, database and security with FastAPI (Docker, EC2), RDS MySQL and a Cloudflare proxy and WAF. Up to {{f:wjmax_peak}} concurrent players during updates.</p>
-        <div class="links"><a href="/en/work/wjmax/">Details</a><a href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">Code</a></div></div>
-    </li>
-    <li>
-      <span class="when">Aug – Oct 2023<br>Vision Inside, team of three</span>
-      <div><h2>Life-insurance disclosure data tools</h2>
-        <p>I loaded public life-insurance disclosure workbooks (16 product categories) into MySQL with openpyxl, pandas and SQLAlchemy and served them through a FastAPI and Tabulator web viewer. I also packaged xlwings-based VBA execution as a standalone tool, built a PyQt desktop prototype, and moved a VBA pricing model's named ranges into the database. Porting that model to Python and checking it against Excel was led by another team member.</p></div>
-    </li>
-    <li>
-      <span class="when">Aug 2022 – Sep 2023<br>Vision Inside</span>
-      <div><h2><a href="/en/work/genomics/">Backend for genomic variant annotation and risk reports</a></h2>
-        <p>Variant calling, annotation and a risk-score API on {{f:bio_ref}} of public reference data, built on an algorithm designed with the team lead and deployed with Docker and Harbor.</p>
-        <div class="links"><a href="/en/work/genomics/">Details</a><a href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener">Code</a></div></div>
-    </li>
-    <li>
-      <span class="when">2022<br>Capstone, team of two</span>
-      <div><h2>Smart Mirror</h2>
-        <p>On a Raspberry Pi, OpenCV LBPH face recognition and the Kakao speech recognition API showed per-user dashboards on a half-mirror display.</p></div>
-    </li>
-    <li>
-      <span class="when">2022<br>Course project</span>
-      <div><h2>Depth estimation with correlation filters and VCR</h2>
-        <p>A course assignment in MATLAB that found depth from elemental images, built on the VCR and correlation-filter scripts from the course's lecture materials; my 2022 changes were small, and the code was rewritten for release in October 2026. This is where my master's research started.</p>
-        <div class="links"><a href="https://github.com/zoocasso/depth-estimation-using-vcr-algorithm-matlab" target="_blank" rel="noopener">Code</a></div></div>
-    </li>
-    <li>
-      <span class="when">Feb – Mar 2022<br>Study project</span>
-      <div><h2>A CNN in MATLAB</h2>
-        <p>Following the examples in Phil Kim's <i>MATLAB Deep Learning</i>, I implemented an MNIST CNN (convolution, ReLU, max pooling, softmax) with backpropagation and momentum gradient descent.</p></div>
-    </li>
-  </ol>
+<!--meta {"title": "Work", "description": "All of Hyeongju Lee's work: data engineering, backend, vision data pipelines, an XR makerthon and study projects.", "nav": "systems"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="You are here"><a href="/en/">Home</a><span aria-hidden="true">/</span><span aria-current="page">Work</span></nav>
+    <h1 id="d-h">All work</h1>
+    <p class="hero-lede">Work from companies, commissioned research, side projects and school. The four systems have their own detailed pages, with flow diagrams.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="d-section" aria-labelledby="sys-h" style="padding-top:8px">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker"><b>01</b> Systems</div>
+        <h2 id="sys-h">Four systems I built and deployed</h2>
+      </div>
+      <a class="sec-more" href="/en/#systems">See the flow diagrams on the home page<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+    </div>
+    <div class="topics">
+      <a class="card topic" href="/en/work/kisti/">
+        <div class="topic-body">
+          <span class="k">{{f:kisti_period}} · Vision Inside · outsourced contract</span>
+          <h3>KISTI project data layer</h3>
+          <p>As the data engineer on a public R&amp;D platform designed by KISTI researchers, I handled collection, loading and serving, and built the model batches and a FastAPI admin interface.</p>
+          <span class="key" style="color:var(--me-2)">{{f:kisti_rows}} · later led to a KRW 300M main-phase contract</span>
+        </div>
+      </a>
+      <a class="card topic" href="/en/work/genomics/">
+        <div class="topic-body">
+          <span class="k">{{f:bio_period}} · Vision Inside · internal project</span>
+          <h3>Genomic variant annotation and risk report system</h3>
+          <p>On an algorithm designed with my team lead, I implemented a variant-calling pipeline, SQL annotation over public references, a FastAPI JSON API and the frontend, and deployed them with Docker and Harbor.</p>
+          <span class="key" style="color:var(--me-2)">{{f:bio_ref}} of references · four-stage SQL annotation</span>
+        </div>
+      </a>
+      <a class="card topic" href="/en/work/hitachi/">
+        <div class="topic-body">
+          <span class="k">Apr 2025 – now · Kyutech lab · research assistant (part-time)</span>
+          <h3>Image-data pipeline for commissioned research with Hitachi</h3>
+          <p>I rewrote everything from machine-vision camera control and capture to dataset preprocessing as a Python pipeline with a PyQt GUI, and handed the design over to two junior researchers.</p>
+          <span class="key" style="color:var(--me-2)">Deployed on site in the Netherlands, Sep–Oct 2026</span>
+        </div>
+      </a>
+      <a class="card topic" href="/en/work/wjmax/">
+        <div class="topic-body">
+          <span class="k">{{f:wjmax_period}} · side project · team of two</span>
+          <h3>WJMax game server</h3>
+          <p>I handled the server, database and security, run with FastAPI (Docker, EC2), RDS MySQL and a Cloudflare proxy and WAF. Rewritten with tests in 2026.</p>
+          <span class="key" style="color:var(--me-2)">Up to {{f:wjmax_peak}} concurrent players during updates</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="d-section" aria-labelledby="other-h">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker"><b>02</b> Other work</div>
+        <h2 id="other-h">Other things I built</h2>
+      </div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th scope="col">Project</th><th scope="col">What I did</th><th scope="col">Stack</th></tr></thead>
+      <tbody>
+        <tr><td>3DOS · vision enhancement on an XR headset<small>Nov 2024 · XR Device Content Makerthon finals</small></td><td>At the finals of the 2024 XR Device Content Makerthon (Pangyo Metaverse Hub), team 3DOS was registered with five members of my undergraduate lab, and I handled development, the presentation and the stage demo. I implemented Fourier peplography (fog and smoke removal) and photon counting (low-light recovery), methods published in Prof. Myungjin Cho's research, from scratch in C++ and OpenCV, built them as an Android native plugin (arm64), and ran them in a Unity app on the Metalens 2 headset on its own camera feed, in front of the audience. The code was lost, so only the <a href="https://github.com/zoocasso/realtime-vision-xr-device" target="_blank" rel="noopener">slides</a> are public.</td><td><ul class="chips"><li>C++</li><li>OpenCV</li><li>Unity</li><li>Android</li></ul></td></tr>
+        <tr><td>Life-insurance disclosure data tools<small>Aug – Oct 2023 · Vision Inside · team of three</small></td><td>I loaded public life-insurance disclosure workbooks (16 product categories) into MySQL with openpyxl, pandas and SQLAlchemy and served them through a FastAPI and Tabulator web viewer. I also built a standalone package that runs VBA through xlwings and a PyQt desktop prototype, and moved a VBA pricing model's named ranges into the database. Porting that model to Python and checking it against Excel was led by another team member.</td><td><ul class="chips"><li>Python</li><li>openpyxl</li><li>pandas</li><li>xlwings</li><li>MySQL</li><li>FastAPI</li><li>PyQt</li></ul></td></tr>
+        <tr><td>Smart Mirror<small>2022 · capstone · team of two</small></td><td>On a Raspberry Pi, OpenCV LBPH face recognition and the Kakao speech recognition API showed per-user dashboards on a half-mirror display.</td><td><ul class="chips"><li>Python</li><li>OpenCV</li><li>Raspberry Pi</li></ul></td></tr>
+        <tr><td>Depth estimation with correlation filters and VCR<small>2022 · course project</small></td><td>A course assignment that found depth from elemental images (MATLAB), built on the VCR and correlation-filter scripts from the course's lecture materials. My 2022 changes were small, and the code was rewritten in October 2026 and <a href="https://github.com/zoocasso/depth-estimation-using-vcr-algorithm-matlab" target="_blank" rel="noopener">published</a>. This is where my master's research started.</td><td><ul class="chips"><li>MATLAB</li></ul></td></tr>
+        <tr><td>A CNN in MATLAB<small>Feb – Mar 2022 · study project</small></td><td>Following the examples in Phil Kim's “MATLAB Deep Learning”, I implemented an MNIST digit-classification CNN (convolution, ReLU, max pooling, softmax) and backpropagation with momentum gradient descent from scratch.</td><td><ul class="chips"><li>MATLAB</li></ul></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <nav class="pager" aria-label="Where next">
+    <a href="/en/"><small>← Home</small><b>Start page</b></a>
+    <a class="next" href="/en/work/kisti/"><small>First system →</small><b>KISTI project data layer</b></a>
+  </nav>
 </div>

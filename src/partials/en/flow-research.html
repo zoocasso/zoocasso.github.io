@@ -1,0 +1,66 @@
+<div class="flow rs">
+  <div class="lane-heads" style="--cols:4" aria-hidden="true"><span></span><span><i class="n">01</i>Input</span><span><i class="n">02</i>Transform</span><span><i class="n">03</i>Reconstruction</span><span><i class="n">04</i>Result</span></div>
+  <div class="lanes">
+    <div class="lane" style="--cols:4">
+      <div class="lane-name"><b>ICMV 2026</b><a href="/en/research/rim/">RIM · angular samples into spatial resolution</a></div>
+      <ol>
+        <li class="node" data-id="r-lytro" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-stage">Input</span><span class="node-title">Lens array images</span><span class="node-metric">7 Stanford Lytro scenes</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Data</dt><dd>Evaluated on 7 Stanford Lytro light field scenes. The elemental image each lens forms is only a few pixels wide.</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-rim" data-owner="me" data-default>
+          <button class="node-btn" type="button"><span class="node-stage">Transform</span><span class="node-title">RIM rearrangement</span><span class="node-metric">Zero quantization error</span><span class="node-tag">First author</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Method</dt><dd>A one-to-one rearrangement that swaps (lens index, pixel position under the lens) (Ray-based Inverse Mapping). Under telecentric capture and orthographic recapture there is no interpolation, so the quantization error is zero.</dd><dt>Presented</dt><dd>ICMV 2026, Budapest · <b>Best Poster Award</b></dd><dt>More</dt><dd><a href="/en/research/rim/">RIM and iRIM page</a></dd></dl></div>
+        </li>
+        <li class="node" data-id="r-ciir" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-stage">Reconstruction</span><span class="node-title">Integral imaging reconstruction</span><span class="node-metric">CIIR</span><span class="node-tag">First author</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Method</dt><dd>The rearranged views are used as the first stage of computational integral imaging reconstruction (CIIR) and compared with using the elemental images as they are.</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-eval" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-stage">Result</span><span class="node-title">Image quality · detection</span><span class="node-metric">PSNR +2.39 dB · mAP50 +0.11</span><span class="node-tag">As reported in the paper</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Result</dt><dd>On the 7 Lytro scenes: {{f:rim_psnr}}, {{f:rim_ssim}}, and pretrained YOLO detection {{f:rim_map}}.</dd></dl></div>
+        </li>
+      </ol>
+    </div>
+    <div class="lane" style="--cols:4">
+      <div class="lane-name"><b>ITC-CSCC 2025 · 2026</b><a href="/en/research/origin-point/">Origin point optimization for VCR</a></div>
+      <ol>
+        <li class="node" data-id="r-ei" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-stage">Input</span><span class="node-title">Elemental images</span><span class="node-metric">9×9 · camera parameters</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Data</dt><dd>9×9 elemental images, the camera parameters and the depth to reconstruct.</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-org" data-owner="me" data-in="params">
+          <button class="node-btn" type="button"><span class="node-stage">Transform</span><span class="node-title">Origin calculation</span><span class="node-metric">Iterative search → one calculation</span><span class="node-tag">First author</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Method</dt><dd>The search that reconstructed again and again to find the origin with the least quantization error became a calculation from the camera parameters alone. In the paper's experiments it gave the same origin and SSIM as the iterative search.</dd><dt>Presented</dt><dd>ITC-CSCC 2025 (Seoul, poster) · ITC-CSCC 2026 (Bangkok, oral)</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-vcr" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-stage">Reconstruction</span><span class="node-title">VCR</span><span class="node-metric">81 reconstructions → 1</span><span class="node-tag">First author</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Result</dt><dd>For 9×9 elemental images, the reconstructions needed to choose the origin dropped <b>from 81 to 1</b>.</dd><dt>Stack</dt><dd><ul class="chips"><li>Python</li><li>NumPy</li><li>CuPy</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="r-gpu" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-stage">Result</span><span class="node-title">Run time</span><span class="node-metric">0.31 s · GPU {{f:origin_gpu}}</span><span class="node-tag">Measured in the paper</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Result</dt><dd>CPU <b>0.31 s</b> (measured in the paper), GPU (CuPy, RTX 3090) <b>{{f:origin_gpu}}</b>. The 25.45 s of the iterative search is an estimate, 0.3142 s per run × 81.</dd><dt>Code</dt><dd><a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">origin-point-optimization-vcr</a></dd></dl></div>
+        </li>
+      </ol>
+    </div>
+    <div class="lane" style="--cols:4">
+      <div class="lane-name"><b>ICCAS 2026</b><a href="/en/research/rim/#irim">iRIM · virtual lens arrays</a></div>
+      <ol>
+        <li class="node" data-id="r-mv" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-stage">Input</span><span class="node-title">Multi-view images</span><span class="node-metric">Rendered Blender scene</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Data</dt><dd>Views rendered from several positions.</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-irim" data-owner="me" data-in="inverse">
+          <button class="node-btn" type="button"><span class="node-stage">Transform</span><span class="node-title">iRIM</span><span class="node-metric">The inverse of RIM</span><span class="node-tag">First author</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Method</dt><dd>Because RIM is one to one, it also runs backwards: iRIM synthesizes the elemental image of the virtual lens array you want from multi-view images.</dd><dt>Presented</dt><dd>ICCAS 2026, Sapporo · poster</dd></dl></div>
+        </li>
+        <li class="node" data-id="r-vla" data-owner="me" data-in="creates">
+          <button class="node-btn" type="button"><span class="node-stage">Result</span><span class="node-title">Virtual lens array image</span><span class="node-metric">100% effective coverage</span><span class="node-tag">First author</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Result</dt><dd>A 6×6 configuration matched to a 24-inch FHD panel (320×180 lenses). Every view has 100% effective coverage, against 6.7% for the corner views of a simulated lens array camera.</dd></dl></div>
+        </li>
+        <li class="node empty" aria-hidden="true"></li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="inspector" aria-live="polite"><div class="insp-side"></div><div class="insp-main"></div></div>

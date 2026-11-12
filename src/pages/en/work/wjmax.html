@@ -1,61 +1,63 @@
-<!--meta {"title": "WJMax game server", "description": "Server, database and security for WJMax, a community rhythm game run by a team of two: FastAPI on EC2, RDS MySQL and Cloudflare, with up to about 2,000 concurrent players during updates.", "nav": "work"} -->
-<div class="doc-head">
-  <p class="crumb"><a href="/en/work/">Work</a> / WJMax server</p>
-  <h1>The server for WJMax, a community rhythm game, with up to {{f:wjmax_peak}} concurrent players</h1>
-  <p class="lede">In a team of two, I handled the server, database and security. The other member built the game client.</p>
-  <dl class="meta">
-    <div><dt>Period</dt><dd>{{f:wjmax_period}}</dd></div>
-    <div><dt>Type</dt><dd>Side project, team of two</dd></div>
-    <div><dt>Role</dt><dd>Server, database and security, on my own</dd></div>
-    <div><dt>Stack</dt><dd>FastAPI, Docker, AWS EC2 and RDS, Cloudflare</dd></div>
-  </dl>
-  <div class="paper-links"><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">Code (GitHub)</a></div>
-</div>
-
-<div class="doc">
-  <nav class="toc" aria-label="On this page">
-    <p>On this page</p>
-    <a href="#result">Results</a><a href="#arch">Architecture</a><a href="#rewrite">2026 rewrite</a>
-  </nav>
-  <div>
-    <section id="result" aria-labelledby="h-result">
-      <h2 id="h-result">Results</h2>
-      <dl class="results">
-        <div><dt>{{f:wjmax_avg}}</dt><dd>Average concurrent players</dd></div>
-        <div><dt>{{f:wjmax_peak}}</dt><dd>Peak concurrent players during updates</dd></div>
-      </dl>
-      <p class="muted" style="margin-top:12px;font-size:15px">No raw server logs remain; the figures come from the earliest write-up, a 2025 portfolio made after the server closed.</p>
-    </section>
-
-    <section id="arch" class="full" aria-labelledby="h-arch">
-      <h2 id="h-arch">Architecture</h2>
-      <div class="diagram" role="img" aria-label="Flow from the game client through Cloudflare to the FastAPI server and RDS MySQL">
-        <div class="box"><b>Game client</b><span>Sends play logs</span></div>
-        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
-        <div class="box"><b>Cloudflare</b><span>Proxy, WAF</span></div>
-        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
-        <div class="box core"><b>FastAPI</b><span>Docker on AWS EC2, play-log API</span></div>
-        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 20 12"><path d="M0 6h17M12 1l6 5-6 5"></path></svg></span>
-        <div class="box"><b>RDS MySQL</b><span>Managed database on AWS</span></div>
-      </div>
-      <p style="margin-top:16px">The game client reports the play count of each of a song's eight charts, and the server stores them in the database. A Cloudflare proxy and WAF sat in front of the server. The server was FastAPI packaged with Docker on EC2, and the database was RDS MySQL.</p>
-    </section>
-
-    <section id="rewrite" aria-labelledby="h-rewrite">
-      <h2 id="h-rewrite">2026 rewrite</h2>
-      <p>I cleaned up and rewrote the code from the live service in October 2026 (<a href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener">GitHub</a>). The request the game client sends is unchanged; these are the problems the rewrite deals with.</p>
-      <ol class="decisions">
-        <li><h3>Connection pool starved under load</h3>
-          <dl><dt>Problem</dt><dd>An early version of the rewrite took the database connection in a FastAPI dependency. In a local load test with 60 clients sending at once, 281 of 600 requests failed with a pool timeout.</dd><dt>Fix</dt><dd>The connection is taken inside the worker thread that runs the request, after its input has been checked, and the pool is sized to the 40 worker threads. CI runs the same test and checks that every client is answered.</dd></dl></li>
-        <li><h3>Retried reports stored twice</h3>
-          <dl><dt>Problem</dt><dd>When a connection drops and the same report arrives again, its play counts can be added twice.</dd><dt>Fix</dt><dd>A report sent with an id is stored once per id. When two copies arrive at once, the key makes the second wait for the first, and the same id with different contents is refused with 409. The released client sends no id, though, so the server assigns one and its retries are stored as separate reports.</dd></dl></li>
-        <li><h3>Song titles merging</h3>
-          <dl><dt>Problem</dt><dd>MySQL's default collation ignores case and kana, so it treats "Glory" and "GLORY", or "ゆめ" and "ユメ", as the same song.</dd><dt>Fix</dt><dd>Titles and ids compare byte for byte (utf8mb4_0900_bin), and CI checks it.</dd></dl></li>
-        <li><h3>Input from a client without authentication</h3>
-          <dl><dt>Problem</dt><dd>The released game client sends no credentials, so anyone who knows the URL can post a report.</dd><dt>Fix</dt><dd>Input is checked before it is parsed: malformed input is a 422 and a body over 1 MB a 413, and Cloudflare in front bounds abuse. The README also states the limit: a report is not proof of who played.</dd></dl></li>
-      </ol>
-      <p style="margin-top:16px">GitHub Actions runs the tests on SQLite and on MySQL 8.0 and 8.4, and checks that <code>schema.sql</code> matches the code (types, collations, keys, indexes).</p>
-    </section>
+<!--meta {"title": "WJMax game server", "description": "Side project: server, database and security for WJMax, a community rhythm game, run on FastAPI, EC2, RDS MySQL and Cloudflare, with up to about 2,000 concurrent players during updates. Includes the problems handled in the 2026 rewrite.", "nav": "systems"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="You are here"><a href="/en/">Home</a><span aria-hidden="true">/</span><a href="/en/#systems">Systems</a><span aria-hidden="true">/</span><span aria-current="page">WJMax game server</span></nav>
+    <h1 id="d-h">A community rhythm game's server:<br>up to {{f:wjmax_peak}} concurrent players</h1>
+    <p class="hero-lede">On WJMax, a community rhythm game made by two people, I handled the server, database and security; the other member built the game client. When I rewrote the code from the live service in October 2026, I covered load, retries and input checks with tests.</p>
+    <dl class="meta-grid">
+      <div><dt>Period</dt><dd>{{f:wjmax_period}}<small>By commit history</small></dd></div>
+      <div><dt>Type</dt><dd>Side project<small>Team of two</small></dd></div>
+      <div><dt>Role</dt><dd>Server, database and security<small>Game client by the other member</small></dd></div>
+      <div><dt>Stack</dt><dd>FastAPI · Docker<small>AWS EC2 · RDS MySQL · Cloudflare</small></dd></div>
+    </dl>
+    <div class="kpis row" aria-label="Key figures">
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Peak during updates</span><span class="kpi-val">~2,000<small>players</small></span><span class="kpi-label">Concurrent players</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Usual</span><span class="kpi-val">~300<small>players</small></span><span class="kpi-label">Average concurrent players</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Rewrite load test</span><span class="kpi-val">281<small>/ 600 failed → 0</small></span><span class="kpi-label">60 clients at once, before and after the connection-pool fix</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>CI</span><span class="kpi-val">3<small>databases</small></span><span class="kpi-label">Tests on SQLite · MySQL 8.0 · 8.4</span></div>
+    </div>
+    <div class="d-actions"><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>Code (GitHub, rewritten Oct 2026)</a></div>
   </div>
+</section>
+
+<div class="wrap">
+  <section class="d-section" id="arch" aria-labelledby="arch-h">
+    <div class="sec-head">
+      <div>
+        <h2 id="arch-h">Architecture</h2>
+        <p class="sec-desc">The game client reports the play count of each of a song's eight charts, and the server receives the reports and stores them in the database.</p>
+      </div>
+      <div class="legend" aria-label="Legend">
+        <span><i class="sw me" aria-hidden="true"></i>Built by me</span>
+        <span><i class="sw other" aria-hidden="true"></i>Others</span>
+        <button class="toggle" type="button" data-mine-toggle aria-pressed="false"><span class="knob" aria-hidden="true"></span>Highlight my work only</button>
+      </div>
+    </div>
+    <div class="sys">
+      {{inc:flow-wjmax}}
+      <div class="sys-outcome"><span class="k">Result</span><span>Ran through update days with up to <b>{{f:wjmax_peak}}</b> concurrent players</span><span>No raw data such as server logs remains, so the figures come from the earliest write-up, a 2025 portfolio made after the server closed</span></div>
+    </div>
+  </section>
+
+  <section class="d-section" id="rewrite" aria-labelledby="rw-h">
+    <h2 id="rw-h">Problems handled in the 2026 rewrite</h2>
+    <p class="sec-desc">The request the game client sends stays as it was; the server-side problems were pinned down one by one with tests.</p>
+    <ol class="decisions">
+      <li><h3>Connection pool starved under load</h3>
+        <dl class="dl"><dt>Problem</dt><dd>An early version of the rewrite took the database connection in a FastAPI dependency. In a local load test with 60 clients sending at once, 281 of 600 requests failed with a pool timeout.</dd><dt>Fix</dt><dd>The connection is taken inside the worker thread that runs the request, after its input has been checked, and the pool is sized to the 40 worker threads. CI runs the same test and checks that every request is answered.</dd></dl></li>
+      <li><h3>Retried reports stored twice</h3>
+        <dl class="dl"><dt>Problem</dt><dd>When a connection drops and the same report arrives again, its play counts can be added twice.</dd><dt>Fix</dt><dd>A report sent with an id is stored once per id. When two copies arrive at once, the key constraint makes the second wait for the first, and the same id with different contents is refused with 409. The released client sends no id, though, so the server assigns one and its retries are stored as separate reports.</dd></dl></li>
+      <li><h3>Song titles merging</h3>
+        <dl class="dl"><dt>Problem</dt><dd>MySQL's default collation ignores case and kana differences, so it treats "Glory" and "GLORY", or "ゆめ" and "ユメ", as the same song.</dd><dt>Fix</dt><dd>Titles and ids use a collation that compares byte for byte (utf8mb4_0900_bin), and CI checks it.</dd></dl></li>
+      <li><h3>Input from a client without authentication</h3>
+        <dl class="dl"><dt>Problem</dt><dd>The released game client sends no credentials, so anyone who knows the URL can post a report.</dd><dt>Fix</dt><dd>Input is checked before it is parsed: malformed input is refused with 422 and a body over 1 MB with 413, and Cloudflare in front helps hold off abuse. The README also states the limit: a report does not prove that a play actually happened.</dd></dl></li>
+    </ol>
+    <p class="note">GitHub Actions runs the tests on SQLite and on MySQL 8.0 and 8.4, and checks that <code>schema.sql</code> matches the code (types, collations, keys, indexes).</p>
+    <ul class="chips" style="margin-top:16px" aria-label="Stack"><li>Python</li><li>FastAPI</li><li>Docker</li><li>AWS EC2</li><li>AWS RDS</li><li>MySQL</li><li>Cloudflare</li><li>GitHub Actions</li></ul>
+  </section>
+
+  <nav class="pager" aria-label="Other systems">
+    <a href="/en/work/hitachi/"><small>← Previous system</small><b>Image-data pipeline for Hitachi</b></a>
+    <a class="next" href="/en/research/"><small>Next →</small><b>Research and the lens array lab</b></a>
+  </nav>
 </div>
-<nav class="pager" aria-label="Other work"><a href="/en/work/kisti/">Previous: KISTI data platform</a><a href="/en/work/genomics/">Next: genomics backend</a></nav>

@@ -1,0 +1,65 @@
+<div class="flow" data-edges="g-fastq>g-call|FASTQ; g-vcf>g-norm|upload; g-call>g-db|VCF; g-norm>g-db|table; g-ref>g-db|chunks; g-db>g-join|4 joins; g-join>g-api|JSON; g-ui>g-api|design; g-api>g-ops|image">
+  <ol class="stages" style="--cols:5">
+    <li class="stage"><div class="stage-h"><span class="n">01</span>Input</div>
+      <ul class="nodes">
+        <li class="node" data-id="g-fastq" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">Raw sequencing data</span><span class="node-metric">FASTQ</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Input</dt><dd>Raw sequencing data (FASTQ), the input to the variant-calling pipeline.</dd></dl></div>
+        </li>
+        <li class="node" data-id="g-vcf" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">Customer VCF · chip files</span><span class="node-metric">Genotype upload</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Input</dt><dd>A VCF file or a genotyping-array (chip) result file uploaded by the customer.</dd></dl></div>
+        </li>
+        <li class="node" data-id="g-ref" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">Public references</span><span class="node-metric">dbSNP · 1000 Genomes and more</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Data</dt><dd>dbSNP (GRCh37, GRCh38) 237 GB, 1000 Genomes 770 GB, the GWAS Catalog and UniProt. Sizes are for the source files.</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">02</span>Processing</div>
+      <ul class="nodes spaced">
+        <li class="node" data-id="g-call" data-owner="shared">
+          <button class="node-btn" type="button"><span class="node-title">Variant-calling pipeline</span><span class="node-metric">BWA → samtools → Picard → GATK</span><span class="node-tag">Designed with team lead · implemented by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Implemented the FASTQ → BWA → samtools → Picard → GATK → VCF pipeline.</dd><dt>Others</dt><dd>The pipeline algorithm was designed at the company together with my team lead.</dd><dt>Stack</dt><dd><ul class="chips"><li>BWA</li><li>samtools</li><li>Picard</li><li>GATK</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="g-norm" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">Input handling</span><span class="node-metric">PyVCF · chip files</span><span class="node-tag">Implemented by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Read customer VCF and chip (array) input with PyVCF and shaped it into the input table used for annotation. Chip input finds its position key in dbSNP by rsID.</dd><dt>Stack</dt><dd><ul class="chips"><li>PyVCF</li><li>Python</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">03</span>Storage</div>
+      <ul class="nodes">
+        <li class="node" data-id="g-db" data-owner="me" data-default>
+          <button class="node-btn" type="button"><span class="node-title">MySQL reference DB</span><span class="node-metric">{{f:bio_ref}}</span><span class="node-tag">Built by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Built dbSNP (<b>237 GB</b>), 1000 Genomes (<b>770 GB</b>), the GWAS Catalog and UniProt into MySQL. Split the files by chromosome (sed, split) and loaded them in pandas chunks through SQLAlchemy.</dd><dt>Stack</dt><dd><ul class="chips"><li>MySQL</li><li>pandas</li><li>SQLAlchemy</li><li>sed · split</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">04</span>Annotation</div>
+      <ul class="nodes">
+        <li class="node" data-id="g-join" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">SQL annotation · report calculation</span><span class="node-metric">Position and alleles, or rsID</span><span class="node-tag">Implemented by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>A four-stage SQL join: dbSNP and 1000 Genomes on a key of chromosome, position, REF and ALT, the GWAS Catalog on rsID and risk allele, and UniProt on variant ID and allele. A <b>rule-based risk score</b> from GWAS odds ratios and betas, allele frequencies compared across the 26 populations of 1000 Genomes, and drug and herbal-medicine information per disease (MedlinePlus, MeSH, ATC, PharmDB-K, OASIS).</dd><dt>Note</dt><dd>The LDA and 1D-CNN models linking diseases to herbal medicines stayed prototype experiments.</dd><dt>Stack</dt><dd><ul class="chips"><li>SQL</li><li>MySQL</li><li>Python</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">05</span>Serving</div>
+      <ul class="nodes">
+        <li class="node" data-id="g-ui" data-owner="other">
+          <button class="node-btn" type="button"><span class="node-title">UI design</span><span class="node-metric">Requirements worked out together</span><span class="node-tag">Canadian lab's designer</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Others</dt><dd>The screens were designed by a designer at the Canadian bio research lab.</dd><dt>What I did</dt><dd>Worked out the requirements with the designer and handled technical communication between the Korean and Canadian teams.</dd></dl></div>
+        </li>
+        <li class="node" data-id="g-api" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">FastAPI JSON API · screens</span><span class="node-metric">Report API + frontend</span><span class="node-tag">Implemented by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Served the reports through a FastAPI JSON API and also built the user-facing screens (frontend). In September 2023 I removed the web screens from the service and turned it into a JSON API for the frontend.</dd><dt>Stack</dt><dd><ul class="chips"><li>FastAPI</li><li>JSON API</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="g-ops" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">Docker · Harbor deployment</span><span class="node-metric">Korea IDC · internal IPs only</span><span class="node-tag">Built by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Set up a Harbor private registry myself on an Ubuntu production server at Korea IDC (certificate, domain, Let's Encrypt) and deployed with Docker images. The production server was kept reachable from internal IPs only.</dd><dt>Stack</dt><dd><ul class="chips"><li>Docker</li><li>Harbor</li><li>Ubuntu</li><li>Let's Encrypt</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+  </ol>
+</div>
+<div class="inspector" aria-live="polite"><div class="insp-side"></div><div class="insp-main"></div></div>

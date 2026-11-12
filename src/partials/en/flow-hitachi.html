@@ -1,0 +1,57 @@
+<div class="flow" data-edges="h-hw>h-cam|setup; h-cam>h-cap|images; h-gui>h-cap|run; h-cap>h-meas|raw images; h-smp>h-meas|labels; h-meas>h-prep; h-prep>h-ds|cleaned">
+  <ol class="stages" style="--cols:5">
+    <li class="stage"><div class="stage-h"><span class="n">01</span>On site</div>
+      <ul class="nodes">
+        <li class="node" data-id="h-hw" data-owner="other">
+          <button class="node-btn" type="button"><span class="node-title">On-site hardware setup</span><span class="node-metric">Capture equipment</span><span class="node-tag">Junior researcher</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Others</dt><dd>The hardware in the lab in the Netherlands was built by a junior researcher who took over the design.</dd></dl></div>
+        </li>
+        <li class="node" data-id="h-cam" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">Industrial machine-vision cameras</span><span class="node-metric">Several · USB3</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Equipment</dt><dd>Several industrial machine-vision cameras, controlled through the Spinnaker SDK (PySpin).</dd></dl></div>
+        </li>
+        <li class="node" data-id="h-smp" data-owner="other">
+          <button class="node-btn" type="button"><span class="node-title">Samples · reference labels</span><span class="node-metric">Ground truth for training data</span><span class="node-tag">Project partner's researchers</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Others</dt><dd>Preparing the samples and the reference labels was done by the project partner's researchers.</dd><dt>Note</dt><dd>What the samples are and what is measured are confidential to the commissioned research, so they are not described.</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">02</span>Control and capture</div>
+      <ul class="nodes spaced">
+        <li class="node" data-id="h-gui" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">PyQt GUI</span><span class="node-metric">For non-developer researchers</span><span class="node-tag">Built by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Built a PyQt GUI with which non-developer researchers capture images and create datasets themselves, without a development environment, and shipped it as a PyInstaller executable. Every step runs from this one GUI.</dd><dt>Stack</dt><dd><ul class="chips"><li>PyQt</li><li>PyInstaller</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="h-cap" data-owner="me" data-default>
+          <button class="node-btn" type="button"><span class="node-title">Camera control · capture</span><span class="node-metric">Spinnaker SDK · PySpin</span><span class="node-tag">Built by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Wrote from scratch the module that controls several machine-vision cameras, matches their capture settings and saves the images.</dd><dt>Stack</dt><dd><ul class="chips"><li>Python</li><li>PySpin</li><li>Spinnaker SDK</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">03</span>Measurement and analysis</div>
+      <ul class="nodes">
+        <li class="node" data-id="h-meas" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">Measurement and analysis program</span><span class="node-metric">Values from the captures</span><span class="node-tag">Built by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>A program that extracts values from the captures and analyses them. On site, this program produced the AI training data.</dd><dt>Stack</dt><dd><ul class="chips"><li>Python</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">04</span>Preprocessing</div>
+      <ul class="nodes">
+        <li class="node" data-id="h-prep" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">Dataset preprocessing</span><span class="node-metric">Python pipeline</span><span class="node-tag">Built by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Cleans the captured images and shapes them for training. I replaced the old code stage by stage, checking that the numbers matched on the same inputs.</dd><dt>Stack</dt><dd><ul class="chips"><li>Python</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">05</span>Output</div>
+      <ul class="nodes">
+        <li class="node" data-id="h-ds" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">Training dataset</span><span class="node-metric">Sample images · reference labels</span><span class="node-tag">Pipeline output</span></button>
+          <div class="node-detail"><dl class="dl"><dt>Contents</dt><dd>An AI training dataset of sample images and reference labels.</dd><dt>Note</dt><dd>The research topic and what is measured are confidential to the commissioned research and are not disclosed.</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+  </ol>
+</div>
+<div class="inspector" aria-live="polite"><div class="insp-side"></div><div class="insp-main"></div></div>
