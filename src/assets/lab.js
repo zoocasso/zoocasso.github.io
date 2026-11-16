@@ -249,7 +249,7 @@ const L = {
   cams: () => ['レンズの一つひとつが、小さなカメラです。少しずつ違う場所から、同時に撮ります。', { ko: `렌즈 하나하나가 아주 작은 카메라예요. ${NL}×${NL}대가 조금씩 다른 자리에서 동시에 찍어요.`, en: `Each lens is a tiny camera; ${NL}×${NL} of them shoot at once from slightly different spots.` }],
   B: ['次は並べ替え。小さな写真から同じ位置のピクセルを集めると、ひとつの方向から見た写真になります。', { ko: `다음은 재배열(RIM). 작은 사진들에서 같은 자리의 픽셀만 모으면 한 방향에서 본 사진이 돼요. 모두 ${VIEWS}장.`, en: `Rearrange (RIM): the same pixel from every tiny picture makes one picture seen from one direction, ${VIEWS} in all.` }],
   // depth-dependent shift explained with the everyday moon-and-finger parallax
-  views: ['ほら、手前の物は大きく、奥の物は少しだけずれます。目の前の指は首を少し動かすだけで大きくずれるのに、月は動かないでしょう？', { ko: '보세요. 앞 물체는 크게, 뒤 물체는 조금만 움직여요. 눈앞에 든 손가락은 고개만 살짝 움직여도 휙 비켜 가는데, 달은 그대로인 것처럼요.', en: 'Look: near objects shift a lot, far ones barely. A finger held before your eyes jumps when you move your head, but the moon stays put.' }],
+  views: ['ほら、手前の物は大きく、奥の物は少しだけずれます。目の前の鉛筆は首を少し動かすだけで大きくずれるのに、月は動かないでしょう？', { ko: '보세요. 앞 물체는 크게, 뒤 물체는 조금만 움직여요. 눈앞에 든 연필은 고개만 살짝 움직여도 휙 비켜 가는데, 달은 그대로인 것처럼요.', en: 'Look: near objects shift a lot, far ones barely. A pencil held before your eyes jumps when you move your head, but the moon stays put.' }],
   C: ['最後に再構成。重ねる面を奥へ動かすと、その奥行きの物体がくっきり戻ります。奥行きごとのずれを戻して重ねるんです。', { ko: `마지막은 재구성. 시점 영상 ${VIEWS}장을 한 면에 겹치고, 그 면을 옮기면 그 깊이의 물체가 선명해져요. 깊이마다 다른 이동량을 되돌려 겹치는 거예요.`, en: `Reconstruct: the ${VIEWS} views overlap on one plane, and whatever stands at the plane's depth turns sharp. It undoes that depth's shift before stacking.` }],
   // the last line hands the visitor from the research demo to the work below
   outro: ['これは修士研究です。会社で作ったデータパイプラインは、ホームの「システム」にあります。', { ko: '여기까지가 석사 연구예요. 회사에서 만든 데이터 파이프라인은 홈의 "시스템"에 있어요.', en: "That was the master's research. The data pipelines built at work are on the home page, under Systems." }],
@@ -842,6 +842,8 @@ const pxCard = q('.pxcard'), pxG = {}, mvTags = { near: q('[data-mv=near]'), far
 if (pxCard) for (const k of ['finger', 'moon', 'eye']) pxG[k] = pxCard.querySelector(`[data-px=${k}]`);
 // the view's travel radius, and how far (in the card's units) the finger and the eye move at that radius
 const PX_R = Math.hypot(HI[0] - VC, HI[1] - VC), PX_A = 30, PX_E = 14, PX_EY = 5;
+// in the card the moon is as good as infinitely far, so it barely moves (the far object in the scene, nearer, moves more)
+const PX_MOON = 0.03;
 let pxOn = false, pxAnchors = null;
 function parallax(on) {
   if (!pxCard || pxOn === on) return;
@@ -859,7 +861,7 @@ function pxFrame(vs, sw, shh) {
   // moon a quarter as much (up and down at half the size, so the finger stays in the picture)
   const ox = reduce ? PX_R : vs[0] - VC, oy = reduce ? 0 : vs[1] - VC;
   const fx = -ox / PX_R * PX_A, fy = -oy / PX_R * PX_A * 0.5;
-  tr(pxG.finger, fx, fy); tr(pxG.moon, fx * RHO, fy * RHO); tr(pxG.eye, ox / PX_R * PX_E, oy / PX_R * PX_EY);
+  tr(pxG.finger, fx, fy); tr(pxG.moon, fx * PX_MOON, fy * PX_MOON); tr(pxG.eye, ox / PX_R * PX_E, oy / PX_R * PX_EY);
   // the labels follow the near and the far object in the view on show (lens units, shifted as uRef does)
   const k = pxAnchors ? Math.min(1, st.V) * Math.max(0, 1 - st.C * 4) : 0, ref = viewRef(scene) * easeIO(Math.min(1, st.V));
   for (const key of ['near', 'far']) {
