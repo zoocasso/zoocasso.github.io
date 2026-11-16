@@ -79,13 +79,15 @@ EXISTING = set()
 PHONE = re.compile(r"(?<!\d)01[016-9][-. ]?\d{3,4}[-. ]?\d{4}(?!\d)|(?<!\d)0[789]0[-. ]?\d{4}[-. ]?\d{4}(?!\d)|\+8[12][ -]?\d")
 # content rules from the owner, checked on every built page's visible text (see check()):
 # never "수료" or start availability, no stack without evidence, no abandoned project, no "sole developer"
-# for the genome work, nothing about what the commissioned research measures, no "last updated" line
+# for the genome work, nothing about what the commissioned research measures, no "last updated" line,
+# no "code lost" line for 3DOS and no model-3 matching count (owner review, 2026-11-16)
 FORBIDDEN = re.compile(
     r"수료|입사 ?가능|근무 ?가능|available from|available to start|入社可能|"
     r"MariaDB|PostgreSQL|\bReact\b|kr-public-data-agent|"
     r"단독 ?개발|sole developer|"
     r"卵|雌雄|\begg|계란|달걀|sexing|"
-    r"last updated|최종 ?수정|최종 ?업데이트|最終更新", re.I)
+    r"last updated|최종 ?수정|최종 ?업데이트|最終更新|"
+    r"분실|유실|紛失|code was lost|24만 ?8천|248K|24万8千", re.I)
 
 SVG = {
     "cv": '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 1.5h5l3.5 3.5v9.5h-8.5z"/><path d="M9 1.5V5h3.5M6 9h4.5M6 11.5h4.5"/></svg>',

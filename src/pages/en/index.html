@@ -48,9 +48,9 @@
           <li class="rstage"><div class="rstage-h"><span>01</span><b>Sources</b></div><ul><li>Shopping sites</li><li>Public data APIs</li><li>VCF · FASTQ</li><li>Machine-vision cameras</li><li>Game client</li></ul></li>
           <li class="rstage"><div class="rstage-h"><span>02</span><b>Collection</b></div><ul><li>Selenium</li><li>BeautifulSoup</li><li>REST API</li><li>PySpin</li><li>Distributed crawling</li></ul></li>
           <li class="rstage"><div class="rstage-h"><span>03</span><b>Storage</b></div><ul><li>MySQL</li><li>AWS RDS</li><li>SQLAlchemy</li><li>Split, chunked loading</li></ul></li>
-          <li class="rstage"><div class="rstage-h"><span>04</span><b>Processing</b></div><ul><li>SQL</li><li>pandas</li><li>scikit-learn</li><li>KeyBERT</li><li>GATK</li><li>OpenCV</li></ul></li>
-          <li class="rstage"><div class="rstage-h"><span>05</span><b>Serving</b></div><ul><li>FastAPI</li><li>Jinja2</li><li>Tabulator</li><li>Java · Spring</li><li>PyQt</li></ul></li>
-          <li class="rstage"><div class="rstage-h"><span>06</span><b>Operations</b></div><ul><li>Docker</li><li>Harbor</li><li>AWS EC2</li><li>Cloudflare</li><li>Linux</li><li>HTTPS</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>04</span><b>Processing</b></div><ul><li>SQL</li><li>pandas</li><li>scikit-learn</li><li>OpenCV</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>05</span><b>Serving</b></div><ul><li>FastAPI</li><li>Java · Spring</li><li>PyQt</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>06</span><b>Operations</b></div><ul><li>Docker</li><li>Harbor</li><li>AWS EC2</li><li>Cloudflare</li><li>Linux</li></ul></li>
         </ol>
       </div>
     </div>
@@ -108,6 +108,7 @@
         <div class="sys-links"><a class="btn" href="/en/work/kisti/">Details<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
       </header>
       {{inc:flow-kisti}}
+      <div class="sys-outcome"><span class="k">Improved</span><span>Direct crawling that kept getting blocked → <b>collection through official APIs</b> (public-data portal API, Rainforest API)</span><span>More stable collection, less legal risk</span></div>
       <div class="sys-outcome"><span class="k">Result</span><span>The project later led to a <b>KRW 300M main-phase contract</b></span><span>Presented results at KISTI technical meetings · wrote the audit deliverables</span></div>
     </article>
 
@@ -122,6 +123,7 @@
         <div class="sys-links"><a class="btn" href="/en/work/genomics/">Details<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>Code (rewritten 2026)</a></div>
       </header>
       {{inc:flow-genome}}
+      <div class="sys-outcome"><span class="k">Improved</span><span>Web screens rendered inside the server → <b>a separate JSON API for the frontend</b> (Sep 2023)</span></div>
       <div class="sys-outcome"><span class="k">Result</span><span>Deployed to a production server and run <b>for internal IPs only</b> (not a public service)</span><span>The service code was rewritten in October 2026 and published</span></div>
     </article>
 
@@ -136,6 +138,7 @@
         <div class="sys-links"><a class="btn" href="/en/work/hitachi/">Details<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
       </header>
       {{inc:flow-hitachi}}
+      <div class="sys-outcome"><span class="k">Improved</span><span>Only the first frame of dark, low-light video, with a home-made C++ camera layer → <b>single high-quality still captures at the right brightness</b>, through the recommended SDK (PySpin)</span></div>
       <div class="sys-outcome"><span class="k">Result</span><span><b>Deployed in a lab in the Netherlands, Sep–Oct 2026</b> · used on site by Hitachi staff</span><span>Demonstrated to the project partner's researchers · working languages Japanese and English</span></div>
     </article>
 
@@ -168,6 +171,7 @@
 
     <div class="sys">
       {{inc:flow-research}}
+      <div class="sys-outcome"><span class="k">Improved</span><span>Reconstructions needed to pick the origin: 81 → <b>1</b></span><span>0.31 s measured in the paper · the iterative 25.45 s is an estimate</span></div>
     </div>
 
     <div class="rs-grid">
@@ -190,6 +194,7 @@
         </ol>
       </div>
     </div>
+    <p class="note"><b>Starting point in vision and ML (2022)</b> · Depth estimation with correlation filters and VCR, a course project (public repository rewritten in 2026), is where my current research started. Alongside it: an MNIST CNN in MATLAB with backpropagation and momentum gradient descent written by hand, no deep-learning framework (2022). My interest in vision began with my graduation project, Smart Mirror (team of two: Raspberry Pi, OpenCV LBPH face recognition, Kakao speech API). <a href="/en/research/#path">Research path</a></p>
   </div>
 </section>
 
@@ -205,11 +210,7 @@
     <table class="tbl">
       <thead><tr><th scope="col">Project</th><th scope="col">What I did</th><th scope="col">Stack</th></tr></thead>
       <tbody>
-        <tr><td>3DOS · vision enhancement on an XR headset<small>Nov 2024 · XR Device Content Makerthon finals</small></td><td>In team 3DOS (five lab members registered), I handled development, the presentation and the stage demo. I implemented Fourier peplography (fog removal) and photon counting (low-light recovery) from Prof. Myungjin Cho's research in C++ and OpenCV, built them as an Android native plugin (arm64) and demonstrated them in a Unity app on the Metalens 2 headset. The code was lost, so only the <a href="https://github.com/zoocasso/realtime-vision-xr-device" target="_blank" rel="noopener">slides</a> are public.</td><td><ul class="chips"><li>C++</li><li>OpenCV</li><li>Unity</li><li>Android</li></ul></td></tr>
-        <tr><td>Life-insurance disclosure data tools<small>Aug – Oct 2023 · Vision Inside · team of three</small></td><td>Loaded life-insurance disclosure workbooks (16 product categories) into MySQL and served them through a FastAPI and Tabulator web viewer. Built a standalone package that runs VBA through xlwings, and a PyQt desktop prototype. Porting the pricing model to Python and checking it against Excel was led by another team member.</td><td><ul class="chips"><li>Python</li><li>openpyxl</li><li>xlwings</li><li>MySQL</li><li>FastAPI</li><li>PyQt</li></ul></td></tr>
-        <tr><td>Smart Mirror<small>2022 · capstone · team of two</small></td><td>On a Raspberry Pi, OpenCV LBPH face recognition and the Kakao speech recognition API showed per-user dashboards on a half-mirror display.</td><td><ul class="chips"><li>Python</li><li>OpenCV</li><li>Raspberry Pi</li></ul></td></tr>
-        <tr><td>Depth estimation with correlation filters and VCR<small>2022 · course project</small></td><td>Recovered depth from elemental images, building on the VCR and correlation-filter scripts from the course's lecture materials. The starting point of my master's research. <a href="https://github.com/zoocasso/depth-estimation-using-vcr-algorithm-matlab" target="_blank" rel="noopener">Code (rewritten Oct 2026)</a></td><td><ul class="chips"><li>MATLAB</li></ul></td></tr>
-        <tr><td>A CNN in MATLAB<small>Feb – Mar 2022 · study project</small></td><td>Following the examples in Phil Kim's “MATLAB Deep Learning”, I implemented an MNIST CNN (convolution, ReLU, max pooling, softmax) and backpropagation with momentum gradient descent from scratch.</td><td><ul class="chips"><li>MATLAB</li></ul></td></tr>
+        <tr><td>3DOS · vision enhancement on an XR headset<small>Nov 2024 · XR Device Content Makerthon finals</small></td><td>In team 3DOS (five lab members registered), I handled development, the presentation and the stage demo. I implemented Fourier peplography (fog removal) and photon counting (low-light recovery) from Prof. Myungjin Cho's research in C++ and OpenCV, built them as an Android native plugin (arm64) and demonstrated them in a Unity app on the Metalens 2 headset. The <a href="https://github.com/zoocasso/realtime-vision-xr-device" target="_blank" rel="noopener">slides</a> are public.</td><td><ul class="chips"><li>C++</li><li>OpenCV</li><li>Unity</li><li>Android</li></ul></td></tr>
       </tbody>
     </table>
   </div>
@@ -231,7 +232,7 @@
           <li><div class="log-when">Apr 2025 – now</div><div class="log-what"><b>Kyushu Institute of Technology, Graduate School of Computer Science and Systems Engineering</b><span>Master's program in Creative Informatics · 3D vision research (advisor: Prof. Min-Chul Lee)</span><span class="pill">{{f:status}}</span></div></li>
           <li><div class="log-when">Apr 2025 – now</div><div class="log-what"><b>Kyutech lab · research assistant (part-time)</b><span>Image-data pipeline for commissioned research with Hitachi · deployed on site in the Netherlands, Sep–Oct 2026</span></div></li>
           <li><div class="log-when">Aug 2024 – Mar 2025</div><div class="log-what"><b>Hankyong National University, 3D Image Processing Systems Lab · undergraduate researcher</b><span>First-author poster at Photonics Conference 2024 (Optical Society of Korea) · 3DOS makerthon</span></div></li>
-          <li><div class="log-when">{{f:career_span}}</div><div class="log-what"><b>Vision Inside · assistant manager (data and backend engineer)</b><span>KISTI project data layer, genomic report system, life-insurance disclosure data tools</span><span>Military service as Industrial Technical Personnel, Jul 2022 – Jul 2024, completed</span></div></li>
+          <li><div class="log-when">{{f:career_span}}</div><div class="log-what"><b>Vision Inside · assistant manager (data and backend engineer)</b><span>KISTI project data layer · genomic report system</span><span>Life-insurance disclosure tool (team of three): loaded disclosure workbooks for 16 product categories into MySQL and served them through a FastAPI web viewer</span><span>Military service as Industrial Technical Personnel, Jul 2022 – Jul 2024, completed</span></div></li>
           <li><div class="log-when">Mar 2018 – Feb 2025</div><div class="log-what"><b>Hankyong National University, B.S. in Electrical, Electronic and Control Engineering</b></div></li>
         </ol>
       </div>

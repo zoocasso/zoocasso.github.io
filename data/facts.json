@@ -17,7 +17,6 @@
   "kisti_asin_dedup": {"ko": "1,221,128개", "en": "1,221,128", "ja": "1,221,128件", "src": "MASTER §2-1"},
   "kisti_asin_short": {"ko": "221만 → 122만", "en": "2.22M → 1.22M", "ja": "221万 → 122万", "src": "MASTER §2-1 (kisti_asin → kisti_asin_dedup)"},
   "kisti_api": {"ko": "2023.06", "en": "Jun 2023", "ja": "2023.06", "src": "MASTER §2-1 API 전환 제안·반영"},
-  "kisti_match": {"ko": "24만 8천 건", "en": "248K", "ja": "24万8千件", "src": "MASTER §2-1 모델3"},
 
   "bio_ref": {"ko": "약 1 TB", "en": "~1 TB", "ja": "約1 TB", "src": "MASTER §2-2 공개 레퍼런스"},
   "bio_period": {"ko": "2022.08 – 2023.09", "en": "Aug 2022 – Sep 2023", "ja": "2022.08 – 2023.09", "src": "MASTER §2-2"},

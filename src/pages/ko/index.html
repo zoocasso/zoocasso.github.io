@@ -48,9 +48,9 @@
           <li class="rstage"><div class="rstage-h"><span>01</span><b>소스</b></div><ul><li>쇼핑몰 웹</li><li>공공데이터 API</li><li>VCF · FASTQ</li><li>머신비전 카메라</li><li>게임 클라이언트</li></ul></li>
           <li class="rstage"><div class="rstage-h"><span>02</span><b>수집</b></div><ul><li>Selenium</li><li>BeautifulSoup</li><li>REST API</li><li>PySpin</li><li>분산 크롤링</li></ul></li>
           <li class="rstage"><div class="rstage-h"><span>03</span><b>저장</b></div><ul><li>MySQL</li><li>AWS RDS</li><li>SQLAlchemy</li><li>분할·청크 적재</li></ul></li>
-          <li class="rstage"><div class="rstage-h"><span>04</span><b>처리</b></div><ul><li>SQL</li><li>pandas</li><li>scikit-learn</li><li>KeyBERT</li><li>GATK</li><li>OpenCV</li></ul></li>
-          <li class="rstage"><div class="rstage-h"><span>05</span><b>서빙</b></div><ul><li>FastAPI</li><li>Jinja2</li><li>Tabulator</li><li>Java · Spring</li><li>PyQt</li></ul></li>
-          <li class="rstage"><div class="rstage-h"><span>06</span><b>운영</b></div><ul><li>Docker</li><li>Harbor</li><li>AWS EC2</li><li>Cloudflare</li><li>Linux</li><li>HTTPS</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>04</span><b>처리</b></div><ul><li>SQL</li><li>pandas</li><li>scikit-learn</li><li>OpenCV</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>05</span><b>서빙</b></div><ul><li>FastAPI</li><li>Java · Spring</li><li>PyQt</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>06</span><b>운영</b></div><ul><li>Docker</li><li>Harbor</li><li>AWS EC2</li><li>Cloudflare</li><li>Linux</li></ul></li>
         </ol>
       </div>
     </div>
@@ -108,6 +108,7 @@
         <div class="sys-links"><a class="btn" href="/work/kisti/">상세 보기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
       </header>
       {{inc:flow-kisti}}
+      <div class="sys-outcome"><span class="k">개선</span><span>자주 막히던 직접 크롤링 → <b>공식 API 수집</b>(공공데이터포털 API, Rainforest API)</span><span>수집이 더 안정적이고 법적 위험이 줄어듦</span></div>
       <div class="sys-outcome"><span class="k">결과</span><span>이 과제는 이후 <b>3억 원 규모 본사업</b>으로 이어짐</span><span>KISTI 기술 회의에서 결과 발표 · 감리 산출물 작성</span></div>
     </article>
 
@@ -122,6 +123,7 @@
         <div class="sys-links"><a class="btn" href="/work/genomics/">상세 보기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>코드 (2026 재작성)</a></div>
       </header>
       {{inc:flow-genome}}
+      <div class="sys-outcome"><span class="k">개선</span><span>서버 안에서 그리던 웹 화면 → <b>프런트엔드용 JSON API로 분리</b> (2023.09)</span></div>
       <div class="sys-outcome"><span class="k">결과</span><span>운영서버 배포 후 <b>내부 IP 전용</b>으로 운영 (공개 서비스는 아님)</span><span>서비스 코드는 2026년 10월 다시 써서 공개</span></div>
     </article>
 
@@ -136,6 +138,7 @@
         <div class="sys-links"><a class="btn" href="/work/hitachi/">상세 보기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
       </header>
       {{inc:flow-hitachi}}
+      <div class="sys-outcome"><span class="k">개선</span><span>어두운 저조도 동영상의 첫 프레임만 쓰고 카메라 제어는 자체 C++ 계층 → <b>적정 밝기의 고화질 정지 영상을 한 장씩 촬영</b>하고 권장 SDK(PySpin)로 제어</span></div>
       <div class="sys-outcome"><span class="k">결과</span><span><b>2026년 9~10월 네덜란드 현지 실험실 배포</b> · 히타치 담당자가 현장에서 직접 사용</span><span>과제 파트너 연구진 앞에서 시연 · 업무 언어 일본어·영어</span></div>
     </article>
 
@@ -168,6 +171,7 @@
 
     <div class="sys">
       {{inc:flow-research}}
+      <div class="sys-outcome"><span class="k">개선</span><span>원점을 고르는 재구성 81번 → <b>1번</b></span><span>논문 측정 0.31 s · 반복 방식의 25.45 s는 추정치</span></div>
     </div>
 
     <div class="rs-grid">
@@ -190,6 +194,7 @@
         </ol>
       </div>
     </div>
+    <p class="note"><b>2022년 비전·ML 출발점</b> · 수업 프로젝트로 한 상관 필터·VCR 깊이 추정(공개 저장소는 2026년 재작성)이 지금 연구의 출발점입니다. 같은 해 딥러닝 프레임워크 없이 역전파·모멘텀 경사하강을 직접 구현한 MNIST CNN (MATLAB, 2022)을 만들었고, 비전에 관심을 갖게 된 것은 졸업작품 Smart Mirror(2인 팀: Raspberry Pi, OpenCV LBPH 얼굴인식, Kakao 음성인식 API)부터입니다. <a href="/research/#path">연구 이력 보기</a></p>
   </div>
 </section>
 
@@ -205,11 +210,7 @@
     <table class="tbl">
       <thead><tr><th scope="col">프로젝트</th><th scope="col">한 일</th><th scope="col">기술</th></tr></thead>
       <tbody>
-        <tr><td>3DOS · XR 헤드셋 시야 개선<small>2024.11 · XR 디바이스 콘텐츠 메이커톤 본선</small></td><td>팀 3DOS(연구실 5명 등록)에서 개발·발표·무대 시연을 전담. 조명진 교수님 연구의 Fourier Peplography(연무 제거)와 Photon Counting(저조도 복원)을 C++·OpenCV로 구현해 Android 네이티브 플러그인(arm64)으로 빌드하고, Metalens 2 헤드셋의 Unity 앱에서 시연. 코드는 분실해 <a href="https://github.com/zoocasso/realtime-vision-xr-device" target="_blank" rel="noopener">발표자료</a>만 공개.</td><td><ul class="chips"><li>C++</li><li>OpenCV</li><li>Unity</li><li>Android</li></ul></td></tr>
-        <tr><td>생명보험 공시 데이터 도구<small>2023.08 – 10 · 비전인사이드 · 3인 팀</small></td><td>생명보험 공시 엑셀(16개 상품군)을 MySQL에 적재하고 FastAPI·Tabulator 웹 뷰어로 제공. xlwings로 VBA를 실행하는 독립 실행 패키지와 PyQt 데스크톱 프로토타입을 개발. 보험료 산출 모델의 Python 변환·대조는 다른 팀원이 주도.</td><td><ul class="chips"><li>Python</li><li>openpyxl</li><li>xlwings</li><li>MySQL</li><li>FastAPI</li><li>PyQt</li></ul></td></tr>
-        <tr><td>Smart Mirror<small>2022 · 졸업작품 · 2인 팀</small></td><td>Raspberry Pi에서 OpenCV LBPH 얼굴인식과 Kakao 음성인식 API로 사용자별 대시보드를 하프미러 디스플레이에 표시.</td><td><ul class="chips"><li>Python</li><li>OpenCV</li><li>Raspberry Pi</li></ul></td></tr>
-        <tr><td>상관 필터·VCR 깊이 추정<small>2022 · 수업 프로젝트</small></td><td>수업 강의자료의 VCR·상관 필터 스크립트를 바탕으로 요소 영상에서 깊이를 복원. 지금 석사 연구의 출발점. <a href="https://github.com/zoocasso/depth-estimation-using-vcr-algorithm-matlab" target="_blank" rel="noopener">코드 (2026년 10월 재작성)</a></td><td><ul class="chips"><li>MATLAB</li></ul></td></tr>
-        <tr><td>MATLAB으로 구현한 CNN<small>2022.02 – 03 · 학습 프로젝트</small></td><td>Phil Kim의 『MATLAB Deep Learning』 예제를 따라 MNIST 분류 CNN(합성곱·ReLU·맥스풀링·소프트맥스)과 모멘텀 경사하강 역전파를 직접 구현.</td><td><ul class="chips"><li>MATLAB</li></ul></td></tr>
+        <tr><td>3DOS · XR 헤드셋 시야 개선<small>2024.11 · XR 디바이스 콘텐츠 메이커톤 본선</small></td><td>팀 3DOS(연구실 5명 등록)에서 개발·발표·무대 시연을 전담. 조명진 교수님 연구의 Fourier Peplography(연무 제거)와 Photon Counting(저조도 복원)을 C++·OpenCV로 구현해 Android 네이티브 플러그인(arm64)으로 빌드하고, Metalens 2 헤드셋의 Unity 앱에서 시연. <a href="https://github.com/zoocasso/realtime-vision-xr-device" target="_blank" rel="noopener">발표자료</a> 공개.</td><td><ul class="chips"><li>C++</li><li>OpenCV</li><li>Unity</li><li>Android</li></ul></td></tr>
       </tbody>
     </table>
   </div>
@@ -231,7 +232,7 @@
           <li><div class="log-when">2025.04 – 현재</div><div class="log-what"><b>규슈공업대학교 대학원 정보공학부</b><span>정보창성공학전공 석사과정 · 3D 비전 연구 (지도교수 이민철)</span><span class="pill">{{f:status}}</span></div></li>
           <li><div class="log-when">2025.04 – 현재</div><div class="log-what"><b>규슈공대 연구실 · 지원연구원(파트타임)</b><span>히타치 수탁연구 이미지 데이터 파이프라인 · 2026년 9~10월 네덜란드 현지 배포</span></div></li>
           <li><div class="log-when">2024.08 – 2025.03</div><div class="log-what"><b>한경국립대학교 3차원영상처리시스템 연구실 · 학부연구생</b><span>Photonics Conference 2024(한국광학회) 1저자 포스터 · 3DOS 메이커톤</span></div></li>
-          <li><div class="log-when">{{f:career_span}}</div><div class="log-what"><b>비전인사이드 · 대리 (데이터·백엔드 엔지니어)</b><span>KISTI 발주 과제 데이터 계층, 유전체 리포트 시스템, 생명보험 공시 데이터 도구</span><span>산업기능요원 2022.07 – 2024.07 만기 복무</span></div></li>
+          <li><div class="log-when">{{f:career_span}}</div><div class="log-what"><b>비전인사이드 · 대리 (데이터·백엔드 엔지니어)</b><span>KISTI 발주 과제 데이터 계층 · 유전체 리포트 시스템</span><span>생명보험 공시 데이터 도구(3인 팀): 공시 엑셀 16개 상품군을 MySQL에 적재하고 FastAPI 웹 뷰어로 제공</span><span>산업기능요원 2022.07 – 2024.07 만기 복무</span></div></li>
           <li><div class="log-when">2018.03 – 2025.02</div><div class="log-what"><b>한경국립대학교 전기전자제어공학과 학사</b></div></li>
         </ol>
       </div>

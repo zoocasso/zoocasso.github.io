@@ -11,10 +11,10 @@
       <div><dt>결과</dt><dd>이후 3억 원 규모 본사업으로 이어짐<small>감리 산출물 작성 포함</small></dd></div>
     </dl>
     <div class="kpis row" aria-label="핵심 수치">
-      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>2023.11 누적</span><span class="kpi-val">8,000만<small>+ 행</small></span><span class="kpi-label">중앙 MySQL 적재</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>2023.11 누적</span><span class="kpi-val">8,000만<small>+ 행</small></span><span class="kpi-label">조달·다나와·아마존 등 7개 테이블</span></div>
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Amazon 세분류</span><span class="kpi-val">10,985<small>/ 11,046</small></span><span class="kpi-label">세분류 단위 수집 범위</span></div>
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>ASIN 중복 제거</span><span class="kpi-val">1,221,128<small>개</small></span><span class="kpi-label">2022년 9월 수집 상품 {{f:kisti_asin}}에서 정리</span></div>
-      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>SQL 매칭</span><span class="kpi-val">24만 8천<small>건</small></span><span class="kpi-label">NTIS 과제 ↔ NICE 기업 키워드</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>다나와 카테고리</span><span class="kpi-val">2,481<small>/ 2,517</small></span><span class="kpi-label">카테고리 단위 수집 범위</span></div>
     </div>
   </div>
 </section>
@@ -36,73 +36,35 @@
     </div>
     <div class="sys">
       {{inc:flow-kisti}}
+      <div class="sys-outcome"><span class="k">개선</span><span>자주 막히던 직접 크롤링 → <b>공식 API 수집</b>(공공데이터포털 API, Rainforest API)</span><span>수집이 더 안정적이고 법적 위험이 줄어듦</span></div>
       <div class="sys-outcome"><span class="k">결과</span><span>이 과제는 이후 <b>3억 원 규모 본사업</b>으로 이어짐</span><span>회사 코드는 공개할 수 없어 구조만 그렸습니다</span></div>
     </div>
   </section>
 
-  <div class="two">
-    <section class="d-section" id="scale" aria-labelledby="vol-h">
-      <h2 id="vol-h">데이터 볼륨</h2>
-      <p class="sec-desc">2023년 11월 코드정의서 기준, 주요 테이블별 행 수입니다.</p>
-      <div class="card">
-        <div class="chart" role="group" aria-label="테이블별 행 수 막대그래프">
-          <div class="bars">
-            <div class="bar-row"><span class="bar-name">조달청 개별 속성<small>조달청 API</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 92px) * 1)"></i><span class="bar-val">41,917,377</span></span></div>
-            <div class="bar-row"><span class="bar-name">다나와 리뷰<small>다나와</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 92px) * .3829)"></i><span class="bar-val">16,049,734</span></span></div>
-            <div class="bar-row"><span class="bar-name">Amazon 상품 상세<small>Amazon</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 92px) * .2382)"></i><span class="bar-val">9,985,638</span></span></div>
-            <div class="bar-row"><span class="bar-name">Amazon 리뷰 키워드<small>Amazon</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 92px) * .1880)"></i><span class="bar-val">7,882,058</span></span></div>
-            <div class="bar-row"><span class="bar-name">조달청 API 수집분<small>조달청 API</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 92px) * .1140)"></i><span class="bar-val">4,779,512</span></span></div>
-            <div class="bar-row"><span class="bar-name">Amazon 상품<small>Amazon</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 92px) * .0221)"></i><span class="bar-val">925,441</span></span></div>
-            <div class="bar-row"><span class="bar-name">다나와 상품<small>다나와</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 92px) * .0100)"></i><span class="bar-val">417,240</span></span></div>
-          </div>
+  <section class="d-section" id="scale" aria-labelledby="vol-h">
+    <h2 id="vol-h">규모와 수집 범위</h2>
+    <p class="sec-desc">2023년 11월 코드정의서 기준 <b>조달·다나와·아마존 등 7개 테이블, 총 8,000만+ 행</b>입니다. 아래는 대상 카테고리 중 실제로 수집한 비율입니다.</p>
+    <div class="card" id="coverage">
+      <div class="cov">
+        <div class="cov-row">
+          <div class="cov-top"><b>Amazon 세분류</b><span>10,985 / 11,046 · 99.4%</span></div>
+          <div class="cov-bar" role="img" aria-label="Amazon 세분류 99.4퍼센트 수집"><i style="width:99.4%"></i></div>
         </div>
-        <div class="chart-foot">
-          <span>7개 테이블 합계 <b>81,957,000</b>행</span>
-          <details class="tableview">
-            <summary>표로 보기</summary>
-            <table>
-              <thead><tr><th scope="col">테이블</th><th scope="col">행 수</th></tr></thead>
-              <tbody>
-                <tr><td>조달청 개별 속성</td><td>41,917,377</td></tr>
-                <tr><td>다나와 리뷰</td><td>16,049,734</td></tr>
-                <tr><td>Amazon 상품 상세</td><td>9,985,638</td></tr>
-                <tr><td>Amazon 리뷰 키워드</td><td>7,882,058</td></tr>
-                <tr><td>조달청 API 수집분</td><td>4,779,512</td></tr>
-                <tr><td>Amazon 상품</td><td>925,441</td></tr>
-                <tr><td>다나와 상품</td><td>417,240</td></tr>
-              </tbody>
-            </table>
-          </details>
+        <div class="cov-row">
+          <div class="cov-top"><b>다나와 카테고리</b><span>2,481 / 2,517 · 98.6%</span></div>
+          <div class="cov-bar" role="img" aria-label="다나와 카테고리 98.6퍼센트 수집"><i style="width:98.6%"></i></div>
         </div>
-      </div>
-      <p class="small-note">Amazon 상품 행 수는 2023년 11월 기준이라, 2022년 9월 수집분을 정리한 결과({{f:kisti_asin_dedup}})와 시점이 다릅니다.</p>
-    </section>
-
-    <section class="d-section" id="coverage" aria-labelledby="cov-h">
-      <h2 id="cov-h">수집 범위</h2>
-      <p class="sec-desc">대상 카테고리 중 실제로 수집한 비율입니다.</p>
-      <div class="card">
-        <div class="cov">
-          <div class="cov-row">
-            <div class="cov-top"><b>Amazon 세분류</b><span>10,985 / 11,046 · 99.4%</span></div>
-            <div class="cov-bar" role="img" aria-label="Amazon 세분류 99.4퍼센트 수집"><i style="width:99.4%"></i></div>
-          </div>
-          <div class="cov-row">
-            <div class="cov-top"><b>다나와 카테고리</b><span>2,481 / 2,517 · 98.6%</span></div>
-            <div class="cov-bar" role="img" aria-label="다나와 카테고리 98.6퍼센트 수집"><i style="width:98.6%"></i></div>
-          </div>
-          <div class="cov-row">
-            <div class="cov-top"><b>Amazon 상품 정리</b><span>ASIN 기준 중복 제거</span></div>
-            <div class="funnel">
-              <div><b>2,217,720</b><span>수집한 상품</span></div>
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-              <div class="me"><b>1,221,128</b><span>중복 제거 후</span></div>
-            </div>
+        <div class="cov-row">
+          <div class="cov-top"><b>Amazon 상품 정리</b><span>ASIN 기준 중복 제거</span></div>
+          <div class="funnel">
+            <div><b>2,217,720</b><span>수집한 상품</span></div>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            <div class="me"><b>1,221,128</b><span>중복 제거 후</span></div>
           </div>
         </div>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
 
   <section class="d-section" id="decisions" aria-labelledby="dec-h">
     <h2 id="dec-h">주요 결정</h2>
@@ -125,7 +87,7 @@
           <li>Amazon·다나와 <b>Selenium 크롤러</b>, 조달청 공공데이터포털 API 수집기와 나라장터 크롤링</li>
           <li>{{f:kisti_farm}}에서 돌리고 원격 DB 1대에 모으는 <b>분산 크롤링 팜</b>, 중복 제거</li>
           <li><b>중앙 MySQL 적재</b>, 2023년 11월 누적 {{f:kisti_rows}}</li>
-          <li>모델 3·4·5 배치: 과제–기업 매칭 SQL {{f:kisti_match}}, 가격대별 K-means(Dunn index), KeyBERT 리뷰 키워드 일 배치. 2024년 모델 3.1 대응 조달청 통계 SQL</li>
+          <li>모델 4·5 배치: 가격대별 K-means(Dunn index), KeyBERT 리뷰 키워드 일 배치. 2024년 조달청 통계 SQL</li>
           <li><b>FastAPI 서비스</b>와 Jinja2·Tabulator 관리 화면(필터, 순차 실행, 통합 검색, 엑셀 다운로드)</li>
           <li>Amazon 수집의 Rainforest API 전환 구현 (2024년 2~5월)</li>
           <li>Java Spring 기반 KISTI 프로토타입 웹에서 DB 스키마·백엔드 연동·프런트엔드 연결 담당 (사내 Java팀과 협업). 협력사 모델 1·2와 함께 사내 서버로 이전하고 Docker 실행 환경 구성</li>
@@ -155,11 +117,11 @@
         <li><span class="when">2022.11</span><span class="rail" aria-hidden="true"></span><div class="what"><b>감리 산출물 작성</b>운영자 매뉴얼, 초기데이터구축완료보고서.</div></li>
         <li><span class="when">2022.11 – 2023.01</span><span class="rail" aria-hidden="true"></span><div class="what"><b>분산 크롤링 팜 운영</b>{{f:kisti_farm}}가 원격 DB 1대에 적재.</div></li>
         <li><span class="when">2023.02 – 03</span><span class="rail" aria-hidden="true"></span><div class="what"><b>카테고리 수집 현황</b>Amazon 세분류 10,985 / 11,046, 다나와 2,481 / 2,517.</div></li>
-        <li><span class="when">2023.03 – 05</span><span class="rail" aria-hidden="true"></span><div class="what"><b>KISTI 프로토타입 사내 이전</b>협력사의 모델 1·2와 사내 Java팀의 Spring 웹을 사내 서버로 옮기고 Docker 실행 환경 구성.</div></li>
+        <li><span class="when">2023.03 – 05</span><span class="rail" aria-hidden="true"></span><div class="what"><b>KISTI 프로토타입 웹 · 사내 이전</b>Java Spring 기반 KISTI 프로토타입 웹에서 DB 스키마·백엔드 연동·프런트엔드 연결 담당(사내 Java팀과 협업). 협력사 모델 1·2와 함께 사내 서버로 옮기고 Docker 실행 환경 구성.</div></li>
         <li><span class="when">2023.06 – 07</span><span class="rail" aria-hidden="true"></span><div class="what"><b>API 수집으로 전환 결정</b>6월 발주처와 협의해 반영, 7월 Amazon용 Rainforest API 선정.</div></li>
-        <li><span class="when">2023.11</span><span class="rail" aria-hidden="true"></span><div class="what"><b>누적 {{f:kisti_rows}}</b>코드정의서 기준 7개 주요 테이블 합계 81,957,000행.</div></li>
+        <li><span class="when">2023.11</span><span class="rail" aria-hidden="true"></span><div class="what"><b>누적 {{f:kisti_rows}}</b>코드정의서 기준 조달·다나와·아마존 등 7개 테이블, 총 8,000만+ 행.</div></li>
         <li><span class="when">2024.02 – 05</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Rainforest API 전환 구현</b>Amazon 수집 경로 교체.</div></li>
-        <li><span class="when">2024</span><span class="rail" aria-hidden="true"></span><div class="what"><b>조달청 통계 SQL</b>가격·속성·납품 통계 (2024년 모델 3.1 대응).</div></li>
+        <li><span class="when">2024</span><span class="rail" aria-hidden="true"></span><div class="what"><b>조달청 통계 SQL</b>가격·속성·납품 통계.</div></li>
         <li class="out"><span class="when">2024.06</span><span class="rail" aria-hidden="true"></span><div class="what"><b>용역 종료</b>이 과제는 이후 3억 원 규모 본사업으로 이어짐.</div></li>
       </ol>
     </div>

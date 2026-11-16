@@ -8,11 +8,11 @@
         </li>
         <li class="node" data-id="k-dnw" data-owner="ext">
           <button class="node-btn" type="button"><span class="node-title">다나와</span><span class="node-metric">카테고리 2,481개</span></button>
-          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>Selenium 크롤러로 카테고리 2,517개 중 <b>2,481개</b> 수집. 2023년 11월 기준 상품 417,240건, 리뷰 16,049,734건.</dd><dt>기술</dt><dd><ul class="chips"><li>Selenium</li><li>BeautifulSoup</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>Selenium 크롤러로 카테고리 2,517개 중 <b>2,481개</b> 수집.</dd><dt>기술</dt><dd><ul class="chips"><li>Selenium</li><li>BeautifulSoup</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="k-pps" data-owner="ext">
           <button class="node-btn" type="button"><span class="node-title">조달청 · 나라장터</span><span class="node-metric">공공데이터포털 API</span></button>
-          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>조달청 공공데이터포털 API 수집과 나라장터 크롤링. 2023년 11월 기준 API 수집분 4,779,512건, 개별 속성 41,917,377건.</dd><dt>기술</dt><dd><ul class="chips"><li>REST API</li><li>Python</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>조달청 공공데이터포털 API 수집과 나라장터 크롤링.</dd><dt>기술</dt><dd><ul class="chips"><li>REST API</li><li>Python</li></ul></dd></dl></div>
         </li>
       </ul>
     </li>
@@ -32,15 +32,15 @@
       <ul class="nodes">
         <li class="node" data-id="k-db" data-owner="me" data-default>
           <button class="node-btn" type="button"><span class="node-title">중앙 MySQL</span><span class="node-metric">{{f:kisti_rows_short}} 행 (2023.11)</span><span class="node-tag">직접 구축</span></button>
-          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>수집 결과를 중앙 MySQL에 적재. 2023년 11월 기준 누적 <b>{{f:kisti_rows}}</b>: 조달 개별 속성 4,192만 · 다나와 리뷰 1,605만 · Amazon 상품 상세 999만 · 리뷰 키워드 788만 · 조달 API 478만 · Amazon 상품 93만 · 다나와 상품 42만.</dd><dt>기술</dt><dd><ul class="chips"><li>MySQL</li><li>SQLAlchemy</li><li>pandas</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>수집 결과를 중앙 MySQL에 적재. 2023년 11월 기준 조달·다나와·아마존 등 7개 테이블, 총 <b>8,000만+ 행</b>.</dd><dt>기술</dt><dd><ul class="chips"><li>MySQL</li><li>SQLAlchemy</li><li>pandas</li></ul></dd></dl></div>
         </li>
       </ul>
     </li>
     <li class="stage"><div class="stage-h"><span class="n">04</span>처리</div>
       <ul class="nodes">
         <li class="node" data-id="k-models" data-owner="me">
-          <button class="node-btn" type="button"><span class="node-title">분석 모델 운영화</span><span class="node-metric">매칭 {{f:kisti_match}}</span><span class="node-tag">직접 구축</span></button>
-          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>모델 3: NTIS 과제–NICE 기업 키워드 매칭 <b>{{f:kisti_match}}</b>(SQL). 모델 4: 가격대별 K-means 클러스터링(군집 수는 Dunn index로 선택). 모델 5: 리뷰 요구 품질 키워드 추출 일 배치(KeyBERT·Sentence-Transformers·Mecab). 2024년 모델 3.1 대응으로 조달청 가격·속성·납품 통계 SQL.</dd><dt>기술</dt><dd><ul class="chips"><li>SQL</li><li>scikit-learn</li><li>KeyBERT</li><li>Sentence-Transformers</li><li>Mecab</li></ul></dd></dl></div>
+          <button class="node-btn" type="button"><span class="node-title">분석 모델 운영화</span><span class="node-metric">모델 4·5 배치</span><span class="node-tag">직접 구축</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>모델 4: 가격대별 K-means 클러스터링(군집 수는 Dunn index로 선택). 모델 5: 리뷰 요구 품질 키워드 추출 일 배치(KeyBERT·Sentence-Transformers·Mecab). 2024년에는 조달청 가격·속성·납품 통계 SQL.</dd><dt>기술</dt><dd><ul class="chips"><li>SQL</li><li>scikit-learn</li><li>KeyBERT</li><li>Sentence-Transformers</li><li>Mecab</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="k-univ" data-owner="other">
           <button class="node-btn" type="button"><span class="node-title">일부 모델 설계</span><span class="node-metric">모델 1·2 일부</span><span class="node-tag">대학 위탁연구</span></button>

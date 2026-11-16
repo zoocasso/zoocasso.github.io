@@ -48,9 +48,9 @@
           <li class="rstage"><div class="rstage-h"><span>01</span><b>ソース</b></div><ul><li>ショッピングサイト</li><li>公共データAPI</li><li>VCF · FASTQ</li><li>マシンビジョンカメラ</li><li>ゲームクライアント</li></ul></li>
           <li class="rstage"><div class="rstage-h"><span>02</span><b>収集</b></div><ul><li>Selenium</li><li>BeautifulSoup</li><li>REST API</li><li>PySpin</li><li>分散クローリング</li></ul></li>
           <li class="rstage"><div class="rstage-h"><span>03</span><b>保存</b></div><ul><li>MySQL</li><li>AWS RDS</li><li>SQLAlchemy</li><li>分割・チャンク蓄積</li></ul></li>
-          <li class="rstage"><div class="rstage-h"><span>04</span><b>処理</b></div><ul><li>SQL</li><li>pandas</li><li>scikit-learn</li><li>KeyBERT</li><li>GATK</li><li>OpenCV</li></ul></li>
-          <li class="rstage"><div class="rstage-h"><span>05</span><b>提供</b></div><ul><li>FastAPI</li><li>Jinja2</li><li>Tabulator</li><li>Java · Spring</li><li>PyQt</li></ul></li>
-          <li class="rstage"><div class="rstage-h"><span>06</span><b>運用</b></div><ul><li>Docker</li><li>Harbor</li><li>AWS EC2</li><li>Cloudflare</li><li>Linux</li><li>HTTPS</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>04</span><b>処理</b></div><ul><li>SQL</li><li>pandas</li><li>scikit-learn</li><li>OpenCV</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>05</span><b>提供</b></div><ul><li>FastAPI</li><li>Java · Spring</li><li>PyQt</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>06</span><b>運用</b></div><ul><li>Docker</li><li>Harbor</li><li>AWS EC2</li><li>Cloudflare</li><li>Linux</li></ul></li>
         </ol>
       </div>
     </div>
@@ -108,6 +108,7 @@
         <div class="sys-links"><a class="btn" href="/ja/work/kisti/">詳細を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
       </header>
       {{inc:flow-kisti}}
+      <div class="sys-outcome"><span class="k">改善</span><span>ブロックされがちだった直接クローリング → <b>公式APIでの収集</b>（公共データポータルAPI、Rainforest API）</span><span>収集が安定し、法的リスクも減少</span></div>
       <div class="sys-outcome"><span class="k">結果</span><span>このプロジェクトは、その後<b>3億ウォン規模の本事業</b>につながった</span><span>KISTIの技術会議で結果を発表 · 監理用の成果物を作成</span></div>
     </article>
 
@@ -122,6 +123,7 @@
         <div class="sys-links"><a class="btn" href="/ja/work/genomics/">詳細を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード（2026年に書き直し）</a></div>
       </header>
       {{inc:flow-genome}}
+      <div class="sys-outcome"><span class="k">改善</span><span>サーバー内で描画していたWeb画面 → <b>フロントエンド向けJSON APIとして分離</b>（2023.09）</span></div>
       <div class="sys-outcome"><span class="k">結果</span><span>本番サーバーにデプロイ後、<b>内部IP限定</b>で運用（公開サービスではない）</span><span>サービスのコードは2026年10月に書き直して公開</span></div>
     </article>
 
@@ -136,6 +138,7 @@
         <div class="sys-links"><a class="btn" href="/ja/work/hitachi/">詳細を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
       </header>
       {{inc:flow-hitachi}}
+      <div class="sys-outcome"><span class="k">改善</span><span>暗い低照度動画の最初のフレームだけを使い、カメラ制御は自作のC++層 → <b>適切な明るさの高画質な静止画を1枚ずつ撮影</b>し、推奨SDK（PySpin）で制御</span></div>
       <div class="sys-outcome"><span class="k">結果</span><span><b>2026年9〜10月、オランダの現地ラボに導入</b> · 日立グループの担当者が現場で直接使用</span><span>プロジェクトパートナーの研究者の前でデモ · 業務言語は日本語・英語</span></div>
     </article>
 
@@ -168,6 +171,7 @@
 
     <div class="sys">
       {{inc:flow-research}}
+      <div class="sys-outcome"><span class="k">改善</span><span>原点を選ぶための再構成 81回 → <b>1回</b></span><span>論文の実測 0.31 s · 反復方式の25.45 sは推定値</span></div>
     </div>
 
     <div class="rs-grid">
@@ -190,6 +194,7 @@
         </ol>
       </div>
     </div>
+    <p class="note"><b>2022年 ビジョン・MLの出発点</b> · 授業プロジェクトで取り組んだ相関フィルタ・VCRによる奥行き推定（公開リポジトリは2026年に書き直し）が、現在の研究の出発点です。同じ年に、深層学習フレームワークを使わず、誤差逆伝播とモメンタム勾配降下法を自分で実装したMNIST CNN（MATLAB、2022）を作りました。ビジョンに関心を持ったきっかけは、卒業制作のSmart Mirror（2人チーム: Raspberry Pi、OpenCV LBPH顔認識、Kakao音声認識API）です。<a href="/ja/research/#path">研究の経歴を見る</a></p>
   </div>
 </section>
 
@@ -205,11 +210,7 @@
     <table class="tbl">
       <thead><tr><th scope="col">プロジェクト</th><th scope="col">担当内容</th><th scope="col">技術</th></tr></thead>
       <tbody>
-        <tr><td>3DOS · XRヘッドセットの視界改善<small>2024.11 · XRデバイスコンテンツ・メイカソン本選</small></td><td>チーム3DOS（研究室の5名で登録）で、開発・発表・ステージでのデモを一人で担当。Myungjin Cho教授の研究のFourier Peplography（もや除去）とPhoton Counting（低照度での復元）をC++・OpenCVで実装し、Androidのネイティブプラグイン（arm64）としてビルドして、Metalens 2ヘッドセットのUnityアプリでデモ。コードは紛失したため、<a href="https://github.com/zoocasso/realtime-vision-xr-device" target="_blank" rel="noopener">発表資料</a>のみ公開。</td><td><ul class="chips"><li>C++</li><li>OpenCV</li><li>Unity</li><li>Android</li></ul></td></tr>
-        <tr><td>生命保険の公示データツール<small>2023.08 – 10 · Vision Inside · 3人チーム</small></td><td>生命保険の公示Excel（16の商品群）をMySQLに蓄積し、FastAPI・TabulatorのWebビューアで提供。xlwingsでVBAを実行するスタンドアロンのパッケージと、PyQtのデスクトップ版プロトタイプを開発。保険料算出モデルのPythonへの移植と照合は、他のチームメンバーが主導。</td><td><ul class="chips"><li>Python</li><li>openpyxl</li><li>xlwings</li><li>MySQL</li><li>FastAPI</li><li>PyQt</li></ul></td></tr>
-        <tr><td>Smart Mirror<small>2022 · 卒業制作 · 2人チーム</small></td><td>Raspberry Pi上で、OpenCVのLBPH顔認識とKakaoの音声認識APIを使い、ユーザーごとのダッシュボードをハーフミラーのディスプレイに表示。</td><td><ul class="chips"><li>Python</li><li>OpenCV</li><li>Raspberry Pi</li></ul></td></tr>
-        <tr><td>相関フィルタ・VCRによる奥行き推定<small>2022 · 授業のプロジェクト</small></td><td>授業の講義資料にあったVCR・相関フィルタのスクリプトをもとに、要素画像から奥行きを復元。現在の修士研究の出発点です。<a href="https://github.com/zoocasso/depth-estimation-using-vcr-algorithm-matlab" target="_blank" rel="noopener">コード（2026年10月に書き直し）</a></td><td><ul class="chips"><li>MATLAB</li></ul></td></tr>
-        <tr><td>MATLABで実装したCNN<small>2022.02 – 03 · 学習用プロジェクト</small></td><td>Phil Kimの『MATLAB Deep Learning』の例題に沿って、MNIST分類のCNN（畳み込み・ReLU・最大プーリング・ソフトマックス）と、モーメンタム付き勾配降下法による誤差逆伝播を自分で実装。</td><td><ul class="chips"><li>MATLAB</li></ul></td></tr>
+        <tr><td>3DOS · XRヘッドセットの視界改善<small>2024.11 · XRデバイスコンテンツ・メイカソン本選</small></td><td>チーム3DOS（研究室の5名で登録）で、開発・発表・ステージでのデモを一人で担当。Myungjin Cho教授の研究のFourier Peplography（もや除去）とPhoton Counting（低照度での復元）をC++・OpenCVで実装し、Androidのネイティブプラグイン（arm64）としてビルドして、Metalens 2ヘッドセットのUnityアプリでデモ。<a href="https://github.com/zoocasso/realtime-vision-xr-device" target="_blank" rel="noopener">発表資料</a>を公開。</td><td><ul class="chips"><li>C++</li><li>OpenCV</li><li>Unity</li><li>Android</li></ul></td></tr>
       </tbody>
     </table>
   </div>
@@ -231,7 +232,7 @@
           <li><div class="log-when">2025.04 – 現在</div><div class="log-what"><b>九州工業大学大学院 情報工学府</b><span>情報創成工学専攻 博士前期課程 · 3Dビジョン研究（指導教員 Min-Chul Lee）</span><span class="pill">{{f:status}}</span></div></li>
           <li><div class="log-when">2025.04 – 現在</div><div class="log-what"><b>九州工業大学の研究室 研究補助員（非常勤）</b><span>日立グループとの受託研究の画像データパイプライン · 2026年9〜10月にオランダで現地導入</span></div></li>
           <li><div class="log-when">2024.08 – 2025.03</div><div class="log-what"><b>韓京国立大学校（韓国）3次元映像処理システム研究室 · 学部研究生</b><span>Photonics Conference 2024（韓国光学会）筆頭著者ポスター · 3DOSメイカソン</span></div></li>
-          <li><div class="log-when">{{f:career_span}}</div><div class="log-what"><b>Vision Inside（韓国）· 代理（主任相当）、データ・バックエンドエンジニア</b><span>KISTI発注案件のデータ層、ゲノムレポートシステム、生命保険の公示データツール</span><span>産業技能要員（兵役の代わりに指定企業で働く韓国の制度）として2022.07 – 2024.07に服務満了</span></div></li>
+          <li><div class="log-when">{{f:career_span}}</div><div class="log-what"><b>Vision Inside（韓国）· 代理（主任相当）、データ・バックエンドエンジニア</b><span>KISTI発注案件のデータ層 · ゲノムレポートシステム</span><span>生命保険の公示データツール（3人チーム）: 公示Excel 16商品群をMySQLに格納し、FastAPIのWebビューアで提供</span><span>産業技能要員（兵役の代わりに指定企業で働く韓国の制度）として2022.07 – 2024.07に服務満了</span></div></li>
           <li><div class="log-when">2018.03 – 2025.02</div><div class="log-what"><b>韓京国立大学校 電気電子制御工学科 学士</b></div></li>
         </ol>
       </div>

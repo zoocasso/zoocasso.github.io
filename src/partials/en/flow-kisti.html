@@ -8,11 +8,11 @@
         </li>
         <li class="node" data-id="k-dnw" data-owner="ext">
           <button class="node-btn" type="button"><span class="node-title">Danawa</span><span class="node-metric">2,481 categories</span></button>
-          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Selenium crawlers collected <b>2,481</b> of 2,517 categories. As of November 2023: 417,240 products and 16,049,734 reviews.</dd><dt>Stack</dt><dd><ul class="chips"><li>Selenium</li><li>BeautifulSoup</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Selenium crawlers collected <b>2,481</b> of 2,517 categories.</dd><dt>Stack</dt><dd><ul class="chips"><li>Selenium</li><li>BeautifulSoup</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="k-pps" data-owner="ext">
           <button class="node-btn" type="button"><span class="node-title">Public procurement</span><span class="node-metric">Public data portal API</span></button>
-          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Collected the Public Procurement Service API on the public data portal and crawled the national procurement site. As of November 2023: 4,779,512 API records and 41,917,377 item attribute rows.</dd><dt>Stack</dt><dd><ul class="chips"><li>REST API</li><li>Python</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Collected the Public Procurement Service API on the public data portal and crawled the national procurement site.</dd><dt>Stack</dt><dd><ul class="chips"><li>REST API</li><li>Python</li></ul></dd></dl></div>
         </li>
       </ul>
     </li>
@@ -32,15 +32,15 @@
       <ul class="nodes">
         <li class="node" data-id="k-db" data-owner="me" data-default>
           <button class="node-btn" type="button"><span class="node-title">Central MySQL</span><span class="node-metric">{{f:kisti_rows_short}} rows (Nov 2023)</span><span class="node-tag">Built by me</span></button>
-          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Loaded the collected data into a central MySQL database. <b>{{f:kisti_rows}}</b> in total as of November 2023: procurement item attributes 41.92M · Danawa reviews 16.05M · Amazon product details 9.99M · review keywords 7.88M · procurement API records 4.78M · Amazon products 925K · Danawa products 417K.</dd><dt>Stack</dt><dd><ul class="chips"><li>MySQL</li><li>SQLAlchemy</li><li>pandas</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Loaded the collected data into a central MySQL database: 7 tables including procurement, Danawa and Amazon, <b>80M+ rows</b> in total (Nov 2023).</dd><dt>Stack</dt><dd><ul class="chips"><li>MySQL</li><li>SQLAlchemy</li><li>pandas</li></ul></dd></dl></div>
         </li>
       </ul>
     </li>
     <li class="stage"><div class="stage-h"><span class="n">04</span>Processing</div>
       <ul class="nodes">
         <li class="node" data-id="k-models" data-owner="me">
-          <button class="node-btn" type="button"><span class="node-title">Analysis models in production</span><span class="node-metric">{{f:kisti_match}} matches</span><span class="node-tag">Built by me</span></button>
-          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Model 3: keyword matching of NTIS projects to NICE companies, <b>{{f:kisti_match}}</b> links (SQL). Model 4: price-band K-means clustering (number of clusters chosen by the Dunn index). Model 5: a daily batch that mines required-quality keywords from reviews (KeyBERT, Sentence-Transformers, Mecab). In 2024, SQL statistics on procurement prices, attributes and deliveries for model 3.1.</dd><dt>Stack</dt><dd><ul class="chips"><li>SQL</li><li>scikit-learn</li><li>KeyBERT</li><li>Sentence-Transformers</li><li>Mecab</li></ul></dd></dl></div>
+          <button class="node-btn" type="button"><span class="node-title">Analysis models in production</span><span class="node-metric">Models 4 and 5</span><span class="node-tag">Built by me</span></button>
+          <div class="node-detail"><dl class="dl"><dt>What I did</dt><dd>Model 4: price-band K-means clustering (number of clusters chosen by the Dunn index). Model 5: a daily batch that mines required-quality keywords from reviews (KeyBERT, Sentence-Transformers, Mecab). In 2024, SQL statistics on procurement prices, attributes and deliveries.</dd><dt>Stack</dt><dd><ul class="chips"><li>SQL</li><li>scikit-learn</li><li>KeyBERT</li><li>Sentence-Transformers</li><li>Mecab</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="k-univ" data-owner="other">
           <button class="node-btn" type="button"><span class="node-title">Some model design</span><span class="node-metric">Parts of models 1–2</span><span class="node-tag">University research</span></button>

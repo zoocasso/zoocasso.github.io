@@ -11,10 +11,10 @@
       <div><dt>Outcome</dt><dd>Later led to a KRW 300M main-phase contract<small>Including the audit deliverables</small></dd></div>
     </dl>
     <div class="kpis row" aria-label="Key figures">
-      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Total, Nov 2023</span><span class="kpi-val">80M<small>+ rows</small></span><span class="kpi-label">Loaded into central MySQL</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Total, Nov 2023</span><span class="kpi-val">80M<small>+ rows</small></span><span class="kpi-label">7 tables incl. procurement, Danawa, Amazon</span></div>
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Amazon subcategories</span><span class="kpi-val">10,985<small>/ 11,046</small></span><span class="kpi-label">Collection coverage by subcategory</span></div>
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>ASIN de-duplication</span><span class="kpi-val">1,221,128<small>unique</small></span><span class="kpi-label">Cleaned from {{f:kisti_asin}} products collected in Sep 2022</span></div>
-      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>SQL matching</span><span class="kpi-val">248K<small>links</small></span><span class="kpi-label">NTIS projects ↔ NICE companies, by keyword</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Danawa categories</span><span class="kpi-val">2,481<small>/ 2,517</small></span><span class="kpi-label">Collection coverage by category</span></div>
     </div>
   </div>
 </section>
@@ -36,73 +36,35 @@
     </div>
     <div class="sys">
       {{inc:flow-kisti}}
+      <div class="sys-outcome"><span class="k">Improved</span><span>Direct crawling that kept getting blocked → <b>collection through official APIs</b> (public-data portal API, Rainforest API)</span><span>More stable collection, less legal risk</span></div>
       <div class="sys-outcome"><span class="k">Result</span><span>The project later led to a <b>KRW 300M main-phase contract</b></span><span>The company's code cannot be published, so only the structure is drawn</span></div>
     </div>
   </section>
 
-  <div class="two">
-    <section class="d-section" id="scale" aria-labelledby="vol-h">
-      <h2 id="vol-h">Data volume</h2>
-      <p class="sec-desc">Rows per main table, from the November 2023 code definition document.</p>
-      <div class="card">
-        <div class="chart" role="group" aria-label="Bar chart of rows per table">
-          <div class="bars">
-            <div class="bar-row"><span class="bar-name">Procurement item attributes<small>Procurement API</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 92px) * 1)"></i><span class="bar-val">41,917,377</span></span></div>
-            <div class="bar-row"><span class="bar-name">Danawa reviews<small>Danawa</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 92px) * .3829)"></i><span class="bar-val">16,049,734</span></span></div>
-            <div class="bar-row"><span class="bar-name">Amazon product details<small>Amazon</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 92px) * .2382)"></i><span class="bar-val">9,985,638</span></span></div>
-            <div class="bar-row"><span class="bar-name">Amazon review keywords<small>Amazon</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 92px) * .1880)"></i><span class="bar-val">7,882,058</span></span></div>
-            <div class="bar-row"><span class="bar-name">Procurement API records<small>Procurement API</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 92px) * .1140)"></i><span class="bar-val">4,779,512</span></span></div>
-            <div class="bar-row"><span class="bar-name">Amazon products<small>Amazon</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 92px) * .0221)"></i><span class="bar-val">925,441</span></span></div>
-            <div class="bar-row"><span class="bar-name">Danawa products<small>Danawa</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 92px) * .0100)"></i><span class="bar-val">417,240</span></span></div>
-          </div>
+  <section class="d-section" id="scale" aria-labelledby="vol-h">
+    <h2 id="vol-h">Scale and collection coverage</h2>
+    <p class="sec-desc"><b>7 tables including procurement, Danawa and Amazon, 80M+ rows in total</b> (Nov 2023 code definition document). Below, the share of the target categories that was actually collected.</p>
+    <div class="card" id="coverage">
+      <div class="cov">
+        <div class="cov-row">
+          <div class="cov-top"><b>Amazon subcategories</b><span>10,985 / 11,046 · 99.4%</span></div>
+          <div class="cov-bar" role="img" aria-label="Amazon subcategories: 99.4 percent collected"><i style="width:99.4%"></i></div>
         </div>
-        <div class="chart-foot">
-          <span><b>81,957,000</b> rows across the 7 tables</span>
-          <details class="tableview">
-            <summary>Show as a table</summary>
-            <table>
-              <thead><tr><th scope="col">Table</th><th scope="col">Rows</th></tr></thead>
-              <tbody>
-                <tr><td>Procurement item attributes</td><td>41,917,377</td></tr>
-                <tr><td>Danawa reviews</td><td>16,049,734</td></tr>
-                <tr><td>Amazon product details</td><td>9,985,638</td></tr>
-                <tr><td>Amazon review keywords</td><td>7,882,058</td></tr>
-                <tr><td>Procurement API records</td><td>4,779,512</td></tr>
-                <tr><td>Amazon products</td><td>925,441</td></tr>
-                <tr><td>Danawa products</td><td>417,240</td></tr>
-              </tbody>
-            </table>
-          </details>
+        <div class="cov-row">
+          <div class="cov-top"><b>Danawa categories</b><span>2,481 / 2,517 · 98.6%</span></div>
+          <div class="cov-bar" role="img" aria-label="Danawa categories: 98.6 percent collected"><i style="width:98.6%"></i></div>
         </div>
-      </div>
-      <p class="small-note">The Amazon product count is from November 2023, so its date differs from the result of cleaning the September 2022 collection ({{f:kisti_asin_dedup}}).</p>
-    </section>
-
-    <section class="d-section" id="coverage" aria-labelledby="cov-h">
-      <h2 id="cov-h">Collection coverage</h2>
-      <p class="sec-desc">The share of the target categories that was actually collected.</p>
-      <div class="card">
-        <div class="cov">
-          <div class="cov-row">
-            <div class="cov-top"><b>Amazon subcategories</b><span>10,985 / 11,046 · 99.4%</span></div>
-            <div class="cov-bar" role="img" aria-label="Amazon subcategories: 99.4 percent collected"><i style="width:99.4%"></i></div>
-          </div>
-          <div class="cov-row">
-            <div class="cov-top"><b>Danawa categories</b><span>2,481 / 2,517 · 98.6%</span></div>
-            <div class="cov-bar" role="img" aria-label="Danawa categories: 98.6 percent collected"><i style="width:98.6%"></i></div>
-          </div>
-          <div class="cov-row">
-            <div class="cov-top"><b>Amazon product cleanup</b><span>De-duplicated by ASIN</span></div>
-            <div class="funnel">
-              <div><b>2,217,720</b><span>products collected</span></div>
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-              <div class="me"><b>1,221,128</b><span>after de-duplication</span></div>
-            </div>
+        <div class="cov-row">
+          <div class="cov-top"><b>Amazon product cleanup</b><span>De-duplicated by ASIN</span></div>
+          <div class="funnel">
+            <div><b>2,217,720</b><span>products collected</span></div>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            <div class="me"><b>1,221,128</b><span>after de-duplication</span></div>
           </div>
         </div>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
 
   <section class="d-section" id="decisions" aria-labelledby="dec-h">
     <h2 id="dec-h">Key decisions</h2>
@@ -125,7 +87,7 @@
           <li><b>Selenium crawlers</b> for Amazon and Danawa, a collector for the Public Procurement Service API on the public data portal, and crawling of the national procurement site</li>
           <li>A <b>distributed crawling farm</b> on {{f:kisti_farm}} feeding one remote database, with de-duplication</li>
           <li><b>Loading into central MySQL</b>, {{f:kisti_rows}} in total as of November 2023</li>
-          <li>Batches for models 3, 4 and 5: project–company matching in SQL ({{f:kisti_match}}), price-band K-means (Dunn index), a daily KeyBERT review-keyword batch. In 2024, procurement statistics in SQL for model 3.1</li>
+          <li>Batches for models 4 and 5: price-band K-means (Dunn index), a daily KeyBERT review-keyword batch. In 2024, procurement statistics in SQL</li>
           <li><b>FastAPI services</b> and Jinja2 and Tabulator admin screens (filters, sequential runs, unified search, Excel export)</li>
           <li>Moving Amazon collection to the Rainforest API (February to May 2024)</li>
           <li>Owned the DB schema, backend integration and frontend wiring of the KISTI prototype web app in Java Spring (with the in-house Java team); moved it, with a partner's models 1–2, to company servers and set up its Docker runtime</li>
@@ -155,11 +117,11 @@
         <li><span class="when">Nov 2022</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Audit deliverables</b>Operator manual and initial data-build report.</div></li>
         <li><span class="when">Nov 2022 – Jan 2023</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Distributed crawling farm in operation</b>{{f:kisti_farm}} loading into one remote database.</div></li>
         <li><span class="when">Feb – Mar 2023</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Category coverage</b>Amazon subcategories 10,985 / 11,046, Danawa 2,481 / 2,517.</div></li>
-        <li><span class="when">Mar – May 2023</span><span class="rail" aria-hidden="true"></span><div class="what"><b>KISTI prototype moved in-house</b>The partner's models 1–2 and the in-house team's Spring web app moved to company servers, with a Docker runtime.</div></li>
+        <li><span class="when">Mar – May 2023</span><span class="rail" aria-hidden="true"></span><div class="what"><b>KISTI prototype web app · moved in-house</b>Owned the DB schema, backend integration and frontend wiring of the Java Spring KISTI prototype web app, with the in-house Java team; moved it with the partner's models 1–2 to company servers on Docker.</div></li>
         <li><span class="when">Jun – Jul 2023</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Decision to collect through APIs</b>Agreed with the client in June and adopted; the Rainforest API chosen for Amazon in July.</div></li>
-        <li><span class="when">Nov 2023</span><span class="rail" aria-hidden="true"></span><div class="what"><b>{{f:kisti_rows}} in total</b>81,957,000 rows across the 7 main tables in the code definition document.</div></li>
+        <li><span class="when">Nov 2023</span><span class="rail" aria-hidden="true"></span><div class="what"><b>{{f:kisti_rows}} in total</b>7 tables including procurement, Danawa and Amazon, 80M+ rows in total (code definition document).</div></li>
         <li><span class="when">Feb – May 2024</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Rainforest API switch built</b>The Amazon collection path replaced.</div></li>
-        <li><span class="when">2024</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Procurement statistics in SQL</b>Prices, attributes and deliveries (for model 3.1 in 2024).</div></li>
+        <li><span class="when">2024</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Procurement statistics in SQL</b>Prices, attributes and deliveries.</div></li>
         <li class="out"><span class="when">Jun 2024</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Contract ended</b>The project later led to a KRW 300M main-phase contract.</div></li>
       </ol>
     </div>

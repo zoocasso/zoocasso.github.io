@@ -1,4 +1,4 @@
-<!--meta {"title": "작업", "description": "데이터 엔지니어링, 백엔드, 비전 데이터 파이프라인, XR 메이커톤과 학습 프로젝트까지 이형주의 작업 목록.", "nav": "systems"} -->
+<!--meta {"title": "작업", "description": "데이터 엔지니어링, 백엔드, 비전 데이터 파이프라인, XR 메이커톤까지 이형주의 작업 목록.", "nav": "systems"} -->
 <section class="d-hero hero" aria-labelledby="d-h">
   <div class="wrap">
     <nav class="crumbs" aria-label="현재 위치"><a href="/">홈</a><span aria-hidden="true">/</span><span aria-current="page">작업</span></nav>
@@ -62,13 +62,10 @@
     <table class="tbl">
       <thead><tr><th scope="col">프로젝트</th><th scope="col">한 일</th><th scope="col">기술</th></tr></thead>
       <tbody>
-        <tr><td>3DOS · XR 헤드셋 시야 개선<small>2024.11 · XR 디바이스 콘텐츠 메이커톤 본선</small></td><td>2024 XR 디바이스 콘텐츠 메이커톤 본선(판교 메타버스 허브)에 학부 연구실 5명으로 팀 3DOS를 등록해 참가했고, 개발과 발표, 무대 시연을 혼자 맡았습니다. 조명진 교수님 연구에서 발표된 Fourier Peplography(연무 제거)와 Photon Counting(저조도 복원)을 C++·OpenCV로 새로 구현해 Android 네이티브 플러그인(arm64)으로 빌드하고, Metalens 2 헤드셋의 Unity 앱에서 기기 카메라 영상에 적용해 관객 앞에서 시연했습니다. 코드는 분실해 <a href="https://github.com/zoocasso/realtime-vision-xr-device" target="_blank" rel="noopener">발표자료</a>만 공개합니다.</td><td><ul class="chips"><li>C++</li><li>OpenCV</li><li>Unity</li><li>Android</li></ul></td></tr>
-        <tr><td>생명보험 공시 데이터 도구<small>2023.08 – 10 · 비전인사이드 · 3인 팀</small></td><td>생명보험 공시 엑셀(16개 상품군)을 openpyxl, pandas, SQLAlchemy로 MySQL에 적재하고 FastAPI·Tabulator 웹 뷰어로 보여 줬습니다. xlwings로 VBA를 실행하는 독립 실행 패키지와 PyQt 데스크톱 프로토타입을 만들었고, VBA 보험료 산출 모델의 이름 정의 영역을 DB로 옮겼습니다. 이 모델을 Python으로 옮겨 엑셀 결과와 대조하는 일은 다른 팀원이 주도했습니다.</td><td><ul class="chips"><li>Python</li><li>openpyxl</li><li>pandas</li><li>xlwings</li><li>MySQL</li><li>FastAPI</li><li>PyQt</li></ul></td></tr>
-        <tr><td>Smart Mirror<small>2022 · 졸업작품 · 2인 팀</small></td><td>Raspberry Pi에서 OpenCV LBPH 얼굴인식과 Kakao 음성인식 API로 사용자별 대시보드를 하프미러 디스플레이에 띄웠습니다.</td><td><ul class="chips"><li>Python</li><li>OpenCV</li><li>Raspberry Pi</li></ul></td></tr>
-        <tr><td>상관 필터와 VCR을 이용한 깊이 추정<small>2022 · 수업 프로젝트</small></td><td>수업 강의자료의 VCR·상관 필터 스크립트를 바탕으로 요소 영상에서 깊이를 찾은 과제입니다(MATLAB). 2022년에 바꾼 부분은 작고, 코드는 2026년 10월에 다시 써서 <a href="https://github.com/zoocasso/depth-estimation-using-vcr-algorithm-matlab" target="_blank" rel="noopener">공개</a>했습니다. 지금 석사 연구의 출발점입니다.</td><td><ul class="chips"><li>MATLAB</li></ul></td></tr>
-        <tr><td>MATLAB으로 구현한 CNN<small>2022.02 – 03 · 학습 프로젝트</small></td><td>Phil Kim의 『MATLAB Deep Learning』 예제를 따라 MNIST 숫자 분류 CNN(합성곱, ReLU, 맥스풀링, 소프트맥스)과 모멘텀 경사하강 역전파를 직접 구현했습니다.</td><td><ul class="chips"><li>MATLAB</li></ul></td></tr>
+        <tr><td>3DOS · XR 헤드셋 시야 개선<small>2024.11 · XR 디바이스 콘텐츠 메이커톤 본선</small></td><td>2024 XR 디바이스 콘텐츠 메이커톤 본선(판교 메타버스 허브)에 학부 연구실 5명으로 팀 3DOS를 등록해 참가했고, 개발과 발표, 무대 시연을 혼자 맡았습니다. 조명진 교수님 연구에서 발표된 Fourier Peplography(연무 제거)와 Photon Counting(저조도 복원)을 C++·OpenCV로 새로 구현해 Android 네이티브 플러그인(arm64)으로 빌드하고, Metalens 2 헤드셋의 Unity 앱에서 기기 카메라 영상에 적용해 관객 앞에서 시연했습니다. <a href="https://github.com/zoocasso/realtime-vision-xr-device" target="_blank" rel="noopener">발표자료</a>를 공개합니다.</td><td><ul class="chips"><li>C++</li><li>OpenCV</li><li>Unity</li><li>Android</li></ul></td></tr>
       </tbody>
     </table>
+    <p class="small-note">2022년 학부 때의 비전·ML 작업(깊이 추정, CNN, Smart Mirror)은 <a href="/research/#path">연구 페이지</a>에, 생명보험 공시 데이터 도구는 <a href="/cv/#career">이력서 페이지</a>의 비전인사이드 경력에 한 줄로 적었습니다.</p>
   </section>
 
   <nav class="pager" aria-label="다음으로">
