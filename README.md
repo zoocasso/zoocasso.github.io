@@ -12,6 +12,10 @@ Personal site of Hyeongju Lee (이형주), data and backend engineer and 3D visi
 - **A lens array lab.** The research page opens on a lab in the browser: a 3D scene (or a real Lytro light field) is captured through a pinhole array model, rearranged with RIM, and reconstructed at different depths, with synthesized music and sound.
 - **CV and portfolio.** The public PDFs, in Korean and English.
 
+<img src="docs/site-lab.gif" alt="The lens array lab on the research page: a 3D scene is captured through a lens array, the elemental images are shown, and the scene is reconstructed at different depths" width="720">
+
+<sub>The lens array lab on the research page, recorded in a headless browser (WebGL): capture through the lens array, elemental images, views, reconstruction at the depth of each object.</sub>
+
 ## Key design decisions
 
 - **No framework and no dependencies.** `build.py` assembles the pages with the Python standard library and writes `dist/`; GitHub Actions publishes it to GitHub Pages.
