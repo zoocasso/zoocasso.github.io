@@ -4,7 +4,7 @@ Personal site of Hyeongju Lee (이형주), data and backend engineer and 3D visi
 
 **Open:** [한국어](https://zoocasso.github.io/) · [English](https://zoocasso.github.io/en/) · [日本語](https://zoocasso.github.io/ja/)
 
-<img src="docs/site-home.png" alt="Home page of the site: the work shown as data-flow diagrams" width="820">
+<img src="docs/site-home.jpg" alt="English home page of the site: headline, four outcome cards and the tools used at each stage of the data path" width="820">
 
 ## What is on the site
 
