@@ -310,6 +310,9 @@ html[lang=ja] .sec-head h2 { letter-spacing: -0.015em; }
 .node[data-owner="other"] .node-tag { background: #E4E6EB; color: var(--ink-2); }
 .node[data-owner="ext"] .node-btn { background: var(--surface-2); border-color: var(--line-2); }
 .node[data-owner="ext"] .node-title { color: var(--ink-2); font-weight: 600; }
+/* an outside dataset (e.g. the Stanford Lytro archive) sits in an oval, like the other outside sources */
+.node.src .node-btn { border-radius: 999px; padding-left: 22px; padding-right: 22px; text-align: center; border-style: dashed; }
+.node.src .node-btn > * { justify-content: center; }
 .flow.rs .node[data-owner="me"] .node-btn { border-color: var(--rs-line); box-shadow: inset 3px 0 0 var(--rs); }
 .flow.rs .node[data-owner="me"] .node-metric { color: var(--rs-2); }
 .flow.rs .node[data-owner="me"] .node-tag { background: var(--rs-soft); color: var(--rs-2); }
