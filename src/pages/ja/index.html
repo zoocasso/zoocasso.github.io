@@ -15,14 +15,14 @@
 
       <div class="kpis" aria-label="主な数値">
         <a class="kpi" href="#sys-kisti">
-          <span class="kpi-src"><i aria-hidden="true"></i>KISTI発注案件 · 2023.11累計</span>
-          <span class="kpi-val">8,000万<small>+ 行</small></span>
-          <span class="kpi-label">商品・調達データの収集・蓄積（中央MySQL）</span>
+          <span class="kpi-src"><i aria-hidden="true"></i>KISTI発注案件 · データ層を担当</span>
+          <span class="kpi-val">3億<small>ウォン本事業</small></span>
+          <span class="kpi-label">収集・蓄積・提供を担当した案件が、その後の本事業につながりました</span>
         </a>
-        <a class="kpi" href="#sys-genome">
-          <span class="kpi-src"><i aria-hidden="true"></i>ゲノムレポートシステム</span>
-          <span class="kpi-val">~1<small>TB</small></span>
-          <span class="kpi-label">公開ゲノムリファレンスの蓄積 · 4段階のSQLアノテーション</span>
+        <a class="kpi" href="#sys-hitachi">
+          <span class="kpi-src"><i aria-hidden="true"></i>日立グループとの共同研究 · ゼロから構築</span>
+          <span class="kpi-val">現地導入</span>
+          <span class="kpi-label">2026年9〜10月 オランダ · 日立グループの担当者が直接使用</span>
         </a>
         <a class="kpi" href="#sys-wjmax">
           <span class="kpi-src"><i aria-hidden="true"></i>WJMax · サーバー・DB担当</span>
@@ -119,11 +119,11 @@
           <div class="sys-role"><span class="pill me">パイプライン・バックエンド・フロントエンドを実装</span><span class="pill">アルゴリズムはチームリーダーと共同で設計</span></div>
           <p class="sys-scope">個人のゲノム変異（VCF、チップアレイ）を{{f:bio_ref}}の公開リファレンスと結び付け、疾患・形質のリスク、集団ごとの頻度、関連する医薬品・韓方生薬の情報を提供するシステムです。慶熙大学校 韓医科大学（韓国）とカナダのバイオ研究所が参加した国際共同プロジェクトでした。<b>私の担当範囲</b> パイプライン・バックエンド・フロントエンドの実装とDockerでのデプロイ</p>
         </div>
-        <div class="sys-links"><a class="btn" href="/ja/work/genomics/">詳細を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード（2026年に書き直し）</a></div>
+        <div class="sys-links"><a class="btn" href="/ja/work/genomics/">詳細を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード</a></div>
       </header>
       {{inc:flow-genome}}
       <div class="sys-outcome"><span class="k">改善</span><span>サーバー内で描画していたWeb画面 → <b>フロントエンド向けJSON APIとして分離</b>（2023.09）</span></div>
-      <div class="sys-outcome"><span class="k">結果</span><span>本番サーバーにデプロイ後、<b>内部IP限定</b>で運用（公開サービスではない）</span><span>サービスのコードは2026年10月に書き直して公開</span></div>
+      <div class="sys-outcome"><span class="k">結果</span><span>本番サーバーにデプロイ後、<b>内部IP限定</b>で運用（公開サービスではない）</span><span>サービスのコードは整理して公開</span></div>
     </article>
 
     <article class="sys" id="sys-hitachi" role="tabpanel" aria-labelledby="tab-hitachi">
@@ -149,10 +149,10 @@
           <div class="sys-role"><span class="pill me">サーバー・DB・セキュリティを担当</span><span class="pill">ゲームクライアントは別の1人が開発</span></div>
           <p class="sys-scope">コミュニティのリズムゲームのプレイ報告を受け取り、保存するサーバーです。平均同時接続は{{f:wjmax_avg}}、アップデート時には最大{{f:wjmax_peak}}が接続しました。</p>
         </div>
-        <div class="sys-links"><a class="btn" href="/ja/work/wjmax/">詳細を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード（2026年に書き直し）</a></div>
+        <div class="sys-links"><a class="btn" href="/ja/work/wjmax/">詳細を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード</a></div>
       </header>
       {{inc:flow-wjmax}}
-      <div class="sys-outcome"><span class="k">結果</span><span>アップデート当日に最大<b>{{f:wjmax_peak}}</b>の同時接続を受けて運用</span><span>公開リポジトリは2026年10月の書き直し版（テスト付き）</span></div>
+      <div class="sys-outcome"><span class="k">結果</span><span>アップデート当日に最大<b>{{f:wjmax_peak}}</b>の同時接続を受けて運用</span><span>公開リポジトリは整理版（テスト付き）</span></div>
     </article>
   </div>
 </section>
@@ -193,7 +193,7 @@
         </ol>
       </div>
     </div>
-    <p class="note"><b>2022年 ビジョン・MLの出発点</b> · 授業プロジェクトで取り組んだ相関フィルタ・VCRによる奥行き推定（公開リポジトリは2026年に書き直し）が、現在の研究の出発点です。同じ年に、深層学習フレームワークを使わず、誤差逆伝播とモメンタム勾配降下法を自分で実装したMNIST CNN（MATLAB、2022）を作りました。ビジョンに関心を持ったきっかけは、卒業制作のSmart Mirror（2人チーム: Raspberry Pi、OpenCV LBPH顔認識、Kakao音声認識API）です。<a href="/ja/research/#path">研究の経歴を見る</a></p>
+    <p class="note"><b>2022年 ビジョン・MLの出発点</b> · 授業プロジェクトで取り組んだ相関フィルタ・VCRによる奥行き推定が、現在の研究の出発点です。同じ年に、深層学習フレームワークを使わず、誤差逆伝播とモメンタム勾配降下法を自分で実装したMNIST CNN（MATLAB）を作りました。ビジョンに関心を持ったきっかけは、卒業制作のSmart Mirror（2人チーム: Raspberry Pi、OpenCV LBPH顔認識、Kakao音声認識API）です。<a href="/ja/research/#path">研究の経歴を見る</a></p>
   </div>
 </section>
 

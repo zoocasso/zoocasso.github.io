@@ -1,4 +1,4 @@
-<!--meta {"title": "WJMax game server", "description": "Side project: server, database and security for WJMax, a community rhythm game, run on FastAPI, EC2, RDS MySQL and Cloudflare, with up to about 2,000 concurrent players during updates. Includes the problems handled in the 2026 rewrite.", "nav": "systems"} -->
+<!--meta {"title": "WJMax game server", "description": "Side project: server, database and security for WJMax, a community rhythm game, run on FastAPI, EC2, RDS MySQL and Cloudflare, with up to about 2,000 concurrent players during updates. Includes the problems handled in the public version.", "nav": "systems"} -->
 <section class="d-hero hero" aria-labelledby="d-h">
   <div class="wrap">
     <nav class="crumbs" aria-label="You are here"><a href="/en/">Home</a><span aria-hidden="true">/</span><a href="/en/#systems">Systems</a><span aria-hidden="true">/</span><span aria-current="page">WJMax game server</span></nav>
@@ -16,7 +16,7 @@
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Rewrite load test</span><span class="kpi-val">281<small>/ 600 failed → 0</small></span><span class="kpi-label">60 clients at once, before and after the connection-pool fix</span></div>
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>CI</span><span class="kpi-val">3<small>databases</small></span><span class="kpi-label">Tests on SQLite · MySQL 8.0 · 8.4</span></div>
     </div>
-    <div class="d-actions"><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>Code (GitHub, rewritten Oct 2026)</a></div>
+    <div class="d-actions"><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>Code (GitHub)</a></div>
   </div>
 </section>
 
@@ -40,7 +40,7 @@
   </section>
 
   <section class="d-section" id="rewrite" aria-labelledby="rw-h">
-    <h2 id="rw-h">Problems handled in the 2026 rewrite</h2>
+    <h2 id="rw-h">Problems handled in the public version</h2>
     <p class="sec-desc">The request the game client sends stays as it was; the server-side problems were pinned down one by one with tests.</p>
     <ol class="decisions">
       <li><h3>Connection pool starved under load</h3>

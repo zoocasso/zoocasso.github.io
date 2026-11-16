@@ -15,14 +15,14 @@
 
       <div class="kpis" aria-label="핵심 수치">
         <a class="kpi" href="#sys-kisti">
-          <span class="kpi-src"><i aria-hidden="true"></i>KISTI 발주 과제 · 2023.11 누적</span>
-          <span class="kpi-val">8,000만<small>+ 행</small></span>
-          <span class="kpi-label">상품·조달 데이터 수집·적재 (중앙 MySQL)</span>
+          <span class="kpi-src"><i aria-hidden="true"></i>KISTI 발주 과제 · 데이터 계층 전담</span>
+          <span class="kpi-val">3억<small>원 본사업</small></span>
+          <span class="kpi-label">수집·적재·서빙을 맡은 과제가 이후 본사업으로 이어짐</span>
         </a>
-        <a class="kpi" href="#sys-genome">
-          <span class="kpi-src"><i aria-hidden="true"></i>유전체 리포트 시스템</span>
-          <span class="kpi-val">~1<small>TB</small></span>
-          <span class="kpi-label">공개 유전체 레퍼런스 적재 · 4단계 SQL 주석</span>
+        <a class="kpi" href="#sys-hitachi">
+          <span class="kpi-src"><i aria-hidden="true"></i>히타치 공동연구 · 처음부터 구축</span>
+          <span class="kpi-val">현장 배포</span>
+          <span class="kpi-label">2026.09–10 네덜란드 · 히타치 담당자가 직접 사용</span>
         </a>
         <a class="kpi" href="#sys-wjmax">
           <span class="kpi-src"><i aria-hidden="true"></i>WJMax 게임 서버 · 서버·DB 담당</span>
@@ -119,7 +119,7 @@
           <div class="sys-role"><span class="pill me">파이프라인·백엔드·프런트엔드 구현</span><span class="pill">알고리즘은 팀장과 함께 설계</span></div>
           <p class="sys-scope">개인 유전체 변이(VCF, 칩 array)를 {{f:bio_ref}} 공개 레퍼런스와 이어 질병·형질 위험도, 집단별 빈도, 관련 의약품·한약재 정보를 주는 시스템입니다. 경희대 한의대와 캐나다 바이오 연구소가 함께한 국제 협업 과제였습니다. <b>제 범위</b> 파이프라인·백엔드·프런트엔드 구현과 Docker 배포</p>
         </div>
-        <div class="sys-links"><a class="btn" href="/work/genomics/">상세 보기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>코드 (2026 재작성)</a></div>
+        <div class="sys-links"><a class="btn" href="/work/genomics/">상세 보기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>코드</a></div>
       </header>
       {{inc:flow-genome}}
       <div class="sys-outcome"><span class="k">개선</span><span>서버 안에서 그리던 웹 화면 → <b>프런트엔드용 JSON API로 분리</b> (2023.09)</span></div>
@@ -149,10 +149,10 @@
           <div class="sys-role"><span class="pill me">서버·DB·보안 담당</span><span class="pill">게임 클라이언트는 다른 1명이 개발</span></div>
           <p class="sys-scope">커뮤니티 리듬게임의 플레이 보고를 받아 저장하는 서버입니다. 평균 동시 접속 {{f:wjmax_avg}}, 업데이트 때 최대 {{f:wjmax_peak}}이 접속했습니다.</p>
         </div>
-        <div class="sys-links"><a class="btn" href="/work/wjmax/">상세 보기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>코드 (2026 재작성)</a></div>
+        <div class="sys-links"><a class="btn" href="/work/wjmax/">상세 보기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>코드</a></div>
       </header>
       {{inc:flow-wjmax}}
-      <div class="sys-outcome"><span class="k">결과</span><span>업데이트 날 최대 <b>{{f:wjmax_peak}}</b> 동시 접속을 받아 운영</span><span>공개 저장소는 2026년 10월 재작성본 (테스트 포함)</span></div>
+      <div class="sys-outcome"><span class="k">결과</span><span>업데이트 날 최대 <b>{{f:wjmax_peak}}</b> 동시 접속을 받아 운영</span><span>공개 저장소는 정리본 (테스트 포함)</span></div>
     </article>
   </div>
 </section>
@@ -193,7 +193,7 @@
         </ol>
       </div>
     </div>
-    <p class="note"><b>2022년 비전·ML 출발점</b> · 수업 프로젝트로 한 상관 필터·VCR 깊이 추정(공개 저장소는 2026년 재작성)이 지금 연구의 출발점입니다. 같은 해 딥러닝 프레임워크 없이 역전파·모멘텀 경사하강을 직접 구현한 MNIST CNN (MATLAB, 2022)을 만들었고, 비전에 관심을 갖게 된 것은 졸업작품 Smart Mirror(2인 팀: Raspberry Pi, OpenCV LBPH 얼굴인식, Kakao 음성인식 API)부터입니다. <a href="/research/#path">연구 이력 보기</a></p>
+    <p class="note"><b>2022년 비전·ML 출발점</b> · 수업 프로젝트로 한 상관 필터·VCR 깊이 추정이 지금 연구의 출발점입니다. 같은 해 딥러닝 프레임워크 없이 역전파·모멘텀 경사하강을 직접 구현한 MNIST CNN(MATLAB)을 만들었고, 비전에 관심을 갖게 된 것은 졸업작품 Smart Mirror(2인 팀: Raspberry Pi, OpenCV LBPH 얼굴인식, Kakao 음성인식 API)부터입니다. <a href="/research/#path">연구 이력 보기</a></p>
   </div>
 </section>
 

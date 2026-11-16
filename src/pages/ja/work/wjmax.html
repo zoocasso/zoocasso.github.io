@@ -1,4 +1,4 @@
-<!--meta {"title": "WJMaxゲームサーバー", "description": "コミュニティのリズムゲームWJMaxのサーバー・DB・セキュリティを担当し、FastAPI、EC2、RDSのMySQL、Cloudflareで運用して、アップデート時に最大約2,000人の同時接続を受けたサイドプロジェクト。2026年の書き直しで扱った問題も紹介します。", "nav": "systems"} -->
+<!--meta {"title": "WJMaxゲームサーバー", "description": "コミュニティのリズムゲームWJMaxのサーバー・DB・セキュリティを担当し、FastAPI、EC2、RDSのMySQL、Cloudflareで運用して、アップデート時に最大約2,000人の同時接続を受けたサイドプロジェクト。公開版で扱った問題も紹介します。", "nav": "systems"} -->
 <section class="d-hero hero" aria-labelledby="d-h">
   <div class="wrap">
     <nav class="crumbs" aria-label="現在地"><a href="/ja/">ホーム</a><span aria-hidden="true">/</span><a href="/ja/#systems">システム</a><span aria-hidden="true">/</span><span aria-current="page">WJMaxゲームサーバー</span></nav>
@@ -16,7 +16,7 @@
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>書き直し版の負荷テスト</span><span class="kpi-val">281<small>/ 600 失敗 → 0</small></span><span class="kpi-label">クライアント60個が同時送信、コネクションプールの修正前後</span></div>
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>CI</span><span class="kpi-val">3<small>種のDB</small></span><span class="kpi-label">SQLite · MySQL 8.0 · 8.4でテスト</span></div>
     </div>
-    <div class="d-actions"><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード（GitHub、2026年10月に書き直し）</a></div>
+    <div class="d-actions"><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード（GitHub）</a></div>
   </div>
 </section>
 
@@ -40,7 +40,7 @@
   </section>
 
   <section class="d-section" id="rewrite" aria-labelledby="rw-h">
-    <h2 id="rw-h">2026年の書き直しで扱った問題</h2>
+    <h2 id="rw-h">公開版で扱った問題</h2>
     <p class="sec-desc">ゲームクライアントが送るリクエストはそのままにして、サーバー側の問題を一つずつテストで固定しました。</p>
     <ol class="decisions">
       <li><h3>負荷が集中したときのコネクションプールの枯渇</h3>

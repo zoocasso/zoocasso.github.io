@@ -1,4 +1,4 @@
-<!--meta {"title": "WJMax 게임 서버", "description": "커뮤니티 리듬게임 WJMax의 서버·DB·보안을 맡아 FastAPI, EC2, RDS MySQL, Cloudflare로 운영하고 업데이트 때 최대 약 2,000명 동시 접속을 받은 사이드 프로젝트. 2026년 재작성에서 다룬 문제 포함.", "nav": "systems"} -->
+<!--meta {"title": "WJMax 게임 서버", "description": "커뮤니티 리듬게임 WJMax의 서버·DB·보안을 맡아 FastAPI, EC2, RDS MySQL, Cloudflare로 운영하고 업데이트 때 최대 약 2,000명 동시 접속을 받은 사이드 프로젝트. 공개 정리본에서 다룬 문제 포함.", "nav": "systems"} -->
 <section class="d-hero hero" aria-labelledby="d-h">
   <div class="wrap">
     <nav class="crumbs" aria-label="현재 위치"><a href="/">홈</a><span aria-hidden="true">/</span><a href="/#systems">시스템</a><span aria-hidden="true">/</span><span aria-current="page">WJMax 게임 서버</span></nav>
@@ -16,7 +16,7 @@
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>재작성 부하 테스트</span><span class="kpi-val">281<small>/ 600 실패 → 0</small></span><span class="kpi-label">클라이언트 60개 동시, 커넥션 풀 수정 전후</span></div>
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>CI</span><span class="kpi-val">3<small>개 DB</small></span><span class="kpi-label">SQLite · MySQL 8.0 · 8.4에서 테스트</span></div>
     </div>
-    <div class="d-actions"><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>코드 (GitHub, 2026년 10월 재작성)</a></div>
+    <div class="d-actions"><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>코드 (GitHub)</a></div>
   </div>
 </section>
 
@@ -40,7 +40,7 @@
   </section>
 
   <section class="d-section" id="rewrite" aria-labelledby="rw-h">
-    <h2 id="rw-h">2026년 재작성에서 다룬 문제</h2>
+    <h2 id="rw-h">공개 정리본에서 다룬 문제</h2>
     <p class="sec-desc">게임 클라이언트가 보내는 요청은 그대로 두고, 서버 쪽 문제를 하나씩 테스트로 고정했습니다.</p>
     <ol class="decisions">
       <li><h3>부하가 몰릴 때 커넥션 풀 고갈</h3>
