@@ -277,33 +277,33 @@ const FOCUS = [
   (n) => [`その奥の${n.jp}まで。`, { ko: `그 뒤의 ${n.ko}까지.`, en: `On to the ${n.en} behind it.` }]
 ];
 const ej = q('.dialog .jp'), ek = q('.dialog .ko'), liveEl = q('[data-live]');
-let sayTimer = 0;
+let sayTimer = 0, sayEnd = null;
 function sayLine(line, after) {
   // on Japanese pages the voice line is the page's language, so it stands alone without a subtitle
   const jp = line[0], sub = lang === 'ja' ? jp : line[1][lang];
   liveEl.textContent = sub;
-  clearInterval(sayTimer);
+  clearInterval(sayTimer); sayEnd = null;
   // the subtitle shows in full as the line starts, like a film subtitle, while the Japanese is typed out
   ek.textContent = sub;
   if (reduce) { ej.textContent = jp; if (after) after(); return; }
   ek.classList.remove('fade'); void ek.offsetWidth; ek.classList.add('fade');
-  // after the Japanese ends, hold as long as typing the subtitle used to take, so the pacing stays the same
-  let i = 0, hold = Math.ceil(sub.length / 2); ej.textContent = '';
+  // once the Japanese is typed out the line is done (the visitor sets the pace from there)
+  let i = 0; ej.textContent = '';
   const rest = Face.mode === 'talk' ? 'idle' : Face.mode;
   if (rest !== 'work') Face.set('talk');
+  const end = sayEnd = () => {
+    clearInterval(sayTimer); sayEnd = null; ej.textContent = jp;
+    if (Face.mode === 'talk') Face.set(rest);
+    if (after) after();
+  };
   sayTimer = setInterval(() => {
-    if (i < jp.length) {
-      const ch = jp[i++]; ej.textContent = jp.slice(0, i);
-      if (!/[\s、。！？…]/.test(ch)) { Snd.blip(ch); Face.flap(); }
-      if (i === jp.length && Face.mode === 'talk') Face.set(rest);
-    } else if (hold > 0) {
-      hold--;
-    } else {
-      clearInterval(sayTimer);
-      if (after) after();
-    }
+    const ch = jp[i++]; ej.textContent = jp.slice(0, i);
+    if (!/[\s、。！？…]/.test(ch)) { Snd.blip(ch); Face.flap(); }
+    if (i >= jp.length) end();
   }, 48);
 }
+// a line still being typed is shown whole at once; true if there was one
+function finishLine() { if (!sayEnd) return false; sayEnd(); return true; }
 const say = (key, after) => sayLine(typeof L[key] === 'function' ? L[key]() : L[key], after);
 
 /* ================= WebGL2 scene ================= */
@@ -339,7 +339,7 @@ precision highp float;
 uniform sampler2D uImg, uDep;
 uniform mat4 uVP;
 uniform float uK[4];
-uniform float uNL, uNP, uW, uZs, uA, uB, uC, uD, uPx, uP11, uReal, uDepV, uDlo, uDhi, uZa, uZb, uVw, uAvg, uSky, uGrow, uMesh;
+uniform float uNL, uNP, uW, uZs, uA, uB, uC, uD, uPx, uP11, uReal, uDepV, uDlo, uDhi, uZa, uZb, uVw, uAvg, uSky, uGrow, uMesh, uRef;
 uniform vec2 uVs;
 out vec4 vCol;
 out float vW;
@@ -359,13 +359,21 @@ void main(){
   float c = (uNP - 1.) * .5;
   vec2 uo = u - c;
   vec2 lens = (s + .5) / uNL;
+  // vw: one view at a time fills the sensor (step 2); cc: the views overlap on the reconstruction plane (step 3)
+  float vw = ease(clamp(uVw, 0., 1.));
+  float cc = ease(lag(uC, length(uo) / (c * 1.4143), .4));
   // dk: the shift per view step that brings this sample back into focus (its depth)
   vec4 col = vec4(0.); float dk, sky = 0.;
   if (uReal > .5) {
     // a light field: elemental-image pixel (s, u) is view u at position s, stored as a mosaic of views;
     // its depth is either one map per lens (estimated) or a mosaic like the views (rendered)
     ivec2 at = ivec2(u * uNL + s);
-    col = vec4(texelFetch(uImg, at, 0).rgb, 1.);
+    // while one view fills the sensor, every view is shown moved by whole lenses so that the views line up
+    // on a plane behind the scene (uRef, in shift per view step): the background holds still, as the moon
+    // does when the head moves, and the nearer an object, the more it shifts. Values are moved, not changed;
+    // the lens array's own views line up on the array itself, where far objects would shift the most
+    vec2 sr = clamp(s + round(uRef * vw * (1. - cc) * uo), vec2(0.), vec2(uNL - 1.));
+    col = vec4(texelFetch(uImg, ivec2(u * uNL + sr), 0).rgb, 1.);
     float dz = texelFetch(uDep, uDepV > .5 ? at : ivec2(s), 0).r;
     dk = mix(uDlo, uDhi, dz);
     sky = uSky * step(.998, dz);
@@ -396,12 +404,10 @@ void main(){
   pos = mix(pos, plane(sai, uZs), b);
   pos.z += sin(3.14159 * b) * .22 * (.5 + .5 * dB);
   // then one view at a time fills the sensor; uVs picks the view, blending the nearest four
-  float vw = ease(clamp(uVw, 0., 1.));
   pos = mix(pos, plane(lens, uZs), vw);
   pos.z += sin(3.14159 * vw) * .12;
   vec2 dv = max(1. - abs(u - uVs), 0.);
   float w = dv.x * dv.y;
-  float cc = ease(lag(uC, length(uo) / (c * 1.4143), .4));
   // reconstruction opens up again: every view counts the same
   vW = mix(1., uAvg > .5 ? w : step(.5, w), vw * (1. - cc));
   // the views are overlapped on a plane in front of the lens array: shifting by d per view step
@@ -693,7 +699,7 @@ function draw(now) {
     gl.uniform1f(P.u.uReal, scene.real ? 1 : 0); gl.uniform1f(P.u.uDepV, scene.perView ? 1 : 0);
     gl.uniform1f(P.u.uSky, scene.sky ? 1 : 0); gl.uniform1f(P.u.uGrow, scene.grow || 1);
     gl.uniform1f(P.u.uDlo, scene.lo || 0); gl.uniform1f(P.u.uDhi, scene.hi || 0);
-    gl.uniform1f(P.u.uZa, scene.za); gl.uniform1f(P.u.uZb, scene.zb);
+    gl.uniform1f(P.u.uZa, scene.za); gl.uniform1f(P.u.uZb, scene.zb); gl.uniform1f(P.u.uRef, viewRef(scene));
     gl.uniformMatrix4fv(P.u.uVP, false, VP);
     gl.uniform1fv(P.u.uK, K);
     gl.uniform1f(P.u.uNL, NL); gl.uniform1f(P.u.uNP, NP);
@@ -742,12 +748,13 @@ function draw(now) {
   gl.disable(gl.BLEND); gl.bindVertexArray(null);
   const sw = stage.clientWidth, shh = stage.clientHeight;
   showViewMap(vs);
+  pxFrame(vs, sw, shh);
   // the names of the object, lens array and sensor planes share one spot on their planes' top (or else
   // bottom) edges, so from left to right they read in the order the light travels. The spot is the first
   // where no name hides behind the robot, the ray diagram or the dialogue box or overlaps another name
   // (which spot is free depends on the screen width); it is kept while it stays clear, so names do not jump
   const sr = stage.getBoundingClientRect();
-  const boxes = [robotEl, raybox, lfzoom, laynote, dialogEl].filter((el) => el && !el.hidden).map((el) => {
+  const boxes = [robotEl, raybox, lfzoom, laynote, pxCard, dialogEl].filter((el) => el && !el.hidden).map((el) => {
     const r = el.getBoundingClientRect(); return [r.left - sr.left, r.top - sr.top, r.right - sr.left, r.bottom - sr.top];
   });
   const hit = (r, list) => list.some((b) => r[0] - 8 < b[2] && r[2] + 8 > b[0] && r[1] - 4 < b[3] && r[3] + 4 > b[1]);
@@ -818,6 +825,81 @@ function showViewMap(vs) {
   if (vmapOn >= 0) vcells[vmapOn].className = '';
   if (on >= 0) vcells[on].className = 'on';
   vmap.hidden = on < 0; vmapOn = on;
+}
+/* ================= the finger and the moon ================= */
+/* While a view fills the sensor it is shown lined up on a plane behind the farthest object (uRef above),
+   where the far object shifts a quarter as much as the near one: like the eyes holding the moon still while
+   a finger before them jumps. During the views moment a card in the corner shows that everyday version,
+   driven by the view on show (vsNow), so the finger, the moon and the eye move in step with the scene, and
+   two labels point at the near and the far object. With reduced motion the card stands still and shows
+   both ends of the move. */
+const RHO = 0.25;
+function viewRef(sc) {
+  const n = sc.targets[0].d, f = sc.targets[sc.targets.length - 1].d;
+  return (f - RHO * n) / (1 - RHO);
+}
+const pxCard = q('.pxcard'), pxG = {}, mvTags = { near: q('[data-mv=near]'), far: q('[data-mv=far]') };
+if (pxCard) for (const k of ['finger', 'moon', 'eye']) pxG[k] = pxCard.querySelector(`[data-px=${k}]`);
+// the view's travel radius, and how far (in the card's units) the finger and the eye move at that radius
+const PX_R = Math.hypot(HI[0] - VC, HI[1] - VC), PX_A = 30, PX_E = 14, PX_EY = 5;
+let pxOn = false, pxAnchors = null;
+function parallax(on) {
+  if (!pxCard || pxOn === on) return;
+  pxOn = on;
+  pxCard.classList.remove('on'); pxCard.classList.toggle('still', reduce);
+  pxCard.hidden = !on;
+  if (on) { void pxCard.offsetWidth; pxCard.classList.add('on'); }
+  else Object.values(mvTags).forEach((el) => { if (el) el.style.opacity = '0'; });
+  request();
+}
+const tr = (el, x, y) => { if (el) el.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`); };
+function pxFrame(vs, sw, shh) {
+  if (!pxOn) return;
+  // the view's offset from the centre plays the head's move: the near finger shifts against it, the far
+  // moon a quarter as much (up and down at half the size, so the finger stays in the picture)
+  const ox = reduce ? PX_R : vs[0] - VC, oy = reduce ? 0 : vs[1] - VC;
+  const fx = -ox / PX_R * PX_A, fy = -oy / PX_R * PX_A * 0.5;
+  tr(pxG.finger, fx, fy); tr(pxG.moon, fx * RHO, fy * RHO); tr(pxG.eye, ox / PX_R * PX_E, oy / PX_R * PX_EY);
+  // the labels follow the near and the far object in the view on show (lens units, shifted as uRef does)
+  const k = pxAnchors ? Math.min(1, st.V) * Math.max(0, 1 - st.C * 4) : 0, ref = viewRef(scene) * easeIO(Math.min(1, st.V));
+  for (const key of ['near', 'far']) {
+    const el = mvTags[key], a = pxAnchors && pxAnchors[key];
+    if (!el) continue;
+    if (!a || k < 0.01) { el.style.opacity = '0'; continue; }
+    const nx = (a.x + (a.d - ref) * (vs[0] - VC) + 0.5) / NL, ny = (a.y + (a.d - ref) * (vs[1] - VC) + 0.5) / NL;
+    const p = project([(nx - 0.5) * W, (0.5 - ny) * W, ZS], sw, shh);
+    el.style.transform = key === 'near'
+      ? `translate(${p[0].toFixed(1)}px, ${(p[1] - 20).toFixed(1)}px) translate(-50%, -100%)`
+      : `translate(${(p[0] + 20).toFixed(1)}px, ${p[1].toFixed(1)}px) translate(0, -50%)`;
+    el.style.opacity = k.toFixed(2);
+  }
+}
+/* where the near and the far object stand, from the depth of the central view (split halfway between the
+   first and the last target): the top of the near one and the right edge of the far one, moved back to
+   zero shift (the central view sees a point at depth d moved by d * (v - VC) lenses) */
+function findAnchors() {
+  pxAnchors = null;
+  if (!depA || scene.kind === 'lytro' || depA.w !== NL * NP) return;
+  const v = Math.floor(VC), uo = v - VC, n0 = scene.targets[0].d, mid = (n0 + scene.targets[scene.targets.length - 1].d) / 2;
+  const o = [0, 1].map(() => ({ n: 0, x: 0, d: 0, right: -1, ry: 0 })), colTop = new Array(NL).fill(NL);
+  for (let y = 0; y < NL; y++) for (let x = 0; x < NL; x++) {
+    const dz = depA.data[((v * NL + y) * depA.w + v * NL + x) * 4] / 255;
+    if (dz >= 0.998) continue;
+    const d = scene.lo + (scene.hi - scene.lo) * dz, far = d >= mid, a = o[far ? 1 : 0];
+    a.n++; a.x += x; a.d += d;
+    if (far && x > a.right) { a.right = x; a.ry = y; }
+    if (!far && y < colTop[x]) colTop[x] = y;
+  }
+  if (o[0].n < 12 || o[1].n < 12) return;
+  const dn = o[0].d / o[0].n, df = o[1].d / o[1].n, cx = Math.round(o[0].x / o[0].n);
+  // the top of the near object over its centre (or the nearest column that has it)
+  let tx = -1;
+  for (let r = 0; r < NL && tx < 0; r++) for (const c of [cx - r, cx + r]) if (c >= 0 && c < NL && colTop[c] < NL) { tx = c; break; }
+  if (tx < 0) return;
+  pxAnchors = {
+    near: { x: tx - dn * uo, y: colTop[tx] - dn * uo, d: dn },
+    far: { x: o[1].right - df * uo, y: o[1].ry - df * uo, d: df }
+  };
 }
 let running = false, visible = true, raf = 0, lastPoke = 0;
 // with nothing moving for this long (no tween, pointer, tilt or resize), the scene stops drawing until the
@@ -1091,7 +1173,58 @@ let scene = blenderScene();
 
 /* ================= timeline ================= */
 let token = 0;
+// every interruption (a step button, a pick, the slider, a new sample) cuts the story: running tweens stop,
+// "Next" goes away and the finger-and-moon card hides
+function cut() { token++; disarm(); parallax(false); return token; }
 const wait = (ms) => new Promise((r) => setTimeout(r, reduce ? 0 : ms));
+/* The story moves on when the visitor says so. Inside a beat the animation plays on its own while the line
+   types out; then "Next" shows in the subtitle box and the story waits. Next, Enter, Space or → anywhere in
+   the lab, or a click on the picture, moves it on. Once the reconstruction can be clicked to focus (step 3,
+   crosshair cursor), a click on the picture picks the focus instead, and only Next or a key moves the story
+   on. A press while a line is still typing shows the whole line. */
+const nextBtn = q('[data-next]');
+let nextGo = null, parked = false, startedAt = -1e9;
+function disarm() {
+  nextGo = null; root.classList.remove('can-next');
+  if (nextBtn.hidden) return;
+  // a keyboard visitor's focus would drop to the page as the button hides: it waits on the stage instead,
+  // and goes back to the button when that shows again
+  if (document.activeElement === nextBtn) { parked = true; stage.focus({ preventScroll: true }); }
+  nextBtn.hidden = true;
+}
+// at least half of the stage on screen: only then do keys move the story or focus come back to Next
+function onScreen() {
+  const r = stage.getBoundingClientRect();
+  return Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0) >= r.height / 2;
+}
+function arm(my, go) {
+  if (my !== token) return;
+  nextGo = go; nextBtn.hidden = false; root.classList.add('can-next');
+  // only a focus parked by disarm comes back, and only with the lab on screen
+  if (parked && document.activeElement === stage && onScreen()) nextBtn.focus({ preventScroll: true });
+  parked = false;
+}
+function advance() {
+  // the press that started the story does not also skip its first line
+  if (performance.now() - startedAt < 600) return;
+  if (finishLine() || !nextGo) return;
+  const go = nextGo; Snd.ui(); disarm(); go();
+}
+// one beat: a line and the animation that goes with it. It resolves once the visitor moves on; a cut story
+// leaves it waiting, and nothing keeps it
+function beat(my, line, anim) {
+  return new Promise((res) => {
+    let left = 2;
+    const one = () => { if (--left === 0) arm(my, () => res(true)); };
+    sayLine(typeof line === 'string' ? (typeof L[line] === 'function' ? L[line]() : L[line]) : line, one);
+    Promise.resolve(anim && anim()).then(() => { if (my === token) one(); });
+  });
+}
+// a line in free play (a pick, the slider, the layers): until the closing lines were heard, Next leads there
+// (freeMy: the latest free action, so a line still typing from the one before hands its Next to it)
+let heardEnd = false, freeMy = -1;
+function freeLine(line, my) { freeMy = my; sayLine(line, () => offerEnd(freeMy)); }
+function offerEnd(my) { if (!heardEnd) arm(my, () => ending(my)); }
 /* the result view turns on its own clock: steps and clicks set st.R directly and bump rSeq to stop it */
 let rSeq = 0;
 function turnR(to, ms) {
@@ -1138,10 +1271,14 @@ function setDepthUI(enabled) {
 /* while reconstructing, the camera stands partway between the side view and the frontal one,
    so the plane can be seen moving into the depth of the scene */
 const CAM_REC = 0.3;
-// after the result: the done line, then the hand-off to the work section, then how to play with it
-function ending(my) {
-  const later = (ms, f) => setTimeout(() => { if (my === token) f(); }, ms);
-  say('done', () => later(2200, () => say('outro', () => later(4000, () => say('idle')))));
+// after the result: the done line, then the hand-off to the work section, then how to play with it (the
+// last line, with nothing after it)
+async function ending(my) {
+  await beat(my, 'done');
+  heardEnd = true;
+  await beat(my, 'outro');
+  say('idle');
+  return true;
 }
 function finish() { root.classList.add('played'); }
 function unfinish() { root.classList.remove('played'); }
@@ -1196,12 +1333,13 @@ function lfDraw(t) {
     g.globalAlpha = 1;
   }
 }
+const LFZ_MS = 6800;
 function lfZoom(on) {
   if (!lfzoom) return;
   cancelAnimationFrame(lfRaf);
   lfzoom.hidden = !(on && lfImgs);
   if (lfzoom.hidden) return;
-  const t0 = performance.now(), dur = 6800;
+  const t0 = performance.now(), dur = LFZ_MS;
   const frame = (now) => {
     const t = reduce ? 1 : Math.min(1, (now - t0) / dur);
     lfDraw(t);
@@ -1217,12 +1355,12 @@ function layersOff() {
   if (laynote) laynote.hidden = true;
 }
 if (layBtn) layBtn.addEventListener('click', async () => {
-  Snd.ui(); const my = ++token, on = layBtn.getAttribute('aria-pressed') !== 'true';
+  Snd.ui(); const my = cut(), on = layBtn.getAttribute('aria-pressed') !== 'true';
   layBtn.setAttribute('aria-pressed', String(on)); laynote.hidden = !on;
   lfZoom(false); viewDrive = false; st.A = 1; st.B = 1; st.V = 0;
   if (st.C < 1) { steps(3); await tween('C', 1, 900, my); if (my !== token) return; }
   setDepthUI(true); finish();
-  if (on) say('lay');
+  if (on) freeLine(L.lay, my); else { freeMy = my; offerEnd(my); }
   await Promise.all([tween('Lay', on ? 1 : 0, 1300, my), tween('cam', on ? 0.02 : CAM_REC, 1300, my), turnR(on ? 0 : 1, 1300)]);
 });
 /* click-to-focus on the reconstruction of the real capture: the click is followed onto the plane in
@@ -1251,8 +1389,8 @@ function unproject(m, x, y, z) {
 /* moving the focus to a picked depth; a pick during the walk through the depths ends the walk, and the
    lab counts as finished, in the result view */
 function focusTo(d, line) {
-  const my = ++token; let moving = true;
-  Snd.focus(); sayLine(line);
+  const my = cut(); let moving = true;
+  Snd.focus(); freeLine(line, my);
   if (!root.classList.contains('played')) { Face.set('happy'); finish(); }
   if (st.R < 0.999) turnR(1, 1100);
   tween('D', d, 900, my).then(() => { moving = false; if (my === token) setDepthUI(true); });
@@ -1272,7 +1410,7 @@ function pickLayer(sx, sy) {
     if (sum > bs) { bs = sum; bk = k; }
   }
   // where the views match about equally at every depth (no texture), no plane can be chosen: say so
-  if (bs < 2 * total / LAYERS) { ++token; Face.set('idle'); say('flat'); return; }
+  if (bs < 2 * total / LAYERS) { const my = cut(); Face.set('idle'); freeLine(L.flat, my); return; }
   focusTo(layerD(bk), L.pickf);
 }
 /* the rendered scene has its depth: the median of the depth pass of the four central views in the
@@ -1286,7 +1424,7 @@ function pickDepth(sx, sy) {
       const dz = depA.data[((vy * NL + y) * depA.w + vx * NL + x) * 4] / 255;
       if (dz < 0.998) vals.push(dz);
     }
-  if (vals.length < 12) { ++token; Face.set('idle'); say('empty'); return; }
+  if (vals.length < 12) { const my = cut(); Face.set('idle'); freeLine(L.empty, my); return; }
   vals.sort((a, b) => a - b);
   let d = scene.lo + (scene.hi - scene.lo) * vals[vals.length >> 1];
   const near = scene.targets.reduce((b, t) => (Math.abs(t.d - d) < Math.abs(b.d - d) ? t : b));
@@ -1309,51 +1447,53 @@ function rayBox(on) {
   if (on) { raybox.hidden = false; void raybox.offsetWidth; raybox.classList.add('on'); } else raybox.hidden = true;
 }
 async function doCapture(my) {
-  steps(1); setDepthUI(false); Face.set('work'); viewDrive = false; layersOff();
+  steps(1); setDepthUI(false); Face.set('work'); viewDrive = false; layersOff(); parallax(false);
   st.B = 0; st.C = 0; st.cam = 0; st.A = 0; st.V = 0; st.icons = 0; st.R = 0; rSeq++;
   if (scene.kind === 'lytro') {
     // a real capture: the recorded lenslet image is the data, so it is shown on the sensor as it is and
     // zoomed into beside the robot; nothing is placed in space
-    st.A = 1; request();
-    say('A'); lfZoom(true);
-    await tween('cam', 1, 2600, my); if (my !== token) return false;
-    await wait(4600); if (my !== token) return false;
-    return true;
+    st.A = 1; request(); lfZoom(true);
+    return beat(my, 'A', () => Promise.all([tween('cam', 1, 2600, my), wait(LFZ_MS)]));
   }
-  {
-    // before the capture: each lens is a tiny camera
-    say('cams'); rayBox(true);
-    await tween('icons', 1, 900, my); if (my !== token) return false;
-    await wait(4200); if (my !== token) return false;
-  }
-  say('A');
-  await wait(300); if (my !== token) return false;
-  Snd.shutter(); Snd.motor(3.2);
-  rayBox(false);
-  await Promise.all([tween('A', 1, 3200, my), tween('icons', 0, 1600, my)]); if (my !== token) return false;
-  await tween('cam', 1, 1200, my); return my === token;
+  // before the capture: each lens is a tiny camera (the panel beside the robot draws itself in 2.5 s)
+  rayBox(true);
+  await beat(my, 'cams', () => Promise.all([tween('icons', 1, 900, my), wait(2500)]));
+  return beat(my, 'A', async () => {
+    await wait(300); if (my !== token) return;
+    Snd.shutter(); Snd.motor(3.2);
+    rayBox(false);
+    await Promise.all([tween('A', 1, 3200, my), tween('icons', 0, 1600, my)]); if (my !== token) return;
+    await tween('cam', 1, 1200, my);
+  });
 }
 async function doRim(my) {
-  steps(2); setDepthUI(false); Face.set('work'); say('B'); viewDrive = false; rayBox(false); lfZoom(false); layersOff();
+  steps(2); setDepthUI(false); Face.set('work'); viewDrive = false; rayBox(false); lfZoom(false); layersOff(); parallax(false);
   st.A = 1; st.cam = 1; st.C = 0; st.B = 0; st.V = 0; st.vt = 0; st.icons = 0; st.R = 0; rSeq++;
-  await wait(600); if (my !== token) return false;
-  Snd.ticks(16, 2.6); Snd.motor(2.8);
-  await tween('B', 1, 2800, my); if (my !== token) return false;
-  // one view fills the sensor, then the view travels around: near and far objects shift differently
-  say('views');
-  await tween('V', 1, 1000, my); if (my !== token) return false;
-  await tween('vt', 1, 3400, my); if (my !== token) return false;
-  viewDrive = true; return true;
+  await beat(my, 'B', async () => {
+    await wait(600); if (my !== token) return;
+    Snd.ticks(16, 2.6); Snd.motor(2.8);
+    await tween('B', 1, 2800, my);
+  });
+  // one view fills the sensor, then the view travels around: near objects shift more than far ones, and the
+  // card in the corner shows the same with a finger and the moon
+  parallax(true);
+  return beat(my, 'views', async () => {
+    await tween('V', 1, 1000, my); if (my !== token) return;
+    await tween('vt', 1, 3400, my); if (my !== token) return;
+    viewDrive = true;
+  });
 }
 async function doRecon(my) {
-  steps(3); Face.set('work'); say('C'); viewDrive = false; rayBox(false); lfZoom(false); layersOff();
+  steps(3); Face.set('work'); viewDrive = false; rayBox(false); lfZoom(false); layersOff(); parallax(false);
   st.A = 1; st.B = 1; st.D = 0; st.C = 0; st.cam = 1; st.icons = 0; st.R = 0; rSeq++;
-  await wait(250); if (my !== token) return false;
-  Snd.motor(2.0);
   // the views leave the sensor for the reconstruction plane while the camera steps back to show the depth
-  await Promise.all([tween('C', 1, 1800, my), tween('cam', CAM_REC, 1800, my)]); if (my !== token) return false;
-  await wait(400); if (my !== token) return false;
-  // move the plane from the nearest target to the farthest one (a few of them, if there are many)
+  await beat(my, 'C', async () => {
+    await wait(250); if (my !== token) return;
+    Snd.motor(2.0);
+    await Promise.all([tween('C', 1, 1800, my), tween('cam', CAM_REC, 1800, my)]);
+  });
+  // move the plane from the nearest target to the farthest one (a few of them, if there are many): the
+  // plane moves on its own, then its line waits for the visitor
   const walk = scene.walk || scene.targets.map((_, i) => i);
   for (let i = 0; i < walk.length; i++) {
     const t = scene.targets[walk[i]];
@@ -1361,29 +1501,44 @@ async function doRecon(my) {
     Snd.focus(); setDepthUI(true);
     // the last stop is "the farthest" only when nothing stands behind it
     const line = i === 0 ? FOCUS[0] : i < walk.length - 1 ? FOCUS[1] : walk[i] === scene.targets.length - 1 ? FOCUS[2] : FOCUS[3];
-    await new Promise((r) => sayLine(line(t.name), r)); if (my !== token) return false;
-    await wait(500); if (my !== token) return false;
+    await beat(my, line(t.name));
   }
   await tween('D', scene.targets[0].d, 1000, my); if (my !== token) return false;
   setDepthUI(true); Face.set('happy'); finish(); turnR(1, 1500);
-  ending(my);
-  return true;
+  return ending(my);
 }
-async function playAll(my) {
-  unfinish();
-  if (!(await doCapture(my))) return;
-  await wait(300); if (my !== token) return;
-  if (!(await doRim(my))) return;
-  await wait(300); if (my !== token) return;
-  await doRecon(my);
+// the story from step n on: the end of each step waits for the visitor, then the next step starts
+const STEPS = [doCapture, doRim, doRecon];
+async function playFrom(n, my) {
+  for (let k = n; k <= STEPS.length; k++) if (!(await STEPS[k - 1](my)) || my !== token) return;
 }
 function jumpToEnd() { lfZoom(false); layersOff(); st.A = 1; st.cam = CAM_REC; st.B = 1; st.C = 1; st.R = 1; rSeq++; st.D = scene.targets[0].d; setDepthUI(true); steps(3); Face.set('happy'); finish(); ending(token); request(); }
 stepBtns.forEach((b) => b.addEventListener('click', () => {
-  Snd.ui(); const my = ++token; const n = Number(b.dataset.step);
-  if (n === 1) doCapture(my); else if (n === 2) doRim(my); else doRecon(my);
+  Snd.ui(); playFrom(Number(b.dataset.step), cut());
 }));
+nextBtn.addEventListener('click', advance);
+// Enter, Space or → anywhere in the lab (the stage takes focus when clicked, so keys work after a click on
+// the picture too); controls keep their own keys: Enter and Space press a button or follow a link, and the
+// slider takes the arrows. A focus outside the lab, or a lab scrolled out of view, never moves the story,
+// so Space still scrolls the page there.
+root.addEventListener('keydown', (e) => {
+  if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.isComposing || !onScreen()) return;
+  const k = e.key, t = e.target;
+  if (k !== 'Enter' && k !== ' ' && k !== 'ArrowRight') return;
+  if (t.closest('input, select, textarea, [contenteditable]')) return;
+  if (k !== 'ArrowRight' && t.closest('button, a')) return;
+  e.preventDefault();
+  if (!e.repeat) advance();
+});
+// a click on the picture moves the story on, except where a click picks the focus (the canvas in step 3,
+// once the reconstruction is in: crosshair cursor); the Next button and the caption link act on their own
+stage.addEventListener('click', (e) => {
+  if (e.target.closest('button, a')) return;
+  if (e.target === canvas && root.classList.contains('pickable')) return;
+  advance();
+});
 q('[data-reverse]').addEventListener('click', async () => {
-  Snd.ui(); const my = ++token; lfZoom(false); layersOff();
+  Snd.ui(); const my = cut(); lfZoom(false); layersOff();
   if (st.B === 0 && st.C === 0) { st.A = 1; st.cam = 1; st.B = 1; }
   setDepthUI(false); steps(2); Face.set('work'); say('rev');
   Snd.motor(st.C > 0 ? 4 : 2.6);
@@ -1393,7 +1548,7 @@ q('[data-reverse]').addEventListener('click', async () => {
 });
 let rTurn = false;
 depth.addEventListener('input', () => {
-  token++; st.A = 1; st.B = 1; st.C = 1; if (st.Lay < 0.5) st.cam = CAM_REC;
+  const my = cut(); st.A = 1; st.B = 1; st.C = 1; if (st.Lay < 0.5) st.cam = CAM_REC;
   const before = focusedLayer();
   st.D = scene.dMin + (scene.dMax - scene.dMin) * Number(depth.value) / 100;
   // the slider opens during step 3's walk through the depths; moving it ends that walk, so the
@@ -1403,7 +1558,9 @@ depth.addEventListener('input', () => {
   if (st.R < 0.999 && !rTurn && st.Lay < 0.5) { rTurn = true; turnR(1, 1200).then(() => { rTurn = false; }); }
   const now = focusedLayer();
   if (now >= 0 && now !== before) Snd.focus();
-  if (now !== before) sayLine(now >= 0 ? FOCUS[0](scene.targets[now].name) : L.between);
+  // a new line when the plane reaches or leaves an object; otherwise the line on show keeps its Next
+  if (now !== before) freeLine(now >= 0 ? FOCUS[0](scene.targets[now].name) : L.between, my);
+  else { freeMy = my; if (!sayEnd) offerEnd(my); }
 });
 
 /* ================= the sample's view mosaic goes to the GPU ================= */
@@ -1417,13 +1574,13 @@ function uploadAtlas(source) {
 let waiting = false;
 function endWait() { waiting = false; stage.classList.remove('waiting'); }
 function opening(my) {
-  soundBtn.hidden = false;
-  say('greet', () => { if (my === token) setTimeout(() => { if (my === token) playAll(my); }, 400); });
+  soundBtn.hidden = false; unfinish();
+  beat(my, 'greet').then(() => playFrom(1, my));
 }
 function useLayers(info, mode) {
   endLoad();
   scene = info.scene; setNL(scene.nl); buildIcons();
-  uploadAtlas(info.atlas);
+  uploadAtlas(info.atlas); findAnchors();
   if (credit) credit.hidden = scene.kind !== 'lytro';
   // the real capture has no 3D shape: its samples start on the sensor
   st.A = scene.kind === 'lytro' ? 1 : 0; st.B = 0; st.C = 0; st.cam = 0; st.D = 0; st.icons = 0; st.V = 0; st.vt = 0; st.R = 0; rSeq++; viewDrive = false; rayBox(false);
@@ -1432,11 +1589,11 @@ function useLayers(info, mode) {
   if (mode === 'still') return;
   if (mode === 'wait' && !waiting) mode = 'opening'; // the click came while the scene was loading
   if (mode !== 'wait') endWait();
-  const my = ++token;
+  const my = cut();
   if (reduce) { jumpToEnd(); return; }
   if (mode === 'wait') { Face.set('idle'); say('tap'); return; }
   if (mode === 'opening') { opening(my); return; }
-  sayLine(L[info.line], () => { if (my === token) playAll(my); });
+  beat(my, info.line).then(() => playFrom(1, my));
 }
 const credit = q('[data-credit]');
 /* a sample is downloaded before it replaces the scene. Meanwhile the old story stops and the controls
@@ -1447,7 +1604,7 @@ function beginLoad(mode) {
   const me = ++loadSeq;
   if (mode !== 'load') return me;
   if (!busy) depthWas = depth.disabled;
-  busy = true; token++; lfZoom(false); unfinish();
+  busy = true; cut(); lfZoom(false); unfinish();
   holdBtns().forEach((b) => { b.disabled = true; }); depth.disabled = true;
   clearTimeout(busyTimer);
   busyTimer = setTimeout(() => { if (me === loadSeq && busy) { Face.set('work'); say('wait'); } }, 250);
@@ -1606,7 +1763,7 @@ function beginStory() {
   if (!waiting) return;
   // one visit-count event per page view, so the owner can see how many visitors start the lab
   if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: 'lab-start', title: 'Lab started', event: true });
-  endWait(); opening(++token);
+  endWait(); startedAt = performance.now(); opening(cut());
 }
 const GESTURES = ['pointerdown', 'keydown', 'touchend'];
 function firstGesture(e) {
