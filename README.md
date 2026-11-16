@@ -1,20 +1,45 @@
 # zoocasso.github.io
 
-Personal site of Hyeongju Lee (이형주), data and backend engineer and 3D vision researcher.
+Personal site of Hyeongju Lee (이형주), data and backend engineer and 3D vision researcher, in Korean, English and Japanese.
 
-- Korean: https://zoocasso.github.io/
-- English: https://zoocasso.github.io/en/
-- Japanese: https://zoocasso.github.io/ja/
+**Open:** [한국어](https://zoocasso.github.io/) · [English](https://zoocasso.github.io/en/) · [日本語](https://zoocasso.github.io/ja/)
 
-The home page shows the work as data-flow diagrams with real numbers: the owner's own work as solid blue
-lines with dots flowing along them, other parties' work as grey dashed lines. Clicking a node highlights
-the data path through it and shows what was done there and by whom.
+<img src="docs/site-home.png" alt="Home page of the site: the work shown as data-flow diagrams" width="820">
 
-The research page opens on a lens array lab: a 3D scene (or a real Lytro light field) is captured through
-a pinhole array model, rearranged with RIM, and reconstructed at different depths, with synthesized music
-and sound.
+## What is on the site
 
-## Data
+- **Systems as data flows.** The home page shows the work as data-flow diagrams with real numbers: my own work as solid blue lines with dots flowing along them, other parties' work as grey dashed lines. Clicking a node highlights the data path through it and shows what was done there and by whom.
+- **A lens array lab.** The research page opens on a lab in the browser: a 3D scene (or a real Lytro light field) is captured through a pinhole array model, rearranged with RIM, and reconstructed at different depths, with synthesized music and sound.
+- **CV and portfolio.** The public PDFs, in Korean and English.
+
+## Key design decisions
+
+- **No framework and no dependencies.** `build.py` assembles the pages with the Python standard library and writes `dist/`; GitHub Actions publishes it to GitHub Pages.
+- **Every number has a source.** The numbers shown on the site live in `data/facts.json`, each with the source it was taken from, and pages refer to them as `{{f:key}}`, so a number changes in one place for all three languages.
+- **The build checks the content.** It stops if a page uses an unknown fact or partial, shows a phone number or a plain email address, has more or fewer than one `<h1>`, has an image without `alt`, links to a page or anchor that does not exist, or breaks one of my content rules (`FORBIDDEN` in `build.py`).
+- **One structure, three languages.** The Korean, English and Japanese pages share the flow-diagram partials, so a diagram is drawn once.
+
+## Layout
+
+| Path | What it holds |
+|---|---|
+| `src/pages/ko/`, `src/pages/en/`, `src/pages/ja/` | Page bodies. Each file starts with a `<!--meta {...} -->` comment (title, description, nav) |
+| `src/partials/<lang>/` | The flow diagrams, shared by the home page and the detail pages. Pages use `{{inc:flow-kisti}}` |
+| `data/facts.json` | Every number shown on the site, with the source it was taken from. Pages use `{{f:key}}` |
+| `src/assets/` | `site.css`, `site.js` (email copy, system tabs, flow diagrams, comparison slider, copy buttons), `lab.js` (WebGL2 lab and Web Audio), `rimviz.js` (RIM page viewers) |
+| `src/img/`, `src/files/` | Images and the public CV and portfolio PDFs (without phone numbers) |
+| `build.py` | Builds `dist/` with the Python standard library and checks it |
+
+## Build and deploy
+
+```
+python build.py            # build and check
+python build.py --serve    # then serve dist/ on http://127.0.0.1:8000
+```
+
+`SITE_DIST=/some/dir` builds somewhere other than `dist/`. Pushing to `main` runs `.github/workflows/deploy.yml`, which builds the site and publishes `dist/` to GitHub Pages.
+
+## Data and credits
 
 The Lytro sample in the lab (`src/img/lytro-*`) comes from occlusions_26 of the Stanford Lytro Light Field
 Archive (A. S. Raj, M. Lowney, R. Shah, G. Wetzstein, 2016, http://lightfields.stanford.edu/LF2016.html),
@@ -39,30 +64,3 @@ parameters) at 8 × 8 views, 1920 × 1080 per view, 256 samples, plus a depth pa
 - `lab-blender-views.webp`, `lab-blender-depth.png`: the views shifted to line up on a plane at 0.28 m
   (so every object's shift per view is positive and grows with distance, as for a lens array), at
   64 lenses, and the per-sample shift from each view's depth pass.
-
-## Layout
-
-| Path | What it holds |
-|---|---|
-| `src/pages/ko/`, `src/pages/en/`, `src/pages/ja/` | Page bodies. Each file starts with a `<!--meta {...} -->` comment (title, description, nav) |
-| `src/partials/<lang>/` | The flow diagrams, shared by the home page and the detail pages. Pages use `{{inc:flow-kisti}}` |
-| `data/facts.json` | Every number shown on the site, with the source it was taken from. Pages use `{{f:key}}` |
-| `src/assets/` | `site.css`, `site.js` (email copy, system tabs, flow diagrams, comparison slider, copy buttons), `lab.js` (WebGL2 lab and Web Audio), `rimviz.js` (RIM page viewers) |
-| `src/img/`, `src/files/` | Images and the public CV and portfolio PDFs (without phone numbers) |
-| `build.py` | Builds `dist/` with the Python standard library and checks it |
-
-## Build
-
-```
-python build.py            # build and check
-python build.py --serve    # then serve dist/ on http://127.0.0.1:8000
-```
-
-The build stops if a page uses an unknown fact or partial, shows a phone number or a plain email address,
-has more or fewer than one `<h1>`, has an image without `alt`, links to a page or anchor that does not exist,
-or breaks one of the owner's content rules (see `FORBIDDEN` in `build.py`). `SITE_DIST=/some/dir` builds
-somewhere other than `dist/`.
-
-## Deploy
-
-Pushing to `main` runs `.github/workflows/deploy.yml`, which builds the site and publishes `dist/` to GitHub Pages.

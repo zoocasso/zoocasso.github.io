@@ -665,7 +665,7 @@ html[lang=ja] .r-hero h1 { letter-spacing: -0.015em; }
 .lab-head .sec-kicker { font-size: 11.5px; }
 .lab-head h2 { margin-top: 2px; font-size: 17px; font-weight: 700; letter-spacing: -0.015em; }
 .lab-head p { font-size: 13px; color: var(--ink-3); text-align: right; max-width: 460px; }
-.lab .stage { position: relative; height: clamp(500px, 60vh, 660px); overflow: hidden; background: var(--bench); }
+.lab .stage { position: relative; height: clamp(400px, calc(100vh - 330px), 660px); overflow: hidden; background: var(--bench); }
 .lab canvas.gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .lab .poster { position: absolute; inset: 0; background: var(--bench); }
 .lab .torch { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; opacity: var(--ta, 0); transition: opacity .5s; background: radial-gradient(460px circle at var(--tx, 50%) var(--ty, 50%), rgba(185, 164, 255, .14), rgba(185, 164, 255, .04) 45%, transparent 70%); }
