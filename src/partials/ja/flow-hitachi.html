@@ -7,8 +7,8 @@
           <div class="node-detail"><dl class="dl"><dt>他の担当</dt><dd>オランダの現地ラボのハードウェア構築は、設計を引き継いだ研究室の後輩が担当しました。</dd></dl></div>
         </li>
         <li class="node" data-id="h-cam" data-owner="me">
-          <button class="node-btn" type="button"><span class="node-title">産業用マシンビジョンカメラ</span><span class="node-metric">複数台・USB3</span></button>
-          <div class="node-detail"><dl class="dl"><dt>機材</dt><dd>産業用マシンビジョンカメラ複数台。Spinnaker SDK（PySpin）で制御します。</dd></dl></div>
+          <button class="node-btn" type="button"><span class="node-title">産業用マシンビジョンカメラ</span><span class="node-metric">複数台・USB3</span><span class="node-tag">SDKから自分で</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>カメラメーカーが提供するSpinnaker SDK（PySpin）を直接扱って複数台のカメラを接続し、PyQtのGUIからカメラの設定値をリアルタイムに変えながら撮影できるように実装。</dd><dt>機材</dt><dd>産業用マシンビジョンカメラ複数台（USB3）</dd><dt>技術</dt><dd><ul class="chips"><li>Spinnaker SDK</li><li>PySpin</li><li>PyQt</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="h-smp" data-owner="other">
           <button class="node-btn" type="button"><span class="node-title">サンプル・基準判定</span><span class="node-metric">学習データの正解</span><span class="node-tag">プロジェクトパートナー</span></button>
@@ -20,7 +20,7 @@
       <ul class="nodes spaced">
         <li class="node" data-id="h-gui" data-owner="me">
           <button class="node-btn" type="button"><span class="node-title">PyQt GUI</span><span class="node-metric">開発者ではない研究員向け</span><span class="node-tag">自分で構築</span></button>
-          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>開発者ではない研究員が、開発環境なしで自分で撮影し、データセットを作れるPyQtのGUIを作り、PyInstallerの実行ファイルとして配布。すべての段階を一つのGUIから実行します。</dd><dt>技術</dt><dd><ul class="chips"><li>PyQt</li><li>PyInstaller</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>開発者ではない研究員が、開発環境なしで自分で撮影し、データセットを作れるPyQtのGUIを作り、PyInstallerの実行ファイルとして配布。カメラの設定値もGUIからリアルタイムに調整し、すべての段階を一つのGUIから実行します。</dd><dt>技術</dt><dd><ul class="chips"><li>PyQt</li><li>PyInstaller</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="h-cap" data-owner="me" data-default>
           <button class="node-btn" type="button"><span class="node-title">カメラ制御・撮影</span><span class="node-metric">Spinnaker SDK · PySpin</span><span class="node-tag">自分で構築</span></button>
