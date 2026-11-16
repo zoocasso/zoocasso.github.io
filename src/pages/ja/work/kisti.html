@@ -36,7 +36,6 @@
     </div>
     <div class="sys">
       {{inc:flow-kisti}}
-      <div class="sys-outcome"><span class="k">改善</span><span>ブロックされがちだった直接クローリング → <b>公式APIでの収集</b>（公共データポータルAPI、Rainforest API）</span><span>収集が安定し、法的リスクも減少</span></div>
       <div class="sys-outcome"><span class="k">結果</span><span>このプロジェクトは、その後<b>3億ウォン規模の本事業</b>につながった</span><span>会社のコードは公開できないため、構成だけを描いています</span></div>
     </div>
   </section>
@@ -68,10 +67,8 @@
 
   <section class="d-section" id="decisions" aria-labelledby="dec-h">
     <h2 id="dec-h">主な判断</h2>
-    <p class="sec-desc">収集方法を変えた理由と、データを整理した基準です。</p>
+    <p class="sec-desc">データを整理した基準です。</p>
     <ol class="decisions">
-      <li><h3>ショッピングサイトの直接クローリングからAPI収集へ移行</h3>
-        <dl class="dl"><dt>問題</dt><dd>2022年から2023年初めまでは、ショッピングサイトを直接クローリングしていました。クローラーを{{f:kisti_farm}}に分散して動かしても（2022年11月〜2023年1月）収集が頻繁にブロックされて途切れ、直接のクローリングには法的なリスクもありました。</dd><dt>提案</dt><dd>公式APIで収集することを私から提案し、2023年6月に発注元（KISTI）と協議して採用されました。APIのデータは形式が整っているため、収集の自動化も容易になりました。</dd><dt>方法</dt><dd>調達庁のデータは2023年4月から公共データポータルのAPIで受け取り、AmazonはRainforest APIに移しました（2023年7月に選定、2024年2〜5月に実装）。</dd></dl></li>
       <li><h3>商品ID（ASIN）による重複除去</h3>
         <dl class="dl"><dt>問題</dt><dd>同じ商品が複数のカテゴリに同時に表示されるため、カテゴリごとに集めると重複していました。</dd><dt>結果</dt><dd>Amazonの商品{{f:kisti_asin}}を{{f:kisti_asin_dedup}}に減らしました。</dd></dl></li>
     </ol>
@@ -118,7 +115,6 @@
         <li><span class="when">2022.11 – 2023.01</span><span class="rail" aria-hidden="true"></span><div class="what"><b>分散クローラー群の運用</b>{{f:kisti_farm}}から1台のリモートDBに蓄積。</div></li>
         <li><span class="when">2023.02 – 03</span><span class="rail" aria-hidden="true"></span><div class="what"><b>カテゴリの収集状況</b>Amazonの細分類 10,985 / 11,046、Danawa 2,481 / 2,517。</div></li>
         <li><span class="when">2023.03 – 05</span><span class="rail" aria-hidden="true"></span><div class="what"><b>KISTIのプロトタイプWeb · 社内への移設</b>Java SpringベースのKISTIプロトタイプWebで、DBスキーマ・バックエンド連携・フロントエンド接続を担当（社内Javaチームと協業）。協力会社のモデル1・2とともに社内サーバーへ移し、Docker実行環境を構成。</div></li>
-        <li><span class="when">2023.06 – 07</span><span class="rail" aria-hidden="true"></span><div class="what"><b>API収集への移行を決定</b>6月に発注元と協議して採用、7月にAmazon用のRainforest APIを選定。</div></li>
         <li><span class="when">2023.11</span><span class="rail" aria-hidden="true"></span><div class="what"><b>累計{{f:kisti_rows}}</b>コード定義書に基づき、調達・Danawa・Amazonなど7テーブル、合計8,000万行以上。</div></li>
         <li><span class="when">2024.02 – 05</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Rainforest APIへの移行を実装</b>Amazonの収集経路を置き換え。</div></li>
         <li><span class="when">2024</span><span class="rail" aria-hidden="true"></span><div class="what"><b>調達庁の統計SQL</b>価格・属性・納品の統計。</div></li>

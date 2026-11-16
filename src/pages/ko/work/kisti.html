@@ -36,7 +36,6 @@
     </div>
     <div class="sys">
       {{inc:flow-kisti}}
-      <div class="sys-outcome"><span class="k">개선</span><span>자주 막히던 직접 크롤링 → <b>공식 API 수집</b>(공공데이터포털 API, Rainforest API)</span><span>수집이 더 안정적이고 법적 위험이 줄어듦</span></div>
       <div class="sys-outcome"><span class="k">결과</span><span>이 과제는 이후 <b>3억 원 규모 본사업</b>으로 이어짐</span><span>회사 코드는 공개할 수 없어 구조만 그렸습니다</span></div>
     </div>
   </section>
@@ -68,10 +67,8 @@
 
   <section class="d-section" id="decisions" aria-labelledby="dec-h">
     <h2 id="dec-h">주요 결정</h2>
-    <p class="sec-desc">수집 방식을 바꾼 이유와 데이터를 정리한 기준입니다.</p>
+    <p class="sec-desc">데이터를 정리한 기준입니다.</p>
     <ol class="decisions">
-      <li><h3>쇼핑몰 직접 크롤링에서 API 수집으로 전환</h3>
-        <dl class="dl"><dt>문제</dt><dd>2022~2023년 초에는 쇼핑몰을 직접 크롤링했습니다. 크롤러를 {{f:kisti_farm}}에 나눠 돌려도(2022년 11월 ~ 2023년 1월) 수집이 자주 막혀 끊겼고, 직접 크롤링은 법적 위험도 있었습니다.</dd><dt>제안</dt><dd>공식 API로 수집하자고 제가 제안했고, 2023년 6월 발주처(KISTI)와 협의해 반영했습니다. API 데이터는 형식이 깨끗해 수집 자동화도 쉬워졌습니다.</dd><dt>방법</dt><dd>조달청 데이터는 2023년 4월부터 공공데이터포털 API로 받았고, Amazon은 Rainforest API로 옮겼습니다(2023년 7월 선정, 2024년 2~5월 구현).</dd></dl></li>
       <li><h3>상품 식별자(ASIN) 기준으로 중복 제거</h3>
         <dl class="dl"><dt>문제</dt><dd>같은 상품이 여러 카테고리에 동시에 노출되어, 카테고리별로 모으면 겹쳤습니다.</dd><dt>결과</dt><dd>Amazon 상품 {{f:kisti_asin}}를 {{f:kisti_asin_dedup}}로 줄였습니다.</dd></dl></li>
     </ol>
@@ -118,7 +115,6 @@
         <li><span class="when">2022.11 – 2023.01</span><span class="rail" aria-hidden="true"></span><div class="what"><b>분산 크롤링 팜 운영</b>{{f:kisti_farm}}가 원격 DB 1대에 적재.</div></li>
         <li><span class="when">2023.02 – 03</span><span class="rail" aria-hidden="true"></span><div class="what"><b>카테고리 수집 현황</b>Amazon 세분류 10,985 / 11,046, 다나와 2,481 / 2,517.</div></li>
         <li><span class="when">2023.03 – 05</span><span class="rail" aria-hidden="true"></span><div class="what"><b>KISTI 프로토타입 웹 · 사내 이전</b>Java Spring 기반 KISTI 프로토타입 웹에서 DB 스키마·백엔드 연동·프런트엔드 연결 담당(사내 Java팀과 협업). 협력사 모델 1·2와 함께 사내 서버로 옮기고 Docker 실행 환경 구성.</div></li>
-        <li><span class="when">2023.06 – 07</span><span class="rail" aria-hidden="true"></span><div class="what"><b>API 수집으로 전환 결정</b>6월 발주처와 협의해 반영, 7월 Amazon용 Rainforest API 선정.</div></li>
         <li><span class="when">2023.11</span><span class="rail" aria-hidden="true"></span><div class="what"><b>누적 {{f:kisti_rows}}</b>코드정의서 기준 조달·다나와·아마존 등 7개 테이블, 총 8,000만+ 행.</div></li>
         <li><span class="when">2024.02 – 05</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Rainforest API 전환 구현</b>Amazon 수집 경로 교체.</div></li>
         <li><span class="when">2024</span><span class="rail" aria-hidden="true"></span><div class="what"><b>조달청 통계 SQL</b>가격·속성·납품 통계.</div></li>
