@@ -101,7 +101,7 @@
     <p class="sec-desc">何が運用され、何が実験にとどまったかです。</p>
     <ol class="decisions">
       <li><h3>HarborとDockerでデプロイ</h3>
-        <dl class="dl"><dt>方法</dt><dd>Korea IDCのUbuntu本番サーバーにHarborのプライベートレジストリを自分で構築し（証明書、ドメイン、Let's Encrypt）、イメージを登録してDockerでデプロイしました。</dd><dt>整理</dt><dd>2023年9月にWeb画面を切り離し、フロントエンドが使うJSON APIとして整理しました。</dd></dl></li>
+        <dl class="dl"><dt>方法</dt><dd>Korea IDCのUbuntu本番サーバーにHarborのプライベートレジストリを自分で構築し（証明書、ドメイン、Let's Encrypt）、イメージを登録してDockerでデプロイしました。</dd><dt>レジストリ</dt><dd>自分で構築したHarborレジストリで本番デプロイを行い、同じレジストリで開発チームリーダーとKubernetesのテスト環境も構成しました。</dd><dt>整理</dt><dd>2023年9月にWeb画面を切り離し、フロントエンドが使うJSON APIとして整理しました。</dd></dl></li>
       <li><h3>限界</h3>
         <dl class="dl"><dt>スコア</dt><dd>リスクはGWASのオッズ比・β値を使う<b>ルールベースのスコア</b>です。機械学習による予測ではありません。</dd><dt>モデル</dt><dd>疾患と韓方薬を結ぶLDAと1D-CNNのモデルは、<b>プロトタイプの実験</b>にとどまりました。</dd><dt>公開</dt><dd>本番サーバーにデプロイしたあとも、<b>内部IPからのみアクセス</b>できるようにしていました。正式なサービスとしては公開されていません。</dd></dl></li>
     </ol>

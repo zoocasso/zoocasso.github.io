@@ -101,7 +101,7 @@
     <p class="sec-desc">What ran in production, and what stayed an experiment.</p>
     <ol class="decisions">
       <li><h3>Deployed with Harbor and Docker</h3>
-        <dl class="dl"><dt>How</dt><dd>I set up a Harbor private registry myself on an Ubuntu production server at Korea IDC (certificate, domain, Let's Encrypt), pushed the images there and deployed with Docker.</dd><dt>Cleanup</dt><dd>In September 2023 I removed the web screens and turned the service into a JSON API for the frontend.</dd></dl></li>
+        <dl class="dl"><dt>How</dt><dd>I set up a Harbor private registry myself on an Ubuntu production server at Korea IDC (certificate, domain, Let's Encrypt), pushed the images there and deployed with Docker.</dd><dt>Registry</dt><dd>Deployed to production through the Harbor registry I built, and used the same registry to set up a Kubernetes test environment with the team lead.</dd><dt>Cleanup</dt><dd>In September 2023 I removed the web screens and turned the service into a JSON API for the frontend.</dd></dl></li>
       <li><h3>Limits</h3>
         <dl class="dl"><dt>Score</dt><dd>Risk is a <b>rule-based score</b> from GWAS odds ratios and betas, not a machine-learning prediction.</dd><dt>Models</dt><dd>The LDA and 1D-CNN models linking diseases to herbal medicines stayed <b>prototype experiments</b>.</dd><dt>Access</dt><dd>After deployment to the production server it stayed <b>reachable only from internal IPs</b>. It was never launched as a public service.</dd></dl></li>
     </ol>
