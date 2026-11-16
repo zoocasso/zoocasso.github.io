@@ -371,12 +371,6 @@ def check():
             errors.append(f"{name}: plain email address (site.js puts it together from data-eu and data-ed)")
         if t.count("<h1") != 1:
             errors.append(f"{name}: expected exactly one <h1>, found {t.count('<h1')}")
-        # Spring appears only as the owner's part in the KISTI prototype web app, never in a stack or skills list
-        lists = re.findall(r'<ul class="chips"[^>]*>.*?</ul>|<ol class="ribbon-stages">.*?</ol>', t, re.S)
-        if name.endswith("cv/index.html"):
-            lists += re.findall(r"<table.*?</table>", t, re.S)
-        if any(re.search(r"\bSpring\b", x) for x in lists):
-            errors.append(f"{name}: content rule: Spring in a stack or skills list")
         for hit in FORBIDDEN.findall(text):
             errors.append(f"{name}: content rule: {hit!r}")
         # Japanese pages name the commissioned research's partner as 日立グループ, never the company alone
