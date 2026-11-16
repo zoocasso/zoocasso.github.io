@@ -101,7 +101,7 @@
     <p class="sec-desc">무엇이 운영됐고, 무엇이 실험에 그쳤는지입니다.</p>
     <ol class="decisions">
       <li><h3>Harbor와 Docker로 배포</h3>
-        <dl class="dl"><dt>방법</dt><dd>Korea IDC의 Ubuntu 운영서버에 Harbor 사설 레지스트리를 직접 구축하고(인증서, 도메인, Let's Encrypt), 이미지를 올려 Docker로 배포했습니다.</dd><dt>레지스트리</dt><dd>직접 구축한 Harbor 레지스트리로 운영 배포를 했고, 같은 레지스트리로 개발팀장과 Kubernetes 테스트 환경을 구성해 봄.</dd><dt>정리</dt><dd>2023년 9월 웹 화면을 떼어 내고 프런트엔드가 쓰는 JSON API로 정리했습니다.</dd></dl></li>
+        <dl class="dl"><dt>방법</dt><dd>Korea IDC의 Ubuntu 운영서버에 Harbor 사설 레지스트리를 직접 구축하고(인증서, 도메인, Let's Encrypt), 이미지를 올려 Docker로 배포했습니다.</dd><dt>레지스트리</dt><dd>직접 구축한 Harbor 레지스트리로 운영 배포를 했고, 같은 레지스트리로 개발팀장과 Kubernetes 테스트 환경도 구성했습니다.</dd><dt>정리</dt><dd>2023년 9월 웹 화면을 떼어 내고 프런트엔드가 쓰는 JSON API로 정리했습니다.</dd></dl></li>
       <li><h3>한계</h3>
         <dl class="dl"><dt>점수</dt><dd>위험도는 GWAS 오즈비·베타값을 쓰는 <b>규칙형 점수</b>입니다. 머신러닝 예측이 아닙니다.</dd><dt>모델</dt><dd>질환과 한약을 잇는 LDA와 1D-CNN 모델은 <b>프로토타입 실험</b>에 그쳤습니다.</dd><dt>공개</dt><dd>운영서버에 배포한 뒤에도 <b>내부 IP로만 접근</b>하게 두었습니다. 정식 서비스로 공개되지는 않았습니다.</dd></dl></li>
     </ol>
