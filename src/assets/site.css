@@ -154,11 +154,11 @@ html[lang=ja] .hero h1 { font-size: clamp(30px, 3.7vw, 48px); letter-spacing: -0
   transition: border-color .15s, transform .15s, box-shadow .15s;
 }
 a.kpi:hover { border-color: var(--me-line); box-shadow: var(--shadow-2); transform: translateY(-1px); }
-.kpi-src { display: flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kpi-src { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 500; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .kpi-src i { width: 6px; height: 6px; border-radius: 2px; background: var(--me); flex: none; }
 .kpi-src i.rs { background: var(--rs); }
-.kpi-val { font-family: var(--mono); font-size: 32px; font-weight: 600; letter-spacing: -0.04em; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.kpi-val small { font-family: var(--font); font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink-3); margin-left: 3px; }
+.kpi-val { font-size: 30px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.kpi-val small { font-size: 16px; font-weight: 600; letter-spacing: 0; color: var(--ink-3); margin-left: 3px; }
 .kpi-label { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; }
 
 /* pipeline ribbon: the stack laid on the data path */
