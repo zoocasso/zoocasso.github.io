@@ -42,6 +42,8 @@
   --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
   /* Hangul and kana are not in JetBrains Mono; they fall back to Pretendard rather than a system monospace */
   --mono: "JetBrains Mono Variable", "JetBrains Mono", "Pretendard Variable", "Pretendard JP Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* code and BibTeX keep true monospace spacing on every page */
+  --mono-code: "JetBrains Mono Variable", "JetBrains Mono", "Pretendard Variable", "Pretendard JP Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --dot: "DotGothic16", "MS Gothic", "Osaka-Mono", monospace;
   --wrap: 1240px;
   --gut: 32px;
@@ -51,6 +53,18 @@
   color-scheme: light;
 }
 html[lang=ja] { --font: "Pretendard JP Variable", "Pretendard JP", "Hiragino Sans", "Yu Gothic", "Meiryo", system-ui, sans-serif; }
+
+/* Mono labels in Korean and Japanese: the glyphs fall back to Pretendard, but the space and the middle dot
+   came from JetBrains Mono at a full 0.6em, so words drifted apart ("현장  배포"). These faces take only
+   those characters from the same Pretendard subset files the page already loads. */
+@font-face { font-family: "Mono Gap"; font-style: normal; font-display: swap; font-weight: 45 920; unicode-range: U+20, U+A0, U+B7;
+  src: url(https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/variable/woff2-dynamic-subset/PretendardVariable.subset.91.woff2) format("woff2-variations"); }
+@font-face { font-family: "Mono Gap JP"; font-style: normal; font-display: swap; font-weight: 45 920; unicode-range: U+20, U+A0;
+  src: url(https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard-jp/dist/web/variable/woff2-dynamic-subset/PretendardJPVariable.subset.118.woff2) format("woff2-variations"); }
+@font-face { font-family: "Mono Gap JP"; font-style: normal; font-display: swap; font-weight: 45 920; unicode-range: U+B7;
+  src: url(https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard-jp/dist/web/variable/woff2-dynamic-subset/PretendardJPVariable.subset.117.woff2) format("woff2-variations"); }
+html[lang=ko] { --mono: "Mono Gap", "JetBrains Mono Variable", "JetBrains Mono", "Pretendard Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+html[lang=ja] { --mono: "Mono Gap JP", "JetBrains Mono Variable", "JetBrains Mono", "Pretendard JP Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -67,7 +81,7 @@ a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; 
 button { font: inherit; color: inherit; }
 h1, h2, h3, h4, p, ol, ul, dl, dd, figure { margin: 0; }
 ol, ul { padding: 0; list-style: none; }
-code { font-family: var(--mono); font-size: .88em; background: var(--surface-2); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+code { font-family: var(--mono-code); font-size: .88em; background: var(--surface-2); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
 .mono { font-family: var(--mono); }
 .num { font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
 .nw { white-space: nowrap; }
@@ -602,7 +616,7 @@ table.data tbody tr:last-child td, table.data tbody tr:last-child th { border-bo
 .method p { margin-top: 10px; font-size: 13.5px; color: var(--ink-3); }
 
 .bib { position: relative; margin-top: 12px; }
-.bib pre { margin: 0; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm); overflow-x: auto; font-size: 12.5px; line-height: 1.6; font-family: var(--mono); word-break: normal; color: var(--ink-2); }
+.bib pre { margin: 0; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm); overflow-x: auto; font-size: 12.5px; line-height: 1.6; font-family: var(--mono-code); word-break: normal; color: var(--ink-2); }
 .bib .btn { position: absolute; right: 8px; top: 8px; height: 30px; font-size: 12.5px; }
 
 .rayfig svg { display: block; width: 100%; max-width: 520px; height: auto; padding: 12px 14px; background: var(--bench); border: 1px solid var(--bench-line); border-radius: var(--r-sm); }
