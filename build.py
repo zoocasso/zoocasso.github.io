@@ -100,7 +100,9 @@ SNAPSHOT = re.compile(
     r"2\.22 ?M|1\.22 ?M|(?<!\d)7 ?개 ?테이블|(?<!\d)7 tables|(?<!\d)7 ?テーブル|"
     # the crawling-farm laptop count and the insurance tool's product-group count (owner, 2026-11-18)
     r"(?<!\d)10 ?[~〜–-] ?20 ?(?:대|台|laptop|machine|-machine)|노트북 ?10|ノートPC ?10|"
-    r"(?<!\d)16 ?개 ?상품군|(?<!\d)16 product categor|(?<!\d)16 ?商品群", re.I)
+    r"(?<!\d)16 ?개 ?상품군|(?<!\d)16 product categor|(?<!\d)16 ?商品群|"
+    # and the count of the 2022 KISTI technical meetings (owner, 2026-11-18)
+    r"(?<!\d)9 ?회|約 ?9 ?回|(?<!\d)9 weekly|about 9 (?:weekly )?meetings|(?<!\d)9 meetings", re.I)
 
 SVG = {
     "cv": '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 1.5h5l3.5 3.5v9.5h-8.5z"/><path d="M9 1.5V5h3.5M6 9h4.5M6 11.5h4.5"/></svg>',
