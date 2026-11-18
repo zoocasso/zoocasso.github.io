@@ -43,7 +43,7 @@
     <p class="sec-desc">The request the game client sends stays as it was; the server-side problems were pinned down one by one with tests.</p>
     <ol class="decisions">
       <li><h3>Requests failing when many players send at once</h3>
-        <dl class="dl"><dt>Problem</dt><dd>An early version of the public code took its database connection too early, so in a test with 60 clients sending at once, nearly half the requests ended up waiting on each other and failed.</dd><dt>Fix</dt><dd>Each request is now handled from start to finish by one worker thread, and there are as many connections as worker threads (40). CI runs the 60-client test and checks that every request is answered.</dd></dl></li>
+        <dl class="dl"><dt>Problem</dt><dd>The first draft of the public code took its database connection too early, so in a test with 60 clients sending at once, nearly half the requests ended up waiting on each other and failed.</dd><dt>Fix</dt><dd>The connection is now taken, used and returned inside one worker thread, and there are as many connections as worker threads (40). CI runs the 60-client test and checks that every request is answered.</dd></dl></li>
       <li><h3>Retried reports stored twice</h3>
         <dl class="dl"><dt>Problem</dt><dd>When a connection drops and the same report arrives again, its play counts can be added twice.</dd><dt>Fix</dt><dd>A report sent with an id is stored once per id. When two copies arrive at once, the key constraint makes the second wait for the first, and the same id with different contents is refused with 409. The released client sends no id, though, so the server assigns one and its retries are stored as separate reports.</dd></dl></li>
       <li><h3>Song titles merging</h3>
