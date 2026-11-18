@@ -4,8 +4,7 @@
   "name": {"ko": "이형주", "en": "Hyeongju Lee", "ja": "イ・ヒョンジュ"},
   "name_alt": {"ko": "Hyeongju Lee", "en": "이형주", "ja": "Hyeongju Lee"},
   "role": {"ko": "데이터·백엔드 엔지니어", "en": "Data & backend engineer", "ja": "データ・バックエンドエンジニア", "src": "MASTER §0 포지셔닝"},
-  "status": {"ko": "2027년 3월 석사 졸업 예정", "en": "Finishing my master's in March 2027", "ja": "2027年3月 修士課程修了予定", "src": "MASTER §0"},
-  "based": {"ko": "일본 후쿠오카 거주", "en": "Based in Fukuoka, Japan", "ja": "福岡県在住", "src": "MASTER §0"},
+  "status": {"ko": "2027년 3월 석사 졸업 예정", "en": "Finishing my master's in March 2027", "ja": "2027年3月 修士課程修了見込み", "src": "MASTER §0"},
   "career_len": {"ko": "2년 5개월", "en": "29 months", "ja": "2年5か月", "src": "MASTER §2 기간 2022-07 ~ 2024-11"},
   "career_span": {"ko": "2022.07 – 2024.11", "en": "Jul 2022 – Nov 2024", "ja": "2022.07 – 2024.11", "src": "MASTER §2 기간 2022-07 ~ 2024-11"},
 
@@ -25,7 +24,6 @@
   "wjmax_period": {"ko": "2023.08 – 2024.02", "en": "Aug 2023 – Feb 2024", "ja": "2023.08 – 2024.02", "src": "MASTER §5"},
 
   "papers": {"ko": "1저자 논문 4편", "en": "4 first-author papers", "ja": "筆頭著者論文4本", "src": "MASTER §4"},
-  "origin_cpu": {"ko": "25.45 s → 0.31 s", "en": "25.45 s → 0.31 s", "ja": "25.45 s → 0.31 s", "src": "MASTER §3-1 (ITC-CSCC 2026 Table III·IV)"},
   "origin_gpu": {"ko": "0.0057 s", "en": "0.0057 s", "ja": "0.0057 s", "src": "MASTER §3-1"},
   "rim_psnr": {"ko": "PSNR 23.31 → 25.70 dB", "en": "PSNR 23.31 → 25.70 dB", "ja": "PSNR 23.31 → 25.70 dB", "src": "MASTER §3-1 논문 기재값 (CV 표기 결정)"},
   "rim_ssim": {"ko": "SSIM 0.741 → 0.877", "en": "SSIM 0.741 → 0.877", "ja": "SSIM 0.741 → 0.877", "src": "MASTER §3-1 논문 기재값"},
