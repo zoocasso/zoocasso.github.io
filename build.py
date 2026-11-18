@@ -413,6 +413,20 @@ def check():
                 target = target / "index.html"
             if target.exists() and frag not in ids_of(target):
                 errors.append(f"{name}: anchor {link}#{frag} has no target")
+    # the CV and portfolio PDFs come from the CV session; check their text too when pypdf is installed
+    # (it is locally; the deploy runner has no pypdf, so there the check is skipped, not failed)
+    try:
+        import pypdf
+    except ImportError:
+        print("note: pypdf not installed, PDF text not checked")
+    else:
+        for f in sorted(DIST.rglob("*.pdf")):
+            name = f.relative_to(DIST).as_posix()
+            text = "\n".join(page.extract_text() or "" for page in pypdf.PdfReader(f).pages)
+            if PHONE.search(text):
+                errors.append(f"{name}: looks like a phone number")
+            for hit in SNAPSHOT.findall(text):
+                errors.append(f"{name}: content rule (removed snapshot figure): {hit!r}")
     return errors
 
 
