@@ -1,8 +1,8 @@
-<!--meta {"title": "ゲノム変異のアノテーション・リスクレポートシステム", "description": "チームリーダーと共同で設計したアルゴリズムをもとに、変異検出パイプライン、約1 TBの公開リファレンスを使ったSQLアノテーション、FastAPIのJSON APIとフロントエンドを実装し、Docker・Harborでデプロイした記録。", "nav": "systems"} -->
+<!--meta {"title": "ゲノム変異のアノテーション・リスクレポートシステム", "description": "チームリーダーと共同で設計したアルゴリズムをもとに、変異検出パイプライン、公開リファレンスを使ったSQLアノテーション、FastAPIのJSON APIとフロントエンドを実装し、Docker・Harborでデプロイした記録。", "nav": "systems"} -->
 <section class="d-hero hero" aria-labelledby="d-h">
   <div class="wrap">
     <nav class="crumbs" aria-label="現在地"><a href="/ja/">ホーム</a><span aria-hidden="true">/</span><a href="/ja/#systems">システム</a><span aria-hidden="true">/</span><span aria-current="page">ゲノムレポートシステム</span></nav>
-    <h1 id="d-h">{{f:bio_ref}}の公開リファレンスで<br>ゲノム変異をアノテーションするシステム</h1>
+    <h1 id="d-h">公開リファレンスで<br>ゲノム変異をアノテーションするシステム</h1>
     <p class="hero-lede">個人のゲノム変異（VCF、チップアレイ）を公開リファレンスと結び付け、疾患・形質のリスク、集団ごとの頻度、関連する医薬品・韓方生薬の情報を提供するシステムです。分析のアルゴリズムは社内でチームリーダーと共同で設計し、パイプライン・バックエンド・フロントエンドの実装とデプロイは私が行いました。慶熙大学校 韓医科大学（韓国）とカナダのバイオ研究所が参加した国際共同プロジェクトでした。</p>
     <dl class="meta-grid">
       <div><dt>期間</dt><dd>{{f:bio_period}}<small>Vision Inside · 社内プロジェクト</small></dd></div>
@@ -10,8 +10,7 @@
       <div><dt>設計</dt><dd>アルゴリズムはチームリーダーと共同<small>UIデザインはカナダの研究所のデザイナー</small></dd></div>
       <div><dt>結果</dt><dd>本番サーバーにデプロイ、内部IP限定<small>正式な公開サービスではない</small></dd></div>
     </dl>
-    <div class="kpis row" aria-label="主な数値">
-      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>公開リファレンスの元データ</span><span class="kpi-val">~1<small>TB</small></span><span class="kpi-label">dbSNP · 1000 Genomes · GWAS Catalog · UniProtなど</span></div>
+    <div class="kpis row three" aria-label="主な数値">
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>SQL結合によるアノテーション</span><span class="kpi-val">4<small>段階</small></span><span class="kpi-label">位置・塩基またはrsIDで、リファレンスを順に結合</span></div>
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>1000 Genomes</span><span class="kpi-val">26<small>集団</small></span><span class="kpi-label">アレル頻度の比較</span></div>
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>デプロイ</span><span class="kpi-val">Docker<small>· Harbor</small></span><span class="kpi-label">Korea IDCの本番サーバー、プライベートレジストリを自分で構築</span></div>
@@ -45,17 +44,9 @@
   <div class="two">
     <section class="d-section" id="ref" aria-labelledby="ref-h">
       <h2 id="ref-h">リファレンス</h2>
-      <p class="sec-desc">アノテーションに使った公開データと、元データのサイズです。</p>
+      <p class="sec-desc">アノテーションに使った公開データです。</p>
       <div class="card">
-        <div class="chart" role="group" aria-label="リファレンスのサイズの棒グラフ">
-          <div class="bars">
-            <div class="bar-row"><span class="bar-name">1000 Genomes<small>26集団のアレル頻度</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 72px) * 1)"></i><span class="bar-val">770 GB</span></span></div>
-            <div class="bar-row"><span class="bar-name">dbSNP<small>GRCh37 · GRCh38、識別子と位置</small></span><span class="bar-track"><i class="bar" style="width:calc((100% - 72px) * .3078)"></i><span class="bar-val">237 GB</span></span></div>
-            <div class="bar-row"><span class="bar-name">GWAS Catalog<small>疾患・形質との関連とオッズ比</small></span><span class="bar-track"><i class="bar other" style="width:4px"></i><span class="bar-val">–</span></span></div>
-            <div class="bar-row"><span class="bar-name">UniProt<small>タンパク質の変異と臨床的な意味</small></span><span class="bar-track"><i class="bar other" style="width:4px"></i><span class="bar-val">–</span></span></div>
-          </div>
-        </div>
-        <div class="chart-foot"><span>元データの合計 <b>約1 TB</b></span><span>GWAS Catalog・UniProtはサイズを記載していません</span></div>
+        <dl class="dl"><dt>1000 Genomes</dt><dd>26集団のアレル頻度</dd><dt>dbSNP</dt><dd>GRCh37 · GRCh38、識別子と位置</dd><dt>GWAS Catalog</dt><dd>疾患・形質との関連とオッズ比</dd><dt>UniProt</dt><dd>タンパク質の変異と臨床的な意味</dd></dl>
       </div>
     </section>
 
@@ -63,7 +54,7 @@
       <h2 id="load-h">蓄積とアノテーションの方法</h2>
       <p class="sec-desc">一度には載せられないサイズを、分割して投入しました。</p>
       <div class="card fig-card prose">
-        <p>dbSNPの元のVCFだけで237 GB、1000 Genomesの元データは770 GBあります。そのため染色体単位でファイルを分割し（sed、split）、<b>pandasのチャンクとSQLAlchemy</b>で少しずつ分けて蓄積しました。</p>
+        <p>dbSNPと1000 Genomesの元のVCFは一度に読み込めないほど大きいため、染色体単位でファイルを分割し（sed、split）、<b>pandasのチャンクとSQLAlchemy</b>で少しずつ分けて蓄積しました。</p>
         <p>アノテーションは、リファレンスのテーブルを順に結合する<b>4段階のSQL結合</b>です。dbSNPと1000 Genomesは染色体・位置・REF・ALTをつないだキーで、GWAS CatalogはrsIDとリスクアレルで、UniProtは変異IDとアレルで結合します。チップの入力は、rsIDを使ってdbSNPから位置キーを引きます。</p>
       </div>
     </section>
@@ -78,7 +69,7 @@
         <ul>
           <li>変異検出パイプラインの実装（FASTQ → BWA → samtools → Picard → GATK → VCF）</li>
           <li>顧客のVCF・チップアレイの入力処理（PyVCF）</li>
-          <li>公開リファレンス<b>{{f:bio_ref}}の蓄積</b>と4段階のSQLアノテーション</li>
+          <li><b>公開リファレンスの蓄積</b>と4段階のSQLアノテーション</li>
           <li>GWASのオッズ比に基づく疾患・形質のリスクスコア、集団ごとの頻度、疾患ごとの医薬品・韓方生薬の情報</li>
           <li><b>FastAPIのJSON API</b>と、レポートのフロントエンド（利用者向けの画面）</li>
           <li>Dockerでのデプロイ、Harborのプライベートレジストリ、ドメイン・HTTPS</li>

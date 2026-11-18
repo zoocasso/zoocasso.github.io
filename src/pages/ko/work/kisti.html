@@ -1,4 +1,4 @@
-<!--meta {"title": "KISTI 발주 과제 데이터 계층", "description": "KISTI가 발주하고 KISTI 연구진이 설계한 공공 R&D 가치창출 플랫폼(SMART K2C)에서 비전인사이드 쪽 데이터 엔지니어로 수집·적재·서빙을 전담한 기록. 2023년 11월 누적 8,000만 행 이상.", "nav": "systems"} -->
+<!--meta {"title": "KISTI 발주 과제 데이터 계층", "description": "KISTI가 발주하고 KISTI 연구진이 설계한 공공 R&D 가치창출 플랫폼(SMART K2C)에서 비전인사이드 쪽 데이터 엔지니어로 수집·적재·서빙을 전담한 기록. ", "nav": "systems"} -->
 <section class="d-hero hero" aria-labelledby="d-h">
   <div class="wrap">
     <nav class="crumbs" aria-label="현재 위치"><a href="/">홈</a><span aria-hidden="true">/</span><a href="/#systems">시스템</a><span aria-hidden="true">/</span><span aria-current="page">KISTI 발주 과제</span></nav>
@@ -10,8 +10,7 @@
       <div><dt>설계</dt><dd>KISTI 연구진<small>일부 모델은 대학 위탁연구</small></dd></div>
       <div><dt>결과</dt><dd>이후 3억 원 규모 본사업으로 이어짐<small>감리 산출물 작성 포함</small></dd></div>
     </dl>
-    <div class="kpis row" aria-label="핵심 수치">
-      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>2023.11 누적</span><span class="kpi-val">8,000만<small>+ 행</small></span><span class="kpi-label">조달·다나와·Amazon 등 7개 테이블</span></div>
+    <div class="kpis row three" aria-label="핵심 수치">
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Amazon 세분류</span><span class="kpi-val">10,985<small>/ 11,046</small></span><span class="kpi-label">세분류 단위 수집 범위</span></div>
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>ASIN 중복 제거</span><span class="kpi-val">1,221,128<small>개</small></span><span class="kpi-label">2022년 9월 수집 상품 {{f:kisti_asin}}에서 정리</span></div>
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>다나와 카테고리</span><span class="kpi-val">2,481<small>/ 2,517</small></span><span class="kpi-label">카테고리 단위 수집 범위</span></div>
@@ -42,7 +41,7 @@
 
   <section class="d-section" id="scale" aria-labelledby="vol-h">
     <h2 id="vol-h">규모와 수집 범위</h2>
-    <p class="sec-desc">2023년 11월 코드정의서 기준 <b>조달·다나와·Amazon 등 7개 테이블, 총 8,000만+ 행</b>입니다. 아래는 대상 카테고리 중 실제로 수집한 비율입니다.</p>
+    <p class="sec-desc">중앙 MySQL은 <b>조달·다나와·Amazon 등 7개 테이블</b>로 이루어져 있습니다. 아래는 대상 카테고리 중 실제로 수집한 비율입니다.</p>
     <div class="card" id="coverage">
       <div class="cov">
         <div class="cov-row">
@@ -83,7 +82,7 @@
         <ul>
           <li>Amazon·다나와 <b>Selenium 크롤러</b>, 조달청 공공데이터포털 API 수집기와 나라장터 크롤링</li>
           <li>{{f:kisti_farm}}에서 돌리고 원격 DB 1대에 모으는 <b>분산 크롤링 팜</b>, 중복 제거</li>
-          <li><b>중앙 MySQL 적재</b>, 2023년 11월 누적 {{f:kisti_rows}}</li>
+          <li><b>중앙 MySQL 적재</b>(조달·다나와·Amazon 등 7개 테이블)</li>
           <li>직접 개발한 모델 3·4·5: 과제–기업 키워드 매칭(SQL), 가격대별 K-means(Dunn index), KeyBERT 리뷰 키워드 일일 배치. 2024년 조달청 통계 SQL</li>
           <li><b>FastAPI 서비스</b>와 Jinja2·Tabulator 관리 화면(필터, 순차 실행, 통합 검색, 엑셀 다운로드)</li>
           <li>Amazon 수집의 Rainforest API 전환 구현 (2024년 2~5월)</li>
@@ -115,7 +114,6 @@
         <li><span class="when">2022.11 – 2023.01</span><span class="rail" aria-hidden="true"></span><div class="what"><b>분산 크롤링 팜 운영</b>{{f:kisti_farm}}가 원격 DB 1대에 적재.</div></li>
         <li><span class="when">2023.02 – 03</span><span class="rail" aria-hidden="true"></span><div class="what"><b>카테고리 수집 현황</b>Amazon 세분류 10,985 / 11,046, 다나와 2,481 / 2,517.</div></li>
         <li><span class="when">2023.03 – 05</span><span class="rail" aria-hidden="true"></span><div class="what"><b>KISTI 프로토타입 웹 · 사내 이전</b>Java Spring 기반 KISTI 프로토타입 웹에서 DB 스키마·백엔드 연동·프런트엔드 연결 담당(사내 Java팀과 협업). 협력사 모델 1·2와 함께 사내 서버로 옮기고 Docker 실행 환경 구성.</div></li>
-        <li><span class="when">2023.11</span><span class="rail" aria-hidden="true"></span><div class="what"><b>누적 {{f:kisti_rows}}</b>코드정의서 기준 조달·다나와·Amazon 등 7개 테이블, 총 8,000만+ 행.</div></li>
         <li><span class="when">2024.02 – 05</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Rainforest API 전환 구현</b>Amazon 수집 경로 교체.</div></li>
         <li><span class="when">2024</span><span class="rail" aria-hidden="true"></span><div class="what"><b>조달청 통계 SQL</b>가격·속성·납품 통계.</div></li>
         <li class="out"><span class="when">2024.06</span><span class="rail" aria-hidden="true"></span><div class="what"><b>용역 종료</b>이 과제는 이후 3억 원 규모 본사업으로 이어짐.</div></li>

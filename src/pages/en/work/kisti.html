@@ -1,4 +1,4 @@
-<!--meta {"title": "KISTI project data layer", "description": "Collection, loading and serving I handled as the data engineer on Vision Inside's side of a public R&D value-creation platform (SMART K2C), commissioned by KISTI and designed by KISTI researchers. 80M+ rows in total as of November 2023.", "nav": "systems"} -->
+<!--meta {"title": "KISTI project data layer", "description": "Collection, loading and serving I handled as the data engineer on Vision Inside's side of a public R&D value-creation platform (SMART K2C), commissioned by KISTI and designed by KISTI researchers.", "nav": "systems"} -->
 <section class="d-hero hero" aria-labelledby="d-h">
   <div class="wrap">
     <nav class="crumbs" aria-label="You are here"><a href="/en/">Home</a><span aria-hidden="true">/</span><a href="/en/#systems">Systems</a><span aria-hidden="true">/</span><span aria-current="page">KISTI project</span></nav>
@@ -10,8 +10,7 @@
       <div><dt>Design</dt><dd>KISTI researchers<small>Some models by university research teams</small></dd></div>
       <div><dt>Outcome</dt><dd>Later led to a KRW 300M main-phase contract<small>Including the audit deliverables</small></dd></div>
     </dl>
-    <div class="kpis row" aria-label="Key figures">
-      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Total, Nov 2023</span><span class="kpi-val">80M<small>+ rows</small></span><span class="kpi-label">7 tables incl. procurement, Danawa, Amazon</span></div>
+    <div class="kpis row three" aria-label="Key figures">
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Amazon subcategories</span><span class="kpi-val">10,985<small>/ 11,046</small></span><span class="kpi-label">Collection coverage by subcategory</span></div>
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>ASIN de-duplication</span><span class="kpi-val">1,221,128<small>unique</small></span><span class="kpi-label">Cleaned from {{f:kisti_asin}} products collected in Sep 2022</span></div>
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Danawa categories</span><span class="kpi-val">2,481<small>/ 2,517</small></span><span class="kpi-label">Collection coverage by category</span></div>
@@ -42,7 +41,7 @@
 
   <section class="d-section" id="scale" aria-labelledby="vol-h">
     <h2 id="vol-h">Scale and collection coverage</h2>
-    <p class="sec-desc"><b>7 tables including procurement, Danawa and Amazon, 80M+ rows in total</b> (Nov 2023 code definition document). Below, the share of the target categories that was actually collected.</p>
+    <p class="sec-desc">The central MySQL database holds <b>7 tables including procurement, Danawa and Amazon</b>. Below, the share of the target categories that was actually collected.</p>
     <div class="card" id="coverage">
       <div class="cov">
         <div class="cov-row">
@@ -83,7 +82,7 @@
         <ul>
           <li><b>Selenium crawlers</b> for Amazon and Danawa, a collector for the Public Procurement Service API on the public data portal, and crawling of the national procurement site</li>
           <li>A <b>distributed crawling farm</b> on {{f:kisti_farm}} feeding one remote database, with de-duplication</li>
-          <li><b>Loading into central MySQL</b>, {{f:kisti_rows}} in total as of November 2023</li>
+          <li><b>Loading into central MySQL</b> (7 tables including procurement, Danawa and Amazon)</li>
           <li>Models 3–5, built by me: project–company keyword matching (SQL), price-band K-means (Dunn index), a daily KeyBERT review-keyword batch. In 2024, procurement statistics in SQL</li>
           <li><b>FastAPI services</b> and Jinja2 and Tabulator admin screens (filters, sequential runs, unified search, Excel export)</li>
           <li>Moving Amazon collection to the Rainforest API (February to May 2024)</li>
@@ -115,7 +114,6 @@
         <li><span class="when">Nov 2022 – Jan 2023</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Distributed crawling farm in operation</b>{{f:kisti_farm}} loading into one remote database.</div></li>
         <li><span class="when">Feb–Mar 2023</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Category coverage</b>Amazon subcategories 10,985 / 11,046, Danawa 2,481 / 2,517.</div></li>
         <li><span class="when">Mar – May 2023</span><span class="rail" aria-hidden="true"></span><div class="what"><b>KISTI prototype web app · moved in-house</b>Owned the DB schema, backend integration and frontend wiring of the Java Spring KISTI prototype web app, with the in-house Java team; moved it with the partner's models 1–2 to company servers on Docker.</div></li>
-        <li><span class="when">Nov 2023</span><span class="rail" aria-hidden="true"></span><div class="what"><b>{{f:kisti_rows}} in total</b>7 tables including procurement, Danawa and Amazon, 80M+ rows in total (code definition document).</div></li>
         <li><span class="when">Feb – May 2024</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Rainforest API switch built</b>The Amazon collection path replaced.</div></li>
         <li><span class="when">2024</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Procurement statistics in SQL</b>Prices, attributes and deliveries.</div></li>
         <li class="out"><span class="when">Jun 2024</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Contract ended</b>The project later led to a KRW 300M main-phase contract.</div></li>

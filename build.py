@@ -88,6 +88,11 @@ FORBIDDEN = re.compile(
     r"卵|雌雄|\begg|계란|달걀|sexing|"
     r"last updated|최종 ?수정|최종 ?업데이트|最終更新|"
     r"분실|유실|紛失|code was lost|24만 ?8천|248K|24万8千", re.I)
+# snapshot sizes the owner removed (2026-11-18): the KISTI row total from the Nov 2023 code definition document
+# with its table counts, and the genome reference sizes. Checked on the whole page, meta and alt text included.
+SNAPSHOT = re.compile(
+    r"8,?000 ?(?:만|万)|(?<![\d.,])80 ?M(?![A-Za-z])|80 million|1,?605 ?(?:만|万)|4,?192 ?(?:만|万)|16\.05 ?M|41\.92 ?M|"
+    r"(?<![\d.,])1 ?TB(?![A-Za-z])|237 ?GB|770 ?GB", re.I)
 
 SVG = {
     "cv": '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 1.5h5l3.5 3.5v9.5h-8.5z"/><path d="M9 1.5V5h3.5M6 9h4.5M6 11.5h4.5"/></svg>',
@@ -381,6 +386,8 @@ def check():
             errors.append(f"{name}: expected exactly one <h1>, found {t.count('<h1')}")
         for hit in FORBIDDEN.findall(text):
             errors.append(f"{name}: content rule: {hit!r}")
+        for hit in SNAPSHOT.findall(t):
+            errors.append(f"{name}: content rule (removed snapshot figure): {hit!r}")
         # Japanese pages name the commissioned research's partner as 日立グループ, never the company alone
         if name.startswith("ja/") and re.search(r"日立(?!グループ)|Hitachi", text):
             errors.append(f"{name}: content rule: Hitachi must read 日立グループ on Japanese pages")

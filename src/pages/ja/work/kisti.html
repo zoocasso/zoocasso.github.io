@@ -1,4 +1,4 @@
-<!--meta {"title": "KISTI発注案件のデータ層", "description": "KISTI（韓国科学技術情報研究院）が発注し、KISTIの研究者が設計した公共R&D価値創出プラットフォーム（SMART K2C）で、Vision Inside側のデータエンジニアとして収集・蓄積・提供を専任で担当した記録。2023年11月時点の累計8,000万行以上。", "nav": "systems"} -->
+<!--meta {"title": "KISTI発注案件のデータ層", "description": "KISTI（韓国科学技術情報研究院）が発注し、KISTIの研究者が設計した公共R&D価値創出プラットフォーム（SMART K2C）で、Vision Inside側のデータエンジニアとして収集・蓄積・提供を専任で担当した記録。", "nav": "systems"} -->
 <section class="d-hero hero" aria-labelledby="d-h">
   <div class="wrap">
     <nav class="crumbs" aria-label="現在地"><a href="/ja/">ホーム</a><span aria-hidden="true">/</span><a href="/ja/#systems">システム</a><span aria-hidden="true">/</span><span aria-current="page">KISTI発注案件</span></nav>
@@ -10,8 +10,7 @@
       <div><dt>設計</dt><dd>KISTIの研究者<small>一部のモデルは大学の委託研究</small></dd></div>
       <div><dt>結果</dt><dd>その後3億ウォン規模の本事業につながった<small>監理用の成果物の作成を含む</small></dd></div>
     </dl>
-    <div class="kpis row" aria-label="主な数値">
-      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>2023.11時点の累計</span><span class="kpi-val">8,000万<small>+ 行</small></span><span class="kpi-label">調達・Danawa・Amazonなど7テーブル</span></div>
+    <div class="kpis row three" aria-label="主な数値">
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Amazonの細分類</span><span class="kpi-val">10,985<small>/ 11,046</small></span><span class="kpi-label">細分類単位の収集範囲</span></div>
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>ASINの重複除去</span><span class="kpi-val">1,221,128<small>件</small></span><span class="kpi-label">2022年9月に収集した商品{{f:kisti_asin}}から整理</span></div>
       <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Danawaのカテゴリ</span><span class="kpi-val">2,481<small>/ 2,517</small></span><span class="kpi-label">カテゴリ単位の収集範囲</span></div>
@@ -42,7 +41,7 @@
 
   <section class="d-section" id="scale" aria-labelledby="vol-h">
     <h2 id="vol-h">規模と収集範囲</h2>
-    <p class="sec-desc">2023年11月のコード定義書に基づき、<b>調達・Danawa・Amazonなど7テーブル、合計8,000万行以上</b>です。下は、対象カテゴリのうち実際に収集した割合です。</p>
+    <p class="sec-desc">中央MySQLは<b>調達・Danawa・Amazonなど7テーブル</b>で構成されています。下は、対象カテゴリのうち実際に収集した割合です。</p>
     <div class="card" id="coverage">
       <div class="cov">
         <div class="cov-row">
@@ -83,7 +82,7 @@
         <ul>
           <li>Amazon・Danawaの<b>Seleniumクローラー</b>、調達庁の公共データポータルAPIの収集器と、ナラジャント（韓国の電子調達システム）のクローリング</li>
           <li>{{f:kisti_farm}}で動かし、1台のリモートDBに集める<b>分散クローラー群</b>と重複除去</li>
-          <li><b>中央MySQLへの蓄積</b>、2023年11月時点の累計{{f:kisti_rows}}</li>
+          <li><b>中央MySQLへの蓄積</b>（調達・Danawa・Amazonなど7テーブル）</li>
           <li>自作のモデル3・4・5：課題と企業のキーワードマッチング（SQL）、価格帯ごとのK-means（Dunn index）、KeyBERTによるレビューキーワードの日次バッチ。2024年は調達庁の統計SQL</li>
           <li><b>FastAPIのサービス</b>と、Jinja2・Tabulatorの管理画面（フィルター、順次実行、統合検索、Excelダウンロード）</li>
           <li>Amazonの収集をRainforest APIに移す作業の実装（2024年2〜5月）</li>
@@ -115,7 +114,6 @@
         <li><span class="when">2022.11 – 2023.01</span><span class="rail" aria-hidden="true"></span><div class="what"><b>分散クローラー群の運用</b>{{f:kisti_farm}}から1台のリモートDBに蓄積。</div></li>
         <li><span class="when">2023.02 – 03</span><span class="rail" aria-hidden="true"></span><div class="what"><b>カテゴリの収集状況</b>Amazonの細分類 10,985 / 11,046、Danawa 2,481 / 2,517。</div></li>
         <li><span class="when">2023.03 – 05</span><span class="rail" aria-hidden="true"></span><div class="what"><b>KISTIのプロトタイプWeb · 社内への移設</b>Java SpringベースのKISTIプロトタイプWebで、DBスキーマ・バックエンド連携・フロントエンド接続を担当（社内Javaチームと協業）。協力会社のモデル1・2とともに社内サーバーへ移し、Docker実行環境を構成。</div></li>
-        <li><span class="when">2023.11</span><span class="rail" aria-hidden="true"></span><div class="what"><b>累計{{f:kisti_rows}}</b>コード定義書に基づき、調達・Danawa・Amazonなど7テーブル、合計8,000万行以上。</div></li>
         <li><span class="when">2024.02 – 05</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Rainforest APIへの移行を実装</b>Amazonの収集経路を置き換え。</div></li>
         <li><span class="when">2024</span><span class="rail" aria-hidden="true"></span><div class="what"><b>調達庁の統計SQL</b>価格・属性・納品の統計。</div></li>
         <li class="out"><span class="when">2024.06</span><span class="rail" aria-hidden="true"></span><div class="what"><b>受託業務の終了</b>このプロジェクトは、その後3億ウォン規模の本事業につながった。</div></li>

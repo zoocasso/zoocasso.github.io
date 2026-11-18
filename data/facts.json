@@ -8,15 +8,12 @@
   "career_len": {"ko": "2년 5개월", "en": "29 months", "ja": "2年5か月", "src": "MASTER §2 기간 2022-07 ~ 2024-11"},
   "career_span": {"ko": "2022.07 – 2024.11", "en": "Jul 2022 – Nov 2024", "ja": "2022.07 – 2024.11", "src": "MASTER §2 기간 2022-07 ~ 2024-11"},
 
-  "kisti_rows": {"ko": "8,000만 행 이상", "en": "80M+ rows", "ja": "8,000万行以上", "src": "MASTER §2-1 누적 규모 (2023-11)"},
-  "kisti_rows_short": {"ko": "8,000만+", "en": "80M+", "ja": "8,000万+", "src": "MASTER §2-1"},
   "kisti_period": {"ko": "2022.08 – 2024.06", "en": "Aug 2022 – Jun 2024", "ja": "2022.08 – 2024.06", "src": "MASTER §2-1"},
   "kisti_farm": {"ko": "노트북 10~20대", "en": "10–20 laptops", "ja": "ノートPC 10〜20台", "src": "MASTER §2-1 분산 크롤링 팜"},
   "kisti_asin": {"ko": "2,217,720개", "en": "2,217,720", "ja": "2,217,720件", "src": "MASTER §2-1"},
   "kisti_asin_dedup": {"ko": "1,221,128개", "en": "1,221,128", "ja": "1,221,128件", "src": "MASTER §2-1"},
   "kisti_asin_short": {"ko": "221만 → 122만", "en": "2.22M → 1.22M", "ja": "221万 → 122万", "src": "MASTER §2-1 (kisti_asin → kisti_asin_dedup)"},
 
-  "bio_ref": {"ko": "약 1 TB", "en": "~1 TB", "ja": "約1 TB", "src": "MASTER §2-2 공개 레퍼런스"},
   "bio_period": {"ko": "2022.08 – 2023.09", "en": "Aug 2022 – Sep 2023", "ja": "2022.08 – 2023.09", "src": "MASTER §2-2"},
 
   "wjmax_peak": {"ko": "약 2,000명", "en": "~2,000", "ja": "約2,000人", "src": "MASTER §5 WJMax 동접 (업데이트 시 최대)"},

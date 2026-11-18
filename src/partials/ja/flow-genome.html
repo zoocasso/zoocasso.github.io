@@ -12,7 +12,7 @@
         </li>
         <li class="node" data-id="g-ref" data-owner="ext">
           <button class="node-btn" type="button"><span class="node-title">公開リファレンス</span><span class="node-metric">dbSNP・1000 Genomesなど</span></button>
-          <div class="node-detail"><dl class="dl"><dt>データ</dt><dd>dbSNP（GRCh37、GRCh38）237 GB、1000 Genomes 770 GB、GWAS Catalog、UniProt。サイズは元データの値です。</dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>データ</dt><dd>dbSNP（GRCh37、GRCh38）、1000 Genomes、GWAS Catalog、UniProt。</dd></dl></div>
         </li>
       </ul>
     </li>
@@ -31,8 +31,8 @@
     <li class="stage"><div class="stage-h"><span class="n">03</span>保存</div>
       <ul class="nodes">
         <li class="node" data-id="g-db" data-owner="me" data-default>
-          <button class="node-btn" type="button"><span class="node-title">MySQLリファレンスDB</span><span class="node-metric">{{f:bio_ref}}</span><span class="node-tag">自分で構築</span></button>
-          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>dbSNP（<b>237 GB</b>）、1000 Genomes（<b>770 GB</b>）、GWAS Catalog、UniProtをMySQLに構築。染色体単位でファイルを分割し（sed、split）、pandasのチャンクとSQLAlchemyで少しずつ蓄積。</dd><dt>技術</dt><dd><ul class="chips"><li>MySQL</li><li>pandas</li><li>SQLAlchemy</li><li>sed · split</li></ul></dd></dl></div>
+          <button class="node-btn" type="button"><span class="node-title">MySQLリファレンスDB</span><span class="node-metric">染色体単位で分割して蓄積</span><span class="node-tag">自分で構築</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>dbSNP、1000 Genomes、GWAS Catalog、UniProtをMySQLに構築。染色体単位でファイルを分割し（sed、split）、pandasのチャンクとSQLAlchemyで少しずつ蓄積。</dd><dt>技術</dt><dd><ul class="chips"><li>MySQL</li><li>pandas</li><li>SQLAlchemy</li><li>sed · split</li></ul></dd></dl></div>
         </li>
       </ul>
     </li>
