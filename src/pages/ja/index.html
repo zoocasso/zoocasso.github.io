@@ -80,11 +80,6 @@
         <span class="tab-name">KISTI発注案件・データ層</span>
         <span class="tab-metric">{{f:kisti_rows_short}} 行</span>
       </button>
-      <button class="tab" role="tab" id="tab-genome" aria-controls="sys-genome" aria-selected="false" tabindex="-1">
-        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:bio_period}}</span>
-        <span class="tab-name">ゲノム変異アノテーション・レポート</span>
-        <span class="tab-metric">リファレンス {{f:bio_ref}}</span>
-      </button>
       <button class="tab" role="tab" id="tab-hitachi" aria-controls="sys-hitachi" aria-selected="false" tabindex="-1">
         <span class="tab-top"><i class="dot" aria-hidden="true"></i>2025.04 – 現在</span>
         <span class="tab-name">日立グループとの共同研究・画像パイプライン</span>
@@ -94,6 +89,11 @@
         <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:wjmax_period}}</span>
         <span class="tab-name">WJMaxゲームサーバー</span>
         <span class="tab-metric">同時接続 最大約2,000</span>
+      </button>
+      <button class="tab" role="tab" id="tab-genome" aria-controls="sys-genome" aria-selected="false" tabindex="-1">
+        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:bio_period}}</span>
+        <span class="tab-name">ゲノム変異アノテーション・レポート</span>
+        <span class="tab-metric">リファレンス {{f:bio_ref}}</span>
       </button>
     </div>
 
@@ -109,21 +109,6 @@
       </header>
       {{inc:flow-kisti}}
       <div class="sys-outcome"><span class="k">結果</span><span>このプロジェクトは、その後<b>3億ウォン規模の本事業</b>につながった</span><span>KISTIの技術会議で結果を発表 · 監理用の成果物を作成</span></div>
-    </article>
-
-    <article class="sys" id="sys-genome" role="tabpanel" aria-labelledby="tab-genome">
-      <header class="sys-head">
-        <div>
-          <div class="sys-meta"><span>{{f:bio_period}}</span><span>Vision Inside</span><span>社内プロジェクト · 国際共同</span></div>
-          <h3>ゲノム変異のアノテーション・リスクレポートシステム</h3>
-          <div class="sys-role"><span class="pill me">パイプライン・バックエンド・フロントエンドを実装</span><span class="pill">アルゴリズムはチームリーダーと共同で設計</span></div>
-          <p class="sys-scope">個人のゲノム変異（VCF、チップアレイ）を{{f:bio_ref}}の公開リファレンスと結び付け、疾患・形質のリスク、集団ごとの頻度、関連する医薬品・韓方生薬の情報を提供するシステムです。慶熙大学校 韓医科大学（韓国）とカナダのバイオ研究所が参加した国際共同プロジェクトでした。<b>私の担当範囲</b> パイプライン・バックエンド・フロントエンドの実装とDockerでのデプロイ</p>
-        </div>
-        <div class="sys-links"><a class="btn" href="/ja/work/genomics/">詳細を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード</a></div>
-      </header>
-      {{inc:flow-genome}}
-      <div class="sys-outcome"><span class="k">改善</span><span>サーバー内で描画していたWeb画面 → <b>フロントエンド向けJSON APIとして分離</b>（2023.09）</span></div>
-      <div class="sys-outcome"><span class="k">結果</span><span>本番サーバーにデプロイ後、<b>内部IP限定</b>で運用（公開サービスではない）</span><span>サービスのコードは整理して公開</span></div>
     </article>
 
     <article class="sys" id="sys-hitachi" role="tabpanel" aria-labelledby="tab-hitachi">
@@ -153,6 +138,21 @@
       </header>
       {{inc:flow-wjmax}}
       <div class="sys-outcome"><span class="k">結果</span><span>アップデート当日に最大<b>{{f:wjmax_peak}}</b>の同時接続を受けて運用</span><span>公開リポジトリは整理版（テスト付き）</span></div>
+    </article>
+
+    <article class="sys" id="sys-genome" role="tabpanel" aria-labelledby="tab-genome">
+      <header class="sys-head">
+        <div>
+          <div class="sys-meta"><span>{{f:bio_period}}</span><span>Vision Inside</span><span>社内プロジェクト · 国際共同</span></div>
+          <h3>ゲノム変異のアノテーション・リスクレポートシステム</h3>
+          <div class="sys-role"><span class="pill me">パイプライン・バックエンド・フロントエンドを実装</span><span class="pill">アルゴリズムはチームリーダーと共同で設計</span></div>
+          <p class="sys-scope">個人のゲノム変異（VCF、チップアレイ）を{{f:bio_ref}}の公開リファレンスと結び付け、疾患・形質のリスク、集団ごとの頻度、関連する医薬品・韓方生薬の情報を提供するシステムです。慶熙大学校 韓医科大学（韓国）とカナダのバイオ研究所が参加した国際共同プロジェクトでした。<b>私の担当範囲</b> パイプライン・バックエンド・フロントエンドの実装とDockerでのデプロイ</p>
+        </div>
+        <div class="sys-links"><a class="btn" href="/ja/work/genomics/">詳細を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード</a></div>
+      </header>
+      {{inc:flow-genome}}
+      <div class="sys-outcome"><span class="k">改善</span><span>サーバー内で描画していたWeb画面 → <b>フロントエンド向けJSON APIとして分離</b>（2023.09）</span></div>
+      <div class="sys-outcome"><span class="k">結果</span><span>本番サーバーにデプロイ後、<b>内部IP限定</b>で運用（公開サービスではない）</span><span>サービスのコードは整理して公開</span></div>
     </article>
   </div>
 </section>

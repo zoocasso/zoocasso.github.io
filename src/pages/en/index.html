@@ -80,11 +80,6 @@
         <span class="tab-name">KISTI project · data layer</span>
         <span class="tab-metric">{{f:kisti_rows_short}} rows</span>
       </button>
-      <button class="tab" role="tab" id="tab-genome" aria-controls="sys-genome" aria-selected="false" tabindex="-1">
-        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:bio_period}}</span>
-        <span class="tab-name">Genomic variant annotation and reports</span>
-        <span class="tab-metric">{{f:bio_ref}} of references</span>
-      </button>
       <button class="tab" role="tab" id="tab-hitachi" aria-controls="sys-hitachi" aria-selected="false" tabindex="-1">
         <span class="tab-top"><i class="dot" aria-hidden="true"></i>Apr 2025 – now</span>
         <span class="tab-name">Image pipeline · joint research with Hitachi</span>
@@ -94,6 +89,11 @@
         <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:wjmax_period}}</span>
         <span class="tab-name">WJMax game server</span>
         <span class="tab-metric">Peak ~2,000 concurrent</span>
+      </button>
+      <button class="tab" role="tab" id="tab-genome" aria-controls="sys-genome" aria-selected="false" tabindex="-1">
+        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:bio_period}}</span>
+        <span class="tab-name">Genomic variant annotation and reports</span>
+        <span class="tab-metric">{{f:bio_ref}} of references</span>
       </button>
     </div>
 
@@ -109,21 +109,6 @@
       </header>
       {{inc:flow-kisti}}
       <div class="sys-outcome"><span class="k">Result</span><span>The project later led to a <b>KRW 300M main-phase contract</b></span><span>Presented results at KISTI technical meetings · wrote the audit deliverables</span></div>
-    </article>
-
-    <article class="sys" id="sys-genome" role="tabpanel" aria-labelledby="tab-genome">
-      <header class="sys-head">
-        <div>
-          <div class="sys-meta"><span>{{f:bio_period}}</span><span>Vision Inside</span><span>Internal project · international collaboration</span></div>
-          <h3>Genomic variant annotation and risk report system</h3>
-          <div class="sys-role"><span class="pill me">Implemented the pipeline, backend and frontend</span><span class="pill">Algorithm designed with the team lead</span></div>
-          <p class="sys-scope">A system that links a person's genomic variants (VCF, chip arrays) to {{f:bio_ref}} of public references and reports disease and trait risk, population frequencies, and related drugs and herbal medicines. It was an international collaboration with Kyung Hee University's College of Korean Medicine and a Canadian bio research lab. <b>My part</b> implementing the pipeline, backend and frontend, and Docker deployment</p>
-        </div>
-        <div class="sys-links"><a class="btn" href="/en/work/genomics/">Details<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>Code</a></div>
-      </header>
-      {{inc:flow-genome}}
-      <div class="sys-outcome"><span class="k">Improved</span><span>Web screens rendered inside the server → <b>a separate JSON API for the frontend</b> (Sep 2023)</span></div>
-      <div class="sys-outcome"><span class="k">Result</span><span>Deployed to a production server and run <b>for internal IPs only</b> (not a public service)</span><span>The service code was cleaned up and published</span></div>
     </article>
 
     <article class="sys" id="sys-hitachi" role="tabpanel" aria-labelledby="tab-hitachi">
@@ -153,6 +138,21 @@
       </header>
       {{inc:flow-wjmax}}
       <div class="sys-outcome"><span class="k">Result</span><span>Ran through update days with up to <b>{{f:wjmax_peak}}</b> concurrent players</span><span>The public repository is a cleaned-up version (with tests)</span></div>
+    </article>
+
+    <article class="sys" id="sys-genome" role="tabpanel" aria-labelledby="tab-genome">
+      <header class="sys-head">
+        <div>
+          <div class="sys-meta"><span>{{f:bio_period}}</span><span>Vision Inside</span><span>Internal project · international collaboration</span></div>
+          <h3>Genomic variant annotation and risk report system</h3>
+          <div class="sys-role"><span class="pill me">Implemented the pipeline, backend and frontend</span><span class="pill">Algorithm designed with the team lead</span></div>
+          <p class="sys-scope">A system that links a person's genomic variants (VCF, chip arrays) to {{f:bio_ref}} of public references and reports disease and trait risk, population frequencies, and related drugs and herbal medicines. It was an international collaboration with Kyung Hee University's College of Korean Medicine and a Canadian bio research lab. <b>My part</b> implementing the pipeline, backend and frontend, and Docker deployment</p>
+        </div>
+        <div class="sys-links"><a class="btn" href="/en/work/genomics/">Details<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>Code</a></div>
+      </header>
+      {{inc:flow-genome}}
+      <div class="sys-outcome"><span class="k">Improved</span><span>Web screens rendered inside the server → <b>a separate JSON API for the frontend</b> (Sep 2023)</span></div>
+      <div class="sys-outcome"><span class="k">Result</span><span>Deployed to a production server and run <b>for internal IPs only</b> (not a public service)</span><span>The service code was cleaned up and published</span></div>
     </article>
   </div>
 </section>
