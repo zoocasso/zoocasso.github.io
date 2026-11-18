@@ -10,9 +10,6 @@
 
   "kisti_period": {"ko": "2022.08 – 2024.06", "en": "Aug 2022 – Jun 2024", "ja": "2022.08 – 2024.06", "src": "MASTER §2-1"},
   "kisti_farm": {"ko": "노트북 10~20대", "en": "10–20 laptops", "ja": "ノートPC 10〜20台", "src": "MASTER §2-1 분산 크롤링 팜"},
-  "kisti_asin": {"ko": "2,217,720개", "en": "2,217,720", "ja": "2,217,720件", "src": "MASTER §2-1"},
-  "kisti_asin_dedup": {"ko": "1,221,128개", "en": "1,221,128", "ja": "1,221,128件", "src": "MASTER §2-1"},
-  "kisti_asin_short": {"ko": "221만 → 122만", "en": "2.22M → 1.22M", "ja": "221万 → 122万", "src": "MASTER §2-1 (kisti_asin → kisti_asin_dedup)"},
 
   "bio_period": {"ko": "2022.08 – 2023.09", "en": "Aug 2022 – Sep 2023", "ja": "2022.08 – 2023.09", "src": "MASTER §2-2"},
 

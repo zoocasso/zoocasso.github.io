@@ -3,12 +3,12 @@
     <li class="stage"><div class="stage-h"><span class="n">01</span>ソース</div>
       <ul class="nodes">
         <li class="node" data-id="k-amz" data-owner="ext">
-          <button class="node-btn" type="button"><span class="node-title">Amazon</span><span class="node-metric">細分類 10,985個</span></button>
-          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>Seleniumのクローラーで、細分類11,046個のうち<b>10,985個</b>を収集。2022年9月に収集した商品ID（ASIN）{{f:kisti_asin}}を重複除去し、<b>{{f:kisti_asin_dedup}}</b>に整理。</dd><dt>その後</dt><dd>Rainforest APIに移行（2023年7月に選定、2024年2〜5月に実装）。</dd><dt>技術</dt><dd><ul class="chips"><li>Selenium</li><li>Rainforest API</li></ul></dd></dl></div>
+          <button class="node-btn" type="button"><span class="node-title">Amazon</span><span class="node-metric">細分類単位で収集</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>Seleniumのクローラーで<b>細分類単位</b>に収集。集めた商品は<b>商品ID（ASIN）で重複除去</b>。</dd><dt>その後</dt><dd>Rainforest APIに移行（2023年7月に選定、2024年2〜5月に実装）。</dd><dt>技術</dt><dd><ul class="chips"><li>Selenium</li><li>Rainforest API</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="k-dnw" data-owner="ext">
-          <button class="node-btn" type="button"><span class="node-title">Danawa</span><span class="node-metric">カテゴリ 2,481個</span></button>
-          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>Seleniumのクローラーで、Danawa（韓国の価格比較サイト）のカテゴリ2,517個のうち<b>2,481個</b>を収集。</dd><dt>技術</dt><dd><ul class="chips"><li>Selenium</li><li>BeautifulSoup</li></ul></dd></dl></div>
+          <button class="node-btn" type="button"><span class="node-title">Danawa</span><span class="node-metric">カテゴリ単位で収集</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>Seleniumのクローラーで、Danawa（韓国の価格比較サイト）を<b>カテゴリ単位</b>で収集。</dd><dt>技術</dt><dd><ul class="chips"><li>Selenium</li><li>BeautifulSoup</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="k-pps" data-owner="ext">
           <button class="node-btn" type="button"><span class="node-title">調達庁・ナラジャント</span><span class="node-metric">公共データポータルAPI</span></button>
@@ -31,8 +31,8 @@
     <li class="stage"><div class="stage-h"><span class="n">03</span>保存</div>
       <ul class="nodes">
         <li class="node" data-id="k-db" data-owner="me" data-default>
-          <button class="node-btn" type="button"><span class="node-title">中央MySQL</span><span class="node-metric">7テーブル</span><span class="node-tag">自分で構築</span></button>
-          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>収集結果を中央MySQLに蓄積。調達・Danawa・Amazonなど<b>7テーブル</b>。</dd><dt>技術</dt><dd><ul class="chips"><li>MySQL</li><li>SQLAlchemy</li><li>pandas</li></ul></dd></dl></div>
+          <button class="node-btn" type="button"><span class="node-title">中央MySQL</span><span class="node-metric">調達・Danawa・Amazon</span><span class="node-tag">自分で構築</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>調達・Danawa・Amazonの収集結果を<b>中央MySQL</b>に蓄積。</dd><dt>技術</dt><dd><ul class="chips"><li>MySQL</li><li>SQLAlchemy</li><li>pandas</li></ul></dd></dl></div>
         </li>
       </ul>
     </li>

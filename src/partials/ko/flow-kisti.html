@@ -3,12 +3,12 @@
     <li class="stage"><div class="stage-h"><span class="n">01</span>소스</div>
       <ul class="nodes">
         <li class="node" data-id="k-amz" data-owner="ext">
-          <button class="node-btn" type="button"><span class="node-title">Amazon</span><span class="node-metric">세분류 10,985개</span></button>
-          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>Selenium 크롤러로 세분류 11,046개 중 <b>10,985개</b>를 수집. 2022년 9월 수집한 상품 ID(ASIN) {{f:kisti_asin}}를 중복 제거해 <b>{{f:kisti_asin_dedup}}</b>로 정리.</dd><dt>이후</dt><dd>Rainforest API로 전환 (2023년 7월 선정, 2024년 2~5월 구현).</dd><dt>기술</dt><dd><ul class="chips"><li>Selenium</li><li>Rainforest API</li></ul></dd></dl></div>
+          <button class="node-btn" type="button"><span class="node-title">Amazon</span><span class="node-metric">세분류 단위 수집</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>Selenium 크롤러로 <b>세분류 단위</b> 수집. 모은 상품은 <b>상품 ID(ASIN) 기준으로 중복 제거</b>.</dd><dt>이후</dt><dd>Rainforest API로 전환 (2023년 7월 선정, 2024년 2~5월 구현).</dd><dt>기술</dt><dd><ul class="chips"><li>Selenium</li><li>Rainforest API</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="k-dnw" data-owner="ext">
-          <button class="node-btn" type="button"><span class="node-title">다나와</span><span class="node-metric">카테고리 2,481개</span></button>
-          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>Selenium 크롤러로 카테고리 2,517개 중 <b>2,481개</b> 수집.</dd><dt>기술</dt><dd><ul class="chips"><li>Selenium</li><li>BeautifulSoup</li></ul></dd></dl></div>
+          <button class="node-btn" type="button"><span class="node-title">다나와</span><span class="node-metric">카테고리 단위 수집</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>Selenium 크롤러로 <b>카테고리 단위</b> 수집.</dd><dt>기술</dt><dd><ul class="chips"><li>Selenium</li><li>BeautifulSoup</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="k-pps" data-owner="ext">
           <button class="node-btn" type="button"><span class="node-title">조달청 · 나라장터</span><span class="node-metric">공공데이터포털 API</span></button>
@@ -31,8 +31,8 @@
     <li class="stage"><div class="stage-h"><span class="n">03</span>저장</div>
       <ul class="nodes">
         <li class="node" data-id="k-db" data-owner="me" data-default>
-          <button class="node-btn" type="button"><span class="node-title">중앙 MySQL</span><span class="node-metric">7개 테이블</span><span class="node-tag">직접 구축</span></button>
-          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>수집 결과를 중앙 MySQL에 적재. 조달·다나와·Amazon 등 <b>7개 테이블</b>.</dd><dt>기술</dt><dd><ul class="chips"><li>MySQL</li><li>SQLAlchemy</li><li>pandas</li></ul></dd></dl></div>
+          <button class="node-btn" type="button"><span class="node-title">중앙 MySQL</span><span class="node-metric">조달·다나와·Amazon</span><span class="node-tag">직접 구축</span></button>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>조달·다나와·Amazon 수집 결과를 <b>중앙 MySQL</b>에 적재.</dd><dt>기술</dt><dd><ul class="chips"><li>MySQL</li><li>SQLAlchemy</li><li>pandas</li></ul></dd></dl></div>
         </li>
       </ul>
     </li>
