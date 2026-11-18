@@ -141,6 +141,10 @@ def layout(lang, meta, body, path, alts_by_lang, v):
     nav = meta.get("nav", "")
     is_home = bool(meta.get("home"))
     og = meta.get("image", f"/img/og-{lang}.jpg")
+    # a content hash in the URL so chat apps and LinkedIn fetch a new preview when the image changes
+    og_file = ROOT / "src" / og.lstrip("/")
+    if og_file.exists():
+        og += "?v=" + hashlib.sha1(og_file.read_bytes()).hexdigest()[:8]
     home = PREFIX[lang] + "/"
     alts = ""
     if len(alts_by_lang) > 1:
@@ -382,7 +386,7 @@ def check():
             if " alt=" not in img:
                 errors.append(f"{name}: image without alt: {img[:80]}")
         for og in re.findall(r'property="og:image" content="' + re.escape(BASE) + r'(/[^"]+)"', t):
-            if not (DIST / og.lstrip("/")).exists():
+            if not (DIST / og.split("?")[0].lstrip("/")).exists():
                 errors.append(f"{name}: missing share image {og}")
         for link in ref.findall(t):
             target = DIST / link.lstrip("/")
