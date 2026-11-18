@@ -97,7 +97,10 @@ SNAPSHOT = re.compile(
     r"(?<![\d.,])3 ?억|(?<![\d.,])3 ?億|(?<![\d.,])300 ?M(?![A-Za-z])|300 million|KRW ?300|"
     # and the mid-employment counts (owner, 2026-11-18: he left in Nov 2024, so 2022–23 snapshot totals must not show)
     r"10,?985|11,?046|2,?217,?720|1,?221,?128|(?<![\d.,])2,?481(?!\d)|(?<![\d.,])2,?517(?!\d)|221 ?(?:만|万)|122 ?(?:만|万)|"
-    r"2\.22 ?M|1\.22 ?M|(?<!\d)7 ?개 ?테이블|(?<!\d)7 tables|(?<!\d)7 ?テーブル", re.I)
+    r"2\.22 ?M|1\.22 ?M|(?<!\d)7 ?개 ?테이블|(?<!\d)7 tables|(?<!\d)7 ?テーブル|"
+    # the crawling-farm laptop count and the insurance tool's product-group count (owner, 2026-11-18)
+    r"(?<!\d)10 ?[~〜–-] ?20 ?(?:대|台|laptop|machine|-machine)|노트북 ?10|ノートPC ?10|"
+    r"(?<!\d)16 ?개 ?상품군|(?<!\d)16 product categor|(?<!\d)16 ?商品群", re.I)
 
 SVG = {
     "cv": '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 1.5h5l3.5 3.5v9.5h-8.5z"/><path d="M9 1.5V5h3.5M6 9h4.5M6 11.5h4.5"/></svg>',
