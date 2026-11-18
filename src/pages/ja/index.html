@@ -85,15 +85,15 @@
         <span class="tab-name">日立グループとの共同研究・画像パイプライン</span>
         <span class="tab-metric">オランダで現地導入</span>
       </button>
-      <button class="tab" role="tab" id="tab-wjmax" aria-controls="sys-wjmax" aria-selected="false" tabindex="-1">
-        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:wjmax_period}}</span>
-        <span class="tab-name">WJMaxゲームサーバー</span>
-        <span class="tab-metric">同時接続 最大約2,000</span>
-      </button>
       <button class="tab" role="tab" id="tab-genome" aria-controls="sys-genome" aria-selected="false" tabindex="-1">
         <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:bio_period}}</span>
         <span class="tab-name">ゲノム変異アノテーション・レポート</span>
         <span class="tab-metric">リファレンス {{f:bio_ref}}</span>
+      </button>
+      <button class="tab" role="tab" id="tab-wjmax" aria-controls="sys-wjmax" aria-selected="false" tabindex="-1">
+        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:wjmax_period}}</span>
+        <span class="tab-name">WJMaxゲームサーバー</span>
+        <span class="tab-metric">同時接続 最大約2,000</span>
       </button>
     </div>
 
@@ -126,20 +126,6 @@
       <div class="sys-outcome"><span class="k">結果</span><span><b>2026年9〜10月、オランダの現地ラボに導入</b> · 日立グループの担当者が現場で直接使用</span><span>プロジェクトパートナーの研究者の前でデモ · 業務言語は日本語・英語</span></div>
     </article>
 
-    <article class="sys" id="sys-wjmax" role="tabpanel" aria-labelledby="tab-wjmax">
-      <header class="sys-head">
-        <div>
-          <div class="sys-meta"><span>{{f:wjmax_period}}</span><span>サイドプロジェクト · 2人チーム</span></div>
-          <h3>WJMaxゲームサーバー · プレイログ収集API</h3>
-          <div class="sys-role"><span class="pill me">サーバー・DB・セキュリティを担当</span><span class="pill">ゲームクライアントは別の1人が開発</span></div>
-          <p class="sys-scope">コミュニティのリズムゲームのプレイ報告を受け取り、保存するサーバーです。平均同時接続は{{f:wjmax_avg}}、アップデート時には最大{{f:wjmax_peak}}が接続しました。</p>
-        </div>
-        <div class="sys-links"><a class="btn" href="/ja/work/wjmax/">詳細を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード</a></div>
-      </header>
-      {{inc:flow-wjmax}}
-      <div class="sys-outcome"><span class="k">結果</span><span>アップデート当日に最大<b>{{f:wjmax_peak}}</b>の同時接続を受けて運用</span><span>公開リポジトリは整理版（テスト付き）</span></div>
-    </article>
-
     <article class="sys" id="sys-genome" role="tabpanel" aria-labelledby="tab-genome">
       <header class="sys-head">
         <div>
@@ -153,6 +139,20 @@
       {{inc:flow-genome}}
       <div class="sys-outcome"><span class="k">改善</span><span>サーバー内で描画していたWeb画面 → <b>フロントエンド向けJSON APIとして分離</b>（2023.09）</span></div>
       <div class="sys-outcome"><span class="k">結果</span><span>本番サーバーにデプロイ後、<b>内部IP限定</b>で運用（公開サービスではない）</span><span>サービスのコードは整理して公開</span></div>
+    </article>
+
+    <article class="sys" id="sys-wjmax" role="tabpanel" aria-labelledby="tab-wjmax">
+      <header class="sys-head">
+        <div>
+          <div class="sys-meta"><span>{{f:wjmax_period}}</span><span>サイドプロジェクト · 2人チーム</span></div>
+          <h3>WJMaxゲームサーバー · プレイログ収集API</h3>
+          <div class="sys-role"><span class="pill me">サーバー・DB・セキュリティを担当</span><span class="pill">ゲームクライアントは別の1人が開発</span></div>
+          <p class="sys-scope">コミュニティのリズムゲームのプレイ報告を受け取り、保存するサーバーです。平均同時接続は{{f:wjmax_avg}}、アップデート時には最大{{f:wjmax_peak}}が接続しました。</p>
+        </div>
+        <div class="sys-links"><a class="btn" href="/ja/work/wjmax/">詳細を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード</a></div>
+      </header>
+      {{inc:flow-wjmax}}
+      <div class="sys-outcome"><span class="k">結果</span><span>アップデート当日に最大<b>{{f:wjmax_peak}}</b>の同時接続を受けて運用</span><span>公開リポジトリは整理版（テスト付き）</span></div>
     </article>
   </div>
 </section>

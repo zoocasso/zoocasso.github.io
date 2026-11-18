@@ -85,15 +85,15 @@
         <span class="tab-name">Image pipeline · joint research with Hitachi</span>
         <span class="tab-metric">Deployed in the Netherlands</span>
       </button>
-      <button class="tab" role="tab" id="tab-wjmax" aria-controls="sys-wjmax" aria-selected="false" tabindex="-1">
-        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:wjmax_period}}</span>
-        <span class="tab-name">WJMax game server</span>
-        <span class="tab-metric">Peak ~2,000 concurrent</span>
-      </button>
       <button class="tab" role="tab" id="tab-genome" aria-controls="sys-genome" aria-selected="false" tabindex="-1">
         <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:bio_period}}</span>
         <span class="tab-name">Genomic variant annotation and reports</span>
         <span class="tab-metric">{{f:bio_ref}} of references</span>
+      </button>
+      <button class="tab" role="tab" id="tab-wjmax" aria-controls="sys-wjmax" aria-selected="false" tabindex="-1">
+        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:wjmax_period}}</span>
+        <span class="tab-name">WJMax game server</span>
+        <span class="tab-metric">Peak ~2,000 concurrent</span>
       </button>
     </div>
 
@@ -126,20 +126,6 @@
       <div class="sys-outcome"><span class="k">Result</span><span><b>Deployed in a lab in the Netherlands, Sep–Oct 2026</b> · used on site by Hitachi staff</span><span>Demonstrated to the project partner's researchers · working languages Japanese and English</span></div>
     </article>
 
-    <article class="sys" id="sys-wjmax" role="tabpanel" aria-labelledby="tab-wjmax">
-      <header class="sys-head">
-        <div>
-          <div class="sys-meta"><span>{{f:wjmax_period}}</span><span>Side project · team of two</span></div>
-          <h3>WJMax game server · play-log collection API</h3>
-          <div class="sys-role"><span class="pill me">Server, database and security</span><span class="pill">Game client built by the other member</span></div>
-          <p class="sys-scope">A server that receives and stores the play reports of a community rhythm game. {{f:wjmax_avg}} concurrent players on average, and up to {{f:wjmax_peak}} during updates.</p>
-        </div>
-        <div class="sys-links"><a class="btn" href="/en/work/wjmax/">Details<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>Code</a></div>
-      </header>
-      {{inc:flow-wjmax}}
-      <div class="sys-outcome"><span class="k">Result</span><span>Ran through update days with up to <b>{{f:wjmax_peak}}</b> concurrent players</span><span>The public repository is a cleaned-up version (with tests)</span></div>
-    </article>
-
     <article class="sys" id="sys-genome" role="tabpanel" aria-labelledby="tab-genome">
       <header class="sys-head">
         <div>
@@ -153,6 +139,20 @@
       {{inc:flow-genome}}
       <div class="sys-outcome"><span class="k">Improved</span><span>Web screens rendered inside the server → <b>a separate JSON API for the frontend</b> (Sep 2023)</span></div>
       <div class="sys-outcome"><span class="k">Result</span><span>Deployed to a production server and run <b>for internal IPs only</b> (not a public service)</span><span>The service code was cleaned up and published</span></div>
+    </article>
+
+    <article class="sys" id="sys-wjmax" role="tabpanel" aria-labelledby="tab-wjmax">
+      <header class="sys-head">
+        <div>
+          <div class="sys-meta"><span>{{f:wjmax_period}}</span><span>Side project · team of two</span></div>
+          <h3>WJMax game server · play-log collection API</h3>
+          <div class="sys-role"><span class="pill me">Server, database and security</span><span class="pill">Game client built by the other member</span></div>
+          <p class="sys-scope">A server that receives and stores the play reports of a community rhythm game. {{f:wjmax_avg}} concurrent players on average, and up to {{f:wjmax_peak}} during updates.</p>
+        </div>
+        <div class="sys-links"><a class="btn" href="/en/work/wjmax/">Details<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>Code</a></div>
+      </header>
+      {{inc:flow-wjmax}}
+      <div class="sys-outcome"><span class="k">Result</span><span>Ran through update days with up to <b>{{f:wjmax_peak}}</b> concurrent players</span><span>The public repository is a cleaned-up version (with tests)</span></div>
     </article>
   </div>
 </section>

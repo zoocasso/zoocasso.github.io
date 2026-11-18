@@ -85,15 +85,15 @@
         <span class="tab-name">히타치 공동연구 · 이미지 파이프라인</span>
         <span class="tab-metric">네덜란드 현지 배포</span>
       </button>
-      <button class="tab" role="tab" id="tab-wjmax" aria-controls="sys-wjmax" aria-selected="false" tabindex="-1">
-        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:wjmax_period}}</span>
-        <span class="tab-name">WJMax 게임 서버</span>
-        <span class="tab-metric">동시 접속 최대 ~2,000</span>
-      </button>
       <button class="tab" role="tab" id="tab-genome" aria-controls="sys-genome" aria-selected="false" tabindex="-1">
         <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:bio_period}}</span>
         <span class="tab-name">유전체 변이 주석·리포트</span>
         <span class="tab-metric">레퍼런스 {{f:bio_ref}}</span>
+      </button>
+      <button class="tab" role="tab" id="tab-wjmax" aria-controls="sys-wjmax" aria-selected="false" tabindex="-1">
+        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:wjmax_period}}</span>
+        <span class="tab-name">WJMax 게임 서버</span>
+        <span class="tab-metric">동시 접속 최대 ~2,000</span>
       </button>
     </div>
 
@@ -126,20 +126,6 @@
       <div class="sys-outcome"><span class="k">결과</span><span><b>2026년 9~10월 네덜란드 현지 실험실 배포</b> · 히타치 담당자가 현장에서 직접 사용</span><span>과제 파트너 연구진 앞에서 시연 · 업무 언어 일본어·영어</span></div>
     </article>
 
-    <article class="sys" id="sys-wjmax" role="tabpanel" aria-labelledby="tab-wjmax">
-      <header class="sys-head">
-        <div>
-          <div class="sys-meta"><span>{{f:wjmax_period}}</span><span>사이드 프로젝트 · 2인 팀</span></div>
-          <h3>WJMax 게임 서버 · 플레이 로그 수집 API</h3>
-          <div class="sys-role"><span class="pill me">서버·DB·보안 담당</span><span class="pill">게임 클라이언트는 다른 1명이 개발</span></div>
-          <p class="sys-scope">커뮤니티 리듬게임의 플레이 보고를 받아 저장하는 서버입니다. 평균 동시 접속 {{f:wjmax_avg}}, 업데이트 때 최대 {{f:wjmax_peak}}이 접속했습니다.</p>
-        </div>
-        <div class="sys-links"><a class="btn" href="/work/wjmax/">상세 보기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>코드</a></div>
-      </header>
-      {{inc:flow-wjmax}}
-      <div class="sys-outcome"><span class="k">결과</span><span>업데이트 날 최대 <b>{{f:wjmax_peak}}</b> 동시 접속을 받아 운영</span><span>공개 저장소는 정리본 (테스트 포함)</span></div>
-    </article>
-
     <article class="sys" id="sys-genome" role="tabpanel" aria-labelledby="tab-genome">
       <header class="sys-head">
         <div>
@@ -153,6 +139,20 @@
       {{inc:flow-genome}}
       <div class="sys-outcome"><span class="k">개선</span><span>서버 안에서 그리던 웹 화면 → <b>프런트엔드용 JSON API로 분리</b> (2023.09)</span></div>
       <div class="sys-outcome"><span class="k">결과</span><span>운영서버 배포 후 <b>내부 IP 전용</b>으로 운영 (공개 서비스는 아님)</span><span>서비스 코드는 정리해 공개</span></div>
+    </article>
+
+    <article class="sys" id="sys-wjmax" role="tabpanel" aria-labelledby="tab-wjmax">
+      <header class="sys-head">
+        <div>
+          <div class="sys-meta"><span>{{f:wjmax_period}}</span><span>사이드 프로젝트 · 2인 팀</span></div>
+          <h3>WJMax 게임 서버 · 플레이 로그 수집 API</h3>
+          <div class="sys-role"><span class="pill me">서버·DB·보안 담당</span><span class="pill">게임 클라이언트는 다른 1명이 개발</span></div>
+          <p class="sys-scope">커뮤니티 리듬게임의 플레이 보고를 받아 저장하는 서버입니다. 평균 동시 접속 {{f:wjmax_avg}}, 업데이트 때 최대 {{f:wjmax_peak}}이 접속했습니다.</p>
+        </div>
+        <div class="sys-links"><a class="btn" href="/work/wjmax/">상세 보기<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>코드</a></div>
+      </header>
+      {{inc:flow-wjmax}}
+      <div class="sys-outcome"><span class="k">결과</span><span>업데이트 날 최대 <b>{{f:wjmax_peak}}</b> 동시 접속을 받아 운영</span><span>공개 저장소는 정리본 (테스트 포함)</span></div>
     </article>
   </div>
 </section>
