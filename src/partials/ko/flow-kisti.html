@@ -4,7 +4,7 @@
       <ul class="nodes">
         <li class="node" data-id="k-amz" data-owner="ext">
           <button class="node-btn" type="button"><span class="node-title">Amazon</span><span class="node-metric">세분류 단위 수집</span></button>
-          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>Selenium 크롤러로 <b>세분류 단위</b> 수집. 모은 상품은 <b>상품 ID(ASIN) 기준으로 중복 제거</b>.</dd><dt>이후</dt><dd>Rainforest API로 전환 (2023년 7월 선정, 2024년 2~5월 구현).</dd><dt>기술</dt><dd><ul class="chips"><li>Selenium</li><li>Rainforest API</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>Selenium 크롤러로 <b>세분류 단위</b> 수집. 모은 상품은 <b>상품 ID(ASIN) 기준으로 중복 제거</b>.</dd><dt>이후</dt><dd>Rainforest API로 전환.</dd><dt>기술</dt><dd><ul class="chips"><li>Selenium</li><li>Rainforest API</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="k-dnw" data-owner="ext">
           <button class="node-btn" type="button"><span class="node-title">다나와</span><span class="node-metric">카테고리 단위 수집</span></button>
@@ -20,11 +20,11 @@
       <ul class="nodes">
         <li class="node" data-id="k-farm" data-owner="me">
           <button class="node-btn" type="button"><span class="node-title">분산 크롤링 팜</span><span class="node-metric">노트북 여러 대</span><span class="node-tag">직접 구축</span></button>
-          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>노트북 여러 대에서 크롤러를 나눠 돌리고 결과를 원격 DB 1대에 적재하는 수집 환경을 구축·운영 (2022년 11월 ~ 2023년 1월).</dd><dt>이유</dt><dd>수집 대상 사이트의 차단을 피하려고 나눠 돌렸습니다.</dd><dt>기술</dt><dd><ul class="chips"><li>Python</li><li>Selenium</li><li>BeautifulSoup</li><li>MySQL</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>노트북 여러 대에서 크롤러를 나눠 돌리고 결과를 원격 DB 1대에 적재하는 수집 환경을 구축·운영.</dd><dt>이유</dt><dd>수집 대상 사이트의 차단을 피하려고 나눠 돌렸습니다.</dd><dt>기술</dt><dd><ul class="chips"><li>Python</li><li>Selenium</li><li>BeautifulSoup</li><li>MySQL</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="k-api" data-owner="me">
           <button class="node-btn" type="button"><span class="node-title">API 수집기</span><span class="node-metric">조달청 · Rainforest</span><span class="node-tag">직접 구축</span></button>
-          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>조달청 공공데이터포털 API 수집기 개발. Amazon 수집을 Rainforest API로 옮기는 작업을 구현 (2024년 2~5월).</dd><dt>기술</dt><dd><ul class="chips"><li>Python</li><li>REST API</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>조달청 공공데이터포털 API 수집기 개발. Amazon 수집을 Rainforest API로 옮기는 작업을 구현.</dd><dt>기술</dt><dd><ul class="chips"><li>Python</li><li>REST API</li></ul></dd></dl></div>
         </li>
       </ul>
     </li>
@@ -40,7 +40,7 @@
       <ul class="nodes">
         <li class="node" data-id="k-models" data-owner="me">
           <button class="node-btn" type="button"><span class="node-title">분석 모델 운영화</span><span class="node-metric">모델 3·4·5 직접 개발</span><span class="node-tag">직접 구축</span></button>
-          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>모델 3: NTIS 과제–기업 키워드 매칭(SQL). 모델 4: 가격대별 K-means 클러스터링(군집 수는 Dunn index로 선택). 모델 5: 리뷰 요구 품질 키워드 추출 일일 배치(KeyBERT·Sentence-Transformers·Mecab). 2024년에는 조달청 가격·속성·납품 통계 SQL.</dd><dt>기술</dt><dd><ul class="chips"><li>SQL</li><li>scikit-learn</li><li>KeyBERT</li><li>Sentence-Transformers</li><li>Mecab</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>모델 3: NTIS 과제–기업 키워드 매칭(SQL). 모델 4: 가격대별 K-means 클러스터링(군집 수는 Dunn index로 선택). 모델 5: 리뷰 요구 품질 키워드 추출 일일 배치(KeyBERT·Sentence-Transformers·Mecab). 조달청 가격·속성·납품 통계 SQL.</dd><dt>기술</dt><dd><ul class="chips"><li>SQL</li><li>scikit-learn</li><li>KeyBERT</li><li>Sentence-Transformers</li><li>Mecab</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="k-univ" data-owner="other">
           <button class="node-btn" type="button"><span class="node-title">일부 모델 설계</span><span class="node-metric">모델 1·2 일부</span><span class="node-tag">대학 위탁연구</span></button>
@@ -56,7 +56,7 @@
         </li>
         <li class="node" data-id="k-proto" data-owner="shared">
           <button class="node-btn" type="button"><span class="node-title">프로토타입 웹</span><span class="node-metric">Java Spring</span><span class="node-tag">사내 Java팀과 협업</span></button>
-          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>Java Spring 기반 프로토타입 웹에서 DB 스키마·백엔드 연동·프런트엔드 연결 담당. 협력사 모델 1·2와 함께 사내 서버로 이전하고 Docker 실행 환경을 구성 (2023년 3~5월).</dd><dt>함께한 주체</dt><dd>웹은 비전인사이드 사내 Java팀과 협업해 개발했고, 모델 1·2는 협력사가 만들었습니다.</dd><dt>기술</dt><dd><ul class="chips"><li>Java</li><li>Spring</li><li>MySQL</li><li>Docker</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>한 일</dt><dd>Java Spring 기반 프로토타입 웹에서 DB 스키마·백엔드 연동·프런트엔드 연결 담당. 협력사 모델 1·2와 함께 사내 서버로 이전하고 Docker 실행 환경을 구성.</dd><dt>함께한 주체</dt><dd>웹은 비전인사이드 사내 Java팀과 협업해 개발했고, 모델 1·2는 협력사가 만들었습니다.</dd><dt>기술</dt><dd><ul class="chips"><li>Java</li><li>Spring</li><li>MySQL</li><li>Docker</li></ul></dd></dl></div>
         </li>
       </ul>
     </li>

@@ -4,7 +4,7 @@
       <ul class="nodes">
         <li class="node" data-id="k-amz" data-owner="ext">
           <button class="node-btn" type="button"><span class="node-title">Amazon</span><span class="node-metric">細分類単位で収集</span></button>
-          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>Seleniumのクローラーで<b>細分類単位</b>に収集。集めた商品は<b>商品ID（ASIN）で重複除去</b>。</dd><dt>その後</dt><dd>Rainforest APIに移行（2023年7月に選定、2024年2〜5月に実装）。</dd><dt>技術</dt><dd><ul class="chips"><li>Selenium</li><li>Rainforest API</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>Seleniumのクローラーで<b>細分類単位</b>に収集。集めた商品は<b>商品ID（ASIN）で重複除去</b>。</dd><dt>その後</dt><dd>Rainforest APIに移行。</dd><dt>技術</dt><dd><ul class="chips"><li>Selenium</li><li>Rainforest API</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="k-dnw" data-owner="ext">
           <button class="node-btn" type="button"><span class="node-title">Danawa</span><span class="node-metric">カテゴリ単位で収集</span></button>
@@ -20,11 +20,11 @@
       <ul class="nodes">
         <li class="node" data-id="k-farm" data-owner="me">
           <button class="node-btn" type="button"><span class="node-title">分散クローラー群</span><span class="node-metric">複数台のノートPC</span><span class="node-tag">自分で構築</span></button>
-          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>複数台のノートPCでクローラーを分散して動かし、結果を1台のリモートDBに蓄積する収集環境を構築・運用（2022年11月〜2023年1月）。</dd><dt>理由</dt><dd>収集先サイトのブロックを避けるため、分散して動かしました。</dd><dt>技術</dt><dd><ul class="chips"><li>Python</li><li>Selenium</li><li>BeautifulSoup</li><li>MySQL</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>複数台のノートPCでクローラーを分散して動かし、結果を1台のリモートDBに蓄積する収集環境を構築・運用。</dd><dt>理由</dt><dd>収集先サイトのブロックを避けるため、分散して動かしました。</dd><dt>技術</dt><dd><ul class="chips"><li>Python</li><li>Selenium</li><li>BeautifulSoup</li><li>MySQL</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="k-api" data-owner="me">
           <button class="node-btn" type="button"><span class="node-title">API収集器</span><span class="node-metric">調達庁・Rainforest</span><span class="node-tag">自分で構築</span></button>
-          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>調達庁の公共データポータルAPIの収集器を開発。Amazonの収集をRainforest APIに移す作業を実装（2024年2〜5月）。</dd><dt>技術</dt><dd><ul class="chips"><li>Python</li><li>REST API</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>調達庁の公共データポータルAPIの収集器を開発。Amazonの収集をRainforest APIに移す作業を実装。</dd><dt>技術</dt><dd><ul class="chips"><li>Python</li><li>REST API</li></ul></dd></dl></div>
         </li>
       </ul>
     </li>
@@ -40,7 +40,7 @@
       <ul class="nodes">
         <li class="node" data-id="k-models" data-owner="me">
           <button class="node-btn" type="button"><span class="node-title">分析モデルの運用</span><span class="node-metric">モデル3・4・5を自作</span><span class="node-tag">自分で構築</span></button>
-          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>モデル3：NTIS課題と企業のキーワードマッチング（SQL）。モデル4：価格帯ごとのK-meansクラスタリング（クラスタ数はDunn indexで選択）。モデル5：レビューから要求品質のキーワードを抽出する日次バッチ（KeyBERT・Sentence-Transformers・Mecab）。2024年は調達庁の価格・属性・納品の統計をSQLで作成。</dd><dt>技術</dt><dd><ul class="chips"><li>SQL</li><li>scikit-learn</li><li>KeyBERT</li><li>Sentence-Transformers</li><li>Mecab</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>モデル3：NTIS課題と企業のキーワードマッチング（SQL）。モデル4：価格帯ごとのK-meansクラスタリング（クラスタ数はDunn indexで選択）。モデル5：レビューから要求品質のキーワードを抽出する日次バッチ（KeyBERT・Sentence-Transformers・Mecab）。調達庁の価格・属性・納品の統計をSQLで作成。</dd><dt>技術</dt><dd><ul class="chips"><li>SQL</li><li>scikit-learn</li><li>KeyBERT</li><li>Sentence-Transformers</li><li>Mecab</li></ul></dd></dl></div>
         </li>
         <li class="node" data-id="k-univ" data-owner="other">
           <button class="node-btn" type="button"><span class="node-title">一部モデルの設計</span><span class="node-metric">モデル1・2の一部</span><span class="node-tag">大学の委託研究</span></button>
@@ -56,7 +56,7 @@
         </li>
         <li class="node" data-id="k-proto" data-owner="shared">
           <button class="node-btn" type="button"><span class="node-title">プロトタイプのWeb</span><span class="node-metric">Java Spring</span><span class="node-tag">社内Javaチームと協業</span></button>
-          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>Java SpringベースのプロトタイプWebで、DBスキーマ・バックエンド連携・フロントエンド接続を担当。協力会社のモデル1・2とあわせて社内サーバーに移設し、Dockerの実行環境を構成（2023年3〜5月）。</dd><dt>協業</dt><dd>WebはVision Insideの社内Javaチームと協業して開発し、モデル1・2は協力会社が担当しました。</dd><dt>技術</dt><dd><ul class="chips"><li>Java</li><li>Spring</li><li>MySQL</li><li>Docker</li></ul></dd></dl></div>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>Java SpringベースのプロトタイプWebで、DBスキーマ・バックエンド連携・フロントエンド接続を担当。協力会社のモデル1・2とあわせて社内サーバーに移設し、Dockerの実行環境を構成。</dd><dt>協業</dt><dd>WebはVision Insideの社内Javaチームと協業して開発し、モデル1・2は協力会社が担当しました。</dd><dt>技術</dt><dd><ul class="chips"><li>Java</li><li>Spring</li><li>MySQL</li><li>Docker</li></ul></dd></dl></div>
         </li>
       </ul>
     </li>
