@@ -217,7 +217,9 @@ def layout(lang, meta, body, path, alts_by_lang, v):
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#F3F4F7">
 <meta name="color-scheme" content="light">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 {fonts}<link rel="stylesheet" href="/assets/site.css?v={v}">
 <script src="/assets/site.js?v={v}" defer></script>
@@ -301,7 +303,7 @@ def build():
     for sub in ("assets", "img", "files"):
         if (SRC / sub).exists():
             shutil.copytree(SRC / sub, DIST / sub)
-    for f in ("favicon.svg", "robots.txt"):
+    for f in ("favicon.svg", "favicon.ico", "apple-touch-icon.png", "robots.txt"):
         if (SRC / f).exists():
             shutil.copyfile(SRC / f, DIST / f)
     (DIST / ".nojekyll").write_text("")

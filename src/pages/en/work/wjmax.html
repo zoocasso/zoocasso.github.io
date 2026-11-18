@@ -45,13 +45,13 @@
       <li><h3>Requests failing when many players send at once</h3>
         <dl class="dl"><dt>Problem</dt><dd>The first draft of the public code took its database connection too early, so in a test with 60 clients sending at once, nearly half the requests ended up waiting on each other and failed.</dd><dt>Fix</dt><dd>The connection is now taken, used and returned inside one worker thread, and there are as many connections as worker threads (40). CI runs the 60-client test and checks that every request is answered.</dd></dl></li>
       <li><h3>Retried reports stored twice</h3>
-        <dl class="dl"><dt>Problem</dt><dd>When a connection drops and the same report arrives again, its play counts can be added twice.</dd><dt>Fix</dt><dd>A report sent with an id is stored once per id. When two copies arrive at once, the key constraint makes the second wait for the first, and the same id with different contents is refused with 409. The released client sends no id, though, so the server assigns one and its retries are stored as separate reports.</dd></dl></li>
+        <dl class="dl"><dt>Problem</dt><dd>When a connection drops and the same report arrives again, its play counts can be added twice.</dd><dt>Fix</dt><dd>A report that carries a number (a report id) is stored only once per number. Two copies arriving at the same moment are still stored once, and the same number with different contents is refused. The released game sends no number, though, so its retries are still stored as separate reports.</dd></dl></li>
       <li><h3>Song titles merging</h3>
-        <dl class="dl"><dt>Problem</dt><dd>MySQL's default collation ignores case and kana differences, so it treats “Glory” and “GLORY”, or “ゆめ” and “ユメ”, as the same song.</dd><dt>Fix</dt><dd>Titles and ids use a collation that compares byte for byte (utf8mb4_0900_bin), and CI checks it.</dd></dl></li>
-      <li><h3>Input from a client without authentication</h3>
-        <dl class="dl"><dt>Problem</dt><dd>The released game client sends no credentials, so anyone who knows the URL can post a report.</dd><dt>Fix</dt><dd>Input is checked before it is parsed: malformed input is refused with 422 and a body over 1 MB with 413, and Cloudflare in front helps hold off abuse. The README also states the limit: a report does not prove that a play actually happened.</dd></dl></li>
+        <dl class="dl"><dt>Problem</dt><dd>By default MySQL does not tell upper from lower case or hiragana from katakana, so it treats “Glory” and “GLORY”, or “ゆめ” and “ユメ”, as the same song.</dd><dt>Fix</dt><dd>Titles and ids are compared exactly as written, character for character, and CI checks it.</dd></dl></li>
+      <li><h3>Input anyone can send</h3>
+        <dl class="dl"><dt>Problem</dt><dd>The released game sends its reports without any login, so anyone who knows the server's address can send one.</dd><dt>Fix</dt><dd>The server checks the format before it reads the contents and turns away malformed input and requests over 1 MB right away; Cloudflare in front also helps hold off abuse. The README also states the limit: a report does not prove that a play actually happened.</dd></dl></li>
     </ol>
-    <p class="note">GitHub Actions runs the tests on SQLite and on MySQL 8.0 and 8.4, and checks that <code>schema.sql</code> matches the code (types, collations, keys, indexes).</p>
+    <p class="note">GitHub Actions runs the tests on SQLite and on MySQL 8.0 and 8.4, and checks that the database definition (<code>schema.sql</code>) matches the code.</p>
     <ul class="chips" style="margin-top:16px" aria-label="Stack"><li>Python</li><li>FastAPI</li><li>Docker</li><li>AWS EC2</li><li>AWS RDS</li><li>MySQL</li><li>Cloudflare</li><li>GitHub Actions</li></ul>
   </section>
 
