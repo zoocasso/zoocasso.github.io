@@ -92,7 +92,9 @@ FORBIDDEN = re.compile(
 # with its table counts, and the genome reference sizes. Checked on the whole page, meta and alt text included.
 SNAPSHOT = re.compile(
     r"8,?000 ?(?:만|万)|(?<![\d.,])80 ?M(?![A-Za-z])|80 million|1,?605 ?(?:만|万)|4,?192 ?(?:만|万)|16\.05 ?M|41\.92 ?M|"
-    r"(?<![\d.,])1 ?TB(?![A-Za-z])|237 ?GB|770 ?GB", re.I)
+    r"(?<![\d.,])1 ?TB(?![A-Za-z])|237 ?GB|770 ?GB|"
+    # and the KISTI follow-on contract amount (owner, 2026-11-18: "금액은 빼줘")
+    r"(?<![\d.,])3 ?억|(?<![\d.,])3 ?億|(?<![\d.,])300 ?M(?![A-Za-z])|300 million|KRW ?300", re.I)
 
 SVG = {
     "cv": '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 1.5h5l3.5 3.5v9.5h-8.5z"/><path d="M9 1.5V5h3.5M6 9h4.5M6 11.5h4.5"/></svg>',
