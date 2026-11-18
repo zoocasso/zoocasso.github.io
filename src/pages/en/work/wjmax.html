@@ -48,7 +48,7 @@
       <li><h3>Retried reports stored twice</h3>
         <dl class="dl"><dt>Problem</dt><dd>When a connection drops and the same report arrives again, its play counts can be added twice.</dd><dt>Fix</dt><dd>A report sent with an id is stored once per id. When two copies arrive at once, the key constraint makes the second wait for the first, and the same id with different contents is refused with 409. The released client sends no id, though, so the server assigns one and its retries are stored as separate reports.</dd></dl></li>
       <li><h3>Song titles merging</h3>
-        <dl class="dl"><dt>Problem</dt><dd>MySQL's default collation ignores case and kana differences, so it treats "Glory" and "GLORY", or "ゆめ" and "ユメ", as the same song.</dd><dt>Fix</dt><dd>Titles and ids use a collation that compares byte for byte (utf8mb4_0900_bin), and CI checks it.</dd></dl></li>
+        <dl class="dl"><dt>Problem</dt><dd>MySQL's default collation ignores case and kana differences, so it treats “Glory” and “GLORY”, or “ゆめ” and “ユメ”, as the same song.</dd><dt>Fix</dt><dd>Titles and ids use a collation that compares byte for byte (utf8mb4_0900_bin), and CI checks it.</dd></dl></li>
       <li><h3>Input from a client without authentication</h3>
         <dl class="dl"><dt>Problem</dt><dd>The released game client sends no credentials, so anyone who knows the URL can post a report.</dd><dt>Fix</dt><dd>Input is checked before it is parsed: malformed input is refused with 422 and a body over 1 MB with 413, and Cloudflare in front helps hold off abuse. The README also states the limit: a report does not prove that a play actually happened.</dd></dl></li>
     </ol>

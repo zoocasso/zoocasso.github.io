@@ -34,7 +34,7 @@
       <div class="prose">
         <p>Volumetric computational reconstruction (VCR) builds slices of a 3D scene by shifting elemental images, taken from many viewpoints, by an amount that depends on depth and overlapping them. The images can only move <b>by whole pixels</b>, which causes quantization error and blurs the result.</p>
         <p>The 2025 paper reduced that error by optimizing the origin point that the overlap is measured from. But finding the best origin meant reconstructing many times, which was slow.</p>
-        <p>The 2026 paper computes this origin <b>directly from the camera parameters alone</b>, independent of the image. In the paper's experiments it gave the same origin and the same SSIM as the iterative search, and only the time dropped. That it is the same in every case is not guaranteed.</p>
+        <p>The 2026 paper computes this origin <b>directly from the camera parameters alone</b>, independent of the image. In the paper's experiments it gave the same origin and the same SSIM as the iterative search, and only the time dropped. This is not guaranteed in every case.</p>
       </div>
     </div>
   </section>

@@ -50,7 +50,7 @@
       <li><h3>曲名どうしが統合されてしまう問題</h3>
         <dl class="dl"><dt>問題</dt><dd>MySQLのデフォルトの照合順序は大文字・小文字やかなの違いを無視するため、「Glory」と「GLORY」、「ゆめ」と「ユメ」を同じ曲とみなします。</dd><dt>解決</dt><dd>曲名とIDをバイト単位でそのまま比較する照合順序（utf8mb4_0900_bin）を使い、CIでそれを確認しています。</dd></dl></li>
       <li><h3>認証のないクライアントからの入力</h3>
-        <dl class="dl"><dt>問題</dt><dd>配布済みのゲームクライアントは認証情報を送らないため、アドレスを知っていれば誰でも報告を送れます。</dd><dt>解決</dt><dd>入力をパースする前に検証し、不正な入力は422、1MBを超える本文は413で拒否して、前段のCloudflareとあわせて濫用を防ぎます。報告が実際のプレイを証明するわけではないという限界も、READMEに記載しました。</dd></dl></li>
+        <dl class="dl"><dt>問題</dt><dd>配布済みのゲームクライアントは認証情報を送らないため、アドレスを知っていれば誰でも報告を送れます。</dd><dt>解決</dt><dd>入力をパースする前に検証し、不正な入力は422、1 MBを超える本文は413で拒否して、前段のCloudflareとあわせて濫用を防ぎます。報告が実際のプレイを証明するわけではないという限界も、READMEに記載しました。</dd></dl></li>
     </ol>
     <p class="note">テストはGitHub ActionsでSQLiteとMySQL 8.0・8.4に対して実行し、<code>schema.sql</code>がコードと一致しているか（型、照合順序、キー、インデックス）も確認しています。</p>
     <ul class="chips" style="margin-top:16px" aria-label="使用技術"><li>Python</li><li>FastAPI</li><li>Docker</li><li>AWS EC2</li><li>AWS RDS</li><li>MySQL</li><li>Cloudflare</li><li>GitHub Actions</li></ul>
