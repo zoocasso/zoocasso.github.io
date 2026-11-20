@@ -89,10 +89,30 @@
   <div class="sec-head">
     <div>
       <div class="sec-kicker rs"><b>03</b> Topics</div>
-      <h2 id="topics-h">Two topics, four papers</h2>
+      <h2 id="topics-h">Four topics</h2>
     </div>
   </div>
   <div class="topics">
+    <div class="card topic">
+      <div class="topic-img fit"><img src="/img/research-refocus-en.gif" width="760" height="528" alt="The focus sweeps through depths, then each object is shown with its box and depth" loading="lazy"></div>
+      <div class="topic-body">
+        <span class="k">Master's thesis (in preparation)</span>
+        <h3>Real-time integral imaging: detect once, refocus only inside each box</h3>
+        <p>From a single real Lytro lens array image, the GPU estimates a box and a depth for each object in real time. Instead of running detection at every depth plane, it detects once and refocuses only inside each box.</p>
+        <p class="src">Lytro data: Stanford Lytro Light Field Archive, occlusions_25 (Raj et al., 2016)</p>
+        <span class="key">16.4 ms per real Lytro frame (61 fps, RTX 3090)</span>
+      </div>
+    </div>
+    <div class="card topic">
+      <div class="topic-img fit"><img src="/img/research-enhance-en.gif" width="719" height="480" alt="Input and result for a dark photo, shown in turn" loading="lazy"></div>
+      <div class="topic-body">
+        <span class="k">Patent application in preparation</span>
+        <h3>Image enhancement for low-light and hazy scenes</h3>
+        <p>Photos taken in the dark or in haze are processed one at a time and made clear. Above: a dark photo from public data.</p>
+        <p class="src">Public data: SI-HDR (Hanji et al., SIGGRAPH 2022, CC BY 4.0)</p>
+        <span class="key">One image at a time</span>
+      </div>
+    </div>
     <a class="card topic" href="/en/research/rim/">
       <div class="topic-img"><img src="/img/ei-synth-800.webp" width="800" height="450" alt="Elemental image of a 6 × 6 lens array synthesized with iRIM" loading="lazy"></div>
       <div class="topic-body">

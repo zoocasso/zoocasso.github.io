@@ -89,10 +89,30 @@
   <div class="sec-head">
     <div>
       <div class="sec-kicker rs"><b>03</b> テーマ</div>
-      <h2 id="topics-h">2つのテーマ、4本の論文</h2>
+      <h2 id="topics-h">4つのテーマ</h2>
     </div>
   </div>
   <div class="topics">
+    <div class="card topic">
+      <div class="topic-img fit"><img src="/img/research-refocus-ja.gif" width="760" height="528" alt="奥行きごとに焦点が移り、物体ごとのボックスと奥行きが表示される結果" loading="lazy"></div>
+      <div class="topic-body">
+        <span class="k">修士論文（準備中）</span>
+        <h3>リアルタイム・インテグラルイメージング：一度だけ検出し、ボックス内だけをリフォーカス</h3>
+        <p>実際のLytroレンズアレイ画像1枚から、物体ごとのボックスと奥行きをGPUでリアルタイムに推定します。奥行き平面ごとに検出する代わりに、一度だけ検出してボックス内だけをリフォーカスします。</p>
+        <p class="src">Lytroデータ：Stanford Lytro Light Field Archive, occlusions_25（Raj et al., 2016）</p>
+        <span class="key">実際のLytro画像1枚 16.4 ms（毎秒61枚、RTX 3090）</span>
+      </div>
+    </div>
+    <div class="card topic">
+      <div class="topic-img fit"><img src="/img/research-enhance-ja.gif" width="719" height="480" alt="暗い写真の入力と結果が交互に表示される図" loading="lazy"></div>
+      <div class="topic-body">
+        <span class="k">特許出願準備中</span>
+        <h3>暗所・霧画像の画質改善</h3>
+        <p>暗い場所や霧の中で撮った写真を1枚ずつ処理し、くっきりさせます。上の図は公開データの暗い写真の例です。</p>
+        <p class="src">公開データ：SI-HDR（Hanji et al., SIGGRAPH 2022, CC BY 4.0）</p>
+        <span class="key">1枚ずつ処理</span>
+      </div>
+    </div>
     <a class="card topic" href="/ja/research/rim/">
       <div class="topic-img"><img src="/img/ei-synth-800.webp" width="800" height="450" alt="iRIMで合成した6×6レンズアレイの要素画像" loading="lazy"></div>
       <div class="topic-body">

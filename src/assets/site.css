@@ -630,13 +630,16 @@ table.data tbody tr:last-child td, table.data tbody tr:last-child th { border-bo
 /* topics on the research page */
 .topics { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .topic { display: grid; grid-template-rows: auto 1fr; overflow: hidden; text-decoration: none; transition: border-color .15s, box-shadow .15s; }
-.topic:hover { border-color: var(--rs-line); box-shadow: var(--shadow-2); }
+a.topic:hover { border-color: var(--rs-line); box-shadow: var(--shadow-2); }
 .topic-img { background: var(--bench); aspect-ratio: 16 / 7; overflow: hidden; display: grid; grid-auto-flow: column; }
 .topic-img img { width: 100%; height: 100%; object-fit: cover; }
 .topic-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 6px; }
 .topic-body .k { font-family: var(--mono); font-size: 11px; color: var(--rs-2); }
 .topic-body h3 { font-size: 17px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.4; }
 .topic-body p { font-size: 14px; color: var(--ink-2); }
+.topic-img.fit { grid-template-rows: minmax(0, 1fr); }
+.topic-img.fit img { object-fit: contain; min-height: 0; }
+.topic-body .src { font-size: 12px; color: var(--ink-3); }
 .topic-body .key { margin-top: auto; padding-top: 8px; font-family: var(--mono); font-size: 12.5px; color: var(--rs-2); font-weight: 600; }
 
 /* CV page: the PDFs first */
