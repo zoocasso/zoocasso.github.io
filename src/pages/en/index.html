@@ -1,0 +1,251 @@
+<!--meta {"home": true, "title": "Hyeongju Lee, data & backend engineer", "description": "Hyeongju Lee, data and backend engineer: data systems that run in production, from collection to serving. Collection, loading and serving for a KISTI-commissioned project, a genomic report backend, and an image pipeline for joint research with Hitachi. Finishing my master's in March 2027.", "nav": "", "body": "home"} -->
+<section class="hero" aria-labelledby="hero-h">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-tags"><span class="eyebrow">{{f:role}} · {{f:career_len}} in industry</span><span class="eyebrow status"><i class="dot" aria-hidden="true"></i>{{f:status}} · Military service completed</span></div>
+        <h1 id="hero-h">From collection to serving,<br>I build <span class="hl">data systems that run in production</span>.</h1>
+        <p class="hero-lede">In <strong>{{f:career_len}} at Vision Inside (assistant manager)</strong>, I built and deployed data collection, loading and serving for a KISTI-commissioned project, and the backend of a genomic report system. Now I research 3D reconstruction from lens array images in my master's at Kyushu Institute of Technology, and I rebuilt the image-data pipeline for joint research with Hitachi and deployed it on site in the Netherlands.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary btn-lg" href="/en/cv/"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 1.5h5l3.5 3.5v9.5h-8.5z"/><path d="M9 1.5V5h3.5M6 9h4.5M6 11.5h4.5"/></svg>CV &amp; portfolio</a>
+          <button class="btn btn-lg" type="button" data-email-copy data-goatcounter-click="email-copy" data-done="Email address copied" data-manual="Address selected; please copy it"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/></svg>Copy email</button>
+          <a class="more-link" href="#systems">See how the systems are built ↓</a>
+        </div>
+      </div>
+
+      <div class="kpis" aria-label="Highlights">
+        <a class="kpi" href="#sys-hitachi">
+          <span class="kpi-src"><i aria-hidden="true"></i>Joint research with Hitachi</span>
+          <span class="kpi-val">On site</span>
+          <span class="kpi-label">Deployed in the Netherlands, Sep–Oct 2026 · used by Hitachi staff</span>
+        </a>
+        <a class="kpi" href="#sys-kisti">
+          <span class="kpi-src"><i aria-hidden="true"></i>KISTI-commissioned platform</span>
+          <span class="kpi-val">Data layer</span>
+          <span class="kpi-label">Owned collection to serving as Vision Inside's data engineer</span>
+        </a>
+        <a class="kpi" href="#research">
+          <span class="kpi-src"><i class="rs" aria-hidden="true"></i>3D vision · first author</span>
+          <span class="kpi-val">4<small>papers</small></span>
+          <span class="kpi-label">International conferences · ICMV 2026 Best Poster Award</span>
+        </a>
+        <a class="kpi" href="#history">
+          <span class="kpi-src"><i class="rs" aria-hidden="true"></i>Activities · selected</span>
+          <span class="kpi-val">Scholar</span>
+          <span class="kpi-label">Rotary Yoneyama Memorial Foundation · selected for 2026</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="ribbon" aria-labelledby="ribbon-h">
+      <div class="ribbon-head">
+        <h2 class="ribbon-title" id="ribbon-h">The path data takes, and the tools I have used at each stage</h2>
+        <span class="ribbon-note">Main languages: Python · SQL</span>
+      </div>
+      <div class="ribbon-body">
+        <div class="ribbon-track" aria-hidden="true"><i class="pkt"></i><i class="pkt"></i><i class="pkt"></i></div>
+        <ol class="ribbon-stages">
+          <li class="rstage"><div class="rstage-h"><span>01</span><b>Sources</b></div><ul><li>Shopping sites</li><li>Public data APIs</li><li>VCF · FASTQ</li><li>Machine-vision cameras</li><li>Game client</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>02</span><b>Collection</b></div><ul><li>Selenium</li><li>BeautifulSoup</li><li>REST API</li><li>PySpin</li><li>Distributed crawling</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>03</span><b>Storage</b></div><ul><li>MySQL</li><li>AWS RDS</li><li>SQLAlchemy</li><li>Split, chunked loading</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>04</span><b>Processing</b></div><ul><li>SQL</li><li>pandas</li><li>scikit-learn</li><li>OpenCV</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>05</span><b>Serving</b></div><ul><li>FastAPI</li><li>Java · Spring</li><li>PyQt</li></ul></li>
+          <li class="rstage"><div class="rstage-h"><span>06</span><b>Operations</b></div><ul><li>Docker</li><li>Harbor</li><li>AWS EC2</li><li>Cloudflare</li><li>Linux</li></ul></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="systems" aria-labelledby="sys-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker"><b>01</b> Systems</div>
+        <h2 id="sys-h">Four systems I built and deployed</h2>
+        <p class="sec-desc">Drawn in the order the data flows. Click a node to highlight the path through it; below the diagram you see what I did and what others did.</p>
+      </div>
+      <div class="legend" aria-label="Legend">
+        <span><i class="sw me" aria-hidden="true"></i>Built by me</span>
+        <span><i class="sw shared" aria-hidden="true"></i>Shared with others</span>
+        <span><i class="sw other" aria-hidden="true"></i>Others</span>
+        <span><i class="sw ext" aria-hidden="true"></i>External sources and users</span>
+        <button class="toggle" type="button" data-mine-toggle aria-pressed="false"><span class="knob" aria-hidden="true"></span>Highlight my work only</button>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Systems">
+      <button class="tab" role="tab" id="tab-kisti" aria-controls="sys-kisti" aria-selected="true">
+        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:kisti_period}}</span>
+        <span class="tab-name">KISTI project · data layer</span>
+        <span class="tab-metric">Owned collection to serving</span>
+      </button>
+      <button class="tab" role="tab" id="tab-hitachi" aria-controls="sys-hitachi" aria-selected="false" tabindex="-1">
+        <span class="tab-top"><i class="dot" aria-hidden="true"></i>Apr 2025 – now</span>
+        <span class="tab-name">Image pipeline · joint research with Hitachi</span>
+        <span class="tab-metric">Deployed in the Netherlands</span>
+      </button>
+      <button class="tab" role="tab" id="tab-genome" aria-controls="sys-genome" aria-selected="false" tabindex="-1">
+        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:bio_period}}</span>
+        <span class="tab-name">Genomic variant annotation and reports</span>
+        <span class="tab-metric">Four-stage SQL annotation</span>
+      </button>
+      <button class="tab" role="tab" id="tab-wjmax" aria-controls="sys-wjmax" aria-selected="false" tabindex="-1">
+        <span class="tab-top"><i class="dot idle" aria-hidden="true"></i>{{f:wjmax_period}}</span>
+        <span class="tab-name">WJMax game server</span>
+        <span class="tab-metric">Update-day traffic surges</span>
+      </button>
+    </div>
+
+    <article class="sys" id="sys-kisti" role="tabpanel" aria-labelledby="tab-kisti">
+      <header class="sys-head">
+        <div>
+          <div class="sys-meta"><span>{{f:kisti_period}}</span><span>Vision Inside</span><span>Outsourced contract</span></div>
+          <h3>KISTI-commissioned project · an AI-based platform for creating value from public R&amp;D (later SMART K2C)</h3>
+          <div class="sys-role"><span class="pill me">Data engineer · collection, loading and serving were mine</span><span class="pill">Design: KISTI researchers</span></div>
+          <p class="sys-scope"><b>Project design</b> KISTI researchers · <b>Some model design</b> commissioned university research · <b>My part</b> built and ran the data layer on Vision Inside's side (collection, loading, serving), and turned analysis models into FastAPI services and admin screens</p>
+        </div>
+        <div class="sys-links"><a class="btn" href="/en/work/kisti/">Details<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+      </header>
+      {{inc:flow-kisti}}
+      <div class="sys-outcome"><span class="k">Result</span><span>The project led to a <b>follow-on main contract</b></span><span>Presented results at KISTI technical meetings · wrote the audit deliverables</span></div>
+    </article>
+
+    <article class="sys" id="sys-hitachi" role="tabpanel" aria-labelledby="tab-hitachi">
+      <header class="sys-head">
+        <div>
+          <div class="sys-meta"><span>Apr 2025 – now</span><span>Kyutech lab · research assistant (part-time)</span><span>Joint research with Hitachi</span></div>
+          <h3>Image-data pipeline · joint research with Hitachi</h3>
+          <div class="sys-role"><span class="pill me">Rewrote all the software from scratch</span><span class="pill">Design handed over to two junior researchers</span></div>
+          <p class="sys-scope">The training-data code I inherited could not be maintained, and every dataset needed a developer sitting next to it. I rewrote everything from camera control to dataset preprocessing as one Python pipeline, with a GUI that non-developer researchers use themselves.</p>
+        </div>
+        <div class="sys-links"><a class="btn" href="/en/work/hitachi/">Details<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+      </header>
+      {{inc:flow-hitachi}}
+      <div class="sys-outcome"><span class="k">Improved</span><span>Only the first frame of dark, low-light video, with a home-made C++ camera layer → <b>single high-quality still captures at the right brightness</b>, through the recommended SDK (PySpin)</span></div>
+      <div class="sys-outcome"><span class="k">Result</span><span><b>Deployed in a lab in the Netherlands, Sep–Oct 2026</b> · used on site by Hitachi staff</span><span>Demonstrated to the project partner's researchers · working languages Japanese and English</span></div>
+    </article>
+
+    <article class="sys" id="sys-genome" role="tabpanel" aria-labelledby="tab-genome">
+      <header class="sys-head">
+        <div>
+          <div class="sys-meta"><span>{{f:bio_period}}</span><span>Vision Inside</span><span>Internal project · international collaboration</span></div>
+          <h3>Genomic variant annotation and risk report system</h3>
+          <div class="sys-role"><span class="pill me">Implemented the pipeline, backend and frontend</span><span class="pill">Algorithm designed with the team lead</span></div>
+          <p class="sys-scope">A system that links a person's genomic variants (VCF, chip arrays) to public references such as dbSNP, 1000 Genomes, the GWAS Catalog and UniProt, and reports disease and trait risk, population frequencies, and related drugs and herbal medicines. It was an international collaboration with Kyung Hee University's College of Korean Medicine and a Canadian bio research lab. <b>My part</b> implementing the pipeline, backend and frontend, and Docker deployment</p>
+        </div>
+        <div class="sys-links"><a class="btn" href="/en/work/genomics/">Details<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>Code</a></div>
+      </header>
+      {{inc:flow-genome}}
+      <div class="sys-outcome"><span class="k">Improved</span><span>Web screens rendered inside the server → <b>a separate JSON API for the frontend</b></span></div>
+      <div class="sys-outcome"><span class="k">Result</span><span>Deployed to a production server and run <b>for internal IPs only</b> (not a public service)</span><span>The service code was cleaned up and published</span></div>
+    </article>
+
+    <article class="sys" id="sys-wjmax" role="tabpanel" aria-labelledby="tab-wjmax">
+      <header class="sys-head">
+        <div>
+          <div class="sys-meta"><span>{{f:wjmax_period}}</span><span>Side project · team of two</span></div>
+          <h3>WJMax game server · play-log collection API</h3>
+          <div class="sys-role"><span class="pill me">Server, database and security</span><span class="pill">Game client built by the other member</span></div>
+          <p class="sys-scope">A server that receives and stores the play reports of a community rhythm game, whose traffic surged on update days.</p>
+        </div>
+        <div class="sys-links"><a class="btn" href="/en/work/wjmax/">Details<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>Code</a></div>
+      </header>
+      {{inc:flow-wjmax}}
+      <div class="sys-outcome"><span class="k">Result</span><span>Ran as a <b>live service</b> through traffic surges on update days</span><span>The public repository is a cleaned-up version (with tests)</span></div>
+    </article>
+  </div>
+</section>
+
+<section class="section" id="research" aria-labelledby="rs-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker rs"><b>02</b> Research · Kyushu Institute of Technology, graduate school (advisor: Prof. Min-Chul Lee)</div>
+        <h2 id="rs-h">3D reconstruction with geometric optics, without training</h2>
+        <p class="sec-desc">Research on recovering 3D scenes from images taken with a lens array (integral imaging) camera. It is laid out the same way, as a flow from the input to the result.</p>
+      </div>
+      <div class="legend"><span class="pill gold"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="6" r="4"/><path d="M5.5 9.2L4.5 15l3.5-2 3.5 2-1-5.8"/></svg>ICMV 2026 Best Poster Award</span><a class="sec-more" href="/en/research/">Research page<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+    </div>
+
+    <div class="sys">
+      {{inc:flow-research}}
+      <div class="sys-outcome"><span class="k">Improved</span><span>Iterative search → <b>direct calculation</b></span><span>Processing time cut sharply with the same image quality in the paper's experiments</span></div>
+    </div>
+
+    <div class="rs-grid">
+      <a class="card lab-card" href="/en/research/#lab">
+        <div class="lab-card-img"><img src="/img/ei-synth-800.webp" width="800" height="450" alt="Lens array elemental image synthesized with iRIM: a torus and a monkey head model split into small lens images" loading="lazy"><div class="steps-mini" aria-hidden="true"><span><b>1</b>Capture</span><span><b>2</b>Rearrange</span><span><b>3</b>Reconstruct</span></div></div>
+        <div class="lab-card-body">
+          <span class="k">Try it · lens array lab</span>
+          <h3>Capture with a lens array, rearrange and reconstruct, in your browser</h3>
+          <p>Capture a 3D scene through a lens array, rearrange it with RIM, then refocus at each depth. Real Lytro camera data is included too. The lab plays sound.</p>
+          <span class="go">Open the lab<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+        </div>
+      </a>
+      <div class="card">
+        <div class="card-h"><h3>4 international conference papers</h3><span>All first author</span></div>
+        <ol class="pubs">
+          <li><div class="pub-venue">ICMV 2026<small>Budapest</small></div><div><p class="pub-title" lang="en">Angular-to-Spatial Information Redistribution via Ray-based Inverse Mapping</p><div class="pub-meta">Hyeongju Lee, Myungjin Cho, Min-Chul Lee · poster <span class="pill gold">Best Poster Award</span></div></div></li>
+          <li><div class="pub-venue">ICCAS 2026<small>Sapporo</small></div><div><p class="pub-title" lang="en">Virtual Lens Array Synthesis from Multi-View Images via iRIM</p><div class="pub-meta">Hyeongju Lee, Myungjin Cho, Min-Chul Lee · poster</div></div></li>
+          <li><div class="pub-venue">ITC-CSCC 2026<small>Bangkok</small></div><div><p class="pub-title" lang="en">Accelerated Origin Point Optimization for Volumetric Computational Reconstruction</p><div class="pub-meta">Hyeongju Lee, Myungjin Cho, Min-Chul Lee · oral · <a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">code</a></div></div></li>
+          <li><div class="pub-venue">ITC-CSCC 2025<small>Seoul</small></div><div><p class="pub-title" lang="en">Image Enhancement of Volumetric Computational Reconstruction Using Origin Point Optimization</p><div class="pub-meta">Hyeongju Lee, Gilsu Yeo, Myungjin Cho, Min-Chul Lee · poster · <a href="https://github.com/zoocasso/origin-point-optimization-vcr" target="_blank" rel="noopener">code</a></div></div></li>
+        </ol>
+      </div>
+    </div>
+    <p class="note"><b>Starting point in vision and ML</b> · Depth estimation with correlation filters and VCR, a course project, is where my current research started. Alongside it: an MNIST CNN in MATLAB with backpropagation and momentum gradient descent written by hand, no deep-learning framework. My interest in vision began with my graduation project, Smart Mirror (team of two: Raspberry Pi, OpenCV LBPH face recognition, Kakao speech API). <a href="/en/research/#path">Research path</a></p>
+  </div>
+</section>
+
+<section class="section" id="work" aria-labelledby="work-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker"><b>03</b> Other work</div>
+        <h2 id="work-h">Other things I built</h2>
+      </div>
+      <a class="sec-more" href="/en/work/">All work<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+    </div>
+    <table class="tbl">
+      <thead><tr><th scope="col">Project</th><th scope="col">What I did</th><th scope="col">Stack</th></tr></thead>
+      <tbody>
+        <tr><td>3DOS · vision enhancement on an XR headset<small>Nov 2024 · XR Device Content Makerthon finals</small></td><td>In team 3DOS (five lab members registered), I handled development, the presentation and the stage demo. I ported the lab's MATLAB code for Fourier peplography (fog removal) and photon counting (low-light recovery), from Prof. Myungjin Cho's research, to C++ and OpenCV (one teammate helped with part of the port), built them as an Android native plugin (arm64) and demonstrated them in a Unity app on the Metalens 2 headset. The <a href="https://github.com/zoocasso/realtime-vision-xr-device" target="_blank" rel="noopener">slides</a> are public.</td><td><ul class="chips"><li>C++</li><li>OpenCV</li><li>Unity</li><li>Android</li></ul></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" id="history" aria-labelledby="hist-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker"><b>04</b> History</div>
+        <h2 id="hist-h">Experience · education · recognition</h2>
+      </div>
+      <a class="sec-more" href="/en/cv/">CV page<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="card-h"><h3>History</h3><span>Most recent first</span></div>
+        <ol class="log">
+          <li><div class="log-when">Apr 2025 – now</div><div class="log-what"><b>Kyushu Institute of Technology, Graduate School of Computer Science and Systems Engineering</b><span>Master's program in Creative Informatics · 3D vision research (advisor: Prof. Min-Chul Lee)</span><span class="pill">{{f:status}}</span></div></li>
+          <li><div class="log-when">Apr 2025 – now</div><div class="log-what"><b>Kyutech lab · research assistant (part-time)</b><span>Image-data pipeline for joint research with Hitachi · deployed on site in the Netherlands, Sep–Oct 2026</span></div></li>
+          <li><div class="log-when">Aug 2024 – Mar 2025</div><div class="log-what"><b>Hankyong National University, 3D Image Processing Systems Lab · undergraduate researcher</b><span>First-author poster at Photonics Conference 2024 (Optical Society of Korea) · 3DOS makerthon</span></div></li>
+          <li><div class="log-when">{{f:career_span}}</div><div class="log-what"><b>Vision Inside · assistant manager (data and backend engineer)</b><span>KISTI project data layer · genomic report system</span><span>Life-insurance disclosure tool (team of three): loaded insurance disclosure workbooks into MySQL and served them through a FastAPI web viewer</span><span>Completed military service as Industrial Technical Personnel (Jul 2022 – Jul 2024)</span></div></li>
+          <li><div class="log-when">Mar 2018 – Feb 2025</div><div class="log-what"><b>Hankyong National University, B.S. in Electrical, Electronic and Control Engineering</b></div></li>
+        </ol>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>Recognition · certification · languages</h3></div>
+        <ul class="side-list">
+          <li><span class="ico gold" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="6" r="4"/><path d="M5.5 9.2L4.5 15l3.5-2 3.5 2-1-5.8"/></svg></span><div><b>ICMV 2026 Best Poster Award</b><small>Budapest · first author</small></div></li>
+          <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 1.5h5l3.5 3.5v9.5h-8.5z"/><path d="M9 1.5V5h3.5"/></svg></span><div><b>4 first-author international conference papers</b><small>ICMV 2026 · ICCAS 2026 · ITC-CSCC 2026 · ITC-CSCC 2025</small></div></li>
+          <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 1.5l1.9 3.9 4.3.6-3.1 3 .7 4.3L8 11.3l-3.8 2 .7-4.3-3.1-3 4.3-.6z"/></svg></span><div><b>Rotary Yoneyama Memorial Foundation Scholar</b><small>2026 · selected through a Japanese-language interview</small></div></li>
+          <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 1.5l5.5 2v4c0 3.4-2.4 6-5.5 7-3.1-1-5.5-3.6-5.5-7v-4z"/><path d="M5.5 8l2 2 3-3.5"/></svg></span><div><b>Military service completed</b><small>Industrial Technical Personnel (Jul 2022 – Jul 2024)</small></div></li>
+          <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="8" cy="4" rx="5.5" ry="2"/><path d="M2.5 4v8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2V4M2.5 8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2"/></svg></span><div><b>SQLD</b><small>Oct 2023 · Korea Data Agency</small></div></li>
+          <li><span class="ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.5"/><path d="M1.5 8h13M8 1.5c2 2 2 11 0 13M8 1.5c-2 2-2 11 0 13"/></svg></span><div><b>Languages</b><small>Korean (native) · Japanese (business-conversational) · English (conversational)</small></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,75 @@
+<!--meta {"title": "実績", "description": "データエンジニアリング、バックエンド、ビジョンデータパイプラインから、XRメイカソンまで、イ・ヒョンジュの実績一覧。", "nav": "systems"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="現在地"><a href="/ja/">ホーム</a><span aria-hidden="true">/</span><span aria-current="page">実績</span></nav>
+    <h1 id="d-h">実績の一覧</h1>
+    <p class="hero-lede">会社、共同研究、サイドプロジェクト、大学で取り組んだことをまとめました。4つのシステムは、フロー図とあわせて個別のページで詳しく説明しています。</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="d-section" aria-labelledby="sys-h" style="padding-top:8px">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker"><b>01</b> システム</div>
+        <h2 id="sys-h">自分で構築・デプロイした4つのシステム</h2>
+      </div>
+      <a class="sec-more" href="/ja/#systems">ホームでフロー図を見る<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+    </div>
+    <div class="topics">
+      <a class="card topic" href="/ja/work/kisti/">
+        <div class="topic-body">
+          <span class="k">{{f:kisti_period}} · Vision Inside · 受託開発</span>
+          <h3>KISTI発注案件のデータ層</h3>
+          <p>KISTI（韓国科学技術情報研究院）の研究者が設計した公共R&amp;Dプラットフォームで、データエンジニアとして収集・蓄積・提供を専任で担当し、モデルのバッチ処理とFastAPIの管理画面まで作りました。</p>
+          <span class="key" style="color:var(--me-2)">後続の本事業契約につながった</span>
+        </div>
+      </a>
+      <a class="card topic" href="/ja/work/hitachi/">
+        <div class="topic-body">
+          <span class="k">2025.04 – 現在 · 九州工業大学の研究室 · 支援研究員（非常勤）</span>
+          <h3>日立グループとの共同研究における画像データパイプライン</h3>
+          <p>マシンビジョンカメラの制御・撮影から学習用データセットの前処理までを、PythonのパイプラインとPyQtのGUIとして書き直し、設計を研究室の後輩2名に引き継ぎました。</p>
+          <span class="key" style="color:var(--me-2)">2026年9〜10月にオランダで現地導入</span>
+        </div>
+      </a>
+      <a class="card topic" href="/ja/work/genomics/">
+        <div class="topic-body">
+          <span class="k">{{f:bio_period}} · Vision Inside · 社内プロジェクト</span>
+          <h3>ゲノム変異のアノテーション・リスクレポートシステム</h3>
+          <p>チームリーダーと共同で設計したアルゴリズムをもとに、変異検出パイプライン、公開リファレンスを使ったSQLアノテーション、FastAPIのJSON APIとフロントエンドを実装し、Docker・Harborでデプロイしました。</p>
+          <span class="key" style="color:var(--me-2)">公開リファレンスによる4段階のSQLアノテーション</span>
+        </div>
+      </a>
+      <a class="card topic" href="/ja/work/wjmax/">
+        <div class="topic-body">
+          <span class="k">{{f:wjmax_period}} · サイドプロジェクト · 2人チーム</span>
+          <h3>WJMaxゲームサーバー</h3>
+          <p>サーバー・DB・セキュリティを担当し、FastAPI（Docker、EC2）、RDSのMySQL、Cloudflareのプロキシ・WAFで運用しました。公開版ではテストを加えて整理しました。</p>
+          <span class="key" style="color:var(--me-2)">アップデート時にアクセスが集中する実サービスとして運用</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="d-section" aria-labelledby="other-h">
+    <div class="sec-head">
+      <div>
+        <div class="sec-kicker"><b>02</b> その他</div>
+        <h2 id="other-h">そのほかに作ったもの</h2>
+      </div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th scope="col">プロジェクト</th><th scope="col">担当内容</th><th scope="col">技術</th></tr></thead>
+      <tbody>
+        <tr><td>3DOS · XRヘッドセットの視界改善<small>2024.11 · XRデバイスコンテンツ・メイカソン本選</small></td><td>2024 XRデバイスコンテンツ・メイカソンの本選（韓国・パンギョのメタバースハブ）に、学部の研究室の5名でチーム3DOSとして登録して参加し、開発と発表、ステージでのデモを担当しました。Myungjin Cho教授の研究で発表されたFourier Peplography（もや除去）とPhoton Counting（低照度での復元）を研究室のMATLABコードからC++・OpenCVに移植し（移植の一部はチームメンバー1名が協力）、Androidのネイティブプラグイン（arm64）としてビルドし、Metalens 2ヘッドセットのUnityアプリで端末のカメラ映像に適用して、観客の前でデモを行いました。<a href="https://github.com/zoocasso/realtime-vision-xr-device" target="_blank" rel="noopener">発表資料</a>を公開しています。</td><td><ul class="chips"><li>C++</li><li>OpenCV</li><li>Unity</li><li>Android</li></ul></td></tr>
+      </tbody>
+    </table>
+    <p class="small-note">2022年の学部時代のビジョン・ML関連の取り組み（奥行き推定、CNN、Smart Mirror）は<a href="/ja/research/#path">研究のページ</a>に、生命保険の公示データツールは<a href="/ja/cv/#career">経歴のページ</a>のVision Insideの経歴に1行でまとめました。</p>
+  </section>
+
+  <nav class="pager" aria-label="次へ">
+    <a href="/ja/"><small>← ホーム</small><b>トップページ</b></a>
+    <a class="next" href="/ja/work/kisti/"><small>1つ目のシステム →</small><b>KISTI発注案件のデータ層</b></a>
+  </nav>
+</div>

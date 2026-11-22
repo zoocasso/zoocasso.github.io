@@ -1,0 +1,61 @@
+<!--meta {"title": "WJMaxゲームサーバー", "description": "コミュニティのリズムゲームWJMaxのサーバー・DB・セキュリティを担当し、FastAPI、EC2、RDSのMySQL、Cloudflareで構成して、アップデート時にアクセスが集中する実サービスとして運用したサイドプロジェクト。公開版で扱った問題も紹介します。", "nav": "systems"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="現在地"><a href="/ja/">ホーム</a><span aria-hidden="true">/</span><a href="/ja/#systems">システム</a><span aria-hidden="true">/</span><span aria-current="page">WJMaxゲームサーバー</span></nav>
+    <h1 id="d-h">コミュニティのリズムゲームのサーバー、<br>アップデート時にアクセスが集中する実サービス</h1>
+    <p class="hero-lede">2人で作ったコミュニティのリズムゲームWJMaxで、サーバー・DB・セキュリティを担当しました。ゲームクライアントはもう1人が開発しました。公開したサーバーコードでは、負荷・再送・入力検証の問題をテストで扱っています。</p>
+    <dl class="meta-grid">
+      <div><dt>期間</dt><dd>{{f:wjmax_period}}<small>コミット履歴に基づく</small></dd></div>
+      <div><dt>形態</dt><dd>サイドプロジェクト<small>2人チーム</small></dd></div>
+      <div><dt>役割</dt><dd>サーバー・DB・セキュリティを担当<small>ゲームクライアントは別の1人</small></dd></div>
+      <div><dt>技術</dt><dd>FastAPI · Docker<small>AWS EC2 · RDS MySQL · Cloudflare</small></dd></div>
+    </dl>
+    <div class="kpis row two-k" aria-label="主な実績">
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>運用</span><span class="kpi-val">実サービス</span><span class="kpi-label">アップデート時にアクセスが集中するゲームサーバー</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>CI</span><span class="kpi-val">自動テスト</span><span class="kpi-label">SQLite · MySQL 8.0 · 8.4で実行</span></div>
+    </div>
+    <div class="d-actions"><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>コード（GitHub）</a></div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="d-section" id="arch" aria-labelledby="arch-h">
+    <div class="sec-head">
+      <div>
+        <h2 id="arch-h">アーキテクチャ</h2>
+        <p class="sec-desc">ゲームクライアントは譜面ごとのプレイ回数を報告として送り、サーバーはそれを受け取ってデータベースに保存していました。</p>
+      </div>
+      <div class="legend" aria-label="凡例">
+        <span><i class="sw me" aria-hidden="true"></i>自分で構築</span>
+        <span><i class="sw other" aria-hidden="true"></i>他の担当者</span>
+        <button class="toggle" type="button" data-mine-toggle aria-pressed="false"><span class="knob" aria-hidden="true"></span>自分の担当だけ強調</button>
+      </div>
+    </div>
+    <div class="sys">
+      {{inc:flow-wjmax}}
+      <div class="sys-outcome"><span class="k">結果</span><span>アップデート時にアクセスが集中する<b>実サービス</b>として運用</span><span>公開リポジトリは整理版（テスト付き）</span></div>
+    </div>
+  </section>
+
+  <section class="d-section" id="rewrite" aria-labelledby="rw-h">
+    <h2 id="rw-h">公開版で扱った問題</h2>
+    <p class="sec-desc">ゲームクライアントが送るリクエストはそのままにして、サーバー側の問題を一つずつテストで固定しました。</p>
+    <ol class="decisions">
+      <li><h3>同時接続が集中するとリクエストが失敗する問題</h3>
+        <dl class="dl"><dt>問題</dt><dd>公開版の初期段階では、リクエストがDB接続を早く取りすぎる構造だったため、多数のリクエストを同時に送るテストで、その多くが互いを待ったまま失敗しました。</dd><dt>解決</dt><dd>接続の取得から使用、返却までを1つのワーカースレッドの中で済ませるようにし、接続数をワーカースレッド数に合わせました。同時リクエストのテストをCIに組み込み、すべてに応答が返ることを確認し続けています。</dd></dl></li>
+      <li><h3>再送された報告が二重に保存される問題</h3>
+        <dl class="dl"><dt>問題</dt><dd>接続が切れて同じ報告が再送されると、プレイ回数が二重に加算されるおそれがあります。</dd><dt>解決</dt><dd>報告に番号（報告ID）が付いていれば、同じ番号は一度だけ保存します。同じ報告が2件同時に届いても保存は1件だけで、番号が同じなのに内容が違う場合は拒否します。ただし配布済みのゲームはこの番号を送らないため、その再送は今も別の報告として保存されます。</dd></dl></li>
+      <li><h3>曲名どうしが統合されてしまう問題</h3>
+        <dl class="dl"><dt>問題</dt><dd>MySQLは初期設定のままだと大文字と小文字、ひらがなとカタカナを区別しないため、「Glory」と「GLORY」、「ゆめ」と「ユメ」を同じ曲とみなします。</dd><dt>解決</dt><dd>曲名とIDは一文字ずつそのまま比較するように設定を変え、CIでそれを確認しています。</dd></dl></li>
+      <li><h3>誰でも送れる入力</h3>
+        <dl class="dl"><dt>問題</dt><dd>配布済みのゲームはログインなどの認証なしで報告を送るため、サーバーのアドレスを知っていれば誰でも報告を送れます。</dd><dt>解決</dt><dd>サーバーが中身を読む前に形式を検証し、不正な入力と大きすぎるリクエストはすぐに拒否します。前段のCloudflareも濫用を防ぎます。報告が実際のプレイの証明にはならないという限界も、READMEに記載しました。</dd></dl></li>
+    </ol>
+    <p class="note">テストはGitHub ActionsでSQLiteとMySQL 8.0・8.4に対して実行し、データベース定義（<code>schema.sql</code>）がコードと一致しているかも確認しています。</p>
+    <ul class="chips" style="margin-top:16px" aria-label="使用技術"><li>Python</li><li>FastAPI</li><li>Docker</li><li>AWS EC2</li><li>AWS RDS</li><li>MySQL</li><li>Cloudflare</li><li>GitHub Actions</li></ul>
+  </section>
+
+  <nav class="pager" aria-label="他のシステム">
+    <a href="/ja/work/genomics/"><small>← 前のシステム</small><b>ゲノム変異のアノテーション・レポート</b></a>
+    <a class="next" href="/ja/research/"><small>次へ →</small><b>研究とレンズアレイ実験室</b></a>
+  </nav>
+</div>

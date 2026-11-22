@@ -1,0 +1,1879 @@
+/* Lens array lab: a planar image is captured through a pinhole array (simulated), rearranged with RIM,
+   and reconstructed. Rendering is WebGL2; music, sound effects and the robot voice are synthesized with Web Audio. */
+(() => {
+'use strict';
+const root = document.getElementById('lab');
+if (!root) return;
+const q = (s) => root.querySelector(s);
+const stage = q('.stage'), canvas = q('canvas.gl'), dialogEl = q('.dialog');
+const lang = ['en', 'ja'].includes(document.documentElement.lang) ? document.documentElement.lang : 'ko';
+const NP = 8, W = 2.0, ZS = 0.3;
+const small = Math.min(window.innerWidth, screen.width || 9999) < 640;
+// the viewpoint follows a mouse; on phones and tablets it follows the device's tilt instead
+const mouse = matchMedia('(hover: hover) and (pointer: fine)').matches;
+// lens count before a sample loads; the real Lytro light field needs more to stay recognisable
+const NL_SIM = small ? 32 : 48, NL_REAL = small ? 64 : 128, VIEWS = NP * NP;
+let NL = NL_SIM, R = NL * NP, COUNT = R * R;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt = (n) => n.toLocaleString({ ko: 'ko-KR', en: 'en-US', ja: 'ja-JP' }[lang]);
+
+/* ================= sound: everything is synthesized here ================= */
+const Snd = (() => {
+  let ctx = null, master, music, sfx, voice, noiseBuf = null, on = false, nextT = 0, step = 0, loop = 0, timer = 0, room = false;
+  const midi = (n) => 440 * Math.pow(2, (n - 69) / 12);
+  function init() {
+    if (ctx) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    ctx = new AC();
+    master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
+    const delay = ctx.createDelay(1); delay.delayTime.value = 0.36;
+    const fb = ctx.createGain(); fb.gain.value = 0.3;
+    const damp = ctx.createBiquadFilter(); damp.type = 'lowpass'; damp.frequency.value = 2200;
+    delay.connect(damp); damp.connect(fb); fb.connect(delay);
+    const wet = ctx.createGain(); wet.gain.value = 0.3; delay.connect(wet); wet.connect(master);
+    music = ctx.createGain(); music.gain.value = 0; music.connect(master); music.connect(delay);
+    sfx = ctx.createGain(); sfx.gain.value = 0.75; sfx.connect(master); sfx.connect(delay);
+    voice = ctx.createGain(); voice.gain.value = 0.42; voice.connect(master);
+    noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+    const d = noiseBuf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  }
+  function env(g, t, a, peak, dec) {
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(peak, t + a);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + a + dec);
+  }
+  function tone(type, f, t, a, peak, dec, dest, filt) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    let head = o;
+    if (filt) { const b = ctx.createBiquadFilter(); b.type = 'lowpass'; b.frequency.value = filt; o.connect(b); head = b; }
+    head.connect(g); g.connect(dest);
+    env(g, t, a, peak, dec);
+    o.start(t); o.stop(t + a + dec + 0.05);
+  }
+  function noise(t, dur, type, freq, peak, dest, qv) {
+    const s = ctx.createBufferSource(); s.buffer = noiseBuf; s.loop = true;
+    const b = ctx.createBiquadFilter(); b.type = type; b.frequency.value = freq; if (qv) b.Q.value = qv;
+    const g = ctx.createGain();
+    s.connect(b); b.connect(g); g.connect(dest);
+    env(g, t, 0.003, peak, dur);
+    s.start(t, Math.random()); s.stop(t + dur + 0.05);
+  }
+  /* music: the "royal road" progression (IV-V-iii-vi) in C at 84 BPM; keys, bass, soft drums, a music-box line */
+  const BPM = 84, S16 = 60 / BPM / 4;
+  const CH = [[53, 57, 60, 64], [55, 59, 62, 65], [52, 55, 59, 62], [57, 60, 64, 67]];
+  const BASS = [41, 43, 40, 45];
+  const MEL = [
+    [[0, 69], [3, 72], [6, 76], [10, 74], [12, 72]],
+    [[0, 74], [4, 67], [8, 69], [11, 74]],
+    [[0, 76], [3, 74], [6, 71], [8, 67], [12, 64]],
+    [[0, 69], [4, 72], [7, 76], [10, 79], [13, 76]]
+  ];
+  function keys(notes, t, dur, peak) {
+    for (const n of notes) {
+      tone('triangle', midi(n), t, 0.02, peak, dur, music, 1500);
+      tone('sine', midi(n) * 2.001, t, 0.01, peak * 0.35, dur * 0.6, music);
+    }
+  }
+  function playStep(st, t) {
+    const bar = Math.floor(st / 16), s = st % 16;
+    if (s === 0) keys(CH[bar], t, S16 * 7, 0.045);
+    if (s === 6 || s === 10) keys(CH[bar], t, S16 * 3, 0.03);
+    if (s === 0 || s === 8) tone('sine', midi(BASS[bar]), t, 0.01, 0.16, S16 * 6, music, 600);
+    if (s === 14) tone('sine', midi(BASS[bar] + 7), t, 0.01, 0.1, S16 * 2, music, 600);
+    if (s === 0 || s === 8) {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.frequency.setValueAtTime(120, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.14);
+      o.connect(g); g.connect(music); env(g, t, 0.004, 0.22, 0.16); o.start(t); o.stop(t + 0.25);
+    }
+    if (s === 4 || s === 12) noise(t, 0.13, 'bandpass', 1900, 0.05, music, 0.8);
+    if (s % 4 === 2) noise(t, 0.035, 'highpass', 7500, 0.022, music);
+    if (loop % 2 === 1) for (const [ms, n] of MEL[bar]) if (ms === s) {
+      tone('sine', midi(n + 12), t, 0.004, 0.05, 0.7, music);
+      tone('sine', midi(n + 12) * 3, t, 0.002, 0.012, 0.25, music);
+    }
+    if (Math.random() < 0.18) noise(t + Math.random() * S16, 0.004, 'highpass', 3000, 0.02 + Math.random() * 0.03, music);
+  }
+  function scheduler() {
+    if (!ctx) return;
+    while (nextT < ctx.currentTime + 0.25) {
+      playStep(step, nextT);
+      nextT += S16; step = (step + 1) % 64; if (step === 0) loop++;
+    }
+  }
+  function startRoom() {
+    if (room) return; room = true;
+    const len = ctx.sampleRate * 4, b = ctx.createBuffer(1, len, ctx.sampleRate), d = b.getChannelData(0);
+    let last = 0;
+    for (let i = 0; i < len; i++) { last = (last + 0.02 * (Math.random() * 2 - 1)) / 1.02; d[i] = last * 3.2; }
+    const s = ctx.createBufferSource(); s.buffer = b; s.loop = true;
+    const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 520;
+    const g = ctx.createGain(); g.gain.value = 0.05;
+    s.connect(f); f.connect(g); g.connect(master); s.start();
+    const hum = ctx.createOscillator(), hg = ctx.createGain(); hum.frequency.value = 120; hg.gain.value = 0.005;
+    hum.connect(hg); hg.connect(master); hum.start();
+  }
+  const live = () => on && ctx;
+  return {
+    get on() { return on; },
+    /* true only when the browser lets this page play sound before any click (e.g. a site the visitor uses often) */
+    autoplayOK() { init(); return !!ctx && ctx.state === 'running'; },
+    async enable() {
+      init(); if (!ctx) return false;
+      try { await ctx.resume(); } catch (e) { return false; }
+      on = true;
+      const t = ctx.currentTime;
+      master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(master.gain.value, t); master.gain.linearRampToValueAtTime(0.9, t + 0.4);
+      startRoom();
+      if (!timer) {
+        nextT = t + 1.4; step = 0;
+        music.gain.setValueAtTime(0, t); music.gain.linearRampToValueAtTime(0.55, t + 5);
+        timer = setInterval(scheduler, 90);
+      }
+      return true;
+    },
+    disable() {
+      if (!ctx) return;
+      on = false;
+      const t = ctx.currentTime;
+      master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(master.gain.value, t); master.gain.linearRampToValueAtTime(0, t + 0.3);
+      setTimeout(() => { if (!on && ctx) ctx.suspend(); }, 400);
+    },
+    chime() {
+      if (!live()) return;
+      const t = ctx.currentTime + 0.05;
+      [[76, 0], [72, 0.34], [79, 0.68]].forEach(([n, dt]) => {
+        tone('sine', midi(n), t + dt, 0.006, 0.22, 1.5, sfx);
+        tone('sine', midi(n) * 4.01, t + dt, 0.003, 0.03, 0.4, sfx);
+      });
+    },
+    shutter() {
+      if (!live()) return;
+      const t = ctx.currentTime;
+      noise(t, 0.03, 'highpass', 2500, 0.3, sfx); noise(t + 0.075, 0.05, 'bandpass', 1200, 0.2, sfx, 1.2);
+    },
+    motor(dur) {
+      if (!live()) return;
+      const t = ctx.currentTime;
+      const o = ctx.createOscillator(), og = ctx.createGain(), lf = ctx.createOscillator(), lg = ctx.createGain();
+      o.type = 'triangle'; o.frequency.setValueAtTime(70, t); o.frequency.linearRampToValueAtTime(115, t + dur * 0.5); o.frequency.linearRampToValueAtTime(65, t + dur);
+      lf.frequency.value = 11; lg.gain.value = 6; lf.connect(lg); lg.connect(o.frequency);
+      o.connect(og); og.connect(sfx);
+      og.gain.setValueAtTime(0.0001, t); og.gain.exponentialRampToValueAtTime(0.06, t + 0.25); og.gain.setValueAtTime(0.06, t + Math.max(0.3, dur - 0.3)); og.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.start(t); lf.start(t); o.stop(t + dur + 0.1); lf.stop(t + dur + 0.1);
+      const s = ctx.createBufferSource(); s.buffer = noiseBuf; s.loop = true;
+      const b = ctx.createBiquadFilter(); b.type = 'bandpass'; b.Q.value = 1.4;
+      b.frequency.setValueAtTime(300, t); b.frequency.exponentialRampToValueAtTime(1400, t + dur * 0.5); b.frequency.exponentialRampToValueAtTime(320, t + dur);
+      const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.035, t + 0.3); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      s.connect(b); b.connect(g); g.connect(sfx); s.start(t); s.stop(t + dur + 0.1);
+    },
+    ticks(n, dur) {
+      if (!live()) return;
+      const t = ctx.currentTime;
+      for (let i = 0; i < n; i++) tone('sine', 1500 + i * 40, t + dur * (i / n), 0.002, 0.04, 0.05, sfx);
+    },
+    focus() {
+      if (!live()) return;
+      const t = ctx.currentTime;
+      tone('sine', midi(88), t, 0.004, 0.12, 0.5, sfx); tone('sine', midi(95), t + 0.11, 0.004, 0.12, 0.9, sfx);
+    },
+    blip(ch) {
+      if (!live()) return;
+      const k = (ch.charCodeAt(0) * 7) % 9 - 4;
+      tone('square', 520 * Math.pow(2, k / 12), ctx.currentTime, 0.006, 0.09, 0.05, voice, 1900);
+    },
+    ui() { if (live()) tone('sine', 1320, ctx.currentTime, 0.003, 0.05, 0.06, sfx); }
+  };
+})();
+
+/* ================= robot screen: a face drawn with lenslets ================= */
+const Face = (() => {
+  const c = q('.robot canvas'), g = c.getContext('2d'), COLS = 14, ROWS = 9;
+  const F = {
+    idle: ['..............', '..............', '...##....##...', '...##....##...', '..............', '..............', '.....####.....', '..............', '..............'],
+    blink: ['..............', '..............', '..............', '...##....##...', '..............', '..............', '.....####.....', '..............', '..............'],
+    talk: ['..............', '..............', '...##....##...', '...##....##...', '..............', '.....####.....', '.....#..#.....', '......##......', '..............'],
+    workL: ['..............', '..............', '..##....##....', '..##....##....', '..............', '..............', '......##......', '..............', '..............'],
+    workR: ['..............', '..............', '....##....##..', '....##....##..', '..............', '..............', '......##......', '..............', '..............'],
+    happy: ['..............', '..............', '....#....#....', '...#.#..#.#...', '..............', '....#....#....', '.....####.....', '..............', '..............']
+  };
+  let mode = 'idle', mouth = false, last = '', gx = 0, gy = 0;
+  const shift = (s, dx) => dx > 0 ? '.'.repeat(dx) + s.slice(0, -dx) : dx < 0 ? s.slice(-dx) + '.'.repeat(-dx) : s;
+  function gaze(base) {
+    // move the eye rows (2 and 3) toward the pointer
+    if (!gx && !gy) return base;
+    const rows = base.slice(), eyes = [rows[2], rows[3]];
+    rows[2] = rows[3] = '.'.repeat(COLS);
+    rows[2 + gy] = shift(eyes[0], gx); rows[3 + gy] = shift(eyes[1], gx);
+    return rows;
+  }
+  function paint(key) {
+    const sig = key + gx + ',' + gy;
+    if (sig === last) return; last = sig;
+    const rows = key.startsWith('work') ? F[key] : gaze(F[key]), cw = c.width / COLS, chh = c.height / ROWS, r = Math.min(cw, chh) * 0.36;
+    g.clearRect(0, 0, c.width, c.height);
+    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
+      const lit = rows[y][x] === '#';
+      g.beginPath(); g.arc((x + 0.5) * cw, (y + 0.5) * chh, r, 0, Math.PI * 2);
+      g.fillStyle = lit ? '#C9B8FF' : 'rgba(233,235,242,0.07)';
+      g.shadowColor = lit ? 'rgba(185,164,255,0.85)' : 'transparent';
+      g.shadowBlur = lit ? r * 1.6 : 0;
+      g.fill();
+    }
+  }
+  function frame(now) {
+    let key = mode;
+    if (mode === 'idle') key = (now % 4200) < 140 ? 'blink' : 'idle';
+    else if (mode === 'talk') key = mouth ? 'talk' : 'idle';
+    else if (mode === 'work') key = Math.floor(now / 380) % 2 ? 'workL' : 'workR';
+    paint(key);
+  }
+  function look(clientX, clientY) {
+    const r = c.getBoundingClientRect();
+    gx = Math.max(-1, Math.min(1, Math.round((clientX - (r.left + r.width / 2)) / 260)));
+    gy = Math.max(-1, Math.min(1, Math.round((clientY - (r.top + r.height / 2)) / 260)));
+  }
+  return { set(m) { mode = m; }, get mode() { return mode; }, flap() { mouth = !mouth; }, frame, look };
+})();
+
+/* ================= dialogue: Japanese voice line, subtitle in the page language ================= */
+const L = {
+  tap: ['クリックすると、音といっしょに始まります。', { ko: '누르면 소리와 함께 시작해요.', en: 'Click to start, with sound.' }],
+  greet: ['ようこそ。奥行きのちがう物を、レンズで撮って、元に戻してみます。', { ko: '어서 오세요. 깊이가 다른 물체들을 렌즈 배열로 찍었다가 다시 되살려 볼게요.', en: "Welcome. Let's capture objects at different depths through a lens array, then bring them back." }],
+  between: ['いまの面は、物と物のあいだです。もう少し動かしてみてください。', { ko: '재구성 면이 물체들 사이에 있어요. 거리를 조금 더 움직여 보세요.', en: 'The plane is between the objects; move the distance a little more.' }],
+  A: () => scene.kind === 'lytro'
+    ? ['本物のLytroで撮った、レンズごとの画像です。拡大すると、小さな丸い像が並んでいます。', { ko: '실제 Lytro 카메라의 렌즈릿 영상이에요. 렌즈마다 작고 둥근 사진이 있고, 렌즈 하나가 작은 카메라예요.', en: 'A real Lytro capture, as its lenslet image: each lens holds a small round picture, so every lens is a tiny camera.' }]
+    : ['カシャッ。小さなカメラごとに、小さな写真が一枚ずつ撮れました。', { ko: `찰칵. 작은 카메라마다 8×8 픽셀짜리 사진이 한 장씩 찍혔어요. 이게 요소 영상이에요.`, en: `Click. Each tiny camera took an 8×8-pixel picture: the elemental images.` }],
+  cams: () => ['レンズの一つひとつが、小さなカメラです。少しずつ違う場所から、同時に撮ります。', { ko: `렌즈 하나하나가 아주 작은 카메라예요. ${NL}×${NL}대가 조금씩 다른 자리에서 동시에 찍어요.`, en: `Each lens is a tiny camera; ${NL}×${NL} of them shoot at once from slightly different spots.` }],
+  B: ['次は並べ替え。小さな写真から同じ位置のピクセルを集めると、ひとつの方向から見た写真になります。', { ko: `다음은 재배열(RIM). 작은 사진들에서 같은 자리의 픽셀만 모으면 한 방향에서 본 사진이 돼요. 모두 ${VIEWS}장.`, en: `Rearrange (RIM): the same pixel from every tiny picture makes one picture seen from one direction, ${VIEWS} in all.` }],
+  // depth-dependent shift explained with the everyday moon-and-finger parallax
+  views: ['ほら、手前の物は大きく、奥の物は少しだけずれます。目の前の鉛筆は首を少し動かすだけで大きくずれるのに、月は動かないでしょう？', { ko: '보세요. 앞 물체는 크게, 뒤 물체는 조금만 움직여요. 눈앞에 든 연필은 고개만 살짝 움직여도 휙 비켜 가는데, 달은 그대로인 것처럼요.', en: 'Look: near objects shift a lot, far ones barely. A pencil held before your eyes jumps when you move your head, but the moon stays put.' }],
+  C: ['最後に再構成。重ねる面を奥へ動かすと、その奥行きの物体がくっきり戻ります。奥行きごとのずれを戻して重ねるんです。', { ko: `마지막은 재구성. 시점 영상 ${VIEWS}장을 한 면에 겹치고, 그 면을 옮기면 그 깊이의 물체가 선명해져요. 깊이마다 다른 이동량을 되돌려 겹치는 거예요.`, en: `Reconstruct: the ${VIEWS} views overlap on one plane, and whatever stands at the plane's depth turns sharp. It undoes that depth's shift before stacking.` }],
+  // the last line hands the visitor from the research demo to the work below
+  outro: ['これは修士研究です。会社で作ったデータパイプラインは、ホームの「システム」にあります。', { ko: '여기까지가 석사 연구예요. 회사에서 만든 데이터 파이프라인은 홈의 "시스템"에 있어요.', en: "That was the master's research. The data pipelines built at work are on the home page, under Systems." }],
+  done: () => ['ピクセルはひとつも失われていません。奥行きごとにピントを合わせ直せます。', { ko: `${fmt(COUNT)}개 픽셀을 하나도 버리지 않고, 깊이마다 초점을 다시 맞출 수 있어요.`, en: `Not one of the ${fmt(COUNT)} pixels was lost, and focus can be set at any depth.` }],
+  idle: () => scene.kind === 'lytro'
+    ? ['画面を押すと、その場所にピントを合わせます。', { ko: '화면을 누르면 그 자리에 초점이 맞아요. "추정 깊이 층"을 켜면 시점들이 어느 깊이에서 잘 맞는지 볼 수 있어요.', en: 'Click the picture to focus there. Turn on "Estimated depth layers" to see at which depths the views agree.' }]
+    : mouse ? ['物をクリックすると、そこにピントが合います。並べ替えのあとは、マウスで視点も変えられます。', { ko: '물체를 누르면 그 깊이로 초점이 옮겨가요. "2 재배열" 뒤에는 마우스로 시점도 바뀌어요.', en: 'Click an object to focus on it. After "2 Rearrange", the mouse changes the view.' }]
+    : tilt.on ? ['物をタップすると、そこにピントが合います。並べ替えのあとは、端末を傾けると視点も変わります。', { ko: '물체를 누르면 그 깊이로 초점이 옮겨가요. "2 재배열"을 누른 뒤 기기를 기울이면 시점도 바뀌어요.', en: 'Tap an object to focus on it, or move the distance slider. After "2 Rearrange", tilt your device to change the view.' }]
+    : ['物をタップするか、距離のつまみで、ピントを合わせ直してみてください。', { ko: '물체를 누르거나 재구성 거리를 움직여 초점을 옮겨 보세요.', en: 'Tap an object or move the distance slider to shift the focus.' }],
+  lay: ['視点がよく合う奥行きを、層にして広げました。推定ですよ。', { ko: '64개 시점이 깊이마다 얼마나 잘 맞는지를 층으로 펼쳤어요. 측정한 3D가 아니라 추정이라, 애매한 곳은 여러 층에 흐리게 퍼집니다.', en: 'How well the 64 views agree at each depth, spread out as layers. This is an estimate, not measured 3D, so ambiguous places spread faintly over several layers.' }],
+  flat: ['ここは模様がなくて、どの奥行きでも同じくらい合います。', { ko: '여기는 무늬가 거의 없어서, 시점들이 어느 깊이에서든 비슷하게 맞아요. 이런 곳에서는 초점을 고를 수 없어요.', en: 'There is almost no texture here, so the views match about equally at every depth; no focus can be chosen from this spot.' }],
+  pickb: ['そこにある物の奥行きに、ピントを合わせました。', { ko: '누른 곳에 있는 물체의 깊이로 재구성 면을 옮겼어요.', en: 'The plane moved to the depth of what you clicked.' }],
+  empty: ['そこは背景なので、ピントを合わせる物がありません。', { ko: '거기는 배경이라 초점을 맞출 물체가 없어요.', en: 'That is background: there is nothing there to focus on.' }],
+  pickf: ['ここで視点がいちばんよく合う面に、ピントを合わせました。', { ko: '누른 자리에서 시점들이 가장 잘 맞는 면으로 초점을 옮겼어요.', en: 'Focus moved to the plane where the views agree best at that spot.' }],
+  rev: ['逆再生もできます。一対一の並べ替えですから。', { ko: 'RIM은 일대일 재배열이라 픽셀 하나 잃지 않고 요소 영상으로 되돌아갑니다.', en: 'RIM is one-to-one, so the elemental images come back without losing a pixel.' }],
+  wait: ['読み込んでいます。少し待ってくださいね。', { ko: '데이터를 불러오는 중이에요. 잠시만 기다려 주세요.', en: 'Loading the data. One moment, please.' }],
+  netbad: ['あれ？ データを読み込めませんでした。', { ko: '데이터를 불러오지 못했어요. 버튼을 다시 눌러 주세요.', en: "I couldn't load the data. Please press the button again." }],
+  scene: ['3Dの物を二つ置きました。手前がサルの頭、奥がドーナツです。', { ko: '3D 물체 두 개를 놓았어요. 앞이 원숭이 머리, 뒤가 원환체예요.', en: 'Two 3D objects: a monkey head in front, a torus behind.' }],
+  lytro: ['スタンフォードのLytroデータです。本物のカメラで撮った景色ですよ。', { ko: '실제 Lytro 카메라로 찍은 장면이에요. Stanford 공개 데이터에서 나뭇가지가 정지 표지판을 가리는 부분을 잘라 왔어요.', en: 'A real scene shot with a Lytro camera, cut from the Stanford archive where a branch hides part of a stop sign.' }],
+};
+const FOCUS = [
+  (n) => [`${n.jp}の位置で、くっきり。`, { ko: `${n.ko} 자리에서 선명해졌어요.`, en: `Sharp where the ${n.en} stood.` }],
+  (n) => [`もっと奥へ。${n.jp}。`, { ko: `더 뒤로 가면 ${n.ko}.`, en: `Further back: the ${n.en}.` }],
+  (n) => [`いちばん奥は${n.jp}。`, { ko: `가장 뒤의 ${n.ko}까지.`, en: `And the farthest: the ${n.en}.` }],
+  (n) => [`その奥の${n.jp}まで。`, { ko: `그 뒤의 ${n.ko}까지.`, en: `On to the ${n.en} behind it.` }]
+];
+const ej = q('.dialog .jp'), ek = q('.dialog .ko'), liveEl = q('[data-live]');
+let sayTimer = 0, sayEnd = null;
+function sayLine(line, after) {
+  // on Japanese pages the voice line is the page's language, so it stands alone without a subtitle
+  const jp = line[0], sub = lang === 'ja' ? jp : line[1][lang];
+  liveEl.textContent = sub;
+  clearInterval(sayTimer); sayEnd = null;
+  // the subtitle shows in full as the line starts, like a film subtitle, while the Japanese is typed out
+  ek.textContent = sub;
+  if (reduce) { ej.textContent = jp; if (after) after(); return; }
+  ek.classList.remove('fade'); void ek.offsetWidth; ek.classList.add('fade');
+  // once the Japanese is typed out the line is done (the visitor sets the pace from there)
+  let i = 0; ej.textContent = '';
+  const rest = Face.mode === 'talk' ? 'idle' : Face.mode;
+  if (rest !== 'work') Face.set('talk');
+  const end = sayEnd = () => {
+    clearInterval(sayTimer); sayEnd = null; ej.textContent = jp;
+    if (Face.mode === 'talk') Face.set(rest);
+    if (after) after();
+  };
+  sayTimer = setInterval(() => {
+    const ch = jp[i++]; ej.textContent = jp.slice(0, i);
+    if (!/[\s、。！？…]/.test(ch)) { Snd.blip(ch); Face.flap(); }
+    if (i >= jp.length) end();
+  }, 48);
+}
+// a line still being typed is shown whole at once; true if there was one
+function finishLine() { if (!sayEnd) return false; sayEnd(); return true; }
+const say = (key, after) => sayLine(typeof L[key] === 'function' ? L[key]() : L[key], after);
+
+/* ================= WebGL2 scene ================= */
+/* A pinhole (lens) array: the elemental-image pixel u under lens s records the point at
+   lens - dk (u - c) / NL, where dk (lens units per view step) grows with the point's distance in front
+   of the array (z = -NP * ZS * dk). The sample scenes give each pixel its colour and dk from a light
+   field (views + depth); a picture dropped in becomes a stack of layers at distances K[k] * ZS, and a
+   pixel records the first opaque layer its ray meets. RIM then swaps (s, u) to (u, s), and
+   reconstruction shifts each view by d * (u - c) / NL: at d = dk the samples land back where they came from. */
+const K = [3, 5, 7, 9];
+function fallback() {
+  q('.fallback').hidden = false; canvas.hidden = true;
+  root.querySelectorAll('.lab-tools .needs-gl').forEach((el) => { el.hidden = true; });
+}
+const gl = canvas.getContext('webgl2', { antialias: false, premultipliedAlpha: false, depth: true });
+if (!gl) { fallback(); return; }
+const floatOK = !!gl.getExtension('EXT_color_buffer_float');
+function sh(type, src) {
+  const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+  return s;
+}
+function prog(vs, fs) {
+  const p = gl.createProgram();
+  gl.attachShader(p, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(p, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(p);
+  if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+  const u = {}; const n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
+  for (let i = 0; i < n; i++) { const name = gl.getActiveUniform(p, i).name.replace(/\[0\]$/, ''); u[name] = gl.getUniformLocation(p, name); }
+  return { p, u };
+}
+const PV = `#version 300 es
+precision highp float;
+uniform sampler2D uImg, uDep;
+uniform mat4 uVP;
+uniform float uK[4];
+uniform float uNL, uNP, uW, uZs, uA, uB, uC, uD, uPx, uP11, uReal, uDepV, uDlo, uDhi, uZa, uZb, uVw, uAvg, uSky, uGrow, uMesh, uRef;
+uniform vec2 uVs;
+out vec4 vCol;
+out float vW;
+float ease(float t){ return t < .5 ? 4.*t*t*t : 1. - pow(-2.*t + 2., 3.) / 2.; }
+float lag(float t, float d, float spread){ return clamp((t - d * spread) / (1. - spread), 0., 1.); }
+vec3 plane(vec2 n, float z){ return vec3((n.x - .5) * uW, (.5 - n.y) * uW, z); }
+vec4 layer(int k, vec2 uv){
+  vec2 cell = vec2(float(k % 2), float(k / 2));
+  return texture(uImg, (clamp(uv, vec2(.001), vec2(.999)) + cell) * .5);
+}
+void main(){
+  float R = uNL * uNP;
+  int iR = int(R);
+  vec2 px = vec2(float(gl_VertexID % iR), float(gl_VertexID / iR));
+  vec2 s = floor(px / uNP);
+  vec2 u = px - s * uNP;
+  float c = (uNP - 1.) * .5;
+  vec2 uo = u - c;
+  vec2 lens = (s + .5) / uNL;
+  // vw: one view at a time fills the sensor (step 2); cc: the views overlap on the reconstruction plane (step 3)
+  float vw = ease(clamp(uVw, 0., 1.));
+  float cc = ease(lag(uC, length(uo) / (c * 1.4143), .4));
+  // dk: the shift per view step that brings this sample back into focus (its depth)
+  vec4 col = vec4(0.); float dk, sky = 0.;
+  if (uReal > .5) {
+    // a light field: elemental-image pixel (s, u) is view u at position s, stored as a mosaic of views;
+    // its depth is either one map per lens (estimated) or a mosaic like the views (rendered)
+    ivec2 at = ivec2(u * uNL + s);
+    // while one view fills the sensor, every view is shown moved by whole lenses so that the views line up
+    // on a plane behind the scene (uRef, in shift per view step): the background holds still, as the moon
+    // does when the head moves, and the nearer an object, the more it shifts. Values are moved, not changed;
+    // the lens array's own views line up on the array itself, where far objects would shift the most
+    vec2 sr = clamp(s + round(uRef * vw * (1. - cc) * uo), vec2(0.), vec2(uNL - 1.));
+    col = vec4(texelFetch(uImg, ivec2(u * uNL + sr), 0).rgb, 1.);
+    float dz = texelFetch(uDep, uDepV > .5 ? at : ivec2(s), 0).r;
+    dk = mix(uDlo, uDhi, dz);
+    sky = uSky * step(.998, dz);
+  } else {
+    // follow the ray outward and keep the first opaque layer it meets
+    float kap = uK[3];
+    for (int k = 0; k < 4; k++) {
+      vec2 o = lens - uK[k] * uo / R;
+      if (o.x < 0. || o.x > 1. || o.y < 0. || o.y > 1.) continue;
+      vec4 t = layer(k, o);
+      if (t.a > .5) { col = t; kap = uK[k]; break; }
+    }
+    dk = kap / uNP;
+  }
+  vec2 obj = lens - dk * uo / uNL;
+  vec2 ei = (px + .5) / R;
+  vec2 sai = (u * uNL + s + .5) / R;
+  vec2 rec = lens - uD * uo / uNL;
+  float a = ease(lag(uA, length(lens - .5) * 1.4142, .45));
+  vec3 O = plane(obj, clamp(uZa + uZb * dk, -2.9, -.3)), P = plane(lens, 0.), S = plane(ei, uZs);
+  vec3 pos = a < .5 ? mix(O, P, a * 2.) : mix(P, S, a * 2. - 1.);
+  if (sky > .5 && a < .5) col.a = 0.;
+  // with the solid meshes on show, a sample appears only once it leaves the surface
+  if (uMesh > .5 && a < .02) col.a = 0.;
+  float grow = mix(uGrow, 1., min(1., a * 2.));
+  float dB = (u.y * uNP + u.x) / (uNP * uNP - 1.);
+  float b = ease(lag(uB, dB, .55));
+  pos = mix(pos, plane(sai, uZs), b);
+  pos.z += sin(3.14159 * b) * .22 * (.5 + .5 * dB);
+  // then one view at a time fills the sensor; uVs picks the view, blending the nearest four
+  pos = mix(pos, plane(lens, uZs), vw);
+  pos.z += sin(3.14159 * vw) * .12;
+  vec2 dv = max(1. - abs(u - uVs), 0.);
+  float w = dv.x * dv.y;
+  // reconstruction opens up again: every view counts the same
+  vW = mix(1., uAvg > .5 ? w : step(.5, w), vw * (1. - cc));
+  // the views are overlapped on a plane in front of the lens array: shifting by d per view step
+  // brings back what stands at depth d, so the plane is drawn at that depth in the scene
+  pos = mix(pos, plane(rec, uZa + uZb * uD), cc);
+  float focus = 1. - smoothstep(0., .2, abs(uD - dk) / max(dk, .05));
+  // a single view, and a real light field refocused by shift-and-sum, cover a whole lens per sample
+  float cellsC = uReal > .5 ? uNP : mix(uNP, 1., focus);
+  float cells = mix(mix(1., uNP, vw), cellsC, cc);
+  vec4 v = uVP * vec4(pos, 1.);
+  gl_Position = v;
+  gl_PointSize = clamp(uPx * uP11 * (uW / R) * cells * grow / (2. * v.w) * 1.12, 1., 64.);
+  vCol = col;
+}`;
+const PF = `#version 300 es
+precision mediump float;
+in vec4 vCol; in float vW; out vec4 o;
+void main(){ if (vCol.a < .03 || vW < .002) discard; o = vec4(vCol.rgb * vW, vW); }`;
+const QV = `#version 300 es
+void main(){ vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2); gl_Position = vec4(p * 2. - 1., 0., 1.); }`;
+const QF = `#version 300 es
+precision highp float;
+uniform sampler2D uAcc;
+uniform float uOp;
+out vec4 o;
+void main(){
+  vec4 a = texelFetch(uAcc, ivec2(gl_FragCoord.xy), 0);
+  if (a.a <= 0.) discard;
+  o = vec4(a.rgb / a.a, clamp(a.a, 0., 1.) * uOp);
+}`;
+/* estimated depth layers (real light field): one quad per plane of the plane sweep, far ones first.
+   Colour: the views shifted to that plane and averaged; weight: how well the 64 views agree there,
+   relative to the other planes (softmax of the variance), so a clear match stands on one layer and an
+   ambiguous one spreads thinly over several. The layer at the slider's depth is drawn brighter. */
+const YV = `#version 300 es
+uniform mat4 uVP; uniform float uW, uZa, uZb, uK0, uK1, uN;
+out vec2 vUV; flat out int vK; out float vD;
+void main(){
+  vec2 Q[6] = vec2[6](vec2(0., 0.), vec2(1., 0.), vec2(1., 1.), vec2(0., 0.), vec2(1., 1.), vec2(0., 1.));
+  int k = int(uN) - 1 - gl_InstanceID;
+  float d = uK0 + (uK1 - uK0) * float(k) / (uN - 1.);
+  vec2 n = Q[gl_VertexID];
+  vUV = n; vK = k; vD = d;
+  gl_Position = uVP * vec4((n.x - .5) * uW, (.5 - n.y) * uW, uZa + uZb * d, 1.);
+}`;
+const YF = `#version 300 es
+precision highp float;
+uniform sampler2D uLay, uLayA; uniform float uNL, uCols, uFade, uDsel, uK0, uK1;
+in vec2 vUV; flat in int vK; in float vD; out vec4 o;
+void main(){
+  ivec2 cell = ivec2(vK % int(uCols), vK / int(uCols));
+  ivec2 t = cell * int(uNL) + ivec2(min(floor(vUV * uNL), vec2(uNL - 1.)));
+  vec3 c = texelFetch(uLay, t, 0).rgb;
+  float a = texelFetch(uLayA, t, 0).r;
+  float sel = exp(-pow((vD - uDsel) / (.06 * (uK1 - uK0)), 2.));
+  float g = uFade * mix(.5, 1., sel);
+  if (a * g < .004) discard;
+  o = vec4(c * a * g, a * g);
+}`;
+const LV = `#version 300 es
+in vec3 aPos; uniform mat4 uVP; uniform float uZ;
+void main(){ gl_Position = uVP * vec4(aPos + vec3(0., 0., uZ), 1.); }`;
+const LF = `#version 300 es
+precision mediump float;
+uniform vec4 uCol; out vec4 o;
+void main(){ o = uCol; }`;
+const EV = `#version 300 es
+in vec4 aP; uniform mat4 uVP; uniform float uT, uPx, uP11, uAsp, uMA; uniform vec2 uM;
+out float vK; out float vA; out float vG;
+void main(){
+  vec3 p = aP.xyz; float seed = abs(aP.w); vK = step(0., aP.w);
+  if (vK > .5) { p.x += sin(uT * .13 + seed * 40.) * .12; p.y += sin(uT * .21 + seed * 17.) * .18; p.z += cos(uT * .1 + seed * 9.) * .1; }
+  vec4 v = uVP * vec4(p, 1.);
+  vec2 ndc = v.xy / v.w;
+  vec2 dm = (ndc - uM) * vec2(uAsp, 1.);
+  float near = length(dm);
+  // the pointer works like a torch on the breadboard, and pushes the dust aside
+  vG = uMA * smoothstep(.8, 0., near);
+  if (vK > .5 && near > .001) v.xy += normalize(dm) / vec2(uAsp, 1.) * uMA * smoothstep(.35, 0., near) * .09 * v.w;
+  gl_Position = v;
+  float sz = vK > .5 ? .018 + .02 * fract(seed * 13.7) : .034 * (1. + .5 * vG);
+  gl_PointSize = clamp(uPx * uP11 * sz / (2. * v.w), 1., 18.);
+  vA = vK > .5 ? (.25 + .35 * (.5 + .5 * sin(uT * .9 + seed * 23.))) : .16 + .6 * vG;
+}`;
+const EF = `#version 300 es
+precision mediump float;
+in float vK; in float vA; in float vG; out vec4 o;
+void main(){
+  vec2 d2 = gl_PointCoord - .5; float d = length(d2);
+  if (d > .5) discard;
+  vec3 col = vK > .5 ? vec3(.79, .72, 1.) : mix(vec3(.6, .63, .7), vec3(.82, .76, 1.), vG);
+  o = vec4(col, vA * (vK > .5 ? smoothstep(.5, 0., d) : smoothstep(.5, .3, d)));
+}`;
+let P, Q, LN, E, Y;
+try { P = prog(PV, PF); Q = prog(QV, QF); LN = prog(LV, LF); E = prog(EV, EF); Y = prog(YV, YF); }
+catch (err) { fallback(); return; }
+const emptyVAO = gl.createVertexArray();
+
+const h = W / 2, lineBuf = gl.createBuffer();
+let gridCount = 0;
+function buildLines(nl) {
+  // one line per lens, thinned out when the lenses get too fine to draw; then the sensor outline
+  const lines = [], step = Math.ceil(nl / 48);
+  for (let i = 0; i <= nl; i += step) { const x = -h + W * i / nl; lines.push(x, -h, 0, x, h, 0, -h, x, 0, h, x, 0); }
+  if (nl % step) lines.push(h, -h, 0, h, h, 0, -h, h, 0, h, h, 0);
+  gridCount = lines.length / 3;
+  lines.push(-h, -h, ZS, h, -h, ZS, h, -h, ZS, h, h, ZS, h, h, ZS, -h, h, ZS, -h, h, ZS, -h, -h, ZS);
+  gl.bindBuffer(gl.ARRAY_BUFFER, lineBuf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(lines), gl.STATIC_DRAW);
+}
+const lineVAO = gl.createVertexArray(); gl.bindVertexArray(lineVAO);
+buildLines(NL);
+const aPos = gl.getAttribLocation(LN.p, 'aPos'); gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 0, 0);
+/* step 1 opens on camera models standing in the lens array: every lens with the sensor behind it is a
+   tiny camera looking at the scene. A few of them are drawn, larger than a lens so they can be seen:
+   the body between the lens array and the sensor, a lens barrel in front, and the way it looks */
+const iconBuf = gl.createBuffer(), iconVAO = gl.createVertexArray();
+gl.bindVertexArray(iconVAO); gl.bindBuffer(gl.ARRAY_BUFFER, iconBuf);
+gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 0, 0);
+gl.bindVertexArray(null);
+let iconCount = 0;
+function buildIcons() {
+  const v = [], seg = (a, b) => v.push(...a, ...b), bw = 0.075, bh = 0.055, r = 0.036, zf = -0.05;
+  for (const fy of [0.2, 0.5, 0.8]) for (const fx of [0.2, 0.5, 0.8]) {
+    // the nearest lens centre
+    const x = ((Math.floor(fx * NL) + .5) / NL - .5) * W, y = (.5 - (Math.floor(fy * NL) + .5) / NL) * W;
+    const c = [[-bw, -bh], [bw, -bh], [bw, bh], [-bw, bh]];
+    for (let i = 0; i < 4; i++) {
+      const [ax, ay] = c[i], [bx, by] = c[(i + 1) % 4];
+      seg([x + ax, y + ay, 0.01], [x + bx, y + by, 0.01]); seg([x + ax, y + ay, ZS], [x + bx, y + by, ZS]);
+      seg([x + ax, y + ay, 0.01], [x + ax, y + ay, ZS]);
+    }
+    for (let i = 0; i < 12; i++) {
+      const a0 = i / 12 * 2 * Math.PI, a1 = (i + 1) / 12 * 2 * Math.PI;
+      seg([x + r * Math.cos(a0), y + r * Math.sin(a0), zf], [x + r * Math.cos(a1), y + r * Math.sin(a1), zf]);
+      if (i % 3 === 0) seg([x + r * Math.cos(a0), y + r * Math.sin(a0), zf], [x + r * Math.cos(a0), y + r * Math.sin(a0), 0.01]);
+    }
+    // where it looks: a short, narrow cone toward the scene
+    for (const [ax, ay] of c) seg([x, y, zf], [x + ax * 1.6, y + ay * 1.6, -0.42]);
+  }
+  gl.bindBuffer(gl.ARRAY_BUFFER, iconBuf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(v), gl.DYNAMIC_DRAW);
+  iconCount = v.length / 3;
+}
+function setNL(nl) { if (nl === NL) return; NL = nl; R = NL * NP; COUNT = R * R; buildLines(NL); }
+
+/* environment: an optical breadboard (holes on a regular pitch) below the bench, and dust in the light */
+const env = [];
+for (let zi = 0; zi < 40; zi++) for (let xi = 0; xi < 52; xi++) env.push(-5.1 + xi * 0.2, -1.45, -5.6 + zi * 0.2, -1 - Math.random() * 0.001);
+const DUST = small ? 160 : 340;
+for (let i = 0; i < DUST; i++) env.push(-3.6 + Math.random() * 7, -1.2 + Math.random() * 3, -4.5 + Math.random() * 7, 0.001 + Math.random());
+const envCount = env.length / 4;
+const envVAO = gl.createVertexArray(); gl.bindVertexArray(envVAO);
+gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(env), gl.STATIC_DRAW);
+const aP = gl.getAttribLocation(E.p, 'aP'); gl.enableVertexAttribArray(aP); gl.vertexAttribPointer(aP, 4, gl.FLOAT, false, 0, 0);
+gl.bindVertexArray(null);
+
+const tex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, tex);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 0]));
+// depth is data, read texel by texel: without these settings the texture has no mipmaps for its
+// default filter, is incomplete, and every read returns 0 (all points at one depth)
+const depTex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, depTex);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 0]));
+
+/* accumulation target: overlapping views are averaged, which is what reconstruction does */
+let acc = null, accTex = null, accW = 0, accH = 0;
+function ensureAcc(w, hh) {
+  if (!floatOK || (w === accW && hh === accH)) return;
+  accW = w; accH = hh;
+  if (accTex) gl.deleteTexture(accTex);
+  accTex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, accTex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, w, hh, 0, gl.RGBA, gl.HALF_FLOAT, null);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  if (!acc) acc = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, acc); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, accTex, 0);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+}
+
+function persp(fy, asp, n, f) { const t = 1 / Math.tan(fy / 2), nf = 1 / (n - f); return [t / asp, 0, 0, 0, 0, t, 0, 0, 0, 0, (f + n) * nf, -1, 0, 0, 2 * f * n * nf, 0]; }
+function look(e, c, up) {
+  let zx = e[0] - c[0], zy = e[1] - c[1], zz = e[2] - c[2]; let l = Math.hypot(zx, zy, zz); zx /= l; zy /= l; zz /= l;
+  let xx = up[1] * zz - up[2] * zy, xy = up[2] * zx - up[0] * zz, xz = up[0] * zy - up[1] * zx; l = Math.hypot(xx, xy, xz); xx /= l; xy /= l; xz /= l;
+  const yx = zy * xz - zz * xy, yy = zz * xx - zx * xz, yz = zx * xy - zy * xx;
+  return [xx, yx, zx, 0, xy, yy, zy, 0, xz, yz, zz, 0, -(xx * e[0] + xy * e[1] + xz * e[2]), -(yx * e[0] + yy * e[1] + yz * e[2]), -(zx * e[0] + zy * e[1] + zz * e[2]), 1];
+}
+function mul(a, b) { const o = new Array(16); for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) o[c * 4 + r] = a[r] * b[c * 4] + a[4 + r] * b[c * 4 + 1] + a[8 + r] * b[c * 4 + 2] + a[12 + r] * b[c * 4 + 3]; return o; }
+const FOV = 34 * Math.PI / 180;
+const easeIO = (t) => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const lerp = (a, b, t) => a + (b - a) * t;
+const lerp3 = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+
+const st = { A: 0, B: 0, C: 0, D: 0, cam: 0, icons: 0, V: 0, vt: 0, Lay: 0, R: 0 };
+const ptr = { x: 0, y: 0, sx: 0, sy: 0, tx: 0, ty: 0, mx: 0, my: 0, ma: 0, inside: false };
+// device tilt on phones and tablets, from -1 to 1 around the way the device is being held
+const tilt = { on: false, x: 0, y: 0, x0: null, y0: null };
+let VP = null, P11 = 1, hasImage = false;
+const T0 = performance.now();
+// in full screen the introduction is hidden, so the scene is centred again
+// (the research page has no introduction over the stage, so there the scene stays centred)
+const wideLayout = () => !!q('.intro') && window.innerWidth >= 1180 && !root.classList.contains('is-fs');
+function camera(asp, now) {
+  // on wide screens the introduction sits on the left, so the scene is drawn off-axis to the right
+  const shift = wideLayout() ? 0.36 : 0;
+  const sh2 = stage.clientHeight || 1;
+  const frac = Math.min(0.42, Math.max(0.08, (sh2 - dialogEl.offsetTop + 14) / sh2));
+  const V = Math.max(2.1 * h / (1.95 - 2 * frac), 1.08 * h / (asp * (1 - shift)));
+  const fit = V / Math.tan(FOV / 2), lift = -V * (frac - 0.025);
+  const k = easeIO(st.cam);
+  const drift = reduce ? 0 : Math.sin(now / 5200) * 0.08;
+  const amp = 1 - 0.35 * k;
+  const ox = (ptr.sx * 1.05 + drift) * amp, oy = (ptr.sy * 0.62 + drift * 0.5) * amp;
+  // the oblique view stands beside the camera body, on its left, and looks through the lens array at
+  // the scene: light then travels left to right (object, lens array, sensor) as in the diagram beside
+  // the robot, and objects at different depths stand apart instead of lining up behind one another
+  const eObl = small ? [-3.6 + ox, 1.2 + oy, 3.0] : [-3.9 + ox, 1.25 + oy, 2.7];
+  // on phones the dialogue covers more of the stage, so the side view aims lower to lift the scene
+  const tObl = [0, small ? -0.5 : -0.1, -0.9];
+  const eFr = [ox * 0.9, lift + oy * 0.9, ZS + fit];
+  const proj = persp(FOV, asp, 0.05, 40);
+  proj[8] = -shift;
+  P11 = proj[5];
+  let eye = lerp3(eObl, eFr, k), at = lerp3(tObl, [0, lift, ZS], k);
+  const kr = easeIO(st.R);
+  if (kr > 0) {
+    // the result: the reconstruction plane head on, as large as the room between the stage top and the
+    // dialogue allows, and kept there while the slider moves it in depth
+    const zRec = scene.za + scene.zb * st.D, top = 44; // clear of the figure caption above
+    const room = 16;
+    const avail = Math.max(0.3, (dialogEl.offsetTop - room - top) / sh2);
+    // views shifted by D spread the reconstruction past the square by D * (NP - 1) / 2 lenses a side
+    const ext = W * (1 + Math.abs(st.D) * (NP - 1) / NL);
+    const Vh = Math.max(ext / (2 * avail), ext / (2 * asp * (1 - shift) * 0.92));
+    const Y = -(1 - 2 * (top + avail * sh2 / 2) / sh2) * Vh;
+    eye = lerp3(eye, [ox * 0.15, Y + oy * 0.15, zRec + Vh / Math.tan(FOV / 2)], kr);
+    at = lerp3(at, [0, Y, zRec], kr);
+  }
+  return mul(proj, look(eye, at, [0, 1, 0]));
+}
+function project(p, w, hh) {
+  const x = VP[0] * p[0] + VP[4] * p[1] + VP[8] * p[2] + VP[12], y = VP[1] * p[0] + VP[5] * p[1] + VP[9] * p[2] + VP[13], ww = VP[3] * p[0] + VP[7] * p[1] + VP[11] * p[2] + VP[15];
+  return [(x / ww * .5 + .5) * w, (1 - (y / ww * .5 + .5)) * hh];
+}
+const BG = [0x12 / 255, 0x15 / 255, 0x1c / 255];
+// spots for a plane's name, as (x, y) on the plane from -1 to 1: along the top edge from the right
+// corner, then along the bottom edge; a name at or right of the middle ends at its spot, others start there
+const SPOT_X = [1, 0.5, 0, -0.5, -1], SPOTS = [...SPOT_X.map((x) => [x, 1]), ...SPOT_X.map((x) => [x, -1])], robotEl = q('.robot');
+let spotK = 0, recK = 0;
+const tags = { obj: q('[data-tag=obj]'), lens: q('[data-tag=lens]'), sen: q('[data-tag=sen]'), rec: q('[data-tag=rec]') };
+const recLabel = tags.rec.textContent;
+function draw(now) {
+  const dpr = Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2);
+  const cw = Math.max(1, Math.round(stage.clientWidth * dpr)), ch = Math.max(1, Math.round(stage.clientHeight * dpr));
+  if (canvas.width !== cw || canvas.height !== ch) { canvas.width = cw; canvas.height = ch; }
+  ptr.sx += (ptr.x - ptr.sx) * 0.07; ptr.sy += (ptr.y - ptr.sy) * 0.07;
+  ptr.mx += (ptr.tx - ptr.mx) * 0.2; ptr.my += (ptr.ty - ptr.my) * 0.2;
+  ptr.ma += ((ptr.inside ? 1 : 0) - ptr.ma) * 0.08;
+  VP = camera(cw / ch, now);
+  ensureAcc(cw, ch);
+  const t = (now - T0) / 1000;
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  gl.viewport(0, 0, cw, ch);
+  gl.clearColor(BG[0], BG[1], BG[2], 1); gl.clearDepth(1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.useProgram(E.p); gl.uniformMatrix4fv(E.u.uVP, false, VP); gl.uniform1f(E.u.uT, t); gl.uniform1f(E.u.uPx, ch); gl.uniform1f(E.u.uP11, P11);
+  gl.uniform1f(E.u.uAsp, cw / ch); gl.uniform2f(E.u.uM, ptr.mx, ptr.my); gl.uniform1f(E.u.uMA, ptr.ma);
+  gl.bindVertexArray(envVAO); gl.drawArrays(gl.POINTS, 0, envCount);
+  gl.disable(gl.BLEND);
+  const vs = viewSel();
+  if (hasImage) {
+    // the solid meshes, fading as the capture starts
+    if (scene.kind === 'mesh') { const ma = 1 - Math.min(1, st.A * 2.5); if (ma > 0.002) drawMeshes(ma); }
+    // while the layers stand in 3D, near points hide far ones (depth test); once views overlap for
+    // reconstruction, they are averaged in a float buffer instead
+    const averaging = floatOK && (st.C > 0.001 || st.V > 0.001);
+    if (averaging) { gl.bindFramebuffer(gl.FRAMEBUFFER, acc); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE); }
+    else { gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LESS); }
+    gl.useProgram(P.p);
+    gl.uniform1f(P.u.uMesh, scene.kind === 'mesh' ? 1 : 0);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex); gl.uniform1i(P.u.uImg, 0);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, depTex); gl.uniform1i(P.u.uDep, 1); gl.activeTexture(gl.TEXTURE0);
+    gl.uniform1f(P.u.uReal, scene.real ? 1 : 0); gl.uniform1f(P.u.uDepV, scene.perView ? 1 : 0);
+    gl.uniform1f(P.u.uSky, scene.sky ? 1 : 0); gl.uniform1f(P.u.uGrow, scene.grow || 1);
+    gl.uniform1f(P.u.uDlo, scene.lo || 0); gl.uniform1f(P.u.uDhi, scene.hi || 0);
+    gl.uniform1f(P.u.uZa, scene.za); gl.uniform1f(P.u.uZb, scene.zb); gl.uniform1f(P.u.uRef, viewRef(scene));
+    gl.uniformMatrix4fv(P.u.uVP, false, VP);
+    gl.uniform1fv(P.u.uK, K);
+    gl.uniform1f(P.u.uNL, NL); gl.uniform1f(P.u.uNP, NP);
+    gl.uniform1f(P.u.uW, W); gl.uniform1f(P.u.uZs, ZS);
+    gl.uniform1f(P.u.uA, st.A); gl.uniform1f(P.u.uB, st.B); gl.uniform1f(P.u.uC, st.C); gl.uniform1f(P.u.uD, st.D);
+    gl.uniform1f(P.u.uPx, ch); gl.uniform1f(P.u.uP11, P11);
+    gl.uniform1f(P.u.uVw, st.V); gl.uniform2f(P.u.uVs, vs[0], vs[1]); gl.uniform1f(P.u.uAvg, averaging ? 1 : 0);
+    gl.bindVertexArray(emptyVAO); gl.drawArrays(gl.POINTS, 0, COUNT);
+    gl.disable(gl.BLEND); gl.disable(gl.DEPTH_TEST);
+    if (averaging) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      gl.useProgram(Q.p); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, accTex); gl.uniform1i(Q.u.uAcc, 0);
+      gl.uniform1f(Q.u.uOp, 1 - easeIO(st.Lay));
+      gl.bindVertexArray(emptyVAO); gl.drawArrays(gl.TRIANGLES, 0, 3);
+      gl.disable(gl.BLEND);
+    }
+    if (st.Lay > 0.001 && layTex) {
+      gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      gl.useProgram(Y.p); gl.uniformMatrix4fv(Y.u.uVP, false, VP);
+      gl.uniform1f(Y.u.uW, W); gl.uniform1f(Y.u.uZa, scene.za); gl.uniform1f(Y.u.uZb, scene.zb);
+      gl.uniform1f(Y.u.uK0, LYTRO.k0); gl.uniform1f(Y.u.uK1, LYTRO.k1); gl.uniform1f(Y.u.uN, LAYERS);
+      gl.uniform1f(Y.u.uNL, NL); gl.uniform1f(Y.u.uCols, LAYER_COLS); gl.uniform1f(Y.u.uFade, easeIO(st.Lay)); gl.uniform1f(Y.u.uDsel, st.D);
+      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, layTex); gl.uniform1i(Y.u.uLay, 0);
+      gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, layATex); gl.uniform1i(Y.u.uLayA, 1); gl.activeTexture(gl.TEXTURE0);
+      gl.bindVertexArray(emptyVAO); gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, LAYERS);
+      gl.disable(gl.BLEND);
+    }
+  }
+  const res = easeIO(st.R), fade = (1 - easeIO(st.cam)) * (1 - res), rc = hasImage ? easeIO(Math.min(1, st.C * 1.5)) : 0, zRec = scene.za + scene.zb * st.D;
+  gl.useProgram(LN.p); gl.uniformMatrix4fv(LN.u.uVP, false, VP); gl.uniform1f(LN.u.uZ, 0);
+  gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.bindVertexArray(lineVAO);
+  // the lens grid steps back while the reconstruction plane is shown through it
+  if (fade > 0.01) { gl.uniform4f(LN.u.uCol, 0.61, 0.53, 0.94, 0.42 * fade * (1 - 0.75 * rc)); gl.drawArrays(gl.LINES, 0, gridCount); }
+  if (res < 0.99) { gl.uniform4f(LN.u.uCol, 0.61, 0.53, 0.94, (0.28 + 0.3 * fade) * (1 - res)); gl.drawArrays(gl.LINES, gridCount, 8); }
+  if (rc > 0.01) {
+    // the same square outline, moved to the reconstruction plane
+    gl.uniform1f(LN.u.uZ, zRec - ZS); gl.uniform4f(LN.u.uCol, 0.79, 0.72, 1.0, 0.8 * rc);
+    gl.drawArrays(gl.LINES, gridCount, 8);
+  }
+  if (st.icons > 0.01 && hasImage) {
+    gl.bindVertexArray(iconVAO); gl.uniform1f(LN.u.uZ, 0);
+    gl.uniform4f(LN.u.uCol, 0.88, 0.84, 1.0, 0.85 * st.icons); gl.drawArrays(gl.LINES, 0, iconCount);
+  }
+  gl.disable(gl.BLEND); gl.bindVertexArray(null);
+  const sw = stage.clientWidth, shh = stage.clientHeight;
+  showViewMap(vs);
+  pxFrame(vs, sw, shh);
+  // the names of the object, lens array and sensor planes share one spot on their planes' top (or else
+  // bottom) edges, so from left to right they read in the order the light travels. The spot is the first
+  // where no name hides behind the robot, the ray diagram or the dialogue box or overlaps another name
+  // (which spot is free depends on the screen width); it is kept while it stays clear, so names do not jump
+  const sr = stage.getBoundingClientRect();
+  const boxes = [robotEl, raybox, lfzoom, laynote, pxCard, dialogEl].filter((el) => el && !el.hidden).map((el) => {
+    const r = el.getBoundingClientRect(); return [r.left - sr.left, r.top - sr.top, r.right - sr.left, r.bottom - sr.top];
+  });
+  const hit = (r, list) => list.some((b) => r[0] - 8 < b[2] && r[2] + 8 > b[0] && r[1] - 4 < b[3] && r[3] + 4 > b[1]);
+  const at = (el, z, k) => {
+    const [cx, cy] = SPOTS[k], s = project([cx * h, cy * h, z], sw, shh), w = el.offsetWidth, hh = el.offsetHeight;
+    const x0 = cx >= 0 ? s[0] - w : s[0], y0 = cy > 0 ? s[1] - 6 - hh : s[1] + 6;
+    return { el, s, k, r: [x0, y0, x0 + w, y0 + hh] };
+  };
+  const put = (p, o) => {
+    const [cx, cy] = SPOTS[p.k];
+    p.el.style.transform = `translate(${p.s[0]}px, ${p.s[1] + (cy > 0 ? -6 : 6)}px) translate(${cx >= 0 ? '-100%' : '0'}, ${cy > 0 ? '-100%' : '0'})`;
+    p.el.style.opacity = o.toFixed(2);
+  };
+  const group = [...(scene.kind === 'lytro' ? [] : [[tags.obj, scene.za + scene.zb * scene.targets[0].d]]), [tags.lens, 0], [tags.sen, ZS]];
+  if (scene.kind === 'lytro') tags.obj.style.opacity = '0';
+  if (fade > 0.01 && tags.lens.offsetWidth) {
+    let best = null;
+    for (const k of [spotK, ...SPOTS.keys()]) {
+      const ps = group.map(([el, z]) => at(el, z, k)), done = [];
+      let bad = 0;
+      for (const p of ps) { if (hit(p.r, boxes) || hit(p.r, done)) bad++; done.push(p.r); }
+      if (!best || bad < best.bad) best = { k, ps, bad };
+      if (!bad) break;
+    }
+    // where no spot is clear for all three (narrow screens), a name that would hide behind a box or
+    // another name is left out rather than drawn half covered
+    spotK = best.k;
+    const shown = [];
+    best.ps.forEach((p, i) => {
+      const ok = !hit(p.r, boxes) && !hit(p.r, shown);
+      if (ok) shown.push(p.r);
+      put(p, ok ? (p.el === tags.obj ? fade * (1 - rc) : fade) : 0);
+    });
+  } else group.forEach(([el]) => { el.style.opacity = '0'; });
+  if (fade * rc > 0.01 && tags.rec.offsetWidth) {
+    let p = null;
+    for (const k of [recK, ...SPOTS.keys()]) { p = at(tags.rec, zRec, k); if (!hit(p.r, boxes)) break; }
+    recK = p.k; put(p, hit(p.r, boxes) ? 0 : fade * rc);
+  } else tags.rec.style.opacity = '0';
+  root.classList.toggle('pickable', hasImage && !busy && st.C > 0.99 && st.Lay < 0.5);
+  Face.frame(now);
+}
+/* which view step 2 shows: it starts at view HI and circles the centre; after the step is over
+   the pointer chooses (left-right and up-down over the stage) */
+const HI = [6, 3], VC = (NP - 1) / 2;
+let viewDrive = false;
+const vsNow = [HI[0], HI[1]];
+function viewSel() {
+  let tx, ty;
+  if (viewDrive && ptr.inside) {
+    tx = VC + Math.max(-1, Math.min(1, ptr.tx * 1.15)) * VC; ty = VC - Math.max(-1, Math.min(1, ptr.ty * 1.15)) * VC;
+  } else if (viewDrive && tilt.on) {
+    tx = VC + Math.max(-1, Math.min(1, tilt.x * 1.15)) * VC; ty = VC - Math.max(-1, Math.min(1, tilt.y * 1.15)) * VC;
+  } else {
+    const a0 = Math.atan2(HI[1] - VC, HI[0] - VC), r = Math.hypot(HI[0] - VC, HI[1] - VC), a = a0 + st.vt * Math.PI * 2;
+    tx = VC + r * Math.cos(a); ty = VC + r * Math.sin(a);
+  }
+  vsNow[0] += (tx - vsNow[0]) * (viewDrive ? 0.25 : 1); vsNow[1] += (ty - vsNow[1]) * (viewDrive ? 0.25 : 1);
+  return vsNow;
+}
+const vmap = q('.vmap'), vcells = [];
+if (vmap) for (let i = 0; i < NP * NP; i++) vcells.push(vmap.appendChild(document.createElement('i')));
+let vmapOn = -2;
+function showViewMap(vs) {
+  if (!vmap) return;
+  const on = st.V > 0.5 && st.C < 0.3 ? Math.round(vs[1]) * NP + Math.round(vs[0]) : -1;
+  if (on === vmapOn) return;
+  if (vmapOn >= 0) vcells[vmapOn].className = '';
+  if (on >= 0) vcells[on].className = 'on';
+  vmap.hidden = on < 0; vmapOn = on;
+}
+/* ================= the finger and the moon ================= */
+/* While a view fills the sensor it is shown lined up on a plane behind the farthest object (uRef above),
+   where the far object shifts a quarter as much as the near one: like the eyes holding the moon still while
+   a finger before them jumps. During the views moment a card in the corner shows that everyday version,
+   driven by the view on show (vsNow), so the finger, the moon and the eye move in step with the scene, and
+   two labels point at the near and the far object. With reduced motion the card stands still and shows
+   both ends of the move. */
+const RHO = 0.25;
+function viewRef(sc) {
+  const n = sc.targets[0].d, f = sc.targets[sc.targets.length - 1].d;
+  return (f - RHO * n) / (1 - RHO);
+}
+const pxCard = q('.pxcard'), pxG = {}, mvTags = { near: q('[data-mv=near]'), far: q('[data-mv=far]') };
+if (pxCard) for (const k of ['finger', 'moon', 'eye']) pxG[k] = pxCard.querySelector(`[data-px=${k}]`);
+// the view's travel radius, and how far (in the card's units) the finger and the eye move at that radius
+const PX_R = Math.hypot(HI[0] - VC, HI[1] - VC), PX_A = 30, PX_E = 14, PX_EY = 5;
+// in the card the moon is as good as infinitely far, so it barely moves (the far object in the scene, nearer, moves more)
+const PX_MOON = 0.03;
+let pxOn = false, pxAnchors = null;
+function parallax(on) {
+  if (!pxCard || pxOn === on) return;
+  pxOn = on;
+  pxCard.classList.remove('on'); pxCard.classList.toggle('still', reduce);
+  pxCard.hidden = !on;
+  if (on) { void pxCard.offsetWidth; pxCard.classList.add('on'); }
+  else Object.values(mvTags).forEach((el) => { if (el) el.style.opacity = '0'; });
+  request();
+}
+const tr = (el, x, y) => { if (el) el.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`); };
+function pxFrame(vs, sw, shh) {
+  if (!pxOn) return;
+  // the view's offset from the centre plays the head's move: the near finger shifts against it, the far
+  // moon a quarter as much (up and down at half the size, so the finger stays in the picture)
+  const ox = reduce ? PX_R : vs[0] - VC, oy = reduce ? 0 : vs[1] - VC;
+  const fx = -ox / PX_R * PX_A, fy = -oy / PX_R * PX_A * 0.5;
+  tr(pxG.finger, fx, fy); tr(pxG.moon, fx * PX_MOON, fy * PX_MOON); tr(pxG.eye, ox / PX_R * PX_E, oy / PX_R * PX_EY);
+  // the labels follow the near and the far object in the view on show (lens units, shifted as uRef does)
+  const k = pxAnchors ? Math.min(1, st.V) * Math.max(0, 1 - st.C * 4) : 0, ref = viewRef(scene) * easeIO(Math.min(1, st.V));
+  for (const key of ['near', 'far']) {
+    const el = mvTags[key], a = pxAnchors && pxAnchors[key];
+    if (!el) continue;
+    if (!a || k < 0.01) { el.style.opacity = '0'; continue; }
+    const nx = (a.x + (a.d - ref) * (vs[0] - VC) + 0.5) / NL, ny = (a.y + (a.d - ref) * (vs[1] - VC) + 0.5) / NL;
+    const p = project([(nx - 0.5) * W, (0.5 - ny) * W, ZS], sw, shh);
+    el.style.transform = key === 'near'
+      ? `translate(${p[0].toFixed(1)}px, ${(p[1] - 20).toFixed(1)}px) translate(-50%, -100%)`
+      : `translate(${(p[0] + 20).toFixed(1)}px, ${p[1].toFixed(1)}px) translate(0, -50%)`;
+    el.style.opacity = k.toFixed(2);
+  }
+}
+/* where the near and the far object stand, from the depth of the central view (split halfway between the
+   first and the last target): the top of the near one and the right edge of the far one, moved back to
+   zero shift (the central view sees a point at depth d moved by d * (v - VC) lenses) */
+function findAnchors() {
+  pxAnchors = null;
+  if (!depA || scene.kind === 'lytro' || depA.w !== NL * NP) return;
+  const v = Math.floor(VC), uo = v - VC, n0 = scene.targets[0].d, mid = (n0 + scene.targets[scene.targets.length - 1].d) / 2;
+  const o = [0, 1].map(() => ({ n: 0, x: 0, d: 0, right: -1, ry: 0 })), colTop = new Array(NL).fill(NL);
+  for (let y = 0; y < NL; y++) for (let x = 0; x < NL; x++) {
+    const dz = depA.data[((v * NL + y) * depA.w + v * NL + x) * 4] / 255;
+    if (dz >= 0.998) continue;
+    const d = scene.lo + (scene.hi - scene.lo) * dz, far = d >= mid, a = o[far ? 1 : 0];
+    a.n++; a.x += x; a.d += d;
+    if (far && x > a.right) { a.right = x; a.ry = y; }
+    if (!far && y < colTop[x]) colTop[x] = y;
+  }
+  if (o[0].n < 12 || o[1].n < 12) return;
+  const dn = o[0].d / o[0].n, df = o[1].d / o[1].n, cx = Math.round(o[0].x / o[0].n);
+  // the top of the near object over its centre (or the nearest column that has it)
+  let tx = -1;
+  for (let r = 0; r < NL && tx < 0; r++) for (const c of [cx - r, cx + r]) if (c >= 0 && c < NL && colTop[c] < NL) { tx = c; break; }
+  if (tx < 0) return;
+  pxAnchors = {
+    near: { x: tx - dn * uo, y: colTop[tx] - dn * uo, d: dn },
+    far: { x: o[1].right - df * uo, y: o[1].ry - df * uo, d: df }
+  };
+}
+let running = false, visible = true, raf = 0, lastPoke = 0;
+// with nothing moving for this long (no tween, pointer, tilt or resize), the scene stops drawing until the
+// next change, so an idle page does not keep the GPU busy; the robot's face keeps blinking on a timer
+const IDLE_MS = 5000;
+function loop(now) {
+  raf = 0; draw(now);
+  if (running && visible && !document.hidden && now - lastPoke < IDLE_MS) raf = requestAnimationFrame(loop);
+}
+function request() { lastPoke = performance.now(); if (!raf) raf = requestAnimationFrame(loop); }
+setInterval(() => { if (!raf && visible && !document.hidden) Face.frame(performance.now()); }, 100);
+function start() { if (reduce) { request(); return; } running = true; request(); }
+// the dialogue box's height sets the camera framing and the link above it, so a longer line redraws
+const resized = new ResizeObserver(() => request()); resized.observe(stage); resized.observe(dialogEl);
+new IntersectionObserver((es) => { visible = es[0].isIntersecting; if (visible) start(); }).observe(stage);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) start(); });
+window.addEventListener('pointermove', (e) => {
+  if (reduce) return;
+  ptr.x = e.clientX / window.innerWidth * 2 - 1; ptr.y = -(e.clientY / window.innerHeight * 2 - 1);
+  const r = canvas.getBoundingClientRect();
+  ptr.tx = (e.clientX - r.left) / r.width * 2 - 1; ptr.ty = -((e.clientY - r.top) / r.height * 2 - 1);
+  ptr.inside = ptr.tx > -1 && ptr.tx < 1 && ptr.ty > -1 && ptr.ty < 1;
+  stage.style.setProperty('--tx', (e.clientX - r.left) + 'px');
+  stage.style.setProperty('--ty', (e.clientY - r.top) + 'px');
+  stage.style.setProperty('--ta', ptr.inside ? '1' : '0');
+  Face.look(e.clientX, e.clientY);
+  request();
+});
+root.addEventListener('pointerleave', () => { ptr.inside = false; stage.style.setProperty('--ta', '0'); });
+
+/* ================= layers: which objects stand at which depth ================= */
+const NAMES = {
+  monkey: { ko: '원숭이 머리', jp: 'サルの頭', en: 'monkey head' },
+  torus: { ko: '원환체', jp: 'ドーナツ', en: 'torus' },
+  bush: { ko: '나뭇가지', jp: '手前の枝', en: 'branch' },
+  stop: { ko: '정지 표지판', jp: '止まれの標識', en: 'stop sign' },
+  building: { ko: '차와 건물', jp: '車と建物', en: 'cars and building' }
+};
+/* a scene says where focus can go: targets (depth d, name) from near to far, the slider range, and
+   how a depth maps to a distance in front of the lens array (z = za + zb * d) */
+/* Lytro sample (Stanford Lytro Light Field Archive, occlusions_26). The archive's decoded lenslet image
+   has 541 x 376 lenses with 14 x 14 pixels under each; 128 x 128 lenses are cut from it without
+   resampling and the central 8 x 8 pixels of each are used (phones: 2 x 2 lenses averaged). There is no
+   3D shape, so nothing is placed in space: the capture starts on the sensor. d: shift per view step
+   (lens units) of the three focus stops, where the 64 views agree best over the branch, the sign and the
+   cars behind. Layers: the planes of the plane sweep (k0 ... k1) drawn as the estimated depth layers;
+   depth along the stack is this shift (disparity), not metres. */
+const LYTRO = { 128: { d: [-0.5, 0.2, 0.6], k0: -1.2, k1: 1.2 }, 64: { d: [-0.2, 0.1, 0.3], k0: -0.6, k1: 0.6 } }[NL_REAL];
+const LAYERS = 25, LAYER_COLS = 5;
+const layerD = (k) => LYTRO.k0 + (LYTRO.k1 - LYTRO.k0) * k / (LAYERS - 1);
+function lytroScene() {
+  const d = LYTRO.d, names = [NAMES.bush, NAMES.stop, NAMES.building], span = d[2] - d[0];
+  const zNear = -K[0] * ZS, zFar = -K[2] * ZS, zb = (zFar - zNear) / span;
+  return { kind: 'lytro', real: true, nl: NL_REAL, targets: d.map((x, i) => ({ d: x, name: names[i] })),
+    dMin: LYTRO.k0, dMax: LYTRO.k1, za: zNear - zb * d[0], zb, tol: span * 0.06, point: [0.5, 0.5] };
+}
+/* Fallback when the mesh programs cannot be built: the pre-rendered Blender sample.
+   The ICCAS 2026 scene rendered from 8 x 8 cameras (the paper's script), with a depth
+   pass for every view. A camera array shifts near objects most; each view was shifted to line the
+   views up on a plane 0.28 m away, just in front of the monkey (as when refocusing there), and then
+   each object's dk is positive and grows with distance, as for a lens array: z = -NP * ZS * dk holds
+   exactly, so the light cone drawn from the point lands where its pixels are. At 64 lenses.
+   Only the two nearest objects are kept: the monkey head and the torus. The cube, cone and sphere behind
+   them (dk 0.93 and more) are turned into background when the sample loads (cut). lo and hi are the
+   depth map's encoding and stay as rendered. (Sliding the torus behind the monkey head does not work:
+   the views differ by under 3 px, so its hidden part is missing from every view and shows as a gap.) */
+const BLENDER = { lo: 0.3552, hi: 1.2, d: [0.3747, 0.7553], cut: 0.85, point: [0.768, 0.373], pointD: 0.3579 };
+function blenderScene() {
+  const names = [NAMES.monkey, NAMES.torus];
+  return { kind: 'blender', real: true, perView: true, nl: 64, targets: BLENDER.d.map((x, i) => ({ d: x, name: names[i] })),
+    sky: true, grow: 1.6, walk: [0, 1], dMin: 0.3, dMax: 0.9, za: 0, zb: -NP * ZS, tol: 0.025, lo: BLENDER.lo, hi: BLENDER.hi,
+    cut: BLENDER.cut, point: BLENDER.point, pointD: BLENDER.pointD };
+}
+/* ================= 3D sample: real meshes, captured in the browser ================= */
+/* Two meshes, a monkey head and a torus, stand in front of the lens array as solid objects, and the
+   capture is computed here. In this lab's pinhole model the pixel u under every lens looks along one
+   direction, so view u is an oblique parallel projection: lens position x_s = x / W + 1/2 + dk (u - c) / NL,
+   with dk = -z / (NP ZS) the shift per view step. Each of the NP x NP views is drawn into its tile of a
+   mosaic, with its depth (dk, scaled to lo ... hi) in a second target: the same views + depth the rest of
+   the lab reads for a rendered light field. */
+// the monkey head stands in front of the torus, a little to its left: it hides part of the torus both from
+// the lens array and from the side view the scene opens with
+const MESH = { lo: 0.15, hi: 1.05, d: [0.3, 0.85], sky: [16 / 255, 17 / 255, 40 / 255] };
+// as in the paper's scene: a key light from the upper right, in front of the objects, and a weaker fill from the left
+const MESH_LIGHT = (() => { const v = [0.5, 0.55, 0.65], n = Math.hypot(...v); return v.map((x) => x / n); })();
+const SHADE = 'vec3 shade(vec3 c, vec3 n, vec3 l){ vec3 m = normalize(n); return c * (.2 + .65 * max(dot(m, l), 0.) + .25 * max(dot(m, normalize(vec3(-.8, .15, .5))), 0.)); }';
+const MV = `#version 300 es
+layout(location = 0) in vec3 aPos; layout(location = 1) in vec3 aNrm;
+uniform mat4 uVP, uM; out vec3 vN;
+void main(){ vN = mat3(uM) * aNrm; gl_Position = uVP * (uM * vec4(aPos, 1.)); }`;
+const MF = `#version 300 es
+precision mediump float;
+uniform vec3 uCol, uL; uniform float uAlpha; in vec3 vN; out vec4 o;
+${SHADE}
+void main(){ o = vec4(shade(uCol, vN, uL), uAlpha); }`;
+const CV = `#version 300 es
+layout(location = 0) in vec3 aPos; layout(location = 1) in vec3 aNrm;
+uniform mat4 uM; uniform vec2 uUo; uniform float uNL, uW, uNPZS, uLo, uHi;
+out vec3 vN; out float vDz;
+void main(){
+  vec3 w = (uM * vec4(aPos, 1.)).xyz; vN = mat3(uM) * aNrm;
+  float dk = -w.z / uNPZS;
+  vDz = (dk - uLo) / (uHi - uLo);
+  gl_Position = vec4(2. * w.x / uW + 2. * dk * uUo.x / uNL, -2. * w.y / uW + 2. * dk * uUo.y / uNL, 2. * vDz - 1., 1.);
+}`;
+const CF = `#version 300 es
+precision highp float;
+uniform vec3 uCol, uL; in vec3 vN; in float vDz;
+layout(location = 0) out vec4 oCol; layout(location = 1) out vec4 oDep;
+${SHADE}
+void main(){ oCol = vec4(shade(uCol, vN, uL), 1.); float z = clamp(vDz, 0., .99); oDep = vec4(z, z, z, 1.); }`;
+// the views are rendered SS times larger and averaged down, so their edges are smooth as in a render;
+// a texel's depth is the nearest surface among its samples
+const SS = 3;
+const DF = `#version 300 es
+precision highp float;
+uniform sampler2D uC, uZ; uniform int uSS;
+layout(location = 0) out vec4 oCol; layout(location = 1) out vec4 oDep;
+void main(){
+  ivec2 p = ivec2(gl_FragCoord.xy) * uSS; vec3 c = vec3(0.); float z = 1.;
+  for (int j = 0; j < 4; j++) for (int i = 0; i < 4; i++) {
+    if (i >= uSS || j >= uSS) continue;
+    c += texelFetch(uC, p + ivec2(i, j), 0).rgb; z = min(z, texelFetch(uZ, p + ivec2(i, j), 0).r);
+  }
+  oCol = vec4(c / float(uSS * uSS), 1.); oDep = vec4(z, z, z, 1.);
+}`;
+let MP = null, CP = null, DP = null;
+try { MP = prog(MV, MF); CP = prog(CV, CF); DP = prog(QV, DF); } catch (err) { MP = null; }
+function torusGeo(R0, r, nu, nv) {
+  const out = [], at = (i, j) => {
+    const a = i / nu * 2 * Math.PI, b = j / nv * 2 * Math.PI, ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b);
+    return [(R0 + r * cb) * ca, (R0 + r * cb) * sa, r * sb, cb * ca, cb * sa, sb];
+  };
+  for (let i = 0; i < nu; i++) for (let j = 0; j < nv; j++) {
+    const a = at(i, j), b = at(i + 1, j), c = at(i + 1, j + 1), d = at(i, j + 1);
+    out.push(...a, ...b, ...c, ...a, ...c, ...d);
+  }
+  return new Float32Array(out);
+}
+function sphereGeo(r, n) {
+  const out = [], at = (i, j) => {
+    const t = i / n * Math.PI, f = j / n * 2 * Math.PI, x = Math.sin(t) * Math.cos(f), y = Math.cos(t), z = Math.sin(t) * Math.sin(f);
+    return [r * x, r * y, r * z, x, y, z];
+  };
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+    const a = at(i, j), b = at(i + 1, j), c = at(i + 1, j + 1), d = at(i, j + 1);
+    out.push(...a, ...b, ...c, ...a, ...c, ...d);
+  }
+  return new Float32Array(out);
+}
+function meshVAO(data, idx) {
+  const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);
+  gl.enableVertexAttribArray(1); gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 24, 12);
+  if (idx) { gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW); }
+  gl.bindVertexArray(null);
+  return { vao, count: idx ? idx.length : data.length / 6, indexed: !!idx };
+}
+const drawGeo = (g) => { gl.bindVertexArray(g.vao); if (g.indexed) gl.drawElements(gl.TRIANGLES, g.count, gl.UNSIGNED_SHORT, 0); else gl.drawArrays(gl.TRIANGLES, 0, g.count); };
+/* the monkey head and the torus of the ICCAS 2026 scene (exported from the paper's Blender script, packed
+   by tools/lab_models.py): each object's rotation is in its vertices, in metres; the lab places them */
+let modelLoad = null;
+const loadModels = () => modelLoad || (modelLoad = fetch('/img/lab-objects.bin').then((r) => (r.ok ? r.arrayBuffer() : null)).then(parseModels).catch(() => null));
+function parseModels(buf) {
+  if (!buf || buf.byteLength < 12 || String.fromCharCode(...new Uint8Array(buf, 0, 4)) !== 'LABM') return null;
+  const dv = new DataView(buf), n = dv.getUint32(8, true), al = (x) => (x + 3) & ~3, out = [];
+  let o = 12;
+  for (let k = 0; k < n; k++) {
+    const nv = dv.getUint32(o, true), ni = dv.getUint32(o + 4, true), sc = dv.getFloat32(o + 8, true); o += 12;
+    const p16 = new Int16Array(buf, o, nv * 3); o += al(nv * 6);
+    const n8 = new Int8Array(buf, o, nv * 3); o += al(nv * 3);
+    const idx = new Uint16Array(buf, o, ni); o += al(ni * 2);
+    const data = new Float32Array(nv * 6);
+    for (let i = 0; i < nv; i++) for (let c = 0; c < 3; c++) { data[i * 6 + c] = p16[i * 3 + c] / 32767 * sc; data[i * 6 + 3 + c] = n8[i * 3 + c] / 127; }
+    out.push({ data, idx });
+  }
+  return out.length >= 2 ? out : null;
+}
+// a model matrix: rotation about x, then about y, a uniform scale, then a move to t
+function placeAt(t, rx, ry, k) {
+  const cx = Math.cos(rx), sx = Math.sin(rx), cy = Math.cos(ry), sy = Math.sin(ry);
+  return [cy * k, 0, -sy * k, 0, sy * sx * k, cx * k, cy * sx * k, 0, sy * cx * k, -sx * k, cy * cx * k, 0, t[0], t[1], t[2], 1];
+}
+let meshObjs = null;
+// models: the paper's meshes, or null for stand-ins (a sphere and a torus) when the file cannot be loaded
+function meshObjects(models) {
+  if (meshObjs) return meshObjs;
+  const zOf = (dk) => -dk * NP * ZS;
+  // sizes as the paper's camera saw them: the monkey head at 0.396 m and the torus at 0.636 m, scaled by
+  // distance so they keep their apparent sizes (the lab's views are parallel projections)
+  const K = 6.36, near = [-0.25, 0.1, zOf(0.35)], far = [0.25, -0.1, zOf(MESH.d[1])], red = [0.72, 0.33, 0.27], cyan = [0.33, 0.7, 0.84];
+  meshObjs = models ? [
+    { geo: meshVAO(models[0].data, models[0].idx), m: placeAt(near, 0, 0, K / 0.396), col: red },
+    { geo: meshVAO(models[1].data, models[1].idx), m: placeAt(far, 0, 0, K / 0.636), col: cyan }
+  ] : [
+    { geo: meshVAO(sphereGeo(0.28, 48)), m: placeAt(near, 0, 0, 1), col: red },
+    { geo: meshVAO(torusGeo(0.4, 0.13, 96, 32)), m: placeAt(far, 0.4, -0.6, 1), col: cyan }
+  ];
+  return meshObjs;
+}
+function meshScene() {
+  return { kind: 'mesh', real: true, perView: true, nl: 64, targets: [{ d: MESH.d[0], name: NAMES.monkey }, { d: MESH.d[1], name: NAMES.torus }],
+    sky: true, grow: 1.6, walk: [0, 1], dMin: 0.2, dMax: 1.0, za: 0, zb: -NP * ZS, tol: 0.03, lo: MESH.lo, hi: MESH.hi };
+}
+let capFBO = null, outFBO = null;
+function rawTex(t, w, hh) {
+  gl.bindTexture(gl.TEXTURE_2D, t);
+  for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.NEAREST], [gl.TEXTURE_MAG_FILTER, gl.NEAREST], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, hh, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+}
+// the lens array capture: every view rendered into its tile of the mosaic, colour and depth together
+function captureMeshes(sc) {
+  const S = NL * NP, B = S * SS, T = NL * SS, objs = meshObjects(), c = (NP - 1) / 2;
+  for (const t of [tex, depTex]) { gl.bindTexture(gl.TEXTURE_2D, t); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, S, S, 0, gl.RGBA, gl.UNSIGNED_BYTE, null); }
+  if (!capFBO) capFBO = { fb: gl.createFramebuffer(), col: gl.createTexture(), dep: gl.createTexture(), rb: gl.createRenderbuffer() };
+  rawTex(capFBO.col, B, B); rawTex(capFBO.dep, B, B);
+  gl.bindRenderbuffer(gl.RENDERBUFFER, capFBO.rb); gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, B, B);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, capFBO.fb);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, capFBO.col, 0);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT1, gl.TEXTURE_2D, capFBO.dep, 0);
+  gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, capFBO.rb);
+  gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.COLOR_ATTACHMENT1]);
+  gl.viewport(0, 0, B, B);
+  gl.clearBufferfv(gl.COLOR, 0, [...MESH.sky, 1]); gl.clearBufferfv(gl.COLOR, 1, [1, 1, 1, 1]);
+  gl.clearDepth(1); gl.clear(gl.DEPTH_BUFFER_BIT);
+  gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LESS); gl.disable(gl.BLEND);
+  gl.useProgram(CP.p);
+  gl.uniform1f(CP.u.uNL, NL); gl.uniform1f(CP.u.uW, W); gl.uniform1f(CP.u.uNPZS, NP * ZS);
+  gl.uniform1f(CP.u.uLo, sc.lo); gl.uniform1f(CP.u.uHi, sc.hi); gl.uniform3fv(CP.u.uL, MESH_LIGHT);
+  for (let vy = 0; vy < NP; vy++) for (let vx = 0; vx < NP; vx++) {
+    gl.viewport(vx * T, vy * T, T, T); gl.uniform2f(CP.u.uUo, vx - c, vy - c);
+    for (const o of objs) {
+      gl.uniformMatrix4fv(CP.u.uM, false, o.m); gl.uniform3fv(CP.u.uCol, o.col);
+      drawGeo(o.geo);
+    }
+  }
+  gl.bindVertexArray(null); gl.disable(gl.DEPTH_TEST);
+  // averaged down into the mosaic the lab reads
+  if (!outFBO) outFBO = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, outFBO);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT1, gl.TEXTURE_2D, depTex, 0);
+  gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.COLOR_ATTACHMENT1]);
+  gl.viewport(0, 0, S, S);
+  gl.useProgram(DP.p);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, capFBO.col); gl.uniform1i(DP.u.uC, 0);
+  gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, capFBO.dep); gl.uniform1i(DP.u.uZ, 1);
+  gl.uniform1i(DP.u.uSS, SS);
+  gl.bindVertexArray(emptyVAO); gl.drawArrays(gl.TRIANGLES, 0, 3); gl.bindVertexArray(null);
+  gl.activeTexture(gl.TEXTURE0);
+  // the depth, also on the CPU for the clicks that pick a depth
+  gl.readBuffer(gl.COLOR_ATTACHMENT1);
+  const data = new Uint8Array(S * S * 4); gl.readPixels(0, 0, S, S, gl.RGBA, gl.UNSIGNED_BYTE, data);
+  depA = { w: S, data };
+  gl.readBuffer(gl.COLOR_ATTACHMENT0); gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  hasImage = true; request();
+}
+function drawMeshes(alpha) {
+  gl.useProgram(MP.p); gl.uniformMatrix4fv(MP.u.uVP, false, VP); gl.uniform3fv(MP.u.uL, MESH_LIGHT); gl.uniform1f(MP.u.uAlpha, alpha);
+  gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LESS);
+  if (alpha < 1) { gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); }
+  for (const o of meshObjects()) {
+    gl.uniformMatrix4fv(MP.u.uM, false, o.m); gl.uniform3fv(MP.u.uCol, o.col);
+    drawGeo(o.geo);
+  }
+  gl.bindVertexArray(null); gl.disable(gl.BLEND); gl.disable(gl.DEPTH_TEST);
+}
+let scene = blenderScene();
+
+/* ================= timeline ================= */
+let token = 0;
+// every interruption (a step button, a pick, the slider, a new sample) cuts the story: running tweens stop,
+// "Next" goes away and the finger-and-moon card hides
+function cut() { token++; disarm(); parallax(false); return token; }
+const wait = (ms) => new Promise((r) => setTimeout(r, reduce ? 0 : ms));
+/* The story moves on when the visitor says so. Inside a beat the animation plays on its own while the line
+   types out; then "Next" shows in the subtitle box and the story waits. Next, Enter, Space or → anywhere in
+   the lab, or a click on the picture, moves it on. Once the reconstruction can be clicked to focus (step 3,
+   crosshair cursor), a click on the picture picks the focus instead, and only Next or a key moves the story
+   on. A press while a line is still typing shows the whole line. */
+const nextBtn = q('[data-next]');
+let nextGo = null, parked = false, startedAt = -1e9;
+function disarm() {
+  nextGo = null; root.classList.remove('can-next');
+  if (nextBtn.hidden) return;
+  // a keyboard visitor's focus would drop to the page as the button hides: it waits on the stage instead,
+  // and goes back to the button when that shows again
+  if (document.activeElement === nextBtn) { parked = true; stage.focus({ preventScroll: true }); }
+  nextBtn.hidden = true;
+}
+// at least half of the stage on screen: only then do keys move the story or focus come back to Next
+function onScreen() {
+  const r = stage.getBoundingClientRect();
+  return Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0) >= r.height / 2;
+}
+function arm(my, go) {
+  if (my !== token) return;
+  nextGo = go; nextBtn.hidden = false; root.classList.add('can-next');
+  // only a focus parked by disarm comes back, and only with the lab on screen
+  if (parked && document.activeElement === stage && onScreen()) nextBtn.focus({ preventScroll: true });
+  parked = false;
+}
+function advance() {
+  // the press that started the story does not also skip its first line
+  if (performance.now() - startedAt < 600) return;
+  if (finishLine() || !nextGo) return;
+  const go = nextGo; Snd.ui(); disarm(); go();
+}
+// one beat: a line and the animation that goes with it. It resolves once the visitor moves on; a cut story
+// leaves it waiting, and nothing keeps it
+function beat(my, line, anim) {
+  return new Promise((res) => {
+    let left = 2;
+    const one = () => { if (--left === 0) arm(my, () => res(true)); };
+    sayLine(typeof line === 'string' ? (typeof L[line] === 'function' ? L[line]() : L[line]) : line, one);
+    Promise.resolve(anim && anim()).then(() => { if (my === token) one(); });
+  });
+}
+// a line in free play (a pick, the slider, the layers): until the closing lines were heard, Next leads there
+// (freeMy: the latest free action, so a line still typing from the one before hands its Next to it)
+let heardEnd = false, freeMy = -1;
+function freeLine(line, my) { freeMy = my; sayLine(line, () => offerEnd(freeMy)); }
+function offerEnd(my) { if (!heardEnd) arm(my, () => ending(my)); }
+/* the result view turns on its own clock: steps and clicks set st.R directly and bump rSeq to stop it */
+let rSeq = 0;
+function turnR(to, ms) {
+  const me = ++rSeq, from = st.R, t0 = performance.now();
+  if (reduce || ms <= 0) { st.R = to; request(); return Promise.resolve(); }
+  return new Promise((res) => {
+    const tick = (now) => {
+      if (me !== rSeq) return res();
+      const k = Math.min(1, (now - t0) / ms);
+      st.R = from + (to - from) * k; request();
+      if (k < 1) requestAnimationFrame(tick); else res();
+    };
+    requestAnimationFrame(tick);
+  });
+}
+function tween(key, to, ms, my) {
+  return new Promise((res) => {
+    const from = st[key];
+    if (reduce || ms <= 0) { st[key] = to; request(); return res(); }
+    const t0 = performance.now();
+    const tick = (now) => {
+      if (my !== token) return res();
+      const k = Math.min(1, (now - t0) / ms);
+      st[key] = from + (to - from) * (key === 'D' ? easeIO(k) : k);
+      request();
+      if (k < 1) requestAnimationFrame(tick); else res();
+    };
+    requestAnimationFrame(tick);
+  });
+}
+const depth = q('[data-depth]'), depthOut = q('[data-depth-out]');
+const focusLabel = { ko: (n) => `${n} 초점`, en: (n) => `Focus: ${n}`, ja: (n) => `ピント：${n}` }[lang];
+function focusedLayer() {
+  return scene.targets.findIndex((t) => Math.abs(st.D - t.d) < scene.tol);
+}
+function setDepthUI(enabled) {
+  const pct = Math.round((st.D - scene.dMin) / (scene.dMax - scene.dMin) * 100), k = focusedLayer();
+  depth.disabled = !enabled; depth.value = String(pct);
+  const name = k >= 0 ? scene.targets[k].name[lang === 'ja' ? 'jp' : lang] : '';
+  depthOut.textContent = enabled ? (k >= 0 ? focusLabel(name) : pct + '%') : '–';
+  depth.setAttribute('aria-valuetext', k >= 0 ? focusLabel(name) : `${pct}%`);
+  tags.rec.textContent = k >= 0 ? `${recLabel} · ${name}` : recLabel;
+}
+/* while reconstructing, the camera stands partway between the side view and the frontal one,
+   so the plane can be seen moving into the depth of the scene */
+const CAM_REC = 0.3;
+// after the result: the done line, then the hand-off to the work section, then how to play with it (the
+// last line, with nothing after it)
+async function ending(my) {
+  await beat(my, 'done');
+  heardEnd = true;
+  await beat(my, 'outro');
+  say('idle');
+  return true;
+}
+function finish() { root.classList.add('played'); }
+function unfinish() { root.classList.remove('played'); }
+const stepBtns = [...root.querySelectorAll('[data-step]')];
+function steps(n) {
+  stepBtns.forEach((b) => {
+    const k = Number(b.dataset.step);
+    b.setAttribute('aria-pressed', String(k === n));
+    b.classList.toggle('done', k < n);
+  });
+  // the bar shows the distance slider and its actions only in step 3 (see .lab[data-step] in site.css)
+  root.dataset.step = String(n);
+}
+/* the panel beside the introduction: three tiny cameras and the pictures they take */
+const raybox = q('.raybox');
+/* step 1 of the real capture: the whole photo (each lens's central 8 x 8 averaged), then the 128 x 128
+   lenses used, then the decoded lenslet image itself at 14 pixels per lens, with one lens's central
+   8 x 8 outlined: those are the 8 x 8 views */
+const lfzoom = q('.lfzoom'), lfc = lfzoom && lfzoom.querySelector('canvas');
+const LFZ = { all: [541, 376], crop: [88, 60, 128], zoom: [88 + 26, 60 + 34, 32, 24] };
+let lfImgs = null, lfRaf = 0;
+function lfDraw(t) {
+  const g = lfc.getContext('2d'), Wc = lfc.width, Hc = lfc.height, asp = Wc / Hc;
+  const [zx, zy, zw, zh] = LFZ.zoom, [cx0, cy0, cn] = LFZ.crop;
+  const fit = (x, y, w, h) => { const ww = Math.max(w, h * asp); return [x + w / 2 - ww / 2, y + h / 2 - ww / asp / 2, ww]; };
+  // the lens outlined at the end (one whose small image shows an edge of the sign letters behind the
+  // branch), and a view about ten lenses wide around it
+  const lx = zx + 9, ly = zy + 15, R2 = [lx + .5 - 5, ly + .5 - 5 / asp, 10];
+  const R0 = fit(0, 0, LFZ.all[0], LFZ.all[1]), R1 = fit(cx0, cy0, cn, cn);
+  const e = (a, b, k) => a.map((v, i) => v + (b[i] - v) * easeIO(Math.min(1, Math.max(0, k))));
+  const R = t < .45 ? e(R0, R1, (t - .1) / .3) : e(R1, R2, (t - .5) / .3);
+  const [x, y, w] = R, h = w / asp, s = Wc / w;
+  g.fillStyle = '#0B0D13'; g.fillRect(0, 0, Wc, Hc);
+  g.imageSmoothingEnabled = true; g.drawImage(lfImgs.photo, x, y, w, h, 0, 0, Wc, Hc);
+  // the decoded lenslet image takes over once single lenses are a few pixels wide
+  const k = Math.min(1, Math.max(0, (70 - w) / 30));
+  if (k > 0) {
+    g.globalAlpha = k; g.imageSmoothingEnabled = false;
+    g.drawImage(lfImgs.zoom, 0, 0, zw * 14, zh * 14, (zx - x) * s, (zy - y) * s, zw * s, zh * s);
+    g.globalAlpha = 1;
+  }
+  g.lineWidth = 2; g.strokeStyle = '#e3c27f';
+  if (w > 150) g.strokeRect((cx0 - x) * s, (cy0 - y) * s, cn * s, cn * s);
+  else if (w > 16) g.strokeRect((R2[0] - x) * s, (R2[1] - y) * s, 10 * s, 10 / asp * s);
+  if (t > .85) {
+    // one lens: its 14 x 14 pixels, and the central 8 x 8 that are used
+    const a = Math.min(1, (t - .85) / .08);
+    g.globalAlpha = a; g.lineWidth = 1.5; g.strokeStyle = '#ece8df';
+    g.strokeRect((lx - x) * s, (ly - y) * s, s, s);
+    g.strokeStyle = '#e3c27f'; g.lineWidth = 2;
+    g.strokeRect((lx - x + 3 / 14) * s, (ly - y + 3 / 14) * s, 8 / 14 * s, 8 / 14 * s);
+    g.globalAlpha = 1;
+  }
+}
+const LFZ_MS = 6800;
+function lfZoom(on) {
+  if (!lfzoom) return;
+  cancelAnimationFrame(lfRaf);
+  lfzoom.hidden = !(on && lfImgs);
+  if (lfzoom.hidden) return;
+  const t0 = performance.now(), dur = LFZ_MS;
+  const frame = (now) => {
+    const t = reduce ? 1 : Math.min(1, (now - t0) / dur);
+    lfDraw(t);
+    if (t < 1 && !lfzoom.hidden) lfRaf = requestAnimationFrame(frame);
+  };
+  lfRaf = requestAnimationFrame(frame);
+}
+/* step 3 of the real capture: the estimated depth layers, switched on by the visitor */
+const layBtn = q('[data-layers-btn]'), laynote = q('[data-laynote]');
+function layersOff() {
+  st.Lay = 0;
+  if (layBtn) layBtn.setAttribute('aria-pressed', 'false');
+  if (laynote) laynote.hidden = true;
+}
+if (layBtn) layBtn.addEventListener('click', async () => {
+  Snd.ui(); const my = cut(), on = layBtn.getAttribute('aria-pressed') !== 'true';
+  layBtn.setAttribute('aria-pressed', String(on)); laynote.hidden = !on;
+  lfZoom(false); viewDrive = false; st.A = 1; st.B = 1; st.V = 0;
+  if (st.C < 1) { steps(3); await tween('C', 1, 900, my); if (my !== token) return; }
+  setDepthUI(true); finish();
+  if (on) freeLine(L.lay, my); else { freeMy = my; offerEnd(my); }
+  await Promise.all([tween('Lay', on ? 1 : 0, 1300, my), tween('cam', on ? 0.02 : CAM_REC, 1300, my), turnR(on ? 0 : 1, 1300)]);
+});
+/* click-to-focus on the reconstruction of the real capture: the click is followed onto the plane in
+   view, and the focus goes to the layer where the 64 views agree best in the 5 x 5 lenses around it
+   (the same agreement as the depth layers); every pixel shown is still an average of captured views */
+function inv4(m) {
+  const a = m, o = new Array(16);
+  const b00 = a[0] * a[5] - a[1] * a[4], b01 = a[0] * a[6] - a[2] * a[4], b02 = a[0] * a[7] - a[3] * a[4], b03 = a[1] * a[6] - a[2] * a[5];
+  const b04 = a[1] * a[7] - a[3] * a[5], b05 = a[2] * a[7] - a[3] * a[6], b06 = a[8] * a[13] - a[9] * a[12], b07 = a[8] * a[14] - a[10] * a[12];
+  const b08 = a[8] * a[15] - a[11] * a[12], b09 = a[9] * a[14] - a[10] * a[13], b10 = a[9] * a[15] - a[11] * a[13], b11 = a[10] * a[15] - a[11] * a[14];
+  const det = 1 / (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
+  o[0] = (a[5] * b11 - a[6] * b10 + a[7] * b09) * det; o[1] = (a[2] * b10 - a[1] * b11 - a[3] * b09) * det;
+  o[2] = (a[13] * b05 - a[14] * b04 + a[15] * b03) * det; o[3] = (a[10] * b04 - a[9] * b05 - a[11] * b03) * det;
+  o[4] = (a[6] * b08 - a[4] * b11 - a[7] * b07) * det; o[5] = (a[0] * b11 - a[2] * b08 + a[3] * b07) * det;
+  o[6] = (a[14] * b02 - a[12] * b05 - a[15] * b01) * det; o[7] = (a[8] * b05 - a[10] * b02 + a[11] * b01) * det;
+  o[8] = (a[4] * b10 - a[5] * b08 + a[7] * b06) * det; o[9] = (a[1] * b08 - a[0] * b10 - a[3] * b06) * det;
+  o[10] = (a[12] * b04 - a[13] * b02 + a[15] * b00) * det; o[11] = (a[9] * b02 - a[8] * b04 - a[11] * b00) * det;
+  o[12] = (a[5] * b07 - a[4] * b09 - a[6] * b06) * det; o[13] = (a[0] * b09 - a[1] * b07 + a[2] * b06) * det;
+  o[14] = (a[13] * b01 - a[12] * b03 - a[14] * b00) * det; o[15] = (a[8] * b03 - a[9] * b01 + a[10] * b00) * det;
+  return o;
+}
+function unproject(m, x, y, z) {
+  const v = [0, 1, 2, 3].map((r) => m[r] * x + m[4 + r] * y + m[8 + r] * z + m[12 + r]);
+  return [v[0] / v[3], v[1] / v[3], v[2] / v[3]];
+}
+/* moving the focus to a picked depth; a pick during the walk through the depths ends the walk, and the
+   lab counts as finished, in the result view */
+function focusTo(d, line) {
+  const my = cut(); let moving = true;
+  Snd.focus(); freeLine(line, my);
+  if (!root.classList.contains('played')) { Face.set('happy'); finish(); }
+  if (st.R < 0.999) turnR(1, 1100);
+  tween('D', d, 900, my).then(() => { moving = false; if (my === token) setDepthUI(true); });
+  const tick = () => { if (moving && my === token) { setDepthUI(true); requestAnimationFrame(tick); } };
+  requestAnimationFrame(tick);
+}
+function pickLayer(sx, sy) {
+  let bk = 0, bs = -1, total = 0;
+  for (let k = 0; k < LAYERS; k++) {
+    const ox = (k % LAYER_COLS) * NL, oy = Math.floor(k / LAYER_COLS) * NL;
+    let sum = 0;
+    for (let j = -2; j <= 2; j++) for (let i = -2; i <= 2; i++) {
+      const x = Math.min(NL - 1, Math.max(0, sx + i)), y = Math.min(NL - 1, Math.max(0, sy + j));
+      sum += layA.data[((oy + y) * layA.w + ox + x) * 4];
+    }
+    total += sum;
+    if (sum > bs) { bs = sum; bk = k; }
+  }
+  // where the views match about equally at every depth (no texture), no plane can be chosen: say so
+  if (bs < 2 * total / LAYERS) { const my = cut(); Face.set('idle'); freeLine(L.flat, my); return; }
+  focusTo(layerD(bk), L.pickf);
+}
+/* the rendered scene has its depth: the median of the depth pass of the four central views in the
+   3 x 3 lenses around the click (the sky, where no surface is, left out), snapped to an object's depth
+   when it is that close */
+function pickDepth(sx, sy) {
+  const vals = [], c0 = Math.floor((NP - 1) / 2);
+  for (let vy = c0; vy <= c0 + 1; vy++) for (let vx = c0; vx <= c0 + 1; vx++)
+    for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) {
+      const x = Math.min(NL - 1, Math.max(0, sx + i)), y = Math.min(NL - 1, Math.max(0, sy + j));
+      const dz = depA.data[((vy * NL + y) * depA.w + vx * NL + x) * 4] / 255;
+      if (dz < 0.998) vals.push(dz);
+    }
+  if (vals.length < 12) { const my = cut(); Face.set('idle'); freeLine(L.empty, my); return; }
+  vals.sort((a, b) => a - b);
+  let d = scene.lo + (scene.hi - scene.lo) * vals[vals.length >> 1];
+  const near = scene.targets.reduce((b, t) => (Math.abs(t.d - d) < Math.abs(b.d - d) ? t : b));
+  const snap = Math.abs(near.d - d) < 0.04;
+  d = Math.min(scene.dMax, Math.max(scene.dMin, snap ? near.d : d));
+  focusTo(d, snap ? FOCUS[0](near.name) : L.pickb);
+}
+canvas.addEventListener('click', (e) => {
+  if (busy || st.C < 0.99 || st.Lay > 0.5 || !VP) return;
+  const r = canvas.getBoundingClientRect(), nx = (e.clientX - r.left) / r.width * 2 - 1, ny = 1 - (e.clientY - r.top) / r.height * 2;
+  const m = inv4(VP), p0 = unproject(m, nx, ny, -1), p1 = unproject(m, nx, ny, 1), zr = scene.za + scene.zb * st.D;
+  const u = (zr - p0[2]) / (p1[2] - p0[2]), X = p0[0] + (p1[0] - p0[0]) * u, Yw = p0[1] + (p1[1] - p0[1]) * u;
+  const sx = Math.floor((X / W + .5) * NL), sy = Math.floor((.5 - Yw / W) * NL);
+  if (sx < 0 || sy < 0 || sx >= NL || sy >= NL) return;
+  if (scene.kind === 'lytro') { if (layA) pickLayer(sx, sy); } else if (depA) pickDepth(sx, sy);
+});
+function rayBox(on) {
+  if (!raybox) return;
+  raybox.classList.remove('on');
+  if (on) { raybox.hidden = false; void raybox.offsetWidth; raybox.classList.add('on'); } else raybox.hidden = true;
+}
+async function doCapture(my) {
+  steps(1); setDepthUI(false); Face.set('work'); viewDrive = false; layersOff(); parallax(false);
+  st.B = 0; st.C = 0; st.cam = 0; st.A = 0; st.V = 0; st.icons = 0; st.R = 0; rSeq++;
+  if (scene.kind === 'lytro') {
+    // a real capture: the recorded lenslet image is the data, so it is shown on the sensor as it is and
+    // zoomed into beside the robot; nothing is placed in space
+    st.A = 1; request(); lfZoom(true);
+    return beat(my, 'A', () => Promise.all([tween('cam', 1, 2600, my), wait(LFZ_MS)]));
+  }
+  // before the capture: each lens is a tiny camera (the panel beside the robot draws itself in 2.5 s)
+  rayBox(true);
+  await beat(my, 'cams', () => Promise.all([tween('icons', 1, 900, my), wait(2500)]));
+  return beat(my, 'A', async () => {
+    await wait(300); if (my !== token) return;
+    Snd.shutter(); Snd.motor(3.2);
+    rayBox(false);
+    await Promise.all([tween('A', 1, 3200, my), tween('icons', 0, 1600, my)]); if (my !== token) return;
+    await tween('cam', 1, 1200, my);
+  });
+}
+async function doRim(my) {
+  steps(2); setDepthUI(false); Face.set('work'); viewDrive = false; rayBox(false); lfZoom(false); layersOff(); parallax(false);
+  st.A = 1; st.cam = 1; st.C = 0; st.B = 0; st.V = 0; st.vt = 0; st.icons = 0; st.R = 0; rSeq++;
+  await beat(my, 'B', async () => {
+    await wait(600); if (my !== token) return;
+    Snd.ticks(16, 2.6); Snd.motor(2.8);
+    await tween('B', 1, 2800, my);
+  });
+  // one view fills the sensor, then the view travels around: near objects shift more than far ones, and the
+  // card in the corner shows the same with a finger and the moon
+  parallax(true);
+  return beat(my, 'views', async () => {
+    await tween('V', 1, 1000, my); if (my !== token) return;
+    await tween('vt', 1, 3400, my); if (my !== token) return;
+    viewDrive = true;
+  });
+}
+async function doRecon(my) {
+  steps(3); Face.set('work'); viewDrive = false; rayBox(false); lfZoom(false); layersOff(); parallax(false);
+  st.A = 1; st.B = 1; st.D = 0; st.C = 0; st.cam = 1; st.icons = 0; st.R = 0; rSeq++;
+  // the views leave the sensor for the reconstruction plane while the camera steps back to show the depth
+  await beat(my, 'C', async () => {
+    await wait(250); if (my !== token) return;
+    Snd.motor(2.0);
+    await Promise.all([tween('C', 1, 1800, my), tween('cam', CAM_REC, 1800, my)]);
+  });
+  // move the plane from the nearest target to the farthest one (a few of them, if there are many): the
+  // plane moves on its own, then its line waits for the visitor
+  const walk = scene.walk || scene.targets.map((_, i) => i);
+  for (let i = 0; i < walk.length; i++) {
+    const t = scene.targets[walk[i]];
+    await tween('D', t.d, 1100, my); if (my !== token) return false;
+    Snd.focus(); setDepthUI(true);
+    // the last stop is "the farthest" only when nothing stands behind it
+    const line = i === 0 ? FOCUS[0] : i < walk.length - 1 ? FOCUS[1] : walk[i] === scene.targets.length - 1 ? FOCUS[2] : FOCUS[3];
+    await beat(my, line(t.name));
+  }
+  await tween('D', scene.targets[0].d, 1000, my); if (my !== token) return false;
+  setDepthUI(true); Face.set('happy'); finish(); turnR(1, 1500);
+  return ending(my);
+}
+// the story from step n on: the end of each step waits for the visitor, then the next step starts
+const STEPS = [doCapture, doRim, doRecon];
+async function playFrom(n, my) {
+  for (let k = n; k <= STEPS.length; k++) if (!(await STEPS[k - 1](my)) || my !== token) return;
+}
+function jumpToEnd() { lfZoom(false); layersOff(); st.A = 1; st.cam = CAM_REC; st.B = 1; st.C = 1; st.R = 1; rSeq++; st.D = scene.targets[0].d; setDepthUI(true); steps(3); Face.set('happy'); finish(); ending(token); request(); }
+stepBtns.forEach((b) => b.addEventListener('click', () => {
+  Snd.ui(); playFrom(Number(b.dataset.step), cut());
+}));
+nextBtn.addEventListener('click', advance);
+// Enter, Space or → anywhere in the lab (the stage takes focus when clicked, so keys work after a click on
+// the picture too); controls keep their own keys: Enter and Space press a button or follow a link, and the
+// slider takes the arrows. A focus outside the lab, or a lab scrolled out of view, never moves the story,
+// so Space still scrolls the page there.
+root.addEventListener('keydown', (e) => {
+  if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.isComposing || !onScreen()) return;
+  const k = e.key, t = e.target;
+  if (k !== 'Enter' && k !== ' ' && k !== 'ArrowRight') return;
+  if (t.closest('input, select, textarea, [contenteditable]')) return;
+  if (k !== 'ArrowRight' && t.closest('button, a')) return;
+  e.preventDefault();
+  if (!e.repeat) advance();
+});
+// a click on the picture moves the story on, except where a click picks the focus (the canvas in step 3,
+// once the reconstruction is in: crosshair cursor); the Next button and the caption link act on their own
+stage.addEventListener('click', (e) => {
+  if (e.target.closest('button, a')) return;
+  if (e.target === canvas && root.classList.contains('pickable')) return;
+  advance();
+});
+q('[data-reverse]').addEventListener('click', async () => {
+  Snd.ui(); const my = cut(); lfZoom(false); layersOff();
+  if (st.B === 0 && st.C === 0) { st.A = 1; st.cam = 1; st.B = 1; }
+  setDepthUI(false); steps(2); Face.set('work'); say('rev');
+  Snd.motor(st.C > 0 ? 4 : 2.6);
+  viewDrive = false;
+  if (st.C > 0 || st.V > 0) { await Promise.all([tween('C', 0, 1400, my), tween('V', 0, 1400, my), tween('cam', 1, 1400, my), turnR(0, 1400)]); if (my !== token) return; }
+  await tween('B', 0, 2600, my); if (my === token) Face.set('idle');
+});
+let rTurn = false;
+depth.addEventListener('input', () => {
+  const my = cut(); st.A = 1; st.B = 1; st.C = 1; if (st.Lay < 0.5) st.cam = CAM_REC;
+  const before = focusedLayer();
+  st.D = scene.dMin + (scene.dMax - scene.dMin) * Number(depth.value) / 100;
+  // the slider opens during step 3's walk through the depths; moving it ends that walk, so the
+  // lab counts as finished here too (otherwise "Reverse RIM" and the link to the RIM page never show)
+  setDepthUI(true); finish(); request();
+  // the first move of the slider also turns to the result view, which then follows the plane
+  if (st.R < 0.999 && !rTurn && st.Lay < 0.5) { rTurn = true; turnR(1, 1200).then(() => { rTurn = false; }); }
+  const now = focusedLayer();
+  if (now >= 0 && now !== before) Snd.focus();
+  // a new line when the plane reaches or leaves an object; otherwise the line on show keeps its Next
+  if (now !== before) freeLine(now >= 0 ? FOCUS[0](scene.targets[now].name) : L.between, my);
+  else { freeMy = my; if (!sayEnd) offerEnd(my); }
+});
+
+/* ================= the sample's view mosaic goes to the GPU ================= */
+function uploadAtlas(source) {
+  if (typeof source === 'function') { source(); return; }
+  gl.bindTexture(gl.TEXTURE_2D, tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+  hasImage = true; request();
+}
+/* before the first click the scene is alive but the story waits, so it can start with its sound */
+let waiting = false;
+function endWait() { waiting = false; stage.classList.remove('waiting'); }
+function opening(my) {
+  soundBtn.hidden = false; unfinish();
+  beat(my, 'greet').then(() => playFrom(1, my));
+}
+function useLayers(info, mode) {
+  endLoad();
+  scene = info.scene; setNL(scene.nl); buildIcons();
+  uploadAtlas(info.atlas); findAnchors();
+  if (credit) credit.hidden = scene.kind !== 'lytro';
+  // the real capture has no 3D shape: its samples start on the sensor
+  st.A = scene.kind === 'lytro' ? 1 : 0; st.B = 0; st.C = 0; st.cam = 0; st.D = 0; st.icons = 0; st.V = 0; st.vt = 0; st.R = 0; rSeq++; viewDrive = false; rayBox(false);
+  lfZoom(false); layersOff(); unfinish(); if (layBtn) layBtn.hidden = scene.kind !== 'lytro';
+  setDepthUI(false); steps(0);
+  if (mode === 'still') return;
+  if (mode === 'wait' && !waiting) mode = 'opening'; // the click came while the scene was loading
+  if (mode !== 'wait') endWait();
+  const my = cut();
+  if (reduce) { jumpToEnd(); return; }
+  if (mode === 'wait') { Face.set('idle'); say('tap'); return; }
+  if (mode === 'opening') { opening(my); return; }
+  beat(my, info.line).then(() => playFrom(1, my));
+}
+const credit = q('[data-credit]');
+/* a sample is downloaded before it replaces the scene. Meanwhile the old story stops and the controls
+   wait, so they never act on the scene being replaced, and a load overtaken by a later choice is dropped */
+let loadSeq = 0, busy = false, busyTimer = 0, depthWas = false;
+const holdBtns = () => [...stepBtns, q('[data-reverse]'), layBtn].filter(Boolean);
+function beginLoad(mode) {
+  const me = ++loadSeq;
+  if (mode !== 'load') return me;
+  if (!busy) depthWas = depth.disabled;
+  busy = true; cut(); lfZoom(false); unfinish();
+  holdBtns().forEach((b) => { b.disabled = true; }); depth.disabled = true;
+  clearTimeout(busyTimer);
+  busyTimer = setTimeout(() => { if (me === loadSeq && busy) { Face.set('work'); say('wait'); } }, 250);
+  return me;
+}
+function endLoad() {
+  if (!busy) return;
+  busy = false; clearTimeout(busyTimer);
+  holdBtns().forEach((b) => { b.disabled = false; }); depth.disabled = depthWas;
+}
+function loadFailed(me) {
+  if (me !== loadSeq) return;
+  endLoad(); pick(scene.kind === 'lytro' ? 'lytro' : 'scene');
+  Face.set('idle'); say('netbad');
+}
+function loadLightField(viewsURL, depURL, make, line, mode) {
+  // the view mosaic and its depth map are both needed before the scene can stand
+  const me = beginLoad(mode);
+  const views = new Image(), dep = new Image(); let n = 0, failed = false;
+  const ready = () => {
+    if (++n < 2 || failed || me !== loadSeq) return;
+    const sc = make();
+    depA = readPixels(dep);
+    let atlas = views, depSrc = dep;
+    if (sc.cut) { const c = cutBehind(views, sc); if (c) { atlas = c.views; depSrc = c.dep; depA = c.depA; } }
+    gl.bindTexture(gl.TEXTURE_2D, depTex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+    gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);   // values, not colours
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, depSrc);
+    gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.BROWSER_DEFAULT_WEBGL);
+    useLayers({ atlas, scene: sc, line }, mode);
+  };
+  views.onload = ready; dep.onload = ready;
+  views.onerror = dep.onerror = () => { if (!failed) { failed = true; loadFailed(me); } };
+  views.src = viewsURL; dep.src = depURL;
+}
+const loadScene = (mode) => {
+  if (!MP) { loadLightField('/img/lab-blender-views.webp', '/img/lab-blender-depth.png', blenderScene, 'scene', mode); return; }
+  // only the meshes are downloaded; the views are rendered from them
+  const me = beginLoad(mode);
+  loadModels().then((models) => {
+    if (me !== loadSeq) return;
+    meshObjects(models);
+    const sc = meshScene(); useLayers({ atlas: () => captureMeshes(sc), scene: sc, line: 'scene' }, mode);
+  });
+};
+const loadImg = (src) => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+let layTex = null, layATex = null, layA = null, depA = null;
+/* samples behind sc.cut (shift per view step) become background, so nothing behind the kept objects is
+   drawn, captured or reconstructed. A removed object's antialiased rim lies in sky pixels next to it, so
+   the removed area grows by two pixels within each view; it takes the sky's depth and the mean colour of
+   that view's remaining sky. The view mosaic (NP x NP views) and the depth mosaic share one layout; if
+   their sizes differ, the sample is shown as rendered. */
+function cutBehind(views, sc) {
+  const w = views.width, h = views.height, T = w / NP;
+  if (!depA || depA.w !== w || depA.data.length !== w * h * 4) return null;
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(views, 0, 0);
+  const img = g.getImageData(0, 0, w, h), px = img.data, dz = new Uint8ClampedArray(depA.data);
+  const sky = 0.998 * 255, cut = (sc.cut - sc.lo) / (sc.hi - sc.lo) * 255;
+  const tileOf = (j) => Math.floor(j / w / T) * NP + Math.floor((j % w) / T);
+  // pixels within two of a marked pixel, inside the same view
+  const ring = (mark) => {
+    const out = new Uint8Array(w * h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const j = y * w + x;
+      if (mark[j] || dz[j * 4] < sky) continue;
+      const x0 = Math.floor(x / T) * T, y0 = Math.floor(y / T) * T;
+      near: for (let ny = Math.max(y0, y - 2); ny <= Math.min(y0 + T - 1, y + 2); ny++)
+        for (let nx = Math.max(x0, x - 2); nx <= Math.min(x0 + T - 1, x + 2); nx++) if (mark[ny * w + nx]) { out[j] = 1; break near; }
+    }
+    return out;
+  };
+  const gone = new Uint8Array(w * h);
+  for (let j = 0; j < w * h; j++) if (dz[j * 4] < sky && dz[j * 4] > cut) gone[j] = 1;
+  const goneRim = ring(gone);
+  // each view's sky colour, from the sky that stays where it is
+  const sum = new Float64Array(NP * NP * 4);
+  for (let j = 0; j < w * h; j++) {
+    if (dz[j * 4] < sky || goneRim[j]) continue;
+    const t = tileOf(j) * 4;
+    sum[t] += px[j * 4]; sum[t + 1] += px[j * 4 + 1]; sum[t + 2] += px[j * 4 + 2]; sum[t + 3]++;
+  }
+  const clear = (j) => {
+    const t = tileOf(j) * 4, n = sum[t + 3] || 1, i = j * 4;
+    dz[i] = dz[i + 1] = dz[i + 2] = 255; px[i] = sum[t] / n; px[i + 1] = sum[t + 1] / n; px[i + 2] = sum[t + 2] / n;
+  };
+  for (let j = 0; j < w * h; j++) if (gone[j] || goneRim[j]) clear(j);
+  g.putImageData(img, 0, 0);
+  const d = new ImageData(dz, w, h);
+  return { views: c, dep: d, depA: { w, data: dz } };
+}
+/* an image's pixels on the CPU, for the clicks that pick a depth */
+function readPixels(img) {
+  const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+  const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(img, 0, 0);
+  return { w: c.width, data: g.getImageData(0, 0, c.width, c.height).data };
+}
+function dataTexture(img) {
+  // texels read one by one, as values
+  const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+  for (const [p, v] of [[gl.TEXTURE_MIN_FILTER, gl.NEAREST], [gl.TEXTURE_MAG_FILTER, gl.NEAREST], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, p, v);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+  gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+  gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.BROWSER_DEFAULT_WEBGL);
+  return t;
+}
+// the real capture is about 1.9 MB (1 MB on small screens); it is fetched once and kept
+let lytroP = null;
+const lytroFiles = () => lytroP || (lytroP = Promise.all(
+  [`lytro-views-${NL_REAL}.webp`, 'lytro-photo.webp', 'lytro-eslf-zoom.webp', `lytro-layers-${NL_REAL}.webp`, `lytro-layers-a-${NL_REAL}.png`]
+    .map((f) => loadImg('/img/' + f))).catch((e) => { lytroP = null; throw e; }));
+function loadLytro(mode) {
+  const me = beginLoad(mode);
+  lytroFiles().then(([views, photo, zoom, lay, layAimg]) => {
+    if (me !== loadSeq) return;
+    lfImgs = { photo, zoom };
+    if (!layTex) { layTex = dataTexture(lay); layATex = dataTexture(layAimg); }
+    // the agreement weights are also read here, for click-to-focus
+    layA = readPixels(layAimg);
+    useLayers({ atlas: views, scene: lytroScene(), line: 'lytro' }, mode);
+  }).catch(() => loadFailed(me));
+}
+const sampleBtns = [...root.querySelectorAll('[data-sample-btn]')];
+function pick(which) { sampleBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sampleBtn === which))); }
+sampleBtns.forEach((b) => b.addEventListener('click', () => {
+  Snd.ui(); pick(b.dataset.sampleBtn);
+  if (b.dataset.sampleBtn === 'lytro') loadLytro('load'); else loadScene('load');
+}));
+// a pointer resting on the real-capture button starts its download, so the click waits less
+const lytroBtn = sampleBtns.find((b) => b.dataset.sampleBtn === 'lytro');
+if (lytroBtn) lytroBtn.addEventListener('pointerenter', () => { lytroFiles().catch(() => {}); }, { once: true });
+
+/* ================= sound: on by default ================= */
+/* Browsers only allow audio after the visitor's first click, tap or key press. So, like the
+   reference site, the robot first asks for a click and the story waits for it; the first gesture
+   inside the lab starts the music and the story together (a click elsewhere on the page, on a link
+   or the resume button, starts nothing). If the browser already allows
+   sound, the story starts at once; otherwise it waits for that click, so lines changing on their own
+   never pull the eye from the introduction beside it. A visitor who turns the sound off is remembered on this device. */
+// the toggle sits in the sticky header (outside the lab), so it can be reached from anywhere on the page
+const soundBtn = document.querySelector('[data-sound]');
+const soundText = { ko: ['소리 켜기', '소리 끄기'], en: ['Sound on', 'Sound off'], ja: ['音を出す', '音を消す'] }[lang];
+let wantSound = true;
+try { if (localStorage.getItem('lab-sound') === 'off') wantSound = false; } catch (e) { /* storage unavailable */ }
+function soundUI() {
+  soundBtn.querySelector('.label').textContent = soundBtn.title = wantSound ? soundText[1] : soundText[0];
+  soundBtn.querySelector('.x').style.display = wantSound ? 'none' : '';
+  soundBtn.querySelector('.w').style.display = wantSound ? '' : 'none';
+}
+function startSound() {
+  if (!wantSound || Snd.on) return;
+  Snd.enable().then((ok) => { if (ok) Snd.chime(); soundUI(); });
+}
+function beginStory() {
+  if (!waiting) return;
+  // one visit-count event per page view, so the owner can see how many visitors start the lab
+  if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: 'lab-start', title: 'Lab started', event: true });
+  endWait(); startedAt = performance.now(); opening(cut());
+}
+const GESTURES = ['pointerdown', 'keydown', 'touchend'];
+function firstGesture(e) {
+  if (e.target && e.target.closest && e.target.closest('[data-sound]')) return;
+  GESTURES.forEach((t) => root.removeEventListener(t, firstGesture, true));
+  startSound(); beginStory();
+}
+GESTURES.forEach((t) => root.addEventListener(t, firstGesture, true));
+soundBtn.addEventListener('click', () => {
+  wantSound = !wantSound;
+  try { localStorage.setItem('lab-sound', wantSound ? 'on' : 'off'); } catch (e) { /* storage unavailable */ }
+  if (wantSound) startSound(); else Snd.disable();
+  soundUI(); beginStory();
+});
+soundUI();
+
+/* ================= full screen ================= */
+/* The whole lab (stage and controls) goes full screen and the introduction steps aside. Browsers
+   without the Fullscreen API for elements (Safari on iPhone) get the same layout by fixing the lab
+   over the page instead; Esc or the same button leaves it. */
+const fsBtn = q('[data-fullscreen]');
+const fsText = { ko: ['전체화면', '전체화면 끝내기'], en: ['Full screen', 'Exit full screen'], ja: ['全画面', '全画面を終了'] }[lang];
+const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement || null;
+const fsReq = root.requestFullscreen || root.webkitRequestFullscreen;
+const fsExit = document.exitFullscreen || document.webkitExitFullscreen;
+let pseudoFs = false;
+function fsUI() {
+  const on = fsEl() === root || pseudoFs;
+  root.classList.toggle('is-fs', on);
+  document.documentElement.classList.toggle('lab-fs', pseudoFs);
+  fsBtn.querySelector('.label').textContent = fsBtn.title = fsText[on ? 1 : 0];
+  fsBtn.querySelector('.in').style.display = on ? 'none' : '';
+  fsBtn.querySelector('.out').style.display = on ? '' : 'none';
+  request();
+}
+function setPseudo(on) { pseudoFs = on; fsUI(); }
+fsBtn.addEventListener('click', () => {
+  if (pseudoFs) { setPseudo(false); return; }
+  if (fsEl()) { fsExit.call(document); return; }
+  if (!fsReq) { setPseudo(true); return; }
+  try {
+    const p = fsReq.call(root);
+    if (p && p.catch) p.catch(() => setPseudo(true));
+  } catch (e) { setPseudo(true); }
+});
+document.addEventListener('fullscreenchange', fsUI);
+document.addEventListener('webkitfullscreenchange', fsUI);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && pseudoFs) setPseudo(false); });
+
+/* ================= tilt: the viewpoint on phones and tablets ================= */
+/* Tilting the device moves the viewpoint the way the mouse does on a computer, and after step 2 it
+   chooses the view. The neutral angle is however the device is held, and it follows slowly, so
+   holding it at any angle comes back to the middle. Safari asks for permission on the first tap.
+   The tilt is read from where "up" lies relative to the screen, not from beta and gamma directly:
+   those are Euler angles, which near upright make a sideways tilt swing gamma several times too far
+   and make a front-back tilt in landscape jump by 180°. Whatever way the device is held or turned,
+   the right edge dropping moves the view right and the top edge leaning back moves it down. */
+if (!mouse && !reduce && 'DeviceOrientationEvent' in window) {
+  const clamp = (v) => Math.max(-1, Math.min(1, v)), D2R = Math.PI / 180, R2D = 180 / Math.PI;
+  const wrap = (a) => ((a + 180) % 360 + 360) % 360 - 180;
+  const faceEl = q('.robot canvas');
+  // how the content is turned from the device's natural orientation; without the API, the edge of
+  // the device pointing up is taken as the top, as the system's own rotation would do
+  const screenAngle = (ux, uy) => {
+    const o = screen.orientation && typeof screen.orientation.angle === 'number' ? screen.orientation.angle
+      : typeof window.orientation === 'number' ? window.orientation : null;
+    if (o !== null) return (o % 360 + 360) % 360;
+    if (window.innerWidth > window.innerHeight) return ux > 0 ? 90 : 270;
+    return uy >= 0 ? 0 : 180;
+  };
+  let lastAng = -1;
+  const onTilt = (e) => {
+    if (e.beta == null || e.gamma == null) return;
+    const b = e.beta * D2R, g = e.gamma * D2R;
+    // "up" in the device's frame (x to the right edge, y to the top edge, z out of the screen)
+    const ux = -Math.cos(b) * Math.sin(g), uy = Math.sin(b), uz = Math.cos(b) * Math.cos(g);
+    const ang = screenAngle(ux, uy), a = ang * D2R;
+    const sx = ux * Math.cos(a) - uy * Math.sin(a), sy = ux * Math.sin(a) + uy * Math.cos(a);
+    const x = Math.asin(clamp(-sx)) * R2D, y = -Math.atan2(sy, uz) * R2D;
+    if (tilt.x0 === null || ang !== lastAng) { tilt.x0 = x; tilt.y0 = y; lastAng = ang; } // a turn starts afresh
+    tilt.x0 += (x - tilt.x0) * 0.004; tilt.y0 = wrap(tilt.y0 + wrap(y - tilt.y0) * 0.004);
+    const px = tilt.x, py = tilt.y;
+    tilt.x = clamp((x - tilt.x0) / 18); tilt.y = clamp(wrap(y - tilt.y0) / 18);
+    tilt.on = true;
+    // the sensor reports even when the device is still; only a real move redraws
+    if (Math.abs(tilt.x - px) + Math.abs(tilt.y - py) > 0.004) request();
+    if (!ptr.inside) { ptr.x = tilt.x; ptr.y = tilt.y; }
+    const r = faceEl.getBoundingClientRect();
+    Face.look(r.left + r.width / 2 + tilt.x * 400, r.top + r.height / 2 - tilt.y * 400);
+  };
+  const listen = () => window.addEventListener('deviceorientation', onTilt);
+  const DOE = window.DeviceOrientationEvent;
+  if (typeof DOE.requestPermission === 'function') {
+    // Safari only grants it inside a tap or click
+    const ask = () => {
+      ['touchend', 'click'].forEach((t) => window.removeEventListener(t, ask, true));
+      DOE.requestPermission().then((r) => { if (r === 'granted') listen(); }).catch(() => { /* declined */ });
+    };
+    ['touchend', 'click'].forEach((t) => window.addEventListener(t, ask, true));
+  } else listen();
+}
+
+/* the 3D sample scene stands in front of the lens array */
+setDepthUI(false);
+start();
+if (reduce) { loadScene('still'); soundBtn.hidden = false; }
+else if (wantSound && !Snd.autoplayOK()) {
+  waiting = true; stage.classList.add('waiting');
+  loadScene('wait');
+} else { startSound(); loadScene('opening'); }
+})();

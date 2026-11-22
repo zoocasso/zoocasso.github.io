@@ -1,0 +1,105 @@
+<!--meta {"title": "KISTI project data layer", "description": "Collection, loading and serving I handled as the data engineer on Vision Inside's side of a public R&D value-creation platform (SMART K2C), commissioned by KISTI and designed by KISTI researchers.", "nav": "systems"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="You are here"><a href="/en/">Home</a><span aria-hidden="true">/</span><a href="/en/#systems">Systems</a><span aria-hidden="true">/</span><span aria-current="page">KISTI project</span></nav>
+    <h1 id="d-h">Built and ran the data layer<br>of a public R&amp;D platform</h1>
+    <p class="hero-lede">On the “AI-based public R&amp;D value-creation platform” (later SMART K2C), commissioned by KISTI (Korea Institute of Science and Technology Information) and designed by KISTI researchers, I handled collection, loading and serving as the data engineer on Vision Inside's side. My part ran from the collection setup for shopping and procurement data to turning analysis models into FastAPI services and admin screens.</p>
+    <dl class="meta-grid">
+      <div><dt>Period</dt><dd>{{f:kisti_period}}<small>At Vision Inside · outsourced contract</small></dd></div>
+      <div><dt>Role</dt><dd>Data engineer<small>Collection, loading and serving were mine</small></dd></div>
+      <div><dt>Design</dt><dd>KISTI researchers<small>Some models by university research teams</small></dd></div>
+      <div><dt>Outcome</dt><dd>Led to a follow-on main contract<small>Including the audit deliverables</small></dd></div>
+    </dl>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="d-section" id="arch" aria-labelledby="arch-h">
+    <div class="sec-head">
+      <div>
+        <h2 id="arch-h">Architecture</h2>
+        <p class="sec-desc">The path data takes from the sources to the users. Click a node to highlight the path through it and see the work at that stage and who did it.</p>
+      </div>
+      <div class="legend" aria-label="Legend">
+        <span><i class="sw me" aria-hidden="true"></i>Built by me</span>
+        <span><i class="sw shared" aria-hidden="true"></i>Built together</span>
+        <span><i class="sw other" aria-hidden="true"></i>Others</span>
+        <span><i class="sw ext" aria-hidden="true"></i>External sources and users</span>
+        <button class="toggle" type="button" data-mine-toggle aria-pressed="false"><span class="knob" aria-hidden="true"></span>Highlight my work only</button>
+      </div>
+    </div>
+    <div class="sys">
+      {{inc:flow-kisti}}
+      <div class="sys-outcome"><span class="k">Result</span><span>The project led to a <b>follow-on main contract</b></span><span>The company's code cannot be published, so only the structure is drawn</span></div>
+    </div>
+  </section>
+
+  <section class="d-section" id="decisions" aria-labelledby="dec-h">
+    <h2 id="dec-h">Key decisions</h2>
+    <p class="sec-desc">The rule used to clean the data.</p>
+    <ol class="decisions">
+      <li><h3>De-duplication by product ID (ASIN)</h3>
+        <dl class="dl"><dt>Problem</dt><dd>The same product appeared in several categories at once, so collecting category by category produced overlaps.</dd><dt>Result</dt><dd>Products with the same ASIN were merged into one, removing the overlaps between categories.</dd></dl></li>
+    </ol>
+  </section>
+
+  <section class="d-section" id="scope" aria-labelledby="scope-h">
+    <h2 id="scope-h">Scope</h2>
+    <p class="sec-desc">Not the whole project: the parts that were mine, listed separately.</p>
+    <div class="card scope-tbl">
+      <div class="scope-col">
+        <h3><i class="sw me" aria-hidden="true"></i>What I built and ran</h3>
+        <ul>
+          <li><b>Selenium crawlers</b> for Amazon and Danawa, a collector for the Public Procurement Service API on the public data portal, and crawling of the national procurement site</li>
+          <li>A <b>distributed crawling farm</b> of laptops feeding one remote database, with de-duplication</li>
+          <li><b>Loading into central MySQL</b> (procurement, Danawa and Amazon data)</li>
+          <li>Models 3–5, built by me: project–company keyword matching (SQL), price-band K-means (Dunn index), a daily KeyBERT review-keyword batch. Procurement statistics in SQL</li>
+          <li><b>FastAPI services</b> and Jinja2 and Tabulator admin screens (filters, sequential runs, unified search, Excel export)</li>
+          <li>Moving Amazon collection to the Rainforest API</li>
+          <li>Owned the DB schema, backend integration and frontend wiring of the KISTI prototype web app in Java Spring (with the in-house Java team); moved it, with a partner's models 1–2, to company servers and set up its Docker runtime</li>
+          <li>Audit deliverables (operator manual, initial data-build report), presenting results in technical meetings, and handling data and code requests</li>
+        </ul>
+      </div>
+      <div class="scope-col other">
+        <h3><i class="sw other" aria-hidden="true"></i>What others did</h3>
+        <ul>
+          <li><b>KISTI researchers</b> · commissioning and designing the project</li>
+          <li><b>University research teams</b> (Sungkyunkwan University, Kookmin University) · algorithm design for some of the platform's models</li>
+          <li><b>A partner company</b> · models 1–2</li>
+          <li><b>The in-house Java team</b> · built the Java Spring prototype web app with me</li>
+          <li><b>Another colleague</b> · meeting minutes and reporting</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="d-section" id="log" aria-labelledby="log-h">
+    <h2 id="log-h">Progress log</h2>
+    <p class="sec-desc">The order the work went in; only the start and end are dated.</p>
+    <div class="card">
+      <ol class="changelog">
+        <li><span class="when">Aug 2022</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Kickoff · regular technical meetings with KISTI researchers</b>Presented results and handled data and code requests directly.</div></li>
+        <li><span class="when"></span><span class="rail" aria-hidden="true"></span><div class="what"><b>Amazon product collection</b>Collected by subcategory and de-duplicated by ASIN.</div></li>
+        <li><span class="when"></span><span class="rail" aria-hidden="true"></span><div class="what"><b>Audit deliverables</b>Operator manual and initial data-build report.</div></li>
+        <li><span class="when"></span><span class="rail" aria-hidden="true"></span><div class="what"><b>Distributed crawling farm in operation</b>Several laptops loading into one remote database.</div></li>
+        <li><span class="when"></span><span class="rail" aria-hidden="true"></span><div class="what"><b>KISTI prototype web app · moved in-house</b>Owned the DB schema, backend integration and frontend wiring of the Java Spring KISTI prototype web app, with the in-house Java team; moved it with the partner's models 1–2 to company servers on Docker.</div></li>
+        <li><span class="when"></span><span class="rail" aria-hidden="true"></span><div class="what"><b>Rainforest API switch built</b>The Amazon collection path replaced.</div></li>
+        <li><span class="when"></span><span class="rail" aria-hidden="true"></span><div class="what"><b>Procurement statistics in SQL</b>Prices, attributes and deliveries.</div></li>
+        <li class="out"><span class="when">Jun 2024</span><span class="rail" aria-hidden="true"></span><div class="what"><b>Contract ended</b>The project led to a follow-on main contract.</div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="d-section" id="proof" aria-labelledby="proof-h">
+    <h2 id="proof-h">What is public</h2>
+    <p class="note">The code and data belong to the company and the client, so they are not public.</p>
+    <ul class="chips" style="margin-top:16px" aria-label="Stack">
+      <li>Python</li><li>SQL</li><li>Selenium</li><li>BeautifulSoup</li><li>pandas</li><li>SQLAlchemy</li><li>MySQL</li><li>scikit-learn</li><li>KeyBERT</li><li>Sentence-Transformers</li><li>Mecab</li><li>FastAPI</li><li>Jinja2</li><li>Tabulator</li><li>Java · Spring</li><li>Docker</li><li>Linux</li>
+    </ul>
+  </section>
+
+  <nav class="pager" aria-label="Other systems">
+    <a href="/en/#systems"><small>← Home</small><b>All four systems</b></a>
+    <a class="next" href="/en/work/hitachi/"><small>Next system →</small><b>Image-data pipeline for joint research with Hitachi</b></a>
+  </nav>
+</div>

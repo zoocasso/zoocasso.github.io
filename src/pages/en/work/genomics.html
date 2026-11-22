@@ -1,0 +1,108 @@
+<!--meta {"title": "Genomic variant annotation and risk report system", "description": "Building on an algorithm designed with my team lead, I implemented a variant-calling pipeline, SQL annotation over public references, a FastAPI JSON API and the frontend, and deployed them with Docker and Harbor.", "nav": "systems"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="You are here"><a href="/en/">Home</a><span aria-hidden="true">/</span><a href="/en/#systems">Systems</a><span aria-hidden="true">/</span><span aria-current="page">Genomic report system</span></nav>
+    <h1 id="d-h">Annotating genomic variants<br>against public references</h1>
+    <p class="hero-lede">The system links a person's genomic variants (VCF, chip arrays) to public references and reports disease and trait risk, population frequencies, and related drugs and herbal medicines. The analysis algorithm was designed at the company with my team lead; I implemented and deployed the pipeline, backend and frontend. It was an international collaboration with Kyung Hee University's College of Korean Medicine and a Canadian bio research lab.</p>
+    <dl class="meta-grid">
+      <div><dt>Period</dt><dd>{{f:bio_period}}<small>Vision Inside · internal project</small></dd></div>
+      <div><dt>Role</dt><dd>Pipeline, backend and frontend<small>Including Docker deployment</small></dd></div>
+      <div><dt>Design</dt><dd>Algorithm with the team lead<small>UI design by the Canadian lab's designer</small></dd></div>
+      <div><dt>Outcome</dt><dd>Deployed, internal IPs only<small>Never launched as a public service</small></dd></div>
+    </dl>
+    <div class="kpis row three" aria-label="Highlights">
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>SQL join annotation</span><span class="kpi-val">4<small>stages</small></span><span class="kpi-label">References attached in turn by position and alleles, or rsID</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>1000 Genomes</span><span class="kpi-val">By population</span><span class="kpi-label">Allele frequencies compared</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Deployment</span><span class="kpi-val">Docker<small>· Harbor</small></span><span class="kpi-label">Korea IDC production server, private registry set up myself</span></div>
+    </div>
+    <div class="d-actions"><a class="btn" href="https://github.com/zoocasso/bio_fastapi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>Code (GitHub)</a></div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="d-section" id="arch" aria-labelledby="arch-h">
+    <div class="sec-head">
+      <div>
+        <h2 id="arch-h">Architecture</h2>
+        <p class="sec-desc">The flow from input to the report API. Click a node to see the path through it and who did what.</p>
+      </div>
+      <div class="legend" aria-label="Legend">
+        <span><i class="sw me" aria-hidden="true"></i>Implemented by me</span>
+        <span><i class="sw shared" aria-hidden="true"></i>Shared with others</span>
+        <span><i class="sw other" aria-hidden="true"></i>Others</span>
+        <span><i class="sw ext" aria-hidden="true"></i>Input and external data</span>
+        <button class="toggle" type="button" data-mine-toggle aria-pressed="false"><span class="knob" aria-hidden="true"></span>Highlight my work only</button>
+      </div>
+    </div>
+    <div class="sys">
+      {{inc:flow-genome}}
+      <div class="sys-outcome"><span class="k">Improved</span><span>Web screens rendered inside the server → <b>a separate JSON API for the frontend</b></span></div>
+      <div class="sys-outcome"><span class="k">Result</span><span>Deployed to a production server and run <b>for internal IPs only</b></span><span>The service code was cleaned up and published</span></div>
+    </div>
+  </section>
+
+  <div class="two">
+    <section class="d-section" id="ref" aria-labelledby="ref-h">
+      <h2 id="ref-h">References</h2>
+      <p class="sec-desc">The public data used for annotation.</p>
+      <div class="card">
+        <dl class="dl"><dt>1000 Genomes</dt><dd>Allele frequencies by population</dd><dt>dbSNP</dt><dd>GRCh37 · GRCh38, IDs and positions</dd><dt>GWAS Catalog</dt><dd>Disease and trait associations, odds ratios</dd><dt>UniProt</dt><dd>Protein variants and clinical significance</dd></dl>
+      </div>
+    </section>
+
+    <section class="d-section" id="load" aria-labelledby="load-h">
+      <h2 id="load-h">Loading and annotation</h2>
+      <p class="sec-desc">Too large to load in one go, so it went in piece by piece.</p>
+      <div class="card fig-card prose">
+        <p>The dbSNP and 1000 Genomes source VCFs were too large to load in one go, so I split the files by chromosome (sed, split) and loaded them a little at a time, in <b>pandas chunks through SQLAlchemy</b>.</p>
+        <p>Annotation is a <b>four-stage SQL join</b> that attaches the reference tables one after another: dbSNP and 1000 Genomes on a key of chromosome, position, REF and ALT, the GWAS Catalog on rsID and risk allele, and UniProt on variant ID and allele. Chip input finds its position key in dbSNP by rsID.</p>
+      </div>
+    </section>
+  </div>
+
+  <section class="d-section" id="scope" aria-labelledby="scope-h">
+    <h2 id="scope-h">Scope</h2>
+    <p class="sec-desc">What was designed together and what I implemented, listed separately.</p>
+    <div class="card scope-tbl">
+      <div class="scope-col">
+        <h3><i class="sw me" aria-hidden="true"></i>What I implemented and deployed</h3>
+        <ul>
+          <li>Implementing the variant-calling pipeline (FASTQ → BWA → samtools → Picard → GATK → VCF)</li>
+          <li>Handling of customer VCF and genotyping-array input (PyVCF)</li>
+          <li><b>Loading public references</b> and four-stage SQL annotation</li>
+          <li>Disease and trait risk scores from GWAS odds ratios, population frequencies, and drug and herbal-medicine information per disease</li>
+          <li>The <b>FastAPI JSON API</b> and the report frontend (user-facing screens)</li>
+          <li>Docker deployment, a Harbor private registry, domain and HTTPS</li>
+          <li>Technical communication between the Korean and Canadian teams, and aligning requirements with the Canadian lab's designer</li>
+        </ul>
+      </div>
+      <div class="scope-col other">
+        <h3><i class="sw other" aria-hidden="true"></i>Done together or by others</h3>
+        <ul>
+          <li><b>With the team lead</b> · designing the pipeline algorithm</li>
+          <li><b>The Canadian lab's designer</b> · UI design</li>
+          <li><b>Kyung Hee University's College of Korean Medicine · a Canadian bio research lab</b> · partners in the international collaboration</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="d-section" id="limits" aria-labelledby="lim-h">
+    <h2 id="lim-h">Deployment and limits</h2>
+    <p class="sec-desc">What ran in production, and what stayed an experiment.</p>
+    <ol class="decisions">
+      <li><h3>Deployed with Harbor and Docker</h3>
+        <dl class="dl"><dt>How</dt><dd>I set up a Harbor private registry myself on an Ubuntu production server at Korea IDC (certificate, domain, Let's Encrypt), pushed the images there and deployed with Docker.</dd><dt>Harbor</dt><dd>Deployed to production through the Harbor registry I built, and used the same registry to set up a Kubernetes test environment with the team lead.</dd><dt>Cleanup</dt><dd>I removed the web screens and turned the service into a JSON API for the frontend.</dd></dl></li>
+      <li><h3>Limits</h3>
+        <dl class="dl"><dt>Score</dt><dd>Risk is a <b>rule-based score</b> from GWAS odds ratios and betas, not a machine-learning prediction.</dd><dt>Models</dt><dd>The LDA and 1D-CNN models linking diseases to herbal medicines stayed <b>prototype experiments</b>.</dd><dt>Access</dt><dd>After deployment to the production server it stayed <b>reachable only from internal IPs</b>. It was never launched as a public service.</dd></dl></li>
+    </ol>
+    <ul class="chips" style="margin-top:20px" aria-label="Stack">
+      <li>Python</li><li>SQL</li><li>FastAPI</li><li>MySQL</li><li>pandas</li><li>SQLAlchemy</li><li>PyVCF</li><li>BWA</li><li>samtools</li><li>Picard</li><li>GATK</li><li>Docker</li><li>Harbor</li><li>Ubuntu</li>
+    </ul>
+  </section>
+
+  <nav class="pager" aria-label="Other systems">
+    <a href="/en/work/hitachi/"><small>← Previous system</small><b>Image-data pipeline for joint research with Hitachi</b></a>
+    <a class="next" href="/en/work/wjmax/"><small>Next system →</small><b>WJMax game server</b></a>
+  </nav>
+</div>

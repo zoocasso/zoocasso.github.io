@@ -1,0 +1,73 @@
+<div class="flow" data-edges="k-amz>k-farm|クローリング; k-dnw>k-farm; k-amz>k-api; k-pps>k-api|API; k-farm>k-db|蓄積; k-api>k-db; k-db>k-models|日次バッチ; k-models>k-srv; k-univ>k-proto|設計; k-srv>k-kisti; k-proto>k-kisti">
+  <ol class="stages" style="--cols:6">
+    <li class="stage"><div class="stage-h"><span class="n">01</span>ソース</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-amz" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">Amazon</span><span class="node-metric">細分類単位で収集</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>Seleniumのクローラーで<b>細分類単位</b>に収集。集めた商品は<b>商品ID（ASIN）で重複除去</b>。</dd><dt>その後</dt><dd>Rainforest APIに移行。</dd><dt>技術</dt><dd><ul class="chips"><li>Selenium</li><li>Rainforest API</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-dnw" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">Danawa</span><span class="node-metric">カテゴリ単位で収集</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>Seleniumのクローラーで、Danawa（韓国の価格比較サイト）を<b>カテゴリ単位</b>で収集。</dd><dt>技術</dt><dd><ul class="chips"><li>Selenium</li><li>BeautifulSoup</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-pps" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">調達庁・ナラジャント</span><span class="node-metric">公共データポータルAPI</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>調達庁（韓国）の公共データポータルAPIからの収集と、ナラジャント（韓国の電子調達システム）のクローリング。</dd><dt>技術</dt><dd><ul class="chips"><li>REST API</li><li>Python</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">02</span>収集</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-farm" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">分散クローラー群</span><span class="node-metric">複数台のノートPC</span><span class="node-tag">自分で構築</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>複数台のノートPCでクローラーを分散して動かし、結果を1台のリモートDBに蓄積する収集環境を構築・運用。</dd><dt>理由</dt><dd>収集先サイトのブロックを避けるため、分散して動かしました。</dd><dt>技術</dt><dd><ul class="chips"><li>Python</li><li>Selenium</li><li>BeautifulSoup</li><li>MySQL</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-api" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">API収集器</span><span class="node-metric">調達庁・Rainforest</span><span class="node-tag">自分で構築</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>調達庁の公共データポータルAPIの収集器を開発。Amazonの収集をRainforest APIに移す作業を実装。</dd><dt>技術</dt><dd><ul class="chips"><li>Python</li><li>REST API</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">03</span>保存</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-db" data-owner="me" data-default>
+          <button class="node-btn" type="button"><span class="node-title">中央MySQL</span><span class="node-metric">調達・Danawa・Amazon</span><span class="node-tag">自分で構築</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>調達・Danawa・Amazonの収集結果を<b>中央MySQL</b>に蓄積。</dd><dt>技術</dt><dd><ul class="chips"><li>MySQL</li><li>SQLAlchemy</li><li>pandas</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">04</span>処理</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-models" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">分析モデルの運用</span><span class="node-metric">モデル3・4・5を自作</span><span class="node-tag">自分で構築</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>モデル3：NTIS課題と企業のキーワードマッチング（SQL）。モデル4：価格帯ごとのK-meansクラスタリング（クラスタ数はDunn indexで選択）。モデル5：レビューから要求品質のキーワードを抽出する日次バッチ（KeyBERT・Sentence-Transformers・Mecab）。調達庁の価格・属性・納品の統計をSQLで作成。</dd><dt>技術</dt><dd><ul class="chips"><li>SQL</li><li>scikit-learn</li><li>KeyBERT</li><li>Sentence-Transformers</li><li>Mecab</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-univ" data-owner="other">
+          <button class="node-btn" type="button"><span class="node-title">一部モデルの設計</span><span class="node-metric">モデル1・2の一部</span><span class="node-tag">大学の委託研究</span></button>
+          <div class="node-detail"><dl class="dl"><dt>他の担当</dt><dd>プラットフォームのモデルの一部は、大学の委託研究チーム（成均館大学校、国民大学校）が設計しました。Vision Insideは、それらのモデルが使うデータと提供の層を担当しました。</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">05</span>提供</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-srv" data-owner="me">
+          <button class="node-btn" type="button"><span class="node-title">FastAPI・管理画面</span><span class="node-metric">Jinja2 · Tabulator</span><span class="node-tag">自分で構築</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>分析モデルをFastAPIのサービスとして提供し、管理画面（フィルター、バッチの順次実行、統合検索、Excelダウンロード）を開発。</dd><dt>技術</dt><dd><ul class="chips"><li>FastAPI</li><li>Jinja2</li><li>Tabulator</li></ul></dd></dl></div>
+        </li>
+        <li class="node" data-id="k-proto" data-owner="shared">
+          <button class="node-btn" type="button"><span class="node-title">プロトタイプのWeb</span><span class="node-metric">Java Spring</span><span class="node-tag">社内Javaチームと協業</span></button>
+          <div class="node-detail"><dl class="dl"><dt>担当内容</dt><dd>Java SpringベースのプロトタイプWebで、DBスキーマ・バックエンド連携・フロントエンド接続を担当。協力会社のモデル1・2とあわせて社内サーバーに移設し、Dockerの実行環境を構成。</dd><dt>協業</dt><dd>WebはVision Insideの社内Javaチームと協業して開発し、モデル1・2は協力会社が担当しました。</dd><dt>技術</dt><dd><ul class="chips"><li>Java</li><li>Spring</li><li>MySQL</li><li>Docker</li></ul></dd></dl></div>
+        </li>
+      </ul>
+    </li>
+    <li class="stage"><div class="stage-h"><span class="n">06</span>利用者</div>
+      <ul class="nodes">
+        <li class="node" data-id="k-kisti" data-owner="ext">
+          <button class="node-btn" type="button"><span class="node-title">KISTIの研究者</span><span class="node-metric">発注・プロジェクト設計</span></button>
+          <div class="node-detail"><dl class="dl"><dt>他の担当</dt><dd>プロジェクトはKISTIが発注し、KISTIの研究者が設計しました。</dd><dt>担当内容</dt><dd>KISTIの研究者との定例技術会議で結果を発表し、データやコードの依頼に直接対応。監理（公共ITプロジェクトの第三者検査）用の成果物（運用者マニュアル、初期データ構築完了報告書）を作成。</dd></dl></div>
+        </li>
+      </ul>
+    </li>
+  </ol>
+</div>
+<div class="inspector" aria-live="polite"><div class="insp-side"></div><div class="insp-main"></div></div>

@@ -1,0 +1,61 @@
+<!--meta {"title": "WJMax game server", "description": "Side project: server, database and security for WJMax, a community rhythm game, on FastAPI, EC2, RDS MySQL and Cloudflare, run as a live service through traffic surges on update days. Includes the problems handled in the public version.", "nav": "systems"} -->
+<section class="d-hero hero" aria-labelledby="d-h">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="You are here"><a href="/en/">Home</a><span aria-hidden="true">/</span><a href="/en/#systems">Systems</a><span aria-hidden="true">/</span><span aria-current="page">WJMax game server</span></nav>
+    <h1 id="d-h">A community rhythm game's server:<br>live through traffic surges on update days</h1>
+    <p class="hero-lede">On WJMax, a community rhythm game made by two people, I handled the server, database and security; the other member built the game client. In the published server code, load, retries and input checks are covered by tests.</p>
+    <dl class="meta-grid">
+      <div><dt>Period</dt><dd>{{f:wjmax_period}}<small>By commit history</small></dd></div>
+      <div><dt>Type</dt><dd>Side project<small>Team of two</small></dd></div>
+      <div><dt>Role</dt><dd>Server, database and security<small>Game client by the other member</small></dd></div>
+      <div><dt>Stack</dt><dd>FastAPI · Docker<small>AWS EC2 · RDS MySQL · Cloudflare</small></dd></div>
+    </dl>
+    <div class="kpis row two-k" aria-label="Highlights">
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>Operation</span><span class="kpi-val">Live service</span><span class="kpi-label">A game server with traffic surges on update days</span></div>
+      <div class="kpi"><span class="kpi-src"><i aria-hidden="true"></i>CI</span><span class="kpi-val">Tested</span><span class="kpi-label">Automatically, on SQLite · MySQL 8.0 · 8.4</span></div>
+    </div>
+    <div class="d-actions"><a class="btn" href="https://github.com/zoocasso/wjmax-game-server" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>Code (GitHub)</a></div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="d-section" id="arch" aria-labelledby="arch-h">
+    <div class="sec-head">
+      <div>
+        <h2 id="arch-h">Architecture</h2>
+        <p class="sec-desc">The game client reports the play count of each chart of a song, and the server receives the reports and stores them in the database.</p>
+      </div>
+      <div class="legend" aria-label="Legend">
+        <span><i class="sw me" aria-hidden="true"></i>Built by me</span>
+        <span><i class="sw other" aria-hidden="true"></i>Others</span>
+        <button class="toggle" type="button" data-mine-toggle aria-pressed="false"><span class="knob" aria-hidden="true"></span>Highlight my work only</button>
+      </div>
+    </div>
+    <div class="sys">
+      {{inc:flow-wjmax}}
+      <div class="sys-outcome"><span class="k">Result</span><span>Ran as a <b>live service</b> through traffic surges on update days</span><span>The public repository is a cleaned-up version (with tests)</span></div>
+    </div>
+  </section>
+
+  <section class="d-section" id="rewrite" aria-labelledby="rw-h">
+    <h2 id="rw-h">Problems handled in the public version</h2>
+    <p class="sec-desc">The request the game client sends stays as it was; the server-side problems were pinned down one by one with tests.</p>
+    <ol class="decisions">
+      <li><h3>Requests failing when many players send at once</h3>
+        <dl class="dl"><dt>Problem</dt><dd>The first draft of the public code took its database connection too early, so in a test with many clients sending at once, many of the requests ended up waiting on each other and failed.</dd><dt>Fix</dt><dd>The connection is now taken, used and returned inside one worker thread, and there are as many connections as worker threads. CI runs the concurrent-request test and checks that every request is answered.</dd></dl></li>
+      <li><h3>Retried reports stored twice</h3>
+        <dl class="dl"><dt>Problem</dt><dd>When a connection drops and the same report arrives again, its play counts can be added twice.</dd><dt>Fix</dt><dd>A report that carries a number (a report id) is stored only once per number. Two copies arriving at the same moment are still stored once, and the same number with different contents is refused. The released game sends no number, though, so its retries are still stored as separate reports.</dd></dl></li>
+      <li><h3>Song titles merging</h3>
+        <dl class="dl"><dt>Problem</dt><dd>By default MySQL does not tell upper from lower case or hiragana from katakana, so it treats “Glory” and “GLORY”, or “ゆめ” and “ユメ”, as the same song.</dd><dt>Fix</dt><dd>Titles and ids are compared exactly as written, character for character, and CI checks it.</dd></dl></li>
+      <li><h3>Input anyone can send</h3>
+        <dl class="dl"><dt>Problem</dt><dd>The released game sends its reports without any login, so anyone who knows the server's address can send one.</dd><dt>Fix</dt><dd>The server checks the format before it reads the contents and turns away malformed input and oversized requests right away; Cloudflare in front also helps hold off abuse. The README also states the limit: a report does not prove that a play actually happened.</dd></dl></li>
+    </ol>
+    <p class="note">GitHub Actions runs the tests on SQLite and on MySQL 8.0 and 8.4, and checks that the database definition (<code>schema.sql</code>) matches the code.</p>
+    <ul class="chips" style="margin-top:16px" aria-label="Stack"><li>Python</li><li>FastAPI</li><li>Docker</li><li>AWS EC2</li><li>AWS RDS</li><li>MySQL</li><li>Cloudflare</li><li>GitHub Actions</li></ul>
+  </section>
+
+  <nav class="pager" aria-label="Other systems">
+    <a href="/en/work/genomics/"><small>← Previous system</small><b>Genomic variant annotation and reports</b></a>
+    <a class="next" href="/en/research/"><small>Next →</small><b>Research and the lens array lab</b></a>
+  </nav>
+</div>
